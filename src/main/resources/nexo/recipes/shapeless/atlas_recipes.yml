@@ -1,0 +1,16 @@
+# Atlas Custom Recipes
+
+test_block_recipe:
+  result:
+    nexo_item: test_block
+    amount: 1
+  ingredients:
+    A:
+      amount: 1
+      minecraft_type: COBBLESTONE
+    B:
+      amount: 1
+      minecraft_type: COBBLESTONE
+    C:
+      amount: 1
+      minecraft_type: COBBLESTONE

@@ -1,0 +1,20 @@
+name: Atlas
+version: ${project.version}
+main: com.coderjoe.atlas.Atlas
+api-version: '1.21'
+description: A power generation and transfer plugin
+author: CoderJoe
+
+depend:
+  - Nexo
+
+commands:
+  testblock:
+    description: Get a TestBlock item
+    usage: /testblock
+    permission: atlas.testblock
+
+permissions:
+  atlas.testblock:
+    description: Allows the player to get a TestBlock
+    default: op

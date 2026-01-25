@@ -1,0 +1,27 @@
+# Atlas Custom Blocks Configuration
+# These items are loaded by Nexo to create custom blocks
+
+test_block:
+  itemname: "<gradient:#FF6B6B:#4ECDC4>Test Block"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_all
+    textures:
+      - atlas:block/test_block
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 100
+      hardness: 3
+      block_sounds:
+        break_sound: block.stone.break
+        place_sound: block.stone.place
+        hit_sound: block.stone.hit
+        step_sound: block.stone.step
+        fall_sound: block.stone.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: test_block
+            probability: 1.0
