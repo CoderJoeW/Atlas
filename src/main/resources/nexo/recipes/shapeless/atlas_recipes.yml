@@ -1,16 +1,17 @@
 # Atlas Custom Recipes
 
-test_block_recipe:
+small_solar_panel_recipe:
   result:
-    nexo_item: test_block
+    nexo_item: small_solar_panel
     amount: 1
   ingredients:
     A:
-      amount: 1
-      minecraft_type: COBBLESTONE
+      amount: 3
+      minecraft_type: IRON_INGOT
     B:
-      amount: 1
-      minecraft_type: COBBLESTONE
+      amount: 3
+      minecraft_type: LAPIS_LAZULI
     C:
-      amount: 1
-      minecraft_type: COBBLESTONE
+      amount: 3
+      minecraft_type: REDSTONE
+
