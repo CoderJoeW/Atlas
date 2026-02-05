@@ -1,27 +1,27 @@
 # Atlas Custom Blocks Configuration
 # These items are loaded by Nexo to create custom blocks
 
-test_block:
-  itemname: "<gradient:#FF6B6B:#4ECDC4>Test Block"
+small_solar_panel:
+  itemname: "<gradient:#1E90FF:#FFD700>Small Solar Panel"
   material: paper
   Pack:
     generate_model: true
-    parent_model: block/cube_all
+    parent_model: block/cube_bottom_top
     textures:
-      - atlas:block/test_block
+      top: atlas:block/small_solar_panel
   Mechanics:
     custom_block:
       type: NOTEBLOCK
       custom_variation: 100
-      hardness: 3
+      hardness: 4
       block_sounds:
-        break_sound: block.stone.break
-        place_sound: block.stone.place
-        hit_sound: block.stone.hit
-        step_sound: block.stone.step
-        fall_sound: block.stone.fall
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
       drop:
         silktouch: false
         loots:
-          - nexo_item: test_block
+          - nexo_item: small_solar_panel
             probability: 1.0
