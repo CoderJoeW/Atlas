@@ -6,6 +6,8 @@ import org.bukkit.Location
 
 class SmallSolarPanel(location: Location): PowerBlock(location, maxStorage = 10) {
 
+    override val canReceivePower: Boolean = false
+
     companion object {
         const val BLOCK_ID = "small_solar_panel"
     }
