@@ -1,5 +1,6 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockInitializer
 import com.coderjoe.atlas.power.PowerBlockListener
 import com.coderjoe.atlas.power.PowerBlockPersistence
@@ -30,6 +31,8 @@ class Atlas : JavaPlugin() {
             server.pluginManager.registerEvents(PlayerJoinListener(resourcePackManager), this)
         }
 
+        PowerBlockDialog.init(this)
+
         initPowerSystem()
 
         logger.info("Atlas plugin enabled!")
@@ -43,6 +46,9 @@ class Atlas : JavaPlugin() {
         if (::powerBlockPersistence.isInitialized && ::powerBlockRegistry.isInitialized) {
             powerBlockPersistence.save(powerBlockRegistry)
         }
+
+        // Cancel all active dialog refresh tasks
+        PowerBlockDialog.cleanup()
 
         // Stop all power block ticking
         if (::powerBlockRegistry.isInitialized) {
