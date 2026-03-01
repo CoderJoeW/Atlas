@@ -46,7 +46,20 @@ class NexoIntegration(private val plugin: JavaPlugin) {
 
         // Copy block textures
         val textures = listOf(
-            "small_solar_panel"
+            "small_solar_panel",
+            "small_solar_panel_low",
+            "small_solar_panel_medium",
+            "small_solar_panel_full",
+            "power_cable_front_powered",
+            "power_cable_back_powered",
+            "power_cable_side_up_powered",
+            "power_cable_side_down_powered",
+            "power_cable_side_left_powered",
+            "power_cable_side_right_powered",
+            "power_cable_cap_up_powered",
+            "power_cable_cap_down_powered",
+            "power_cable_cap_left_powered",
+            "power_cable_cap_right_powered"
         )
         for (textureName in textures) {
             val textureFile = File(texturesFolder, "$textureName.png")

@@ -1,7 +1,9 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.Atlas
+import com.nexomc.nexo.api.NexoBlocks
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
@@ -36,10 +38,30 @@ abstract class PowerBlock(
     }
 
     protected abstract fun powerUpdate()
+    abstract fun getVisualStateBlockId(): String
+    private var currentVisualState: String? = null
+
+    protected fun updateVisualState() {
+        val newState = getVisualStateBlockId()
+        if (newState != currentVisualState) {
+            location.block.setType(Material.AIR, false)
+            NexoBlocks.place(newState, location)
+            currentVisualState = newState
+        }
+    }
 
     fun start() {
+        // Snapshot the current block so the deferred update is a no-op when already correct
+        currentVisualState = NexoBlocks.customBlockMechanic(location.block)?.itemID
+
+        // Defer to next tick — corrects visual state if it doesn't match (e.g. after persistence load)
+        plugin.server.scheduler.runTask(plugin, Runnable {
+            updateVisualState()
+        })
+
         updateTask = plugin.server.scheduler.runTaskTimer(plugin, Runnable {
             powerUpdate()
+            updateVisualState()
         }, updateIntervalTicks, updateIntervalTicks)
 
         plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started - updating every ${updateIntervalTicks / 20} seconds")

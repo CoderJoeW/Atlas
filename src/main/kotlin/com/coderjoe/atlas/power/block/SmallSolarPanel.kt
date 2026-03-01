@@ -12,6 +12,13 @@ class SmallSolarPanel(location: Location): PowerBlock(location, maxStorage = 10)
         const val BLOCK_ID = "small_solar_panel"
     }
 
+    override fun getVisualStateBlockId(): String = when (currentPower) {
+        0 -> "small_solar_panel"
+        in 1..3 -> "small_solar_panel_low"
+        in 4..7 -> "small_solar_panel_medium"
+        else -> "small_solar_panel_full"
+    }
+
     override fun powerUpdate() {
         val world = location.world ?: return
         val isDaytime = world.time in 0..12000
