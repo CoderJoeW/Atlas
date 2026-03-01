@@ -15,3 +15,11 @@ small_solar_panel_recipe:
       amount: 3
       minecraft_type: REDSTONE
 
+power_cable_recipe:
+  result:
+    nexo_item: power_cable
+    amount: 1
+  ingredients:
+    A:
+      amount: 1
+      minecraft_type: COPPER_INGOT

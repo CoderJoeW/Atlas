@@ -15,14 +15,12 @@ abstract class PowerBlock(
 ) {
     private var updateTask: BukkitTask? = null
     protected val plugin: JavaPlugin = JavaPlugin.getPlugin(Atlas::class.java)
-
-    companion object {
-        private const val UPDATE_INTERVAL_TICKS = 100L // 20 seconds (20 ticks per second)
-    }
+    protected open val updateIntervalTicks: Long = 100L
+    protected open val canReceivePower: Boolean = true
 
     fun hasPower(): Boolean = currentPower > 0
 
-    fun canAcceptPower(): Boolean = currentPower < maxStorage
+    fun canAcceptPower(): Boolean = canReceivePower && currentPower < maxStorage
 
     fun addPower(amount: Int): Int {
         val spaceAvailable = maxStorage - currentPower
@@ -42,9 +40,9 @@ abstract class PowerBlock(
     fun start() {
         updateTask = plugin.server.scheduler.runTaskTimer(plugin, Runnable {
             powerUpdate()
-        }, UPDATE_INTERVAL_TICKS, UPDATE_INTERVAL_TICKS)
+        }, updateIntervalTicks, updateIntervalTicks)
 
-        plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started - updating every 20 seconds")
+        plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started - updating every ${updateIntervalTicks / 20} seconds")
     }
 
     fun stop() {

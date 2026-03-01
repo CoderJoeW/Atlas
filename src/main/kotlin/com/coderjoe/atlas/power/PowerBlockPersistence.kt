@@ -20,14 +20,18 @@ class PowerBlockPersistence(private val plugin: JavaPlugin) {
 
         for ((powerBlock, blockId) in powerBlocksWithIds) {
             val data = PowerBlockData.fromPowerBlock(powerBlock, blockId)
-            blockDataList.add(mapOf(
+            val map = mutableMapOf<String, Any>(
                 "blockId" to data.blockId,
                 "world" to data.world,
                 "x" to data.x,
                 "y" to data.y,
                 "z" to data.z,
                 "currentPower" to data.currentPower
-            ))
+            )
+            if (data.facing != null) {
+                map["facing"] = data.facing
+            }
+            blockDataList.add(map)
         }
 
         config.set("power_blocks", blockDataList)
@@ -63,8 +67,9 @@ class PowerBlockPersistence(private val plugin: JavaPlugin) {
                 val y = blockDataMap["y"] as? Int ?: continue
                 val z = blockDataMap["z"] as? Int ?: continue
                 val currentPower = blockDataMap["currentPower"] as? Int ?: 0
+                val facing = blockDataMap["facing"] as? String
 
-                val data = PowerBlockData(blockId, world, x, y, z, currentPower)
+                val data = PowerBlockData(blockId, world, x, y, z, currentPower, facing)
                 val location = data.toLocation(plugin)
 
                 if (location == null) {
@@ -73,7 +78,7 @@ class PowerBlockPersistence(private val plugin: JavaPlugin) {
                     continue
                 }
 
-                val powerBlock = PowerBlockFactory.createPowerBlock(blockId, location)
+                val powerBlock = PowerBlockFactory.createPowerBlock(blockId, location, data.toBlockFace())
 
                 if (powerBlock != null) {
                     powerBlock.currentPower = currentPower

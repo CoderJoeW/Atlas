@@ -12,7 +12,7 @@ mkdir -p "$SERVER_DIR/plugins/Nexo/pack/assets/atlas/textures/block"
 
 # Build the plugin
 echo "Building plugin..."
-mvn package -q
+mvn clean install package -q
 
 if [ $? -ne 0 ]; then
     echo "Build failed!"
@@ -69,8 +69,7 @@ echo "Setting up Atlas Nexo configurations..."
 cp "src/main/resources/nexo/items/atlas_blocks.yml" "$SERVER_DIR/plugins/Nexo/items/"
 cp "src/main/resources/nexo/recipes/shapeless/atlas_recipes.yml" "$SERVER_DIR/plugins/Nexo/recipes/shapeless/"
 cp src/main/resources/nexo/pack/assets/atlas/textures/block/small_solar_panel_*.png "$SERVER_DIR/plugins/Nexo/pack/assets/atlas/textures/block/"
-cp src/main/resources/nexo/pack/assets/atlas/textures/block/power_line_*.png "$SERVER_DIR/plugins/Nexo/pack/assets/atlas/textures/block/"
-cp src/main/resources/nexo/pack/assets/atlas/textures/block/power_line_powered_*.png "$SERVER_DIR/plugins/Nexo/pack/assets/atlas/textures/block/"
+cp src/main/resources/nexo/pack/assets/atlas/textures/block/power_cable_*.png "$SERVER_DIR/plugins/Nexo/pack/assets/atlas/textures/block/"
 
 # Create/update the Atlas plugin config (resource pack disabled - Nexo handles it)
 cat > "$SERVER_DIR/plugins/Atlas/config.yml" << EOF
