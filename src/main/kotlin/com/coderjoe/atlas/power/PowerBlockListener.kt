@@ -1,14 +1,17 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.nexomc.nexo.api.NexoBlocks
 import com.nexomc.nexo.api.NexoItems
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -79,7 +82,7 @@ class PowerBlockListener(
         if (PowerBlockFactory.isRegistered(blockId)) {
             plugin.logger.info("Power block placed: $blockId at ${event.block.location}")
 
-            val powerBlock = PowerBlockFactory.createPowerBlock(blockId, event.block.location)
+            val powerBlock = PowerBlockFactory.createPowerBlock(blockId, event.block.location.clone())
 
             if (powerBlock != null) {
                 registry.registerPowerBlock(powerBlock, blockId)
@@ -104,19 +107,36 @@ class PowerBlockListener(
         if (powerBlock != null) {
             plugin.logger.info("Power block removed with ${powerBlock.currentPower}/${powerBlock.maxStorage} power")
 
-            // Manually drop the base power_cable item for directional variants
+            // Manually drop the base item for visual-state variants
             // since Nexo may not handle drops for programmatically-placed blocks
-            if (powerBlock is PowerCable) {
-                val itemBuilder = NexoItems.itemFromId(PowerCable.BLOCK_ID)
+            val baseItemId = when (powerBlock) {
+                is PowerCable -> PowerCable.BLOCK_ID
+                is SmallSolarPanel -> SmallSolarPanel.BLOCK_ID
+                else -> null
+            }
+
+            if (baseItemId != null) {
+                val itemBuilder = NexoItems.itemFromId(baseItemId)
                 if (itemBuilder != null) {
                     val dropLocation = event.block.location.add(0.5, 0.5, 0.5)
                     event.block.world.dropItemNaturally(dropLocation, itemBuilder.build())
                     event.isDropItems = false // prevent any default drops
                 } else {
-                    plugin.logger.warning("Could not find Nexo item for ${PowerCable.BLOCK_ID}")
+                    plugin.logger.warning("Could not find Nexo item for $baseItemId")
                 }
             }
         }
+    }
+
+    @EventHandler
+    fun onPlayerInteract(event: PlayerInteractEvent) {
+        if (event.action != Action.RIGHT_CLICK_BLOCK) return
+        if (event.player.isSneaking) return // allow placing blocks against power blocks
+        val block = event.clickedBlock ?: return
+        val powerBlock = registry.getPowerBlock(block.location) ?: return
+
+        PowerBlockDialog.showPowerDialog(event.player, powerBlock)
+        event.isCancelled = true
     }
 
     private fun getPlayerFacing(event: BlockPlaceEvent): BlockFace {
