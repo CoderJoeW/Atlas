@@ -4,9 +4,10 @@ import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockFactory
 import org.bukkit.Location
 
-class SmallSolarPanel(location: Location): PowerBlock(location, maxStorage = 10) {
+class SmallSolarPanel(location: Location): PowerBlock(location, maxStorage = 1) {
 
     override val canReceivePower: Boolean = false
+    override val updateIntervalTicks: Long = 1200L
 
     companion object {
         const val BLOCK_ID = "small_solar_panel"
@@ -14,8 +15,6 @@ class SmallSolarPanel(location: Location): PowerBlock(location, maxStorage = 10)
 
     override fun getVisualStateBlockId(): String = when (currentPower) {
         0 -> "small_solar_panel"
-        in 1..3 -> "small_solar_panel_low"
-        in 4..7 -> "small_solar_panel_medium"
         else -> "small_solar_panel_full"
     }
 
