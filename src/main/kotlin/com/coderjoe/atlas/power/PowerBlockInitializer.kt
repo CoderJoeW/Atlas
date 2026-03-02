@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import org.bukkit.plugin.java.JavaPlugin
@@ -18,6 +19,13 @@ object PowerBlockInitializer {
         plugin.logger.info("Registering SmallDrill...")
         PowerBlockFactory.register("small_drill") { location, _ ->
             SmallDrill(location)
+        }
+
+        plugin.logger.info("Registering SmallBattery variants...")
+        for (variantId in SmallBattery.ALL_VARIANT_IDS) {
+            PowerBlockFactory.register(variantId) { location, facing ->
+                SmallBattery(location, facing)
+            }
         }
 
         plugin.logger.info("Registering PowerCable variants...")

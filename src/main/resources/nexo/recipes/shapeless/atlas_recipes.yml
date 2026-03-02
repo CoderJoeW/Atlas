@@ -38,3 +38,18 @@ small_drill_recipe:
     C:
       amount: 1
       minecraft_type: DIAMOND
+
+small_battery_recipe:
+  result:
+    nexo_item: small_battery
+    amount: 1
+  ingredients:
+    A:
+      amount: 3
+      minecraft_type: IRON_INGOT
+    B:
+      amount: 3
+      minecraft_type: REDSTONE
+    C:
+      amount: 1
+      minecraft_type: COPPER_INGOT
