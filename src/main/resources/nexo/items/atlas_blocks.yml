@@ -485,3 +485,28 @@ power_cable_down_powered:
         loots:
           - nexo_item: power_cable
             probability: 1.0
+
+small_drill:
+  itemname: "<gradient:#8B4513:#CD853F>Small Drill"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_all
+    textures:
+      all: atlas:block/small_drill
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 117
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_drill
+            probability: 1.0
