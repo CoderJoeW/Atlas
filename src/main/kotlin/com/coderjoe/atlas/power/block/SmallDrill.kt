@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.power.PowerBlock
+import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.Material
 
@@ -16,6 +17,21 @@ class SmallDrill(location: Location) : PowerBlock(location, maxStorage = 10) {
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
     override fun powerUpdate() {
+        // Pull power from adjacent blocks
+        if (canAcceptPower()) {
+            val registry = PowerBlockRegistry.instance ?: return
+            val neighbors = registry.getAdjacentPowerBlocks(location)
+            for (neighbor in neighbors) {
+                if (!canAcceptPower()) break
+                if (neighbor.hasPower()) {
+                    val pulled = neighbor.removePower(1)
+                    if (pulled > 0) {
+                        addPower(pulled)
+                    }
+                }
+            }
+        }
+
         if (currentPower < 10) return
 
         val world = location.world ?: return

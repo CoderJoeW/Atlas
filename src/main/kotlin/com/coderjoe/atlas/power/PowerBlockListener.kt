@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.nexomc.nexo.api.NexoBlocks
@@ -36,6 +37,21 @@ class PowerBlockListener(
 
         val blockId = mechanic.itemID
         plugin.logger.info("Nexo block placed with ID: $blockId")
+
+        // Handle small_battery base item: determine facing for pull direction
+        if (blockId == SmallBattery.BLOCK_ID) {
+            val facing = getPlayerFacing(event)
+            plugin.logger.info("SmallBattery placed facing $facing")
+
+            val location = event.block.location.clone()
+            val powerBlock = PowerBlockFactory.createPowerBlock(blockId, location, facing)
+            if (powerBlock != null) {
+                registry.registerPowerBlock(powerBlock, blockId)
+            } else {
+                plugin.logger.warning("Failed to create power block for: $blockId")
+            }
+            return
+        }
 
         // Handle power_cable base item: swap to directional variant
         if (blockId == PowerCable.BLOCK_ID) {
@@ -111,6 +127,7 @@ class PowerBlockListener(
             // Manually drop the base item for visual-state variants
             // since Nexo may not handle drops for programmatically-placed blocks
             val baseItemId = when (powerBlock) {
+                is SmallBattery -> SmallBattery.BLOCK_ID
                 is PowerCable -> PowerCable.BLOCK_ID
                 is SmallDrill -> SmallDrill.BLOCK_ID
                 is SmallSolarPanel -> SmallSolarPanel.BLOCK_ID

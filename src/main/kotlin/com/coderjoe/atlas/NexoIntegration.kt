@@ -26,15 +26,12 @@ class NexoIntegration(private val plugin: JavaPlugin) {
         }
 
         val targetFile = File(itemsFolder, "atlas_blocks.yml")
-        if (!targetFile.exists()) {
-            plugin.saveResource("nexo/items/atlas_blocks.yml", false)
-            // Move from our data folder to Nexo's folder
-            val sourceFile = File(plugin.dataFolder, "nexo/items/atlas_blocks.yml")
-            if (sourceFile.exists()) {
-                sourceFile.copyTo(targetFile, overwrite = true)
-                sourceFile.delete()
-                plugin.logger.info("Copied Atlas block configurations to Nexo")
-            }
+        plugin.saveResource("nexo/items/atlas_blocks.yml", true)
+        val sourceFile = File(plugin.dataFolder, "nexo/items/atlas_blocks.yml")
+        if (sourceFile.exists()) {
+            sourceFile.copyTo(targetFile, overwrite = true)
+            sourceFile.delete()
+            plugin.logger.info("Copied Atlas block configurations to Nexo")
         }
     }
 
@@ -47,9 +44,9 @@ class NexoIntegration(private val plugin: JavaPlugin) {
         // Copy block textures
         val textures = listOf(
             "small_solar_panel",
-            "small_solar_panel_low",
-            "small_solar_panel_medium",
             "small_solar_panel_full",
+            "small_solar_panel_side",
+            "small_solar_panel_bottom",
             "power_cable_front_powered",
             "power_cable_back_powered",
             "power_cable_side_up_powered",
@@ -60,18 +57,22 @@ class NexoIntegration(private val plugin: JavaPlugin) {
             "power_cable_cap_down_powered",
             "power_cable_cap_left_powered",
             "power_cable_cap_right_powered",
-            "small_drill"
+            "small_drill",
+            "small_battery",
+            "small_battery_low",
+            "small_battery_medium",
+            "small_battery_full",
+            "small_battery_side",
+            "small_battery_bottom"
         )
         for (textureName in textures) {
             val textureFile = File(texturesFolder, "$textureName.png")
-            if (!textureFile.exists()) {
-                plugin.saveResource("nexo/pack/assets/atlas/textures/block/$textureName.png", false)
-                val sourceFile = File(plugin.dataFolder, "nexo/pack/assets/atlas/textures/block/$textureName.png")
-                if (sourceFile.exists()) {
-                    sourceFile.copyTo(textureFile, overwrite = true)
-                    sourceFile.delete()
-                    plugin.logger.info("Copied $textureName texture to Nexo")
-                }
+            plugin.saveResource("nexo/pack/assets/atlas/textures/block/$textureName.png", true)
+            val sourceFile = File(plugin.dataFolder, "nexo/pack/assets/atlas/textures/block/$textureName.png")
+            if (sourceFile.exists()) {
+                sourceFile.copyTo(textureFile, overwrite = true)
+                sourceFile.delete()
+                plugin.logger.info("Copied $textureName texture to Nexo")
             }
         }
     }
@@ -83,14 +84,12 @@ class NexoIntegration(private val plugin: JavaPlugin) {
         }
 
         val targetFile = File(recipesFolder, "atlas_recipes.yml")
-        if (!targetFile.exists()) {
-            plugin.saveResource("nexo/recipes/shapeless/atlas_recipes.yml", false)
-            val sourceFile = File(plugin.dataFolder, "nexo/recipes/shapeless/atlas_recipes.yml")
-            if (sourceFile.exists()) {
-                sourceFile.copyTo(targetFile, overwrite = true)
-                sourceFile.delete()
-                plugin.logger.info("Copied Atlas recipes to Nexo")
-            }
+        plugin.saveResource("nexo/recipes/shapeless/atlas_recipes.yml", true)
+        val sourceFile = File(plugin.dataFolder, "nexo/recipes/shapeless/atlas_recipes.yml")
+        if (sourceFile.exists()) {
+            sourceFile.copyTo(targetFile, overwrite = true)
+            sourceFile.delete()
+            plugin.logger.info("Copied Atlas recipes to Nexo")
         }
     }
 }

@@ -214,60 +214,12 @@ small_solar_panel:
     parent_model: block/cube_bottom_top
     textures:
       top: atlas:block/small_solar_panel
+      bottom: atlas:block/small_solar_panel_bottom
+      side: atlas:block/small_solar_panel_side
   Mechanics:
     custom_block:
       type: NOTEBLOCK
       custom_variation: 100
-      hardness: 4
-      block_sounds:
-        break_sound: block.metal.break
-        place_sound: block.metal.place
-        hit_sound: block.metal.hit
-        step_sound: block.metal.step
-        fall_sound: block.metal.fall
-      drop:
-        silktouch: false
-        loots:
-          - nexo_item: small_solar_panel
-            probability: 1.0
-
-small_solar_panel_low:
-  itemname: "<gradient:#1E90FF:#FFD700>Small Solar Panel"
-  material: paper
-  Pack:
-    generate_model: true
-    parent_model: block/cube_bottom_top
-    textures:
-      top: atlas:block/small_solar_panel_low
-  Mechanics:
-    custom_block:
-      type: NOTEBLOCK
-      custom_variation: 108
-      hardness: 4
-      block_sounds:
-        break_sound: block.metal.break
-        place_sound: block.metal.place
-        hit_sound: block.metal.hit
-        step_sound: block.metal.step
-        fall_sound: block.metal.fall
-      drop:
-        silktouch: false
-        loots:
-          - nexo_item: small_solar_panel
-            probability: 1.0
-
-small_solar_panel_medium:
-  itemname: "<gradient:#1E90FF:#FFD700>Small Solar Panel"
-  material: paper
-  Pack:
-    generate_model: true
-    parent_model: block/cube_bottom_top
-    textures:
-      top: atlas:block/small_solar_panel_medium
-  Mechanics:
-    custom_block:
-      type: NOTEBLOCK
-      custom_variation: 109
       hardness: 4
       block_sounds:
         break_sound: block.metal.break
@@ -289,6 +241,8 @@ small_solar_panel_full:
     parent_model: block/cube_bottom_top
     textures:
       top: atlas:block/small_solar_panel_full
+      bottom: atlas:block/small_solar_panel_bottom
+      side: atlas:block/small_solar_panel_side
   Mechanics:
     custom_block:
       type: NOTEBLOCK
@@ -509,4 +463,112 @@ small_drill:
         silktouch: false
         loots:
           - nexo_item: small_drill
+            probability: 1.0
+
+small_battery:
+  itemname: "<gradient:#4A90D9:#2ECC71>Small Battery"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_bottom_top
+    textures:
+      top: atlas:block/small_battery
+      bottom: atlas:block/small_battery_bottom
+      side: atlas:block/small_battery_side
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 118
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_battery
+            probability: 1.0
+
+small_battery_low:
+  itemname: "<gradient:#4A90D9:#2ECC71>Small Battery"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_bottom_top
+    textures:
+      top: atlas:block/small_battery_low
+      bottom: atlas:block/small_battery_bottom
+      side: atlas:block/small_battery_side
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 119
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_battery
+            probability: 1.0
+
+small_battery_medium:
+  itemname: "<gradient:#4A90D9:#2ECC71>Small Battery"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_bottom_top
+    textures:
+      top: atlas:block/small_battery_medium
+      bottom: atlas:block/small_battery_bottom
+      side: atlas:block/small_battery_side
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 120
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_battery
+            probability: 1.0
+
+small_battery_full:
+  itemname: "<gradient:#4A90D9:#2ECC71>Small Battery"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_bottom_top
+    textures:
+      top: atlas:block/small_battery_full
+      bottom: atlas:block/small_battery_bottom
+      side: atlas:block/small_battery_side
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 121
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_battery
             probability: 1.0
