@@ -1,4 +1,4 @@
-package com.coderjoe.atlas
+package com.coderjoe.atlas.integration
 
 import com.nexomc.nexo.api.NexoBlocks
 import com.nexomc.nexo.api.NexoItems

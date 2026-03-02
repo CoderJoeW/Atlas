@@ -1,7 +1,10 @@
-package com.coderjoe.atlas.power
+package com.coderjoe.atlas.listener
 
+import com.coderjoe.atlas.power.PowerBlockFactory
+import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.ui.PowerBlockDialog
 import com.nexomc.nexo.api.NexoBlocks
 import com.nexomc.nexo.api.NexoItems
 import org.bukkit.Material

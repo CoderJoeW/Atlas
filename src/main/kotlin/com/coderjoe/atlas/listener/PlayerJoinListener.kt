@@ -1,5 +1,6 @@
-package com.coderjoe.atlas
+package com.coderjoe.atlas.listener
 
+import com.coderjoe.atlas.integration.ResourcePackManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent

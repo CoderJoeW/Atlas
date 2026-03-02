@@ -1,5 +1,8 @@
-package com.coderjoe.atlas.power
+package com.coderjoe.atlas.power.persistence
 
+import com.coderjoe.atlas.power.PowerBlockData
+import com.coderjoe.atlas.power.PowerBlockFactory
+import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File

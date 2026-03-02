@@ -1,10 +1,13 @@
 package com.coderjoe.atlas
 
-import com.coderjoe.atlas.power.PowerBlockDialog
+import com.coderjoe.atlas.integration.NexoIntegration
+import com.coderjoe.atlas.integration.ResourcePackManager
+import com.coderjoe.atlas.listener.PlayerJoinListener
+import com.coderjoe.atlas.listener.PowerBlockListener
 import com.coderjoe.atlas.power.PowerBlockInitializer
-import com.coderjoe.atlas.power.PowerBlockListener
-import com.coderjoe.atlas.power.PowerBlockPersistence
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.persistence.PowerBlockPersistence
+import com.coderjoe.atlas.ui.PowerBlockDialog
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 

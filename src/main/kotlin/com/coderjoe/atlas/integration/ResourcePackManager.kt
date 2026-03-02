@@ -1,4 +1,4 @@
-package com.coderjoe.atlas
+package com.coderjoe.atlas.integration
 
 import net.kyori.adventure.resource.ResourcePackInfo
 import net.kyori.adventure.resource.ResourcePackRequest

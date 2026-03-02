@@ -1,5 +1,7 @@
-package com.coderjoe.atlas.power
+package com.coderjoe.atlas.ui
 
+import com.coderjoe.atlas.power.PowerBlock
+import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.papermc.paper.dialog.Dialog
