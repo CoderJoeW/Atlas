@@ -23,3 +23,18 @@ power_cable_recipe:
     A:
       amount: 1
       minecraft_type: COPPER_INGOT
+
+small_drill_recipe:
+  result:
+    nexo_item: small_drill
+    amount: 1
+  ingredients:
+    A:
+      amount: 3
+      minecraft_type: IRON_INGOT
+    B:
+      amount: 3
+      minecraft_type: REDSTONE
+    C:
+      amount: 1
+      minecraft_type: DIAMOND

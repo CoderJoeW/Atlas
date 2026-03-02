@@ -59,7 +59,8 @@ class NexoIntegration(private val plugin: JavaPlugin) {
             "power_cable_cap_up_powered",
             "power_cable_cap_down_powered",
             "power_cable_cap_left_powered",
-            "power_cable_cap_right_powered"
+            "power_cable_cap_right_powered",
+            "small_drill"
         )
         for (textureName in textures) {
             val textureFile = File(texturesFolder, "$textureName.png")

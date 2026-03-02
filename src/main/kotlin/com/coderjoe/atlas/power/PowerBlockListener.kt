@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.nexomc.nexo.api.NexoBlocks
 import com.nexomc.nexo.api.NexoItems
@@ -111,6 +112,7 @@ class PowerBlockListener(
             // since Nexo may not handle drops for programmatically-placed blocks
             val baseItemId = when (powerBlock) {
                 is PowerCable -> PowerCable.BLOCK_ID
+                is SmallDrill -> SmallDrill.BLOCK_ID
                 is SmallSolarPanel -> SmallSolarPanel.BLOCK_ID
                 else -> null
             }

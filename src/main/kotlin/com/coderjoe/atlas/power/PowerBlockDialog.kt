@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
@@ -95,6 +96,7 @@ object PowerBlockDialog {
 
     private fun getBlockDisplayName(powerBlock: PowerBlock): String = when (powerBlock) {
         is SmallSolarPanel -> "Small Solar Panel"
+        is SmallDrill -> "Small Drill"
         is PowerCable -> "Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         else -> "Power Block"
     }
@@ -127,6 +129,8 @@ object PowerBlockDialog {
 
         val infoLine = when (powerBlock) {
             is SmallSolarPanel -> Component.text("Generator - produces 1 power/5s during daytime")
+                .color(NamedTextColor.GRAY)
+            is SmallDrill -> Component.text("Machine - mines blocks below, consumes 10 power/s")
                 .color(NamedTextColor.GRAY)
             is PowerCable -> Component.text("Cable - transfers power in facing direction")
                 .color(NamedTextColor.GRAY)
