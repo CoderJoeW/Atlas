@@ -16,9 +16,11 @@ object PowerBlockInitializer {
             SmallSolarPanel(location)
         }
 
-        plugin.logger.info("Registering SmallDrill...")
-        PowerBlockFactory.register("small_drill") { location, _ ->
-            SmallDrill(location)
+        plugin.logger.info("Registering SmallDrill variants...")
+        for (variantId in SmallDrill.ALL_DIRECTIONAL_IDS) {
+            PowerBlockFactory.register(variantId) { location, facing ->
+                SmallDrill(location, facing)
+            }
         }
 
         plugin.logger.info("Registering SmallBattery variants...")

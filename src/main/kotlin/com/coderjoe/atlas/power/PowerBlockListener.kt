@@ -81,6 +81,27 @@ class PowerBlockListener(
             return
         }
 
+        // Handle small_drill: direction based on placement face, swap to directional variant
+        if (blockId == SmallDrill.BLOCK_ID) {
+            val facing = getPlayerFacing(event).oppositeFace
+            val variantId = SmallDrill.DIRECTIONAL_IDS[facing] ?: SmallDrill.BLOCK_ID
+            plugin.logger.info("SmallDrill placed, mining direction: $facing, variant: $variantId")
+
+            val location = event.block.location.clone()
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                location.block.setType(Material.AIR, false)
+                NexoBlocks.place(variantId, location)
+
+                val powerBlock = PowerBlockFactory.createPowerBlock(variantId, location, facing)
+                if (powerBlock != null) {
+                    registry.registerPowerBlock(powerBlock, variantId)
+                } else {
+                    plugin.logger.warning("Failed to create power block for variant: $variantId")
+                }
+            })
+            return
+        }
+
         // Handle directional variant placed directly (e.g., from Nexo)
         val facing = PowerCable.facingFromBlockId(blockId)
         if (facing != null) {

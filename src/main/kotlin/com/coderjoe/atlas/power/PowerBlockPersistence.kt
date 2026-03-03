@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.power
 
+import com.coderjoe.atlas.power.block.SmallDrill
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -30,6 +31,9 @@ class PowerBlockPersistence(private val plugin: JavaPlugin) {
             )
             if (data.facing != null) {
                 map["facing"] = data.facing
+            }
+            if (data.enabled != null) {
+                map["enabled"] = data.enabled
             }
             blockDataList.add(map)
         }
@@ -68,8 +72,9 @@ class PowerBlockPersistence(private val plugin: JavaPlugin) {
                 val z = blockDataMap["z"] as? Int ?: continue
                 val currentPower = blockDataMap["currentPower"] as? Int ?: 0
                 val facing = blockDataMap["facing"] as? String
+                val enabled = blockDataMap["enabled"] as? Boolean
 
-                val data = PowerBlockData(blockId, world, x, y, z, currentPower, facing)
+                val data = PowerBlockData(blockId, world, x, y, z, currentPower, facing, enabled)
                 val location = data.toLocation(plugin)
 
                 if (location == null) {
@@ -82,6 +87,9 @@ class PowerBlockPersistence(private val plugin: JavaPlugin) {
 
                 if (powerBlock != null) {
                     powerBlock.currentPower = currentPower
+                    if (powerBlock is SmallDrill && data.enabled != null) {
+                        powerBlock.enabled = data.enabled
+                    }
                     registry.registerPowerBlock(powerBlock, blockId)
                     loadedCount++
                 } else {
