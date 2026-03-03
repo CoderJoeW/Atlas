@@ -1,6 +1,8 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.SmallBattery
+import com.coderjoe.atlas.power.block.SmallDrill
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
@@ -11,12 +13,19 @@ data class PowerBlockData(
     val y: Int,
     val z: Int,
     val currentPower: Int,
-    val facing: String? = null
+    val facing: String? = null,
+    val enabled: Boolean? = null
 ) {
     companion object {
         fun fromPowerBlock(powerBlock: PowerBlock, blockId: String): PowerBlockData {
             val loc = powerBlock.location
-            val facing = if (powerBlock is PowerCable) powerBlock.facing.name else null
+            val facing = when (powerBlock) {
+                is PowerCable -> powerBlock.facing.name
+                is SmallDrill -> powerBlock.miningDirection.name
+                is SmallBattery -> powerBlock.facing.name
+                else -> null
+            }
+            val enabled = if (powerBlock is SmallDrill) powerBlock.enabled else null
             return PowerBlockData(
                 blockId = blockId,
                 world = loc.world?.name ?: "world",
@@ -24,7 +33,8 @@ data class PowerBlockData(
                 y = loc.blockY,
                 z = loc.blockZ,
                 currentPower = powerBlock.currentPower,
-                facing = facing
+                facing = facing,
+                enabled = enabled
             )
         }
     }

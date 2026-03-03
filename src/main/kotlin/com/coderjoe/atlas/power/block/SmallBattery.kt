@@ -5,7 +5,9 @@ import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-class SmallBattery(location: Location, val facing: BlockFace) : PowerBlock(location, maxStorage = 10) {
+class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location, maxStorage = 10) {
+
+    val facing: BlockFace = if (facing == BlockFace.SELF) BlockFace.DOWN else facing
 
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
