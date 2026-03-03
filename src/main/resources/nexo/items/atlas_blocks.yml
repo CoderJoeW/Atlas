@@ -465,6 +465,186 @@ small_drill:
           - nexo_item: small_drill
             probability: 1.0
 
+small_drill_north:
+  itemname: "<gradient:#8B4513:#CD853F>Small Drill"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/small_drill_front
+      south: atlas:block/small_drill
+      east: atlas:block/small_drill_arrow_right
+      west: atlas:block/small_drill_arrow_left
+      up: atlas:block/small_drill_arrow_up
+      down: atlas:block/small_drill_arrow_up
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 122
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_drill
+            probability: 1.0
+
+small_drill_south:
+  itemname: "<gradient:#8B4513:#CD853F>Small Drill"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/small_drill
+      south: atlas:block/small_drill_front
+      east: atlas:block/small_drill_arrow_left
+      west: atlas:block/small_drill_arrow_right
+      up: atlas:block/small_drill_arrow_down
+      down: atlas:block/small_drill_arrow_down
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 123
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_drill
+            probability: 1.0
+
+small_drill_east:
+  itemname: "<gradient:#8B4513:#CD853F>Small Drill"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/small_drill_arrow_right
+      south: atlas:block/small_drill_arrow_left
+      east: atlas:block/small_drill_front
+      west: atlas:block/small_drill
+      up: atlas:block/small_drill_arrow_right
+      down: atlas:block/small_drill_arrow_left
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 124
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_drill
+            probability: 1.0
+
+small_drill_west:
+  itemname: "<gradient:#8B4513:#CD853F>Small Drill"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/small_drill_arrow_left
+      south: atlas:block/small_drill_arrow_right
+      east: atlas:block/small_drill
+      west: atlas:block/small_drill_front
+      up: atlas:block/small_drill_arrow_left
+      down: atlas:block/small_drill_arrow_right
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 125
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_drill
+            probability: 1.0
+
+small_drill_up:
+  itemname: "<gradient:#8B4513:#CD853F>Small Drill"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/small_drill_arrow_down
+      south: atlas:block/small_drill_arrow_down
+      east: atlas:block/small_drill_arrow_down
+      west: atlas:block/small_drill_arrow_down
+      up: atlas:block/small_drill_front
+      down: atlas:block/small_drill
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 126
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_drill
+            probability: 1.0
+
+small_drill_down:
+  itemname: "<gradient:#8B4513:#CD853F>Small Drill"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/small_drill_arrow_up
+      south: atlas:block/small_drill_arrow_up
+      east: atlas:block/small_drill_arrow_up
+      west: atlas:block/small_drill_arrow_up
+      up: atlas:block/small_drill
+      down: atlas:block/small_drill_front
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 127
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: small_drill
+            probability: 1.0
+
 small_battery:
   itemname: "<gradient:#4A90D9:#2ECC71>Small Battery"
   material: paper

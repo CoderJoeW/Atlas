@@ -59,6 +59,14 @@ object PowerBlockDialog {
     }
 
     private fun sendDialog(player: Player, powerBlock: PowerBlock) {
+        if (powerBlock is SmallDrill) {
+            sendDrillDialog(player, powerBlock)
+        } else {
+            sendDefaultDialog(player, powerBlock)
+        }
+    }
+
+    private fun sendDefaultDialog(player: Player, powerBlock: PowerBlock) {
         val title = Component.text(getBlockDisplayName(powerBlock))
         val bodyText = buildPowerInfo(powerBlock)
         val body = DialogBody.plainMessage(bodyText)
@@ -85,6 +93,48 @@ object PowerBlockDialog {
                         .build()
                 )
                 .type(DialogType.notice(closeButton))
+        }
+
+        player.showDialog(dialog)
+    }
+
+    private fun sendDrillDialog(player: Player, drill: SmallDrill) {
+        val title = Component.text("Small Drill")
+        val bodyText = buildPowerInfo(drill)
+        val body = DialogBody.plainMessage(bodyText)
+
+        val toggleLabel = if (drill.enabled) "Turn Off" else "Turn On"
+        val toggleAction = DialogAction.customClick(
+            DialogActionCallback { _, _ ->
+                drill.toggleEnabled()
+            },
+            ClickCallback.Options.builder().build()
+        )
+        val toggleButton = ActionButton.builder(Component.text(toggleLabel))
+            .action(toggleAction)
+            .build()
+
+        val closeAction = DialogAction.customClick(
+            DialogActionCallback { _, audience ->
+                val p = audience as? Player ?: return@DialogActionCallback
+                activeDialogs.remove(p.uniqueId)?.cancel()
+            },
+            ClickCallback.Options.builder().build()
+        )
+        val closeButton = ActionButton.builder(Component.text("Close"))
+            .action(closeAction)
+            .build()
+
+        val dialog = Dialog.create { factory ->
+            factory.empty()
+                .base(
+                    DialogBase.builder(title)
+                        .body(listOf(body))
+                        .canCloseWithEscape(false)
+                        .afterAction(DialogBase.DialogAfterAction.CLOSE)
+                        .build()
+                )
+                .type(DialogType.confirmation(toggleButton, closeButton))
         }
 
         player.showDialog(dialog)
@@ -134,8 +184,12 @@ object PowerBlockDialog {
                 .color(NamedTextColor.GRAY)
             is SmallBattery -> Component.text("Storage - holds up to 10 power")
                 .color(NamedTextColor.GRAY)
-            is SmallDrill -> Component.text("Machine - mines blocks below, consumes 10 power/s")
-                .color(NamedTextColor.GRAY)
+            is SmallDrill -> {
+                val directionName = powerBlock.miningDirection.name.lowercase().replaceFirstChar { it.uppercase() }
+                val status = if (powerBlock.enabled) "ON" else "OFF"
+                Component.text("Machine - mining $directionName, $status, consumes 10 power/s")
+                    .color(NamedTextColor.GRAY)
+            }
             is PowerCable -> Component.text("Cable - transfers power in facing direction")
                 .color(NamedTextColor.GRAY)
             else -> Component.text("Power block")
