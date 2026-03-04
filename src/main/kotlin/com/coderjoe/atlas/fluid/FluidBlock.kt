@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.power
+package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.Atlas
 import com.nexomc.nexo.api.NexoBlocks
@@ -7,45 +7,37 @@ import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
-/**
- * Represents a block that participates in the power network
- */
-abstract class PowerBlock(
+abstract class FluidBlock(
     val location: Location,
-    val maxStorage: Int,
-    var currentPower: Int = 0
+    var storedFluid: FluidType = FluidType.NONE
 ) {
     private var updateTask: BukkitTask? = null
     protected val plugin: JavaPlugin = JavaPlugin.getPlugin(Atlas::class.java)
-    protected open val updateIntervalTicks: Long = 100L
-    protected open val canReceivePower: Boolean = true
+    protected open val updateIntervalTicks: Long = 20L
 
-    fun hasPower(): Boolean = currentPower > 0
+    fun hasFluid(): Boolean = storedFluid != FluidType.NONE
 
-    fun canAcceptPower(): Boolean = canReceivePower && currentPower < maxStorage
-
-    fun addPower(amount: Int): Int {
-        val spaceAvailable = maxStorage - currentPower
-        val toAdd = minOf(amount, spaceAvailable)
-        currentPower += toAdd
-        return toAdd
+    fun storeFluid(type: FluidType): Boolean {
+        if (storedFluid != FluidType.NONE) return false
+        storedFluid = type
+        return true
     }
 
-    fun removePower(amount: Int): Int {
-        val toRemove = minOf(amount, currentPower)
-        currentPower -= toRemove
-        return toRemove
+    fun removeFluid(): FluidType {
+        val fluid = storedFluid
+        storedFluid = FluidType.NONE
+        return fluid
     }
 
-    protected abstract fun powerUpdate()
+    protected abstract fun fluidUpdate()
     abstract fun getVisualStateBlockId(): String
     private var currentVisualState: String? = null
 
     protected fun updateVisualState() {
         val newState = getVisualStateBlockId()
         if (newState != currentVisualState) {
-            val key = PowerBlockRegistry.locationKey(location)
-            val registry = PowerBlockRegistry.instance ?: return
+            val key = FluidBlockRegistry.locationKey(location)
+            val registry = FluidBlockRegistry.instance ?: return
             registry.updatingLocations.add(key)
             try {
                 location.block.setType(Material.AIR, false)
@@ -58,24 +50,22 @@ abstract class PowerBlock(
     }
 
     fun start() {
-        // Snapshot the current block so the deferred update is a no-op when already correct
         currentVisualState = NexoBlocks.customBlockMechanic(location.block)?.itemID
 
-        // Defer to next tick — corrects visual state if it doesn't match (e.g. after persistence load)
         plugin.server.scheduler.runTask(plugin, Runnable {
             updateVisualState()
         })
 
         updateTask = plugin.server.scheduler.runTaskTimer(plugin, Runnable {
             try {
-                powerUpdate()
+                fluidUpdate()
                 updateVisualState()
             } catch (e: Exception) {
-                plugin.logger.warning("Error in power block tick at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}")
+                plugin.logger.warning("Error in fluid block tick at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}")
             }
         }, updateIntervalTicks, updateIntervalTicks)
 
-        plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started - updating every ${updateIntervalTicks / 20} seconds")
+        plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started")
     }
 
     fun stop() {

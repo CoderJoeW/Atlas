@@ -11,10 +11,15 @@ import java.util.concurrent.ConcurrentHashMap
 class PowerBlockRegistry(private val plugin: JavaPlugin) {
     private val powerBlocks = ConcurrentHashMap<String, PowerBlock>()
     private val blockIds = ConcurrentHashMap<String, String>() // Maps location key to block ID
+    val updatingLocations: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     companion object {
         var instance: PowerBlockRegistry? = null
             private set
+
+        fun locationKey(location: Location): String {
+            return "${location.world?.name}:${location.blockX},${location.blockY},${location.blockZ}"
+        }
     }
 
     init {
@@ -38,6 +43,7 @@ class PowerBlockRegistry(private val plugin: JavaPlugin) {
     fun unregisterPowerBlock(location: Location): PowerBlock? {
         val key = locationKey(location)
         val powerBlock = powerBlocks.remove(key)
+        blockIds.remove(key)
         powerBlock?.stop()
         if (powerBlock != null) {
             plugin.logger.info("Unregistered ${powerBlock::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ}")
@@ -108,7 +114,4 @@ class PowerBlockRegistry(private val plugin: JavaPlugin) {
         }
     }
 
-    private fun locationKey(location: Location): String {
-        return "${location.world?.name}:${location.blockX},${location.blockY},${location.blockZ}"
-    }
 }

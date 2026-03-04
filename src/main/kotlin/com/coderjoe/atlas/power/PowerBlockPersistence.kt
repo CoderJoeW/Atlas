@@ -67,10 +67,10 @@ class PowerBlockPersistence(private val plugin: JavaPlugin) {
             try {
                 val blockId = blockDataMap["blockId"] as? String ?: continue
                 val world = blockDataMap["world"] as? String ?: continue
-                val x = blockDataMap["x"] as? Int ?: continue
-                val y = blockDataMap["y"] as? Int ?: continue
-                val z = blockDataMap["z"] as? Int ?: continue
-                val currentPower = blockDataMap["currentPower"] as? Int ?: 0
+                val x = (blockDataMap["x"] as? Number)?.toInt() ?: continue
+                val y = (blockDataMap["y"] as? Number)?.toInt() ?: continue
+                val z = (blockDataMap["z"] as? Number)?.toInt() ?: continue
+                val currentPower = (blockDataMap["currentPower"] as? Number)?.toInt() ?: 0
                 val facing = blockDataMap["facing"] as? String
                 val enabled = blockDataMap["enabled"] as? Boolean
 

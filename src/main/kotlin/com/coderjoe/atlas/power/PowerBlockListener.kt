@@ -27,6 +27,9 @@ class PowerBlockListener(
 
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
+        val key = PowerBlockRegistry.locationKey(event.block.location)
+        if (registry.updatingLocations.contains(key)) return
+
         plugin.logger.info("Block placed event triggered at ${event.block.location}")
 
         val mechanic = NexoBlocks.customBlockMechanic(event.block)
@@ -134,6 +137,9 @@ class PowerBlockListener(
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
+        val key = PowerBlockRegistry.locationKey(event.block.location)
+        if (registry.updatingLocations.contains(key)) return
+
         val mechanic = NexoBlocks.customBlockMechanic(event.block)
 
         if (mechanic != null) {

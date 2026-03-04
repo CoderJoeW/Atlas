@@ -1,5 +1,10 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.fluid.FluidBlockDialog
+import com.coderjoe.atlas.fluid.FluidBlockInitializer
+import com.coderjoe.atlas.fluid.FluidBlockListener
+import com.coderjoe.atlas.fluid.FluidBlockPersistence
+import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockInitializer
 import com.coderjoe.atlas.power.PowerBlockListener
@@ -13,6 +18,8 @@ class Atlas : JavaPlugin() {
     private lateinit var nexoIntegration: NexoIntegration
     private lateinit var powerBlockRegistry: PowerBlockRegistry
     private lateinit var powerBlockPersistence: PowerBlockPersistence
+    private lateinit var fluidBlockRegistry: FluidBlockRegistry
+    private lateinit var fluidBlockPersistence: FluidBlockPersistence
     private var autoSaveTask: BukkitTask? = null
 
     override fun onEnable() {
@@ -32,27 +39,40 @@ class Atlas : JavaPlugin() {
         }
 
         PowerBlockDialog.init(this)
+        FluidBlockDialog.init(this)
 
         initPowerSystem()
+        initFluidSystem()
+
+        // Auto-save every 5 minutes (6000 ticks)
+        autoSaveTask = server.scheduler.runTaskTimer(this, Runnable {
+            powerBlockPersistence.save(powerBlockRegistry)
+            fluidBlockPersistence.save(fluidBlockRegistry)
+        }, 6000L, 6000L)
 
         logger.info("Atlas plugin enabled!")
     }
 
     override fun onDisable() {
-        // Cancel auto-save task
         autoSaveTask?.cancel()
 
-        // Save all power blocks before shutdown
         if (::powerBlockPersistence.isInitialized && ::powerBlockRegistry.isInitialized) {
             powerBlockPersistence.save(powerBlockRegistry)
         }
 
-        // Cancel all active dialog refresh tasks
-        PowerBlockDialog.cleanup()
+        if (::fluidBlockPersistence.isInitialized && ::fluidBlockRegistry.isInitialized) {
+            fluidBlockPersistence.save(fluidBlockRegistry)
+        }
 
-        // Stop all power block ticking
+        PowerBlockDialog.cleanup()
+        FluidBlockDialog.cleanup()
+
         if (::powerBlockRegistry.isInitialized) {
             powerBlockRegistry.stopAll()
+        }
+
+        if (::fluidBlockRegistry.isInitialized) {
+            fluidBlockRegistry.stopAll()
         }
 
         logger.info("Atlas plugin has been disabled!")
@@ -66,11 +86,17 @@ class Atlas : JavaPlugin() {
 
         server.pluginManager.registerEvents(PowerBlockListener(this, powerBlockRegistry), this)
 
-        // Auto-save every 5 minutes (6000 ticks)
-        autoSaveTask = server.scheduler.runTaskTimer(this, Runnable {
-            powerBlockPersistence.save(powerBlockRegistry)
-        }, 6000L, 6000L)
-
         logger.info("Power system initialized")
+    }
+
+    fun initFluidSystem() {
+        FluidBlockInitializer.initialize(this)
+        fluidBlockRegistry = FluidBlockRegistry(this)
+        fluidBlockPersistence = FluidBlockPersistence(this)
+        fluidBlockPersistence.load(fluidBlockRegistry)
+
+        server.pluginManager.registerEvents(FluidBlockListener(this, fluidBlockRegistry), this)
+
+        logger.info("Fluid system initialized")
     }
 }
