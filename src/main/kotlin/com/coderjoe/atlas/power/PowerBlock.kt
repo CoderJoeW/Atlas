@@ -44,9 +44,16 @@ abstract class PowerBlock(
     protected fun updateVisualState() {
         val newState = getVisualStateBlockId()
         if (newState != currentVisualState) {
-            location.block.setType(Material.AIR, false)
-            NexoBlocks.place(newState, location)
-            currentVisualState = newState
+            val key = PowerBlockRegistry.locationKey(location)
+            val registry = PowerBlockRegistry.instance ?: return
+            registry.updatingLocations.add(key)
+            try {
+                location.block.setType(Material.AIR, false)
+                NexoBlocks.place(newState, location)
+                currentVisualState = newState
+            } finally {
+                registry.updatingLocations.remove(key)
+            }
         }
     }
 
@@ -60,8 +67,12 @@ abstract class PowerBlock(
         })
 
         updateTask = plugin.server.scheduler.runTaskTimer(plugin, Runnable {
-            powerUpdate()
-            updateVisualState()
+            try {
+                powerUpdate()
+                updateVisualState()
+            } catch (e: Exception) {
+                plugin.logger.warning("Error in power block tick at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}")
+            }
         }, updateIntervalTicks, updateIntervalTicks)
 
         plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started - updating every ${updateIntervalTicks / 20} seconds")

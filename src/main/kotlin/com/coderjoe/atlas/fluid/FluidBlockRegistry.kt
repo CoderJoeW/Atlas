@@ -8,10 +8,15 @@ import java.util.concurrent.ConcurrentHashMap
 class FluidBlockRegistry(private val plugin: JavaPlugin) {
     private val fluidBlocks = ConcurrentHashMap<String, FluidBlock>()
     private val blockIds = ConcurrentHashMap<String, String>()
+    val updatingLocations: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     companion object {
         var instance: FluidBlockRegistry? = null
             private set
+
+        fun locationKey(location: Location): String {
+            return "${location.world?.name}:${location.blockX},${location.blockY},${location.blockZ}"
+        }
     }
 
     init {
@@ -63,7 +68,4 @@ class FluidBlockRegistry(private val plugin: JavaPlugin) {
         }
     }
 
-    private fun locationKey(location: Location): String {
-        return "${location.world?.name}:${location.blockX},${location.blockY},${location.blockZ}"
-    }
 }

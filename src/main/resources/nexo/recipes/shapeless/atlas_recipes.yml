@@ -53,3 +53,27 @@ small_battery_recipe:
     C:
       amount: 1
       minecraft_type: COPPER_INGOT
+
+fluid_pump_recipe:
+  result:
+    nexo_item: fluid_pump
+    amount: 1
+  ingredients:
+    A:
+      amount: 3
+      minecraft_type: IRON_INGOT
+    B:
+      amount: 3
+      minecraft_type: REDSTONE
+    C:
+      amount: 1
+      minecraft_type: BUCKET
+
+fluid_pipe_recipe:
+  result:
+    nexo_item: fluid_pipe
+    amount: 1
+  ingredients:
+    A:
+      amount: 1
+      minecraft_type: IRON_INGOT

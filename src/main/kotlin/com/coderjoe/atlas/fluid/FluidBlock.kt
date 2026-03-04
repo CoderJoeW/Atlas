@@ -36,9 +36,16 @@ abstract class FluidBlock(
     protected fun updateVisualState() {
         val newState = getVisualStateBlockId()
         if (newState != currentVisualState) {
-            location.block.setType(Material.AIR, false)
-            NexoBlocks.place(newState, location)
-            currentVisualState = newState
+            val key = FluidBlockRegistry.locationKey(location)
+            val registry = FluidBlockRegistry.instance ?: return
+            registry.updatingLocations.add(key)
+            try {
+                location.block.setType(Material.AIR, false)
+                NexoBlocks.place(newState, location)
+                currentVisualState = newState
+            } finally {
+                registry.updatingLocations.remove(key)
+            }
         }
     }
 
@@ -50,8 +57,12 @@ abstract class FluidBlock(
         })
 
         updateTask = plugin.server.scheduler.runTaskTimer(plugin, Runnable {
-            fluidUpdate()
-            updateVisualState()
+            try {
+                fluidUpdate()
+                updateVisualState()
+            } catch (e: Exception) {
+                plugin.logger.warning("Error in fluid block tick at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}")
+            }
         }, updateIntervalTicks, updateIntervalTicks)
 
         plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started")
