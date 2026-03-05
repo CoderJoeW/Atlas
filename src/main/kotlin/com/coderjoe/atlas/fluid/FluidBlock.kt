@@ -12,8 +12,13 @@ abstract class FluidBlock(
     var storedFluid: FluidType = FluidType.NONE
 ) {
     private var updateTask: BukkitTask? = null
-    protected val plugin: JavaPlugin = JavaPlugin.getPlugin(Atlas::class.java)
+    protected val plugin: JavaPlugin get() = testPlugin ?: JavaPlugin.getPlugin(Atlas::class.java)
     protected open val updateIntervalTicks: Long = 20L
+
+    companion object {
+        @JvmStatic
+        internal var testPlugin: JavaPlugin? = null
+    }
 
     fun hasFluid(): Boolean = storedFluid != FluidType.NONE
 
