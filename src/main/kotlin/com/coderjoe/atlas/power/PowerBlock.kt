@@ -16,8 +16,13 @@ abstract class PowerBlock(
     var currentPower: Int = 0
 ) {
     private var updateTask: BukkitTask? = null
-    protected val plugin: JavaPlugin = JavaPlugin.getPlugin(Atlas::class.java)
+    protected val plugin: JavaPlugin get() = testPlugin ?: JavaPlugin.getPlugin(Atlas::class.java)
     protected open val updateIntervalTicks: Long = 100L
+
+    companion object {
+        @JvmStatic
+        internal var testPlugin: JavaPlugin? = null
+    }
     protected open val canReceivePower: Boolean = true
 
     fun hasPower(): Boolean = currentPower > 0
