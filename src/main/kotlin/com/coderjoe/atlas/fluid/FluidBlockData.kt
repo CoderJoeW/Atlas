@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid
 
+import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import org.bukkit.Location
@@ -13,13 +14,19 @@ data class FluidBlockData(
     val y: Int,
     val z: Int,
     val fluidType: String,
-    val facing: String? = null
+    val facing: String? = null,
+    val storedAmount: Int? = null
 ) {
     companion object {
         fun fromFluidBlock(fluidBlock: FluidBlock, blockId: String): FluidBlockData {
             val loc = fluidBlock.location
             val facing = when (fluidBlock) {
                 is FluidPipe -> fluidBlock.facing.name
+                is FluidContainer -> fluidBlock.facing.name
+                else -> null
+            }
+            val storedAmount = when (fluidBlock) {
+                is FluidContainer -> fluidBlock.storedAmount
                 else -> null
             }
             return FluidBlockData(
@@ -29,7 +36,8 @@ data class FluidBlockData(
                 y = loc.blockY,
                 z = loc.blockZ,
                 fluidType = fluidBlock.storedFluid.name,
-                facing = facing
+                facing = facing,
+                storedAmount = storedAmount
             )
         }
     }

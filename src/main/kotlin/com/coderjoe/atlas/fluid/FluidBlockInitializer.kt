@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid
 
+import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import org.bukkit.plugin.java.JavaPlugin
@@ -34,6 +35,13 @@ object FluidBlockInitializer {
         for ((face, variantId) in FluidPipe.LAVA_FILLED_IDS) {
             FluidBlockFactory.register(variantId) { location, facing ->
                 FluidPipe(location, facing)
+            }
+        }
+
+        plugin.logger.info("Registering FluidContainer variants...")
+        for (variantId in FluidContainer.ALL_VARIANT_IDS) {
+            FluidBlockFactory.register(variantId) { location, facing ->
+                FluidContainer(location, facing)
             }
         }
 

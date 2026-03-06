@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid
 
+import com.coderjoe.atlas.fluid.block.FluidContainer
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -27,6 +28,9 @@ class FluidBlockPersistence(private val plugin: JavaPlugin) {
             )
             if (data.facing != null) {
                 map["facing"] = data.facing
+            }
+            if (data.storedAmount != null) {
+                map["storedAmount"] = data.storedAmount
             }
             blockDataList.add(map)
         }
@@ -65,8 +69,9 @@ class FluidBlockPersistence(private val plugin: JavaPlugin) {
                 val z = (blockDataMap["z"] as? Number)?.toInt() ?: continue
                 val fluidType = blockDataMap["fluidType"] as? String ?: "NONE"
                 val facing = blockDataMap["facing"] as? String
+                val storedAmount = (blockDataMap["storedAmount"] as? Number)?.toInt()
 
-                val data = FluidBlockData(blockId, world, x, y, z, fluidType, facing)
+                val data = FluidBlockData(blockId, world, x, y, z, fluidType, facing, storedAmount)
                 val location = data.toLocation(plugin)
 
                 if (location == null) {
@@ -78,7 +83,11 @@ class FluidBlockPersistence(private val plugin: JavaPlugin) {
                 val fluidBlock = FluidBlockFactory.createFluidBlock(blockId, location, data.toBlockFace())
 
                 if (fluidBlock != null) {
-                    fluidBlock.storedFluid = data.toFluidType()
+                    if (fluidBlock is FluidContainer && data.storedAmount != null) {
+                        fluidBlock.restoreState(data.toFluidType(), data.storedAmount)
+                    } else {
+                        fluidBlock.storedFluid = data.toFluidType()
+                    }
                     registry.registerFluidBlock(fluidBlock, blockId)
                     loadedCount++
                 } else {
