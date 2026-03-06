@@ -127,18 +127,7 @@ object TestHelper {
     }
 
     private fun clearFactories() {
-        try {
-            val field = PowerBlockFactory::class.java.getDeclaredField("blockConstructors")
-            field.isAccessible = true
-            @Suppress("UNCHECKED_CAST")
-            (field.get(PowerBlockFactory) as MutableMap<*, *>).clear()
-        } catch (_: Exception) {}
-
-        try {
-            val field = FluidBlockFactory::class.java.getDeclaredField("blockConstructors")
-            field.isAccessible = true
-            @Suppress("UNCHECKED_CAST")
-            (field.get(FluidBlockFactory) as MutableMap<*, *>).clear()
-        } catch (_: Exception) {}
+        PowerBlockFactory.clear()
+        FluidBlockFactory.clear()
     }
 }
