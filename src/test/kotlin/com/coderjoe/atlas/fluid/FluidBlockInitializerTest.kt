@@ -24,8 +24,8 @@ class FluidBlockInitializerTest {
         FluidBlockInitializer.initialize(TestHelper.mockPlugin)
         val ids = FluidBlockFactory.getRegisteredBlockIds()
 
-        // 3 pump + 6 directional pipe + 6 water-filled + 6 lava-filled = 21
-        assertEquals(21, ids.size)
+        // 3 pump + 6 directional pipe + 6 water-filled + 6 lava-filled + 42 container = 63
+        assertEquals(63, ids.size)
     }
 
     @Test
