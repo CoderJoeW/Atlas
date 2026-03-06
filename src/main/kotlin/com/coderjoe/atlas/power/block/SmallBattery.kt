@@ -1,5 +1,7 @@
 package com.coderjoe.atlas.power.block
 
+import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
@@ -7,7 +9,7 @@ import org.bukkit.block.BlockFace
 
 class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location, maxStorage = 10) {
 
-    val facing: BlockFace = if (facing == BlockFace.SELF) BlockFace.DOWN else facing
+    override val facing: BlockFace = if (facing == BlockFace.SELF) BlockFace.DOWN else facing
 
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
@@ -23,7 +25,19 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
         )
 
         val ALL_VARIANT_IDS: List<String> = CHARGE_VARIANT_IDS.values.toList()
+
+        val descriptor = BlockDescriptor(
+            baseBlockId = BLOCK_ID,
+            displayName = "Small Battery",
+            description = "Storage - holds up to 10 power",
+            placementType = PlacementType.SIMPLE,
+            directionalVariants = emptyMap(),
+            allRegistrableIds = ALL_VARIANT_IDS,
+            constructor = { loc, facing -> SmallBattery(loc, facing) }
+        )
     }
+
+    override val baseBlockId: String = BLOCK_ID
 
     private fun chargeLevel(): Int = when (currentPower) {
         0 -> 0

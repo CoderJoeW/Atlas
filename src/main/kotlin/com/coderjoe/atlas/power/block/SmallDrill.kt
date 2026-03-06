@@ -1,5 +1,7 @@
 package com.coderjoe.atlas.power.block
 
+import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
@@ -28,7 +30,20 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
         )
 
         val ALL_DIRECTIONAL_IDS: List<String> = DIRECTIONAL_IDS.values.toList()
+
+        val descriptor = BlockDescriptor(
+            baseBlockId = BLOCK_ID,
+            displayName = "Small Drill",
+            description = "Machine - consumes 10 power/s",
+            placementType = PlacementType.DIRECTIONAL_OPPOSITE,
+            directionalVariants = DIRECTIONAL_IDS,
+            allRegistrableIds = ALL_DIRECTIONAL_IDS,
+            constructor = { loc, facing -> SmallDrill(loc, facing) }
+        )
     }
+
+    override val baseBlockId: String = BLOCK_ID
+    override val facing: BlockFace get() = miningDirection
 
     override fun getVisualStateBlockId(): String =
         DIRECTIONAL_IDS[miningDirection] ?: BLOCK_ID

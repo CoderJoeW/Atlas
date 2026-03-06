@@ -1,12 +1,14 @@
 package com.coderjoe.atlas.fluid.block
 
+import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-class FluidPipe(location: Location, val facing: BlockFace) : FluidBlock(location) {
+class FluidPipe(location: Location, override val facing: BlockFace) : FluidBlock(location) {
 
     override val updateIntervalTicks: Long = 20L
 
@@ -43,7 +45,19 @@ class FluidPipe(location: Location, val facing: BlockFace) : FluidBlock(location
         )
 
         fun facingFromBlockId(blockId: String): BlockFace? = ID_TO_FACING[blockId]
+
+        val descriptor = BlockDescriptor(
+            baseBlockId = BLOCK_ID,
+            displayName = "Fluid Pipe",
+            description = "Pipe - transports fluid in facing direction",
+            placementType = PlacementType.DIRECTIONAL,
+            directionalVariants = DIRECTIONAL_IDS,
+            allRegistrableIds = DIRECTIONAL_IDS.values.toList() + WATER_FILLED_IDS.values.toList() + LAVA_FILLED_IDS.values.toList(),
+            constructor = { loc, facing -> FluidPipe(loc, facing) }
+        )
     }
+
+    override val baseBlockId: String = BLOCK_ID
 
     override fun getVisualStateBlockId(): String = when (storedFluid) {
         FluidType.WATER -> WATER_FILLED_IDS[facing]!!

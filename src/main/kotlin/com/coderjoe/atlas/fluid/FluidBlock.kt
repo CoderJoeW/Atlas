@@ -1,24 +1,13 @@
 package com.coderjoe.atlas.fluid
 
-import com.coderjoe.atlas.Atlas
-import com.nexomc.nexo.api.NexoBlocks
+import com.coderjoe.atlas.core.AtlasBlock
+import com.coderjoe.atlas.core.BlockRegistry
 import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
 
 abstract class FluidBlock(
-    val location: Location,
+    location: Location,
     var storedFluid: FluidType = FluidType.NONE
-) {
-    private var updateTask: BukkitTask? = null
-    protected val plugin: JavaPlugin get() = testPlugin ?: JavaPlugin.getPlugin(Atlas::class.java)
-    protected open val updateIntervalTicks: Long = 20L
-
-    companion object {
-        @JvmStatic
-        internal var testPlugin: JavaPlugin? = null
-    }
+) : AtlasBlock(location) {
 
     open fun hasFluid(): Boolean = storedFluid != FluidType.NONE
 
@@ -35,47 +24,12 @@ abstract class FluidBlock(
     }
 
     protected abstract fun fluidUpdate()
-    abstract fun getVisualStateBlockId(): String
-    private var currentVisualState: String? = null
 
-    protected fun updateVisualState() {
-        val newState = getVisualStateBlockId()
-        if (newState != currentVisualState) {
-            val key = FluidBlockRegistry.locationKey(location)
-            val registry = FluidBlockRegistry.instance ?: return
-            registry.updatingLocations.add(key)
-            try {
-                location.block.setType(Material.AIR, false)
-                NexoBlocks.place(newState, location)
-                currentVisualState = newState
-            } finally {
-                registry.updatingLocations.remove(key)
-            }
-        }
+    override fun blockUpdate() {
+        fluidUpdate()
     }
 
-    fun start() {
-        currentVisualState = NexoBlocks.customBlockMechanic(location.block)?.itemID
-
-        plugin.server.scheduler.runTask(plugin, Runnable {
-            updateVisualState()
-        })
-
-        updateTask = plugin.server.scheduler.runTaskTimer(plugin, Runnable {
-            try {
-                fluidUpdate()
-                updateVisualState()
-            } catch (e: Exception) {
-                plugin.logger.warning("Error in fluid block tick at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}")
-            }
-        }, updateIntervalTicks, updateIntervalTicks)
-
-        plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started")
-    }
-
-    fun stop() {
-        updateTask?.cancel()
-        updateTask = null
-        plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} stopped")
+    override fun getRegistry(): BlockRegistry<*> {
+        return FluidBlockRegistry.instance ?: throw IllegalStateException("FluidBlockRegistry not initialized")
     }
 }

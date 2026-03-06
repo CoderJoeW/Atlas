@@ -1,5 +1,7 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.core.AtlasBlock
+import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
@@ -33,9 +35,8 @@ object TestHelper {
         dataFolder = File(System.getProperty("java.io.tmpdir"), "atlas-test-${System.nanoTime()}")
         dataFolder.mkdirs()
 
-        // Set test plugin hooks on base classes (avoids JavaPlugin.getPlugin() call)
-        PowerBlock.testPlugin = mockPlugin
-        FluidBlock.testPlugin = mockPlugin
+        // Set test plugin hook on base class (avoids JavaPlugin.getPlugin() call)
+        AtlasBlock.testPlugin = mockPlugin
 
         every { mockPlugin.server } returns mockServer
         every { mockPlugin.logger } returns Logger.getLogger("TestAtlas")
@@ -57,8 +58,7 @@ object TestHelper {
 
     fun teardown() {
         unmockkAll()
-        PowerBlock.testPlugin = null
-        FluidBlock.testPlugin = null
+        AtlasBlock.testPlugin = null
         clearRegistries()
         clearFactories()
         dataFolder.deleteRecursively()
@@ -69,46 +69,46 @@ object TestHelper {
     }
 
     fun PowerBlock.callPowerUpdate() {
-        val method = this::class.java.getDeclaredMethod("powerUpdate")
+        val method = PowerBlock::class.java.getDeclaredMethod("powerUpdate")
         method.isAccessible = true
         method.invoke(this)
     }
 
     fun FluidBlock.callFluidUpdate() {
-        val method = this::class.java.getDeclaredMethod("fluidUpdate")
+        val method = FluidBlock::class.java.getDeclaredMethod("fluidUpdate")
         method.isAccessible = true
         method.invoke(this)
     }
 
     fun addToRegistry(registry: PowerBlockRegistry, block: PowerBlock, blockId: String) {
-        val powerBlocksField = PowerBlockRegistry::class.java.getDeclaredField("powerBlocks")
-        powerBlocksField.isAccessible = true
+        val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
+        blocksField.isAccessible = true
         @Suppress("UNCHECKED_CAST")
-        val powerBlocks = powerBlocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, PowerBlock>
+        val blocks = blocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, PowerBlock>
 
-        val blockIdsField = PowerBlockRegistry::class.java.getDeclaredField("blockIds")
+        val blockIdsField = BlockRegistry::class.java.getDeclaredField("blockIds")
         blockIdsField.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
 
         val key = PowerBlockRegistry.locationKey(block.location)
-        powerBlocks[key] = block
+        blocks[key] = block
         blockIds[key] = blockId
     }
 
     fun addToRegistry(registry: FluidBlockRegistry, block: FluidBlock, blockId: String) {
-        val fluidBlocksField = FluidBlockRegistry::class.java.getDeclaredField("fluidBlocks")
-        fluidBlocksField.isAccessible = true
+        val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
+        blocksField.isAccessible = true
         @Suppress("UNCHECKED_CAST")
-        val fluidBlocks = fluidBlocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, FluidBlock>
+        val blocks = blocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, FluidBlock>
 
-        val blockIdsField = FluidBlockRegistry::class.java.getDeclaredField("blockIds")
+        val blockIdsField = BlockRegistry::class.java.getDeclaredField("blockIds")
         blockIdsField.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
 
         val key = FluidBlockRegistry.locationKey(block.location)
-        fluidBlocks[key] = block
+        blocks[key] = block
         blockIds[key] = blockId
     }
 
