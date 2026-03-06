@@ -2,11 +2,9 @@ package com.coderjoe.atlas
 
 import com.coderjoe.atlas.fluid.FluidBlockDialog
 import com.coderjoe.atlas.fluid.FluidBlockFactory
-import com.coderjoe.atlas.fluid.FluidBlockInitializer
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockFactory
-import com.coderjoe.atlas.power.PowerBlockInitializer
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -27,13 +25,13 @@ class AtlasPluginTest {
 
     @Test
     fun `power system initializes with 17 block types`() {
-        PowerBlockInitializer.initialize(TestHelper.mockPlugin)
+        TestHelper.initPowerFactory()
         assertEquals(17, PowerBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test
     fun `fluid system initializes with 63 block types`() {
-        FluidBlockInitializer.initialize(TestHelper.mockPlugin)
+        TestHelper.initFluidFactory()
         assertEquals(63, FluidBlockFactory.getRegisteredBlockIds().size)
     }
 
@@ -61,7 +59,7 @@ class AtlasPluginTest {
 
     @Test
     fun `stopAll clears power blocks`() {
-        PowerBlockInitializer.initialize(TestHelper.mockPlugin)
+        TestHelper.initPowerFactory()
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         registry.stopAll()
         assertEquals(0, registry.getAllPowerBlocks().size)
@@ -69,7 +67,7 @@ class AtlasPluginTest {
 
     @Test
     fun `stopAll clears fluid blocks`() {
-        FluidBlockInitializer.initialize(TestHelper.mockPlugin)
+        TestHelper.initFluidFactory()
         val registry = FluidBlockRegistry(TestHelper.mockPlugin)
         registry.stopAll()
         assertEquals(0, registry.getAllFluidBlocksWithIds().size)

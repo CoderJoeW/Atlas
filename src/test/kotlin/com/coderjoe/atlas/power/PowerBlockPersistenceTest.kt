@@ -22,7 +22,7 @@ class PowerBlockPersistenceTest {
         persistence = PowerBlockPersistence(TestHelper.mockPlugin)
 
         // Initialize factory so load() can create blocks
-        PowerBlockInitializer.initialize(TestHelper.mockPlugin)
+        TestHelper.initPowerFactory()
     }
 
     @AfterEach

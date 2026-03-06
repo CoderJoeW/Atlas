@@ -18,7 +18,7 @@ class FluidBlockPersistenceTest {
         TestHelper.setup()
         registry = FluidBlockRegistry(TestHelper.mockPlugin)
         persistence = FluidBlockPersistence(TestHelper.mockPlugin)
-        FluidBlockInitializer.initialize(TestHelper.mockPlugin)
+        TestHelper.initFluidFactory()
     }
 
     @AfterEach

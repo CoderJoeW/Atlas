@@ -22,6 +22,15 @@ open class BlockFactory<T : AtlasBlock> {
         return blockConstructors.keys
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun registerFromDescriptors(descriptors: Collection<BlockDescriptor>) {
+        for (desc in descriptors) {
+            for (id in desc.allRegistrableIds) {
+                register(id, desc.constructor as (Location, BlockFace) -> T)
+            }
+        }
+    }
+
     fun clear() {
         blockConstructors.clear()
     }

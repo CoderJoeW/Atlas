@@ -4,12 +4,10 @@ import com.coderjoe.atlas.core.AtlasBlockListener
 import com.coderjoe.atlas.core.BlockSystem
 import com.coderjoe.atlas.fluid.FluidBlockDialog
 import com.coderjoe.atlas.fluid.FluidBlockFactory
-import com.coderjoe.atlas.fluid.FluidBlockInitializer
 import com.coderjoe.atlas.fluid.FluidBlockPersistence
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockFactory
-import com.coderjoe.atlas.power.PowerBlockInitializer
 import com.coderjoe.atlas.power.PowerBlockPersistence
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.plugin.java.JavaPlugin
@@ -107,21 +105,21 @@ class Atlas : JavaPlugin() {
     }
 
     fun initPowerSystem() {
-        PowerBlockInitializer.initialize(this)
+        PowerBlockFactory.registerFromDescriptors(powerDescriptors().values)
         powerBlockRegistry = PowerBlockRegistry(this)
         powerBlockPersistence = PowerBlockPersistence(this)
         powerBlockPersistence.load(powerBlockRegistry)
 
-        logger.info("Power system initialized")
+        logger.info("Power system initialized with ${PowerBlockFactory.getRegisteredBlockIds().size} block types")
     }
 
     fun initFluidSystem() {
-        FluidBlockInitializer.initialize(this)
+        FluidBlockFactory.registerFromDescriptors(fluidDescriptors().values)
         fluidBlockRegistry = FluidBlockRegistry(this)
         fluidBlockPersistence = FluidBlockPersistence(this)
         fluidBlockPersistence.load(fluidBlockRegistry)
 
-        logger.info("Fluid system initialized")
+        logger.info("Fluid system initialized with ${FluidBlockFactory.getRegisteredBlockIds().size} block types")
     }
 
     private fun powerDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
