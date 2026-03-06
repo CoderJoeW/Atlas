@@ -1,13 +1,15 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.core.AtlasBlockListener
+import com.coderjoe.atlas.core.BlockSystem
 import com.coderjoe.atlas.fluid.FluidBlockDialog
+import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockInitializer
-import com.coderjoe.atlas.fluid.FluidBlockListener
 import com.coderjoe.atlas.fluid.FluidBlockPersistence
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.power.PowerBlockDialog
+import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockInitializer
-import com.coderjoe.atlas.power.PowerBlockListener
 import com.coderjoe.atlas.power.PowerBlockPersistence
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.plugin.java.JavaPlugin
@@ -43,6 +45,32 @@ class Atlas : JavaPlugin() {
 
         initPowerSystem()
         initFluidSystem()
+
+        // Register unified listener
+        val powerSystem = BlockSystem<com.coderjoe.atlas.power.PowerBlock>(
+            name = "power",
+            registry = powerBlockRegistry,
+            factory = PowerBlockFactory,
+            descriptors = powerDescriptors(),
+            showDialog = { player, block ->
+                PowerBlockDialog.showPowerDialog(player, block as com.coderjoe.atlas.power.PowerBlock)
+            }
+        )
+
+        val fluidSystem = BlockSystem<com.coderjoe.atlas.fluid.FluidBlock>(
+            name = "fluid",
+            registry = fluidBlockRegistry,
+            factory = FluidBlockFactory,
+            descriptors = fluidDescriptors(),
+            showDialog = { player, block ->
+                FluidBlockDialog.showFluidDialog(player, block as com.coderjoe.atlas.fluid.FluidBlock)
+            }
+        )
+
+        server.pluginManager.registerEvents(
+            AtlasBlockListener(this, listOf(powerSystem, fluidSystem)),
+            this
+        )
 
         // Auto-save every 5 minutes (6000 ticks)
         autoSaveTask = server.scheduler.runTaskTimer(this, Runnable {
@@ -84,8 +112,6 @@ class Atlas : JavaPlugin() {
         powerBlockPersistence = PowerBlockPersistence(this)
         powerBlockPersistence.load(powerBlockRegistry)
 
-        server.pluginManager.registerEvents(PowerBlockListener(this, powerBlockRegistry), this)
-
         logger.info("Power system initialized")
     }
 
@@ -95,8 +121,23 @@ class Atlas : JavaPlugin() {
         fluidBlockPersistence = FluidBlockPersistence(this)
         fluidBlockPersistence.load(fluidBlockRegistry)
 
-        server.pluginManager.registerEvents(FluidBlockListener(this, fluidBlockRegistry), this)
-
         logger.info("Fluid system initialized")
+    }
+
+    private fun powerDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
+        return listOf(
+            com.coderjoe.atlas.power.block.SmallSolarPanel.descriptor,
+            com.coderjoe.atlas.power.block.SmallDrill.descriptor,
+            com.coderjoe.atlas.power.block.SmallBattery.descriptor,
+            com.coderjoe.atlas.power.block.PowerCable.descriptor
+        ).associateBy { it.baseBlockId }
+    }
+
+    private fun fluidDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
+        return listOf(
+            com.coderjoe.atlas.fluid.block.FluidPump.descriptor,
+            com.coderjoe.atlas.fluid.block.FluidPipe.descriptor,
+            com.coderjoe.atlas.fluid.block.FluidContainer.descriptor
+        ).associateBy { it.baseBlockId }
     }
 }

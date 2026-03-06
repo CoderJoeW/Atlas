@@ -1,8 +1,9 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.core.AtlasBlockListener
+import com.coderjoe.atlas.core.BlockSystem
 import com.coderjoe.atlas.fluid.block.FluidPump
-import com.nexomc.nexo.api.NexoBlocks
 import io.mockk.*
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -17,13 +18,20 @@ import org.junit.jupiter.api.Assertions.*
 class FluidBlockListenerTest {
 
     private lateinit var registry: FluidBlockRegistry
-    private lateinit var listener: FluidBlockListener
+    private lateinit var listener: AtlasBlockListener
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
         registry = FluidBlockRegistry(TestHelper.mockPlugin)
-        listener = FluidBlockListener(TestHelper.mockPlugin, registry)
+        val system = BlockSystem<FluidBlock>(
+            name = "fluid",
+            registry = registry,
+            factory = FluidBlockFactory,
+            descriptors = emptyMap(),
+            showDialog = { _, _ -> }
+        )
+        listener = AtlasBlockListener(TestHelper.mockPlugin, listOf(system))
     }
 
     @AfterEach
@@ -72,8 +80,6 @@ class FluidBlockListenerTest {
         val event = mockk<BlockBreakEvent>(relaxed = true)
         every { event.block } returns block
 
-        // NexoItems.itemFromId() will throw NoClassDefFoundError in test env
-        // but the block should still be unregistered before that call
         try {
             listener.onBlockBreak(event)
         } catch (_: NoClassDefFoundError) {}
@@ -131,9 +137,6 @@ class FluidBlockListenerTest {
 
     @Test
     fun `getPlayerFacing returns UP when dy positive`() {
-        val method = FluidBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(0.0, 65.0, 0.0)
@@ -143,14 +146,11 @@ class FluidBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        assertEquals(BlockFace.UP, method.invoke(listener, event) as BlockFace)
+        assertEquals(BlockFace.UP, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns EAST when dx positive`() {
-        val method = FluidBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(1.0, 64.0, 0.0)
@@ -160,14 +160,11 @@ class FluidBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        assertEquals(BlockFace.EAST, method.invoke(listener, event) as BlockFace)
+        assertEquals(BlockFace.EAST, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns DOWN when dy negative`() {
-        val method = FluidBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(0.0, 63.0, 0.0)
@@ -177,14 +174,11 @@ class FluidBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        assertEquals(BlockFace.DOWN, method.invoke(listener, event) as BlockFace)
+        assertEquals(BlockFace.DOWN, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns WEST when dx negative`() {
-        val method = FluidBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(-1.0, 64.0, 0.0)
@@ -194,14 +188,11 @@ class FluidBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        assertEquals(BlockFace.WEST, method.invoke(listener, event) as BlockFace)
+        assertEquals(BlockFace.WEST, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns SOUTH when dz positive`() {
-        val method = FluidBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(0.0, 64.0, 1.0)
@@ -211,14 +202,11 @@ class FluidBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        assertEquals(BlockFace.SOUTH, method.invoke(listener, event) as BlockFace)
+        assertEquals(BlockFace.SOUTH, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns NORTH when dz negative`() {
-        val method = FluidBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(0.0, 64.0, -1.0)
@@ -228,6 +216,6 @@ class FluidBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        assertEquals(BlockFace.NORTH, method.invoke(listener, event) as BlockFace)
+        assertEquals(BlockFace.NORTH, AtlasBlockListener.getPlayerFacing(event))
     }
 }

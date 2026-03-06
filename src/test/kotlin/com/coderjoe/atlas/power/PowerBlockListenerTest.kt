@@ -1,10 +1,10 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.core.AtlasBlockListener
+import com.coderjoe.atlas.core.BlockSystem
 import com.coderjoe.atlas.power.block.SmallSolarPanel
-import com.nexomc.nexo.api.NexoBlocks
 import io.mockk.*
-import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
@@ -12,21 +12,26 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
 class PowerBlockListenerTest {
 
     private lateinit var registry: PowerBlockRegistry
-    private lateinit var listener: PowerBlockListener
+    private lateinit var listener: AtlasBlockListener
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
         registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        listener = PowerBlockListener(TestHelper.mockPlugin, registry)
+        val system = BlockSystem<PowerBlock>(
+            name = "power",
+            registry = registry,
+            factory = PowerBlockFactory,
+            descriptors = emptyMap(),
+            showDialog = { _, _ -> }
+        )
+        listener = AtlasBlockListener(TestHelper.mockPlugin, listOf(system))
     }
 
     @AfterEach
@@ -46,7 +51,6 @@ class PowerBlockListenerTest {
         every { event.block } returns block
 
         listener.onBlockPlace(event)
-        // No block should be registered
         assertNull(registry.getPowerBlock(loc))
     }
 
@@ -62,7 +66,6 @@ class PowerBlockListenerTest {
         every { event.block } returns block
 
         listener.onBlockBreak(event)
-        // Should not crash or unregister
     }
 
     @Test
@@ -77,8 +80,6 @@ class PowerBlockListenerTest {
         val event = mockk<BlockBreakEvent>(relaxed = true)
         every { event.block } returns block
 
-        // NexoItems.itemFromId() will throw NoClassDefFoundError in test env
-        // but the block should still be unregistered before that call
         try {
             listener.onBlockBreak(event)
         } catch (_: NoClassDefFoundError) {}
@@ -136,9 +137,6 @@ class PowerBlockListenerTest {
 
     @Test
     fun `getPlayerFacing returns UP when dy positive`() {
-        val method = PowerBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(0.0, 65.0, 0.0)
@@ -148,15 +146,11 @@ class PowerBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        val result = method.invoke(listener, event) as BlockFace
-        assertEquals(BlockFace.UP, result)
+        assertEquals(BlockFace.UP, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns DOWN when dy negative`() {
-        val method = PowerBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(0.0, 63.0, 0.0)
@@ -166,15 +160,11 @@ class PowerBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        val result = method.invoke(listener, event) as BlockFace
-        assertEquals(BlockFace.DOWN, result)
+        assertEquals(BlockFace.DOWN, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns EAST when dx positive`() {
-        val method = PowerBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(1.0, 64.0, 0.0)
@@ -184,15 +174,11 @@ class PowerBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        val result = method.invoke(listener, event) as BlockFace
-        assertEquals(BlockFace.EAST, result)
+        assertEquals(BlockFace.EAST, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns WEST when dx negative`() {
-        val method = PowerBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(-1.0, 64.0, 0.0)
@@ -202,15 +188,11 @@ class PowerBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        val result = method.invoke(listener, event) as BlockFace
-        assertEquals(BlockFace.WEST, result)
+        assertEquals(BlockFace.WEST, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns SOUTH when dz positive`() {
-        val method = PowerBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(0.0, 64.0, 1.0)
@@ -220,15 +202,11 @@ class PowerBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        val result = method.invoke(listener, event) as BlockFace
-        assertEquals(BlockFace.SOUTH, result)
+        assertEquals(BlockFace.SOUTH, AtlasBlockListener.getPlayerFacing(event))
     }
 
     @Test
     fun `getPlayerFacing returns NORTH when dz negative`() {
-        val method = PowerBlockListener::class.java.getDeclaredMethod("getPlayerFacing", BlockPlaceEvent::class.java)
-        method.isAccessible = true
-
         val placed = mockk<Block>(relaxed = true)
         val against = mockk<Block>(relaxed = true)
         every { placed.location } returns TestHelper.createLocation(0.0, 64.0, -1.0)
@@ -238,7 +216,6 @@ class PowerBlockListenerTest {
         every { event.block } returns placed
         every { event.blockAgainst } returns against
 
-        val result = method.invoke(listener, event) as BlockFace
-        assertEquals(BlockFace.NORTH, result)
+        assertEquals(BlockFace.NORTH, AtlasBlockListener.getPlayerFacing(event))
     }
 }
