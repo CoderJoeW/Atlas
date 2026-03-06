@@ -1,5 +1,7 @@
 package com.coderjoe.atlas.fluid
 
+import com.coderjoe.atlas.core.AtlasBlockDialog
+import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
@@ -16,45 +18,24 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
 
 object FluidBlockDialog {
 
-    private lateinit var plugin: JavaPlugin
-    private val activeDialogs = ConcurrentHashMap<UUID, BukkitTask>()
-
     fun init(plugin: JavaPlugin) {
-        this.plugin = plugin
+        AtlasBlockDialog.init(plugin)
     }
 
-    fun showFluidDialog(player: Player, fluidBlock: FluidBlock) {
-        activeDialogs.remove(player.uniqueId)?.cancel()
-
-        sendDialog(player, fluidBlock)
-
-        val task = plugin.server.scheduler.runTaskTimer(plugin, Runnable {
-            if (!player.isOnline) {
-                activeDialogs.remove(player.uniqueId)?.cancel()
-                return@Runnable
-            }
-            if (player.location.distance(fluidBlock.location) > 10) {
-                activeDialogs.remove(player.uniqueId)?.cancel()
-                return@Runnable
-            }
-            val registry = FluidBlockRegistry.instance
-            if (registry == null || registry.getFluidBlock(fluidBlock.location) == null) {
-                activeDialogs.remove(player.uniqueId)?.cancel()
-                return@Runnable
-            }
-            sendDialog(player, fluidBlock)
-        }, 10L, 10L)
-
-        activeDialogs[player.uniqueId] = task
+    fun showFluidDialog(player: Player, fluidBlock: FluidBlock, registry: BlockRegistry<*>) {
+        AtlasBlockDialog.showDialog(player, fluidBlock, registry) { p, block, onClose ->
+            sendDialog(p, block as FluidBlock, onClose)
+        }
     }
 
-    private fun sendDialog(player: Player, fluidBlock: FluidBlock) {
+    fun cleanup() {
+        AtlasBlockDialog.cleanup()
+    }
+
+    private fun sendDialog(player: Player, fluidBlock: FluidBlock, onClose: (Player) -> Unit) {
         val title = Component.text(getBlockDisplayName(fluidBlock))
         val bodyText = buildFluidInfo(fluidBlock)
         val body = DialogBody.plainMessage(bodyText)
@@ -62,7 +43,7 @@ object FluidBlockDialog {
         val closeAction = DialogAction.customClick(
             DialogActionCallback { _, audience ->
                 val p = audience as? Player ?: return@DialogActionCallback
-                activeDialogs.remove(p.uniqueId)?.cancel()
+                onClose(p)
             },
             ClickCallback.Options.builder().build()
         )
@@ -84,11 +65,6 @@ object FluidBlockDialog {
         }
 
         player.showDialog(dialog)
-    }
-
-    fun cleanup() {
-        activeDialogs.values.forEach { it.cancel() }
-        activeDialogs.clear()
     }
 
     private fun getBlockDisplayName(fluidBlock: FluidBlock): String = when (fluidBlock) {

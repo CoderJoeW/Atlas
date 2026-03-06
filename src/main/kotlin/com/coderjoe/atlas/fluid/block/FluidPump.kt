@@ -1,5 +1,7 @@
 package com.coderjoe.atlas.fluid.block
 
+import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.power.PowerBlockRegistry
@@ -36,7 +38,19 @@ class FluidPump(location: Location) : FluidBlock(location) {
             BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
             BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
         )
+
+        val descriptor = BlockDescriptor(
+            baseBlockId = BLOCK_ID,
+            displayName = "Fluid Pump",
+            description = "Pump - extracts fluid from adjacent cauldrons (1 power/s)",
+            placementType = PlacementType.SIMPLE,
+            directionalVariants = emptyMap(),
+            allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE, BLOCK_ID_ACTIVE_LAVA),
+            constructor = { loc, _ -> FluidPump(loc) }
+        )
     }
+
+    override val baseBlockId: String = BLOCK_ID
 
     fun canRemoveFluidFrom(direction: BlockFace): Boolean {
         val cauldron = cauldronFace ?: return false

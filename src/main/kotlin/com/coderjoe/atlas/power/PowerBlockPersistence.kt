@@ -1,107 +1,35 @@
 package com.coderjoe.atlas.power
 
+import com.coderjoe.atlas.core.BlockPersistence
 import com.coderjoe.atlas.power.block.SmallDrill
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
-import java.io.File
 
-/**
- * Handles saving and loading PowerBlock data to/from disk
- */
-class PowerBlockPersistence(private val plugin: JavaPlugin) {
-    private val dataFile = File(plugin.dataFolder, "power_blocks.yml")
-
-    fun save(registry: PowerBlockRegistry) {
-        val config = YamlConfiguration()
-        val powerBlocksWithIds = registry.getAllPowerBlocksWithIds()
-
-        plugin.logger.info("Saving ${powerBlocksWithIds.size} power blocks to disk...")
-
-        val blockDataList = mutableListOf<Map<String, Any>>()
-
-        for ((powerBlock, blockId) in powerBlocksWithIds) {
-            val data = PowerBlockData.fromPowerBlock(powerBlock, blockId)
+class PowerBlockPersistence(plugin: JavaPlugin) {
+    private val persistence = BlockPersistence<PowerBlock>(
+        plugin = plugin,
+        fileName = "power_blocks.yml",
+        yamlKey = "power_blocks",
+        factory = PowerBlockFactory,
+        serialize = { block, _ ->
             val map = mutableMapOf<String, Any>(
-                "blockId" to data.blockId,
-                "world" to data.world,
-                "x" to data.x,
-                "y" to data.y,
-                "z" to data.z,
-                "currentPower" to data.currentPower
+                "currentPower" to block.currentPower
             )
-            if (data.facing != null) {
-                map["facing"] = data.facing
+            if (block is SmallDrill) {
+                map["enabled"] = block.enabled
             }
-            if (data.enabled != null) {
-                map["enabled"] = data.enabled
-            }
-            blockDataList.add(map)
-        }
-
-        config.set("power_blocks", blockDataList)
-
-        try {
-            config.save(dataFile)
-            plugin.logger.info("Successfully saved ${blockDataList.size} power blocks")
-        } catch (e: Exception) {
-            plugin.logger.severe("Failed to save power blocks: ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
-    fun load(registry: PowerBlockRegistry) {
-        if (!dataFile.exists()) {
-            plugin.logger.info("No power blocks data file found, starting fresh")
-            return
-        }
-
-        val config = YamlConfiguration.loadConfiguration(dataFile)
-        val blockDataList = config.getMapList("power_blocks")
-
-        plugin.logger.info("Loading ${blockDataList.size} power blocks from disk...")
-
-        var loadedCount = 0
-        var failedCount = 0
-
-        for (blockDataMap in blockDataList) {
-            try {
-                val blockId = blockDataMap["blockId"] as? String ?: continue
-                val world = blockDataMap["world"] as? String ?: continue
-                val x = (blockDataMap["x"] as? Number)?.toInt() ?: continue
-                val y = (blockDataMap["y"] as? Number)?.toInt() ?: continue
-                val z = (blockDataMap["z"] as? Number)?.toInt() ?: continue
-                val currentPower = (blockDataMap["currentPower"] as? Number)?.toInt() ?: 0
-                val facing = blockDataMap["facing"] as? String
-                val enabled = blockDataMap["enabled"] as? Boolean
-
-                val data = PowerBlockData(blockId, world, x, y, z, currentPower, facing, enabled)
-                val location = data.toLocation(plugin)
-
-                if (location == null) {
-                    plugin.logger.warning("Failed to load power block at $world $x,$y,$z - world not found")
-                    failedCount++
-                    continue
+            map
+        },
+        restore = { block, data ->
+            block.currentPower = (data["currentPower"] as? Number)?.toInt() ?: 0
+            if (block is SmallDrill) {
+                val enabled = data["enabled"] as? Boolean
+                if (enabled != null) {
+                    block.enabled = enabled
                 }
-
-                val powerBlock = PowerBlockFactory.createPowerBlock(blockId, location, data.toBlockFace())
-
-                if (powerBlock != null) {
-                    powerBlock.currentPower = currentPower
-                    if (powerBlock is SmallDrill && data.enabled != null) {
-                        powerBlock.enabled = data.enabled
-                    }
-                    registry.registerPowerBlock(powerBlock, blockId)
-                    loadedCount++
-                } else {
-                    plugin.logger.warning("Failed to create power block for ID: $blockId at $x,$y,$z")
-                    failedCount++
-                }
-            } catch (e: Exception) {
-                plugin.logger.warning("Failed to load power block: ${e.message}")
-                failedCount++
             }
         }
+    )
 
-        plugin.logger.info("Loaded $loadedCount power blocks, $failedCount failed")
-    }
+    fun save(registry: PowerBlockRegistry) = persistence.save(registry)
+    fun load(registry: PowerBlockRegistry) = persistence.load(registry)
 }

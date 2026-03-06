@@ -1,11 +1,13 @@
 package com.coderjoe.atlas.power.block
 
+import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-class PowerCable(location: Location, val facing: BlockFace) : PowerBlock(location, maxStorage = 1) {
+class PowerCable(location: Location, override val facing: BlockFace) : PowerBlock(location, maxStorage = 1) {
 
     companion object {
         const val BLOCK_ID = "power_cable"
@@ -31,7 +33,19 @@ class PowerCable(location: Location, val facing: BlockFace) : PowerBlock(locatio
         )
 
         fun facingFromBlockId(blockId: String): BlockFace? = ID_TO_FACING[blockId]
+
+        val descriptor = BlockDescriptor(
+            baseBlockId = BLOCK_ID,
+            displayName = "Power Cable",
+            description = "Cable - transfers power in facing direction",
+            placementType = PlacementType.DIRECTIONAL,
+            directionalVariants = DIRECTIONAL_IDS,
+            allRegistrableIds = DIRECTIONAL_IDS.values.toList(),
+            constructor = { loc, facing -> PowerCable(loc, facing) }
+        )
     }
+
+    override val baseBlockId: String = BLOCK_ID
 
     override val updateIntervalTicks: Long = 20L // 1 second
 

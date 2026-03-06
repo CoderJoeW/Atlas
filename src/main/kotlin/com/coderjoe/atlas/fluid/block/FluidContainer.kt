@@ -1,12 +1,14 @@
 package com.coderjoe.atlas.fluid.block
 
+import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-class FluidContainer(location: Location, val facing: BlockFace) : FluidBlock(location) {
+class FluidContainer(location: Location, override val facing: BlockFace) : FluidBlock(location) {
 
     var storedAmount: Int = 0
         private set
@@ -67,7 +69,19 @@ class FluidContainer(location: Location, val facing: BlockFace) : FluidBlock(loc
             }
             return null
         }
+
+        val descriptor = BlockDescriptor(
+            baseBlockId = BLOCK_ID,
+            displayName = "Fluid Container",
+            description = "Container - stores up to $MAX_CAPACITY units of fluid",
+            placementType = PlacementType.DIRECTIONAL,
+            directionalVariants = DIRECTIONAL_IDS,
+            allRegistrableIds = ALL_VARIANT_IDS,
+            constructor = { loc, facing -> FluidContainer(loc, facing) }
+        )
     }
+
+    override val baseBlockId: String = BLOCK_ID
 
     override fun hasFluid(): Boolean = storedAmount > 0
 
