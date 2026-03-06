@@ -1402,3 +1402,1249 @@ fluid_pipe_down_filled_lava:
         loots:
           - nexo_item: fluid_pipe
             probability: 1.0
+
+# ==================== Fluid Container ====================
+
+fluid_container:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_all
+    textures:
+      all: atlas:block/fluid_container_side
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 1
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+
+fluid_container_north:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_front
+      south: atlas:block/fluid_container_back
+      east: atlas:block/fluid_container_side
+      west: atlas:block/fluid_container_side
+      up: atlas:block/fluid_container_top
+      down: atlas:block/fluid_container_top
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 2
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_south:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_back
+      south: atlas:block/fluid_container_front
+      east: atlas:block/fluid_container_side
+      west: atlas:block/fluid_container_side
+      up: atlas:block/fluid_container_top
+      down: atlas:block/fluid_container_top
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 3
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_east:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side
+      south: atlas:block/fluid_container_side
+      east: atlas:block/fluid_container_front
+      west: atlas:block/fluid_container_back
+      up: atlas:block/fluid_container_top
+      down: atlas:block/fluid_container_top
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 4
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_west:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side
+      south: atlas:block/fluid_container_side
+      east: atlas:block/fluid_container_back
+      west: atlas:block/fluid_container_front
+      up: atlas:block/fluid_container_top
+      down: atlas:block/fluid_container_top
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 5
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_up:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side
+      south: atlas:block/fluid_container_side
+      east: atlas:block/fluid_container_side
+      west: atlas:block/fluid_container_side
+      up: atlas:block/fluid_container_front
+      down: atlas:block/fluid_container_back
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 6
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_down:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side
+      south: atlas:block/fluid_container_side
+      east: atlas:block/fluid_container_side
+      west: atlas:block/fluid_container_side
+      up: atlas:block/fluid_container_back
+      down: atlas:block/fluid_container_front
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 7
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_north_water_low:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_front_water_low
+      south: atlas:block/fluid_container_back_water_low
+      east: atlas:block/fluid_container_side_water_low
+      west: atlas:block/fluid_container_side_water_low
+      up: atlas:block/fluid_container_top_water_low
+      down: atlas:block/fluid_container_top_water_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 8
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_north_water_medium:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_front_water_medium
+      south: atlas:block/fluid_container_back_water_medium
+      east: atlas:block/fluid_container_side_water_medium
+      west: atlas:block/fluid_container_side_water_medium
+      up: atlas:block/fluid_container_top_water_medium
+      down: atlas:block/fluid_container_top_water_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 9
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_north_water_full:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_front_water_full
+      south: atlas:block/fluid_container_back_water_full
+      east: atlas:block/fluid_container_side_water_full
+      west: atlas:block/fluid_container_side_water_full
+      up: atlas:block/fluid_container_top_water_full
+      down: atlas:block/fluid_container_top_water_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 10
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_north_lava_low:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_front_lava_low
+      south: atlas:block/fluid_container_back_lava_low
+      east: atlas:block/fluid_container_side_lava_low
+      west: atlas:block/fluid_container_side_lava_low
+      up: atlas:block/fluid_container_top_lava_low
+      down: atlas:block/fluid_container_top_lava_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 11
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_north_lava_medium:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_front_lava_medium
+      south: atlas:block/fluid_container_back_lava_medium
+      east: atlas:block/fluid_container_side_lava_medium
+      west: atlas:block/fluid_container_side_lava_medium
+      up: atlas:block/fluid_container_top_lava_medium
+      down: atlas:block/fluid_container_top_lava_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 12
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_north_lava_full:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_front_lava_full
+      south: atlas:block/fluid_container_back_lava_full
+      east: atlas:block/fluid_container_side_lava_full
+      west: atlas:block/fluid_container_side_lava_full
+      up: atlas:block/fluid_container_top_lava_full
+      down: atlas:block/fluid_container_top_lava_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 13
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_south_water_low:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_back_water_low
+      south: atlas:block/fluid_container_front_water_low
+      east: atlas:block/fluid_container_side_water_low
+      west: atlas:block/fluid_container_side_water_low
+      up: atlas:block/fluid_container_top_water_low
+      down: atlas:block/fluid_container_top_water_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 14
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_south_water_medium:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_back_water_medium
+      south: atlas:block/fluid_container_front_water_medium
+      east: atlas:block/fluid_container_side_water_medium
+      west: atlas:block/fluid_container_side_water_medium
+      up: atlas:block/fluid_container_top_water_medium
+      down: atlas:block/fluid_container_top_water_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 15
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_south_water_full:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_back_water_full
+      south: atlas:block/fluid_container_front_water_full
+      east: atlas:block/fluid_container_side_water_full
+      west: atlas:block/fluid_container_side_water_full
+      up: atlas:block/fluid_container_top_water_full
+      down: atlas:block/fluid_container_top_water_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 16
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_south_lava_low:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_back_lava_low
+      south: atlas:block/fluid_container_front_lava_low
+      east: atlas:block/fluid_container_side_lava_low
+      west: atlas:block/fluid_container_side_lava_low
+      up: atlas:block/fluid_container_top_lava_low
+      down: atlas:block/fluid_container_top_lava_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 17
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_south_lava_medium:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_back_lava_medium
+      south: atlas:block/fluid_container_front_lava_medium
+      east: atlas:block/fluid_container_side_lava_medium
+      west: atlas:block/fluid_container_side_lava_medium
+      up: atlas:block/fluid_container_top_lava_medium
+      down: atlas:block/fluid_container_top_lava_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 18
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_south_lava_full:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_back_lava_full
+      south: atlas:block/fluid_container_front_lava_full
+      east: atlas:block/fluid_container_side_lava_full
+      west: atlas:block/fluid_container_side_lava_full
+      up: atlas:block/fluid_container_top_lava_full
+      down: atlas:block/fluid_container_top_lava_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 19
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_east_water_low:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_low
+      south: atlas:block/fluid_container_side_water_low
+      east: atlas:block/fluid_container_front_water_low
+      west: atlas:block/fluid_container_back_water_low
+      up: atlas:block/fluid_container_top_water_low
+      down: atlas:block/fluid_container_top_water_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 20
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_east_water_medium:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_medium
+      south: atlas:block/fluid_container_side_water_medium
+      east: atlas:block/fluid_container_front_water_medium
+      west: atlas:block/fluid_container_back_water_medium
+      up: atlas:block/fluid_container_top_water_medium
+      down: atlas:block/fluid_container_top_water_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 21
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_east_water_full:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_full
+      south: atlas:block/fluid_container_side_water_full
+      east: atlas:block/fluid_container_front_water_full
+      west: atlas:block/fluid_container_back_water_full
+      up: atlas:block/fluid_container_top_water_full
+      down: atlas:block/fluid_container_top_water_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 22
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_east_lava_low:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_low
+      south: atlas:block/fluid_container_side_lava_low
+      east: atlas:block/fluid_container_front_lava_low
+      west: atlas:block/fluid_container_back_lava_low
+      up: atlas:block/fluid_container_top_lava_low
+      down: atlas:block/fluid_container_top_lava_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 23
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_east_lava_medium:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_medium
+      south: atlas:block/fluid_container_side_lava_medium
+      east: atlas:block/fluid_container_front_lava_medium
+      west: atlas:block/fluid_container_back_lava_medium
+      up: atlas:block/fluid_container_top_lava_medium
+      down: atlas:block/fluid_container_top_lava_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 24
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_east_lava_full:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_full
+      south: atlas:block/fluid_container_side_lava_full
+      east: atlas:block/fluid_container_front_lava_full
+      west: atlas:block/fluid_container_back_lava_full
+      up: atlas:block/fluid_container_top_lava_full
+      down: atlas:block/fluid_container_top_lava_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 25
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_west_water_low:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_low
+      south: atlas:block/fluid_container_side_water_low
+      east: atlas:block/fluid_container_back_water_low
+      west: atlas:block/fluid_container_front_water_low
+      up: atlas:block/fluid_container_top_water_low
+      down: atlas:block/fluid_container_top_water_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 26
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_west_water_medium:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_medium
+      south: atlas:block/fluid_container_side_water_medium
+      east: atlas:block/fluid_container_back_water_medium
+      west: atlas:block/fluid_container_front_water_medium
+      up: atlas:block/fluid_container_top_water_medium
+      down: atlas:block/fluid_container_top_water_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 27
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_west_water_full:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_full
+      south: atlas:block/fluid_container_side_water_full
+      east: atlas:block/fluid_container_back_water_full
+      west: atlas:block/fluid_container_front_water_full
+      up: atlas:block/fluid_container_top_water_full
+      down: atlas:block/fluid_container_top_water_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 28
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_west_lava_low:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_low
+      south: atlas:block/fluid_container_side_lava_low
+      east: atlas:block/fluid_container_back_lava_low
+      west: atlas:block/fluid_container_front_lava_low
+      up: atlas:block/fluid_container_top_lava_low
+      down: atlas:block/fluid_container_top_lava_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 29
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_west_lava_medium:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_medium
+      south: atlas:block/fluid_container_side_lava_medium
+      east: atlas:block/fluid_container_back_lava_medium
+      west: atlas:block/fluid_container_front_lava_medium
+      up: atlas:block/fluid_container_top_lava_medium
+      down: atlas:block/fluid_container_top_lava_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 30
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_west_lava_full:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_full
+      south: atlas:block/fluid_container_side_lava_full
+      east: atlas:block/fluid_container_back_lava_full
+      west: atlas:block/fluid_container_front_lava_full
+      up: atlas:block/fluid_container_top_lava_full
+      down: atlas:block/fluid_container_top_lava_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 31
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_up_water_low:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_low
+      south: atlas:block/fluid_container_side_water_low
+      east: atlas:block/fluid_container_side_water_low
+      west: atlas:block/fluid_container_side_water_low
+      up: atlas:block/fluid_container_front_water_low
+      down: atlas:block/fluid_container_back_water_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 32
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_up_water_medium:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_medium
+      south: atlas:block/fluid_container_side_water_medium
+      east: atlas:block/fluid_container_side_water_medium
+      west: atlas:block/fluid_container_side_water_medium
+      up: atlas:block/fluid_container_front_water_medium
+      down: atlas:block/fluid_container_back_water_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 33
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_up_water_full:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_full
+      south: atlas:block/fluid_container_side_water_full
+      east: atlas:block/fluid_container_side_water_full
+      west: atlas:block/fluid_container_side_water_full
+      up: atlas:block/fluid_container_front_water_full
+      down: atlas:block/fluid_container_back_water_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 34
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_up_lava_low:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_low
+      south: atlas:block/fluid_container_side_lava_low
+      east: atlas:block/fluid_container_side_lava_low
+      west: atlas:block/fluid_container_side_lava_low
+      up: atlas:block/fluid_container_front_lava_low
+      down: atlas:block/fluid_container_back_lava_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 35
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_up_lava_medium:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_medium
+      south: atlas:block/fluid_container_side_lava_medium
+      east: atlas:block/fluid_container_side_lava_medium
+      west: atlas:block/fluid_container_side_lava_medium
+      up: atlas:block/fluid_container_front_lava_medium
+      down: atlas:block/fluid_container_back_lava_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 36
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_up_lava_full:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_full
+      south: atlas:block/fluid_container_side_lava_full
+      east: atlas:block/fluid_container_side_lava_full
+      west: atlas:block/fluid_container_side_lava_full
+      up: atlas:block/fluid_container_front_lava_full
+      down: atlas:block/fluid_container_back_lava_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 37
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_down_water_low:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_low
+      south: atlas:block/fluid_container_side_water_low
+      east: atlas:block/fluid_container_side_water_low
+      west: atlas:block/fluid_container_side_water_low
+      up: atlas:block/fluid_container_back_water_low
+      down: atlas:block/fluid_container_front_water_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 38
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_down_water_medium:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_medium
+      south: atlas:block/fluid_container_side_water_medium
+      east: atlas:block/fluid_container_side_water_medium
+      west: atlas:block/fluid_container_side_water_medium
+      up: atlas:block/fluid_container_back_water_medium
+      down: atlas:block/fluid_container_front_water_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 39
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_down_water_full:
+  itemname: "<gradient:#5DADE2:#48C9B0>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_water_full
+      south: atlas:block/fluid_container_side_water_full
+      east: atlas:block/fluid_container_side_water_full
+      west: atlas:block/fluid_container_side_water_full
+      up: atlas:block/fluid_container_back_water_full
+      down: atlas:block/fluid_container_front_water_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 40
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_down_lava_low:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_low
+      south: atlas:block/fluid_container_side_lava_low
+      east: atlas:block/fluid_container_side_lava_low
+      west: atlas:block/fluid_container_side_lava_low
+      up: atlas:block/fluid_container_back_lava_low
+      down: atlas:block/fluid_container_front_lava_low
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 41
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_down_lava_medium:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_medium
+      south: atlas:block/fluid_container_side_lava_medium
+      east: atlas:block/fluid_container_side_lava_medium
+      west: atlas:block/fluid_container_side_lava_medium
+      up: atlas:block/fluid_container_back_lava_medium
+      down: atlas:block/fluid_container_front_lava_medium
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 42
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0
+fluid_container_down_lava_full:
+  itemname: "<gradient:#FF6B00:#FF4500>Fluid Container"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_container_side_lava_full
+      south: atlas:block/fluid_container_side_lava_full
+      east: atlas:block/fluid_container_side_lava_full
+      west: atlas:block/fluid_container_side_lava_full
+      up: atlas:block/fluid_container_back_lava_full
+      down: atlas:block/fluid_container_front_lava_full
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 43
+      hardness: 3
+      block_sounds:
+        break_sound: block.glass.break
+        place_sound: block.glass.place
+        hit_sound: block.glass.hit
+        step_sound: block.glass.step
+        fall_sound: block.glass.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_container
+            probability: 1.0

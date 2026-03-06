@@ -77,3 +77,18 @@ fluid_pipe_recipe:
     A:
       amount: 1
       minecraft_type: IRON_INGOT
+
+fluid_container_recipe:
+  result:
+    nexo_item: fluid_container
+    amount: 1
+  ingredients:
+    A:
+      amount: 4
+      minecraft_type: IRON_INGOT
+    B:
+      amount: 4
+      minecraft_type: GLASS
+    C:
+      amount: 1
+      minecraft_type: BUCKET
