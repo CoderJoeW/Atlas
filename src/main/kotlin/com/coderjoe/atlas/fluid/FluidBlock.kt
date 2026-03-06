@@ -20,15 +20,15 @@ abstract class FluidBlock(
         internal var testPlugin: JavaPlugin? = null
     }
 
-    fun hasFluid(): Boolean = storedFluid != FluidType.NONE
+    open fun hasFluid(): Boolean = storedFluid != FluidType.NONE
 
-    fun storeFluid(type: FluidType): Boolean {
+    open fun storeFluid(type: FluidType): Boolean {
         if (storedFluid != FluidType.NONE) return false
         storedFluid = type
         return true
     }
 
-    fun removeFluid(): FluidType {
+    open fun removeFluid(): FluidType {
         val fluid = storedFluid
         storedFluid = FluidType.NONE
         return fluid

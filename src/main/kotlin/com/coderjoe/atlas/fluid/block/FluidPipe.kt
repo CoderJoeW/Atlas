@@ -73,6 +73,13 @@ class FluidPipe(location: Location, val facing: BlockFace) : FluidBlock(location
                     plugin.logger.info("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe")
                 }
             }
+            is FluidContainer -> {
+                if (source.canRemoveFluidFrom(facing)) {
+                    val fluid = source.removeFluid()
+                    storeFluid(fluid)
+                    plugin.logger.info("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer")
+                }
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid
 
+import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.nexomc.nexo.api.NexoBlocks
@@ -39,6 +40,32 @@ class FluidBlockListener(
             return
         }
 
+        // Handle fluid_container base item: swap to directional variant
+        if (blockId == FluidContainer.BLOCK_ID) {
+            val facing = getPlayerFacing(event)
+            val variantId = FluidContainer.DIRECTIONAL_IDS[facing]
+            if (variantId == null) {
+                plugin.logger.warning("No directional variant for facing $facing")
+                return
+            }
+
+            plugin.logger.info("Swapping fluid_container to directional variant: $variantId (facing $facing)")
+
+            val location = event.block.location.clone()
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                location.block.setType(Material.AIR, false)
+                NexoBlocks.place(variantId, location)
+
+                val fluidBlock = FluidBlockFactory.createFluidBlock(variantId, location, facing)
+                if (fluidBlock != null) {
+                    registry.registerFluidBlock(fluidBlock, variantId)
+                } else {
+                    plugin.logger.warning("Failed to create fluid block for variant: $variantId")
+                }
+            })
+            return
+        }
+
         // Handle fluid_pipe base item: swap to directional variant
         if (blockId == FluidPipe.BLOCK_ID) {
             val facing = getPlayerFacing(event)
@@ -65,11 +92,22 @@ class FluidBlockListener(
             return
         }
 
-        // Handle directional variant placed directly
-        val facing = FluidPipe.facingFromBlockId(blockId)
-        if (facing != null) {
-            plugin.logger.info("Directional fluid pipe placed: $blockId (facing $facing)")
-            val fluidBlock = FluidBlockFactory.createFluidBlock(blockId, event.block.location, facing)
+        // Handle directional variant placed directly (pipe)
+        val pipeFacing = FluidPipe.facingFromBlockId(blockId)
+        if (pipeFacing != null) {
+            plugin.logger.info("Directional fluid pipe placed: $blockId (facing $pipeFacing)")
+            val fluidBlock = FluidBlockFactory.createFluidBlock(blockId, event.block.location, pipeFacing)
+            if (fluidBlock != null) {
+                registry.registerFluidBlock(fluidBlock, blockId)
+            }
+            return
+        }
+
+        // Handle directional variant placed directly (container)
+        val containerFacing = FluidContainer.facingFromBlockId(blockId)
+        if (containerFacing != null) {
+            plugin.logger.info("Directional fluid container placed: $blockId (facing $containerFacing)")
+            val fluidBlock = FluidBlockFactory.createFluidBlock(blockId, event.block.location, containerFacing)
             if (fluidBlock != null) {
                 registry.registerFluidBlock(fluidBlock, blockId)
             }
@@ -97,6 +135,7 @@ class FluidBlockListener(
         val baseItemId = when (fluidBlock) {
             is FluidPump -> FluidPump.BLOCK_ID
             is FluidPipe -> FluidPipe.BLOCK_ID
+            is FluidContainer -> FluidContainer.BLOCK_ID
             else -> null
         }
 

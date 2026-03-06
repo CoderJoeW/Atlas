@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid
 
+import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import io.papermc.paper.dialog.Dialog
@@ -93,14 +94,23 @@ object FluidBlockDialog {
     private fun getBlockDisplayName(fluidBlock: FluidBlock): String = when (fluidBlock) {
         is FluidPump -> "Fluid Pump"
         is FluidPipe -> "Fluid Pipe (${fluidBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+        is FluidContainer -> "Fluid Container (${fluidBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         else -> "Fluid Block"
     }
 
     private fun buildFluidInfo(fluidBlock: FluidBlock): Component {
-        val fluidName = when (fluidBlock.storedFluid) {
-            FluidType.WATER -> "Water"
-            FluidType.LAVA -> "Lava"
-            FluidType.NONE -> "Empty"
+        val fluidName = if (fluidBlock is FluidContainer && fluidBlock.storedAmount > 0) {
+            when (fluidBlock.storedFluid) {
+                FluidType.WATER -> "Water (${fluidBlock.storedAmount}/${FluidContainer.MAX_CAPACITY})"
+                FluidType.LAVA -> "Lava (${fluidBlock.storedAmount}/${FluidContainer.MAX_CAPACITY})"
+                FluidType.NONE -> "Empty"
+            }
+        } else {
+            when (fluidBlock.storedFluid) {
+                FluidType.WATER -> "Water"
+                FluidType.LAVA -> "Lava"
+                FluidType.NONE -> "Empty"
+            }
         }
 
         val fluidColor = when (fluidBlock.storedFluid) {
@@ -118,6 +128,8 @@ object FluidBlockDialog {
             is FluidPump -> Component.text("Pump - extracts fluid from adjacent cauldrons (1 power/s)")
                 .color(NamedTextColor.GRAY)
             is FluidPipe -> Component.text("Pipe - transports fluid in facing direction")
+                .color(NamedTextColor.GRAY)
+            is FluidContainer -> Component.text("Container - stores up to ${FluidContainer.MAX_CAPACITY} units of fluid")
                 .color(NamedTextColor.GRAY)
             else -> Component.text("Fluid block")
                 .color(NamedTextColor.GRAY)
