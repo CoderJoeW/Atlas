@@ -53,7 +53,7 @@ class Atlas : JavaPlugin() {
             factory = PowerBlockFactory,
             descriptors = powerDescriptors(),
             showDialog = { player, block ->
-                PowerBlockDialog.showPowerDialog(player, block as com.coderjoe.atlas.power.PowerBlock)
+                PowerBlockDialog.showPowerDialog(player, block as com.coderjoe.atlas.power.PowerBlock, powerBlockRegistry)
             }
         )
 
@@ -63,7 +63,7 @@ class Atlas : JavaPlugin() {
             factory = FluidBlockFactory,
             descriptors = fluidDescriptors(),
             showDialog = { player, block ->
-                FluidBlockDialog.showFluidDialog(player, block as com.coderjoe.atlas.fluid.FluidBlock)
+                FluidBlockDialog.showFluidDialog(player, block as com.coderjoe.atlas.fluid.FluidBlock, fluidBlockRegistry)
             }
         )
 
