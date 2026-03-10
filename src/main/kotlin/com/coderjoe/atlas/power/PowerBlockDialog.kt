@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
@@ -123,6 +124,7 @@ object PowerBlockDialog {
         is SmallBattery -> "Small Battery"
         is SmallDrill -> "Small Drill"
         is PowerCable -> "Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+        is LavaGenerator -> "Lava Generator"
         else -> "Power Block"
     }
 
@@ -164,6 +166,8 @@ object PowerBlockDialog {
                     .color(NamedTextColor.GRAY)
             }
             is PowerCable -> Component.text("Cable - transfers power in facing direction")
+                .color(NamedTextColor.GRAY)
+            is LavaGenerator -> Component.text("Generator - produces ${LavaGenerator.POWER_PER_LAVA} power per lava unit")
                 .color(NamedTextColor.GRAY)
             else -> Component.text("Power block")
                 .color(NamedTextColor.GRAY)

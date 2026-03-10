@@ -11,6 +11,7 @@ import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
@@ -136,7 +137,8 @@ object TestHelper {
     fun initPowerFactory() {
         PowerBlockFactory.registerFromDescriptors(listOf(
             SmallSolarPanel.descriptor, SmallDrill.descriptor,
-            SmallBattery.descriptor, PowerCable.descriptor
+            SmallBattery.descriptor, PowerCable.descriptor,
+            LavaGenerator.descriptor
         ))
     }
 
