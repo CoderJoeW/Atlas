@@ -1,5 +1,8 @@
 # Atlas Plugin Configuration
 
+# Enable or disable plugin logging (warnings and errors are always shown)
+logging: false
+
 resource-pack:
   # Enable or disable resource pack distribution
   enabled: false

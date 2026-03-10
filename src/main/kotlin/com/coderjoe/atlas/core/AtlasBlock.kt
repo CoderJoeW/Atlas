@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.core
 
 import com.coderjoe.atlas.Atlas
+import com.coderjoe.atlas.atlasInfo
 import com.nexomc.nexo.api.NexoBlocks
 import org.bukkit.Location
 import org.bukkit.Material
@@ -60,12 +61,12 @@ abstract class AtlasBlock(
             }
         }, updateIntervalTicks, updateIntervalTicks)
 
-        plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started")
+        plugin.logger.atlasInfo("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started")
     }
 
     fun stop() {
         updateTask?.cancel()
         updateTask = null
-        plugin.logger.info("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} stopped")
+        plugin.logger.atlasInfo("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} stopped")
     }
 }
