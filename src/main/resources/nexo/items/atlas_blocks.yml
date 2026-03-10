@@ -2648,3 +2648,64 @@ fluid_container_down_lava_full:
         loots:
           - nexo_item: fluid_container
             probability: 1.0
+
+# ─── Lava Generator ───────────────────────────────────────────────
+lava_generator:
+  itemname: "<gradient:#FF4500:#FF8C00>Lava Generator"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/lava_generator_side
+      south: atlas:block/lava_generator_side
+      east: atlas:block/lava_generator_side
+      west: atlas:block/lava_generator_side
+      up: atlas:block/lava_generator_top
+      down: atlas:block/lava_generator_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 152
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: lava_generator
+            probability: 1.0
+
+lava_generator_active:
+  itemname: "<gradient:#FF4500:#FF8C00>Lava Generator"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/lava_generator_side_active
+      south: atlas:block/lava_generator_side_active
+      east: atlas:block/lava_generator_side_active
+      west: atlas:block/lava_generator_side_active
+      up: atlas:block/lava_generator_top_active
+      down: atlas:block/lava_generator_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 153
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: lava_generator
+            probability: 1.0

@@ -92,3 +92,18 @@ fluid_container_recipe:
     C:
       amount: 1
       minecraft_type: BUCKET
+
+lava_generator_recipe:
+  result:
+    nexo_item: lava_generator
+    amount: 1
+  ingredients:
+    A:
+      amount: 3
+      minecraft_type: IRON_INGOT
+    B:
+      amount: 3
+      minecraft_type: REDSTONE
+    C:
+      amount: 1
+      minecraft_type: MAGMA_BLOCK
