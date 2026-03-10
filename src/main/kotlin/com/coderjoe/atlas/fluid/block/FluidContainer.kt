@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid.block
 
+import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
@@ -133,7 +134,7 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 if (source.canRemoveFluidFrom(facing)) {
                     val fluid = source.removeFluid()
                     if (storeFluid(fluid)) {
-                        plugin.logger.info("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump")
+                        plugin.logger.atlasInfo("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump")
                     } else {
                         source.storeFluid(fluid)
                     }
@@ -143,7 +144,7 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 if (source.hasFluid()) {
                     val fluid = source.removeFluid()
                     if (storeFluid(fluid)) {
-                        plugin.logger.info("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe")
+                        plugin.logger.atlasInfo("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe")
                     } else {
                         source.storeFluid(fluid)
                     }
@@ -153,7 +154,7 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 if (source.canRemoveFluidFrom(facing)) {
                     val fluid = source.removeFluid()
                     if (storeFluid(fluid)) {
-                        plugin.logger.info("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer")
+                        plugin.logger.atlasInfo("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer")
                     } else {
                         source.storeFluid(fluid)
                     }

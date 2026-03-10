@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.power.block
 
+import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
@@ -39,10 +40,10 @@ class SmallSolarPanel(location: Location): PowerBlock(location, maxStorage = 1) 
         if (isDaytime) {
             val generated = addPower(1)
             if (generated > 0) {
-                plugin.logger.info("SmallSolarPanel at ${location.blockX},${location.blockY},${location.blockZ} generated $generated power (now $currentPower/$maxStorage)")
+                plugin.logger.atlasInfo("SmallSolarPanel at ${location.blockX},${location.blockY},${location.blockZ} generated $generated power (now $currentPower/$maxStorage)")
             }
         } else {
-            plugin.logger.info("SmallSolarPanel at ${location.blockX},${location.blockY},${location.blockZ} is not generating power because it is not daytime.")
+            plugin.logger.atlasInfo("SmallSolarPanel at ${location.blockX},${location.blockY},${location.blockZ} is not generating power because it is not daytime.")
         }
 
         // TODO: Implement power transfer to connected blocks

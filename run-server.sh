@@ -76,6 +76,8 @@ cat > "$SERVER_DIR/plugins/Atlas/config.yml" << EOF
 # Atlas Plugin Configuration (auto-generated for testing)
 # Resource pack is disabled because Nexo handles resource pack generation and hosting
 
+logging: false
+
 resource-pack:
   enabled: false
   url: ""

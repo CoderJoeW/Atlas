@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.core
 
+import com.coderjoe.atlas.atlasInfo
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.configuration.file.YamlConfiguration
@@ -20,7 +21,7 @@ class BlockPersistence<T : AtlasBlock>(
         val config = YamlConfiguration()
         val blocksWithIds = registry.getAllBlocksWithIds()
 
-        plugin.logger.info("Saving ${blocksWithIds.size} blocks to $fileName...")
+        plugin.logger.atlasInfo("Saving ${blocksWithIds.size} blocks to $fileName...")
 
         val blockDataList = mutableListOf<Map<String, Any>>()
 
@@ -44,7 +45,7 @@ class BlockPersistence<T : AtlasBlock>(
 
         try {
             config.save(dataFile)
-            plugin.logger.info("Successfully saved ${blockDataList.size} blocks to $fileName")
+            plugin.logger.atlasInfo("Successfully saved ${blockDataList.size} blocks to $fileName")
         } catch (e: Exception) {
             plugin.logger.severe("Failed to save blocks to $fileName: ${e.message}")
             e.printStackTrace()
@@ -53,14 +54,14 @@ class BlockPersistence<T : AtlasBlock>(
 
     fun load(registry: BlockRegistry<T>) {
         if (!dataFile.exists()) {
-            plugin.logger.info("No $fileName data file found, starting fresh")
+            plugin.logger.atlasInfo("No $fileName data file found, starting fresh")
             return
         }
 
         val config = YamlConfiguration.loadConfiguration(dataFile)
         val blockDataList = config.getMapList(yamlKey)
 
-        plugin.logger.info("Loading ${blockDataList.size} blocks from $fileName...")
+        plugin.logger.atlasInfo("Loading ${blockDataList.size} blocks from $fileName...")
 
         var loadedCount = 0
         var failedCount = 0
@@ -104,6 +105,6 @@ class BlockPersistence<T : AtlasBlock>(
             }
         }
 
-        plugin.logger.info("Loaded $loadedCount blocks from $fileName, $failedCount failed")
+        plugin.logger.atlasInfo("Loaded $loadedCount blocks from $fileName, $failedCount failed")
     }
 }

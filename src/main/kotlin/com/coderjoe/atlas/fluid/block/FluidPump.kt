@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid.block
 
+import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
@@ -138,6 +139,6 @@ class FluidPump(location: Location) : FluidBlock(location) {
         storeFluid(fluidType)
         cauldronFace = foundFace
         pumpStatus = PumpStatus.EXTRACTING
-        plugin.logger.info("FluidPump at ${location.blockX},${location.blockY},${location.blockZ} extracted ${fluidType.name} from $foundFace")
+        plugin.logger.atlasInfo("FluidPump at ${location.blockX},${location.blockY},${location.blockZ} extracted ${fluidType.name} from $foundFace")
     }
 }

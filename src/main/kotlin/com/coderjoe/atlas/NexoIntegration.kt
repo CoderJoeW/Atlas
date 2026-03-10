@@ -13,7 +13,7 @@ class NexoIntegration(private val plugin: JavaPlugin) {
         copyItemConfigurations()
         copyTextures()
         copyRecipes()
-        plugin.logger.info("Atlas Nexo integration initialized")
+        plugin.logger.atlasInfo("Atlas Nexo integration initialized")
     }
 
     private fun copyItemConfigurations() {
@@ -29,7 +29,7 @@ class NexoIntegration(private val plugin: JavaPlugin) {
         if (sourceFile.exists()) {
             sourceFile.copyTo(targetFile, overwrite = true)
             sourceFile.delete()
-            plugin.logger.info("Copied Atlas block configurations to Nexo")
+            plugin.logger.atlasInfo("Copied Atlas block configurations to Nexo")
         }
     }
 
@@ -50,7 +50,7 @@ class NexoIntegration(private val plugin: JavaPlugin) {
             if (sourceFile.exists()) {
                 sourceFile.copyTo(textureFile, overwrite = true)
                 sourceFile.delete()
-                plugin.logger.info("Copied ${fileName.removeSuffix(".png")} texture to Nexo")
+                plugin.logger.atlasInfo("Copied ${fileName.removeSuffix(".png")} texture to Nexo")
             }
         }
     }
@@ -90,7 +90,7 @@ class NexoIntegration(private val plugin: JavaPlugin) {
         if (sourceFile.exists()) {
             sourceFile.copyTo(targetFile, overwrite = true)
             sourceFile.delete()
-            plugin.logger.info("Copied Atlas recipes to Nexo")
+            plugin.logger.atlasInfo("Copied Atlas recipes to Nexo")
         }
     }
 }

@@ -27,6 +27,8 @@ class Atlas : JavaPlugin() {
             dataFolder.mkdirs()
         }
 
+        AtlasConfig.load(this)
+
         nexoIntegration = NexoIntegration(this)
         nexoIntegration.initialize()
 
@@ -34,7 +36,7 @@ class Atlas : JavaPlugin() {
         resourcePackManager.load()
 
         if (resourcePackManager.isConfigured()) {
-            logger.info("Resource pack is configured and will be sent to players on join")
+            logger.atlasInfo("Resource pack is configured and will be sent to players on join")
             server.pluginManager.registerEvents(PlayerJoinListener(resourcePackManager), this)
         }
 
@@ -76,7 +78,7 @@ class Atlas : JavaPlugin() {
             fluidBlockPersistence.save(fluidBlockRegistry)
         }, 6000L, 6000L)
 
-        logger.info("Atlas plugin enabled!")
+        logger.atlasInfo("Atlas plugin enabled!")
     }
 
     override fun onDisable() {
@@ -101,7 +103,7 @@ class Atlas : JavaPlugin() {
             fluidBlockRegistry.stopAll()
         }
 
-        logger.info("Atlas plugin has been disabled!")
+        logger.atlasInfo("Atlas plugin has been disabled!")
     }
 
     fun initPowerSystem() {
@@ -110,7 +112,7 @@ class Atlas : JavaPlugin() {
         powerBlockPersistence = PowerBlockPersistence(this)
         powerBlockPersistence.load(powerBlockRegistry)
 
-        logger.info("Power system initialized with ${PowerBlockFactory.getRegisteredBlockIds().size} block types")
+        logger.atlasInfo("Power system initialized with ${PowerBlockFactory.getRegisteredBlockIds().size} block types")
     }
 
     fun initFluidSystem() {
@@ -119,7 +121,7 @@ class Atlas : JavaPlugin() {
         fluidBlockPersistence = FluidBlockPersistence(this)
         fluidBlockPersistence.load(fluidBlockRegistry)
 
-        logger.info("Fluid system initialized with ${FluidBlockFactory.getRegisteredBlockIds().size} block types")
+        logger.atlasInfo("Fluid system initialized with ${FluidBlockFactory.getRegisteredBlockIds().size} block types")
     }
 
     private fun powerDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {

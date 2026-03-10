@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid.block
 
+import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
@@ -77,21 +78,21 @@ class FluidPipe(location: Location, override val facing: BlockFace) : FluidBlock
                 if (source.canRemoveFluidFrom(facing)) {
                     val fluid = source.removeFluid()
                     storeFluid(fluid)
-                    plugin.logger.info("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump")
+                    plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump")
                 }
             }
             is FluidPipe -> {
                 if (source.hasFluid()) {
                     val fluid = source.removeFluid()
                     storeFluid(fluid)
-                    plugin.logger.info("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe")
+                    plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe")
                 }
             }
             is FluidContainer -> {
                 if (source.canRemoveFluidFrom(facing)) {
                     val fluid = source.removeFluid()
                     storeFluid(fluid)
-                    plugin.logger.info("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer")
+                    plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer")
                 }
             }
         }

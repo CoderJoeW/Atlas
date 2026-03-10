@@ -21,7 +21,7 @@ class ResourcePackManager(private val plugin: JavaPlugin) {
 
         val enabled = config.getBoolean("resource-pack.enabled", false)
         if (!enabled) {
-            plugin.logger.info("Resource pack is disabled in config")
+            plugin.logger.atlasInfo("Resource pack is disabled in config")
             return
         }
 
@@ -49,7 +49,7 @@ class ResourcePackManager(private val plugin: JavaPlugin) {
                 promptMessage = Component.text(prompt)
             }
 
-            plugin.logger.info("Resource pack configured: $url")
+            plugin.logger.atlasInfo("Resource pack configured: $url")
         } catch (e: Exception) {
             plugin.logger.severe("Failed to configure resource pack: ${e.message}")
         }
@@ -69,7 +69,7 @@ class ResourcePackManager(private val plugin: JavaPlugin) {
 
         player.sendResourcePacks(request)
 
-        plugin.logger.info("Sent resource pack to ${player.name}")
+        plugin.logger.atlasInfo("Sent resource pack to ${player.name}")
     }
 
     fun isConfigured(): Boolean = packInfo != null

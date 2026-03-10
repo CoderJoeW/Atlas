@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.power.block
 
+import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
@@ -64,7 +65,7 @@ class PowerCable(location: Location, override val facing: BlockFace) : PowerBloc
             val pulled = source.removePower(1)
             if (pulled > 0) {
                 addPower(pulled)
-                plugin.logger.info("PowerCable at ${location.blockX},${location.blockY},${location.blockZ} pulled $pulled power from ${source::class.simpleName} (now $currentPower/$maxStorage)")
+                plugin.logger.atlasInfo("PowerCable at ${location.blockX},${location.blockY},${location.blockZ} pulled $pulled power from ${source::class.simpleName} (now $currentPower/$maxStorage)")
             }
         }
     }

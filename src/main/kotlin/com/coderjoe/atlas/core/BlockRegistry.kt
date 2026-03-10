@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.core
 
+import com.coderjoe.atlas.atlasInfo
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.plugin.java.JavaPlugin
@@ -21,7 +22,7 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
         blocks[key] = block
         blockIds[key] = blockId
         block.start()
-        plugin.logger.info("Registered ${block::class.simpleName} at ${block.location.blockX},${block.location.blockY},${block.location.blockZ}")
+        plugin.logger.atlasInfo("Registered ${block::class.simpleName} at ${block.location.blockX},${block.location.blockY},${block.location.blockZ}")
     }
 
     fun unregister(location: Location): T? {
@@ -30,7 +31,7 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
         blockIds.remove(key)
         block?.stop()
         if (block != null) {
-            plugin.logger.info("Unregistered ${block::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ}")
+            plugin.logger.atlasInfo("Unregistered ${block::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ}")
         }
         return block
     }
@@ -71,7 +72,7 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
     }
 
     fun stopAll() {
-        plugin.logger.info("Stopping ${blocks.size} blocks...")
+        plugin.logger.atlasInfo("Stopping ${blocks.size} blocks...")
         blocks.values.forEach { it.stop() }
         blocks.clear()
     }
