@@ -60,7 +60,7 @@ class AtlasBlockListener(
                 createAndRegister(system, blockId, location, facing)
             }
             PlacementType.DIRECTIONAL -> {
-                val facing = getPlayerFacing(event)
+                val facing = getDirectionalFacing(event, descriptor)
                 val variantId = descriptor.directionalVariants[facing] ?: return
                 val location = event.block.location.clone()
                 plugin.server.scheduler.runTask(plugin, Runnable {
@@ -70,7 +70,7 @@ class AtlasBlockListener(
                 })
             }
             PlacementType.DIRECTIONAL_OPPOSITE -> {
-                val facing = getPlayerFacing(event).oppositeFace
+                val facing = getDirectionalFacing(event, descriptor, opposite = true)
                 val variantId = descriptor.directionalVariants[facing] ?: blockId
                 val location = event.block.location.clone()
                 plugin.server.scheduler.runTask(plugin, Runnable {
@@ -146,6 +146,15 @@ class AtlasBlockListener(
     }
 
     companion object {
+        fun getDirectionalFacing(event: BlockPlaceEvent, descriptor: BlockDescriptor, opposite: Boolean = false): BlockFace {
+            val raw = getPlayerFacing(event)
+            val facing = if (opposite) raw.oppositeFace else raw
+            if (descriptor.directionalVariants.containsKey(facing)) return facing
+            // Fall back to the player's horizontal look direction
+            val fallback = event.player.facing
+            return if (opposite) fallback.oppositeFace else fallback
+        }
+
         fun getPlayerFacing(event: BlockPlaceEvent): BlockFace {
             val against = event.blockAgainst.location
             val placed = event.block.location
