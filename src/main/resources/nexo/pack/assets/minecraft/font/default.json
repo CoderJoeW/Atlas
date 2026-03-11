@@ -1,0 +1,67 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "atlas:block/small_solar_panel.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE100"]
+    },
+    {
+      "type": "bitmap",
+      "file": "atlas:block/lava_generator_side.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE101"]
+    },
+    {
+      "type": "bitmap",
+      "file": "atlas:block/power_cable_front.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE102"]
+    },
+    {
+      "type": "bitmap",
+      "file": "atlas:block/small_battery.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE103"]
+    },
+    {
+      "type": "bitmap",
+      "file": "atlas:block/small_drill_front.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE104"]
+    },
+    {
+      "type": "bitmap",
+      "file": "atlas:block/fluid_pump_top.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE105"]
+    },
+    {
+      "type": "bitmap",
+      "file": "atlas:block/fluid_pipe_front.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE106"]
+    },
+    {
+      "type": "bitmap",
+      "file": "atlas:block/fluid_container_front.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE107"]
+    },
+    {
+      "type": "bitmap",
+      "file": "atlas:block/conveyor_belt_top_north.png",
+      "ascent": 7,
+      "height": 16,
+      "chars": ["\uE108"]
+    }
+  ]
+}

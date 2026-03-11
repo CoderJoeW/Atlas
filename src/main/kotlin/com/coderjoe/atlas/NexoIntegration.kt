@@ -14,6 +14,7 @@ class NexoIntegration(private val plugin: JavaPlugin) {
         copyTextures()
         copyModels()
         copyRecipes()
+        copyFonts()
         plugin.logger.atlasInfo("Atlas Nexo integration initialized")
     }
 
@@ -97,6 +98,28 @@ class NexoIntegration(private val plugin: JavaPlugin) {
                 sourceFile.copyTo(modelFile, overwrite = true)
                 sourceFile.delete()
                 plugin.logger.atlasInfo("Copied ${fileName.removeSuffix(".json")} model to Nexo")
+            }
+        }
+    }
+
+    private fun copyFonts() {
+        val fontsFolder = File(nexoFolder, "pack/assets/minecraft/font")
+        if (!fontsFolder.exists()) {
+            fontsFolder.mkdirs()
+        }
+
+        val prefix = "nexo/pack/assets/minecraft/font/"
+        val fontPaths = discoverResources(prefix, ".json")
+
+        for (resourcePath in fontPaths) {
+            val fileName = resourcePath.substringAfterLast("/")
+            val fontFile = File(fontsFolder, fileName)
+            plugin.saveResource(resourcePath, true)
+            val sourceFile = File(plugin.dataFolder, resourcePath)
+            if (sourceFile.exists()) {
+                sourceFile.copyTo(fontFile, overwrite = true)
+                sourceFile.delete()
+                plugin.logger.atlasInfo("Copied ${fileName.removeSuffix(".json")} font to Nexo")
             }
         }
     }

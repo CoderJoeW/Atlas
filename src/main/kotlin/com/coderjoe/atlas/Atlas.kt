@@ -2,6 +2,8 @@ package com.coderjoe.atlas
 
 import com.coderjoe.atlas.core.AtlasBlockListener
 import com.coderjoe.atlas.core.BlockSystem
+import com.coderjoe.atlas.guide.GuideBook
+import com.coderjoe.atlas.guide.GuideBookListener
 import com.coderjoe.atlas.fluid.FluidBlockDialog
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockPersistence
@@ -89,6 +91,10 @@ class Atlas : JavaPlugin() {
             AtlasBlockListener(this, listOf(powerSystem, fluidSystem, transportSystem)),
             this
         )
+
+        val guideBookListener = GuideBookListener(this)
+        server.pluginManager.registerEvents(guideBookListener, this)
+        server.addRecipe(GuideBook.createRecipe(this))
 
         // Auto-save every 5 minutes (6000 ticks)
         autoSaveTask = server.scheduler.runTaskTimer(this, Runnable {
