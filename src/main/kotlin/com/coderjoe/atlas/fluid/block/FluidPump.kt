@@ -43,7 +43,7 @@ class FluidPump(location: Location) : FluidBlock(location) {
         val descriptor = BlockDescriptor(
             baseBlockId = BLOCK_ID,
             displayName = "Fluid Pump",
-            description = "Pump - extracts fluid from adjacent cauldrons (1 power/s)",
+            description = "Pump - extracts fluid from adjacent cauldrons or source blocks (1 power/s)",
             placementType = PlacementType.SIMPLE,
             directionalVariants = emptyMap(),
             allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE, BLOCK_ID_ACTIVE_LAVA),
@@ -91,6 +91,14 @@ class FluidPump(location: Location) : FluidBlock(location) {
             val type = when (adjacentBlock.type) {
                 Material.WATER_CAULDRON -> FluidType.WATER
                 Material.LAVA_CAULDRON -> FluidType.LAVA
+                Material.WATER -> {
+                    val levelData = adjacentBlock.blockData as? org.bukkit.block.data.Levelled
+                    if (levelData != null && levelData.level == 0) FluidType.WATER else continue
+                }
+                Material.LAVA -> {
+                    val levelData = adjacentBlock.blockData as? org.bukkit.block.data.Levelled
+                    if (levelData != null && levelData.level == 0) FluidType.LAVA else continue
+                }
                 else -> continue
             }
 
@@ -122,18 +130,24 @@ class FluidPump(location: Location) : FluidBlock(location) {
             return
         }
 
-        // Step 4: Drain the cauldron and store fluid
-        if (foundBlock.type == Material.WATER_CAULDRON) {
-            val levelled = foundBlock.blockData as? org.bukkit.block.data.Levelled
-            if (levelled != null && levelled.level > 1) {
-                levelled.level = levelled.level - 1
-                foundBlock.blockData = levelled
-            } else {
+        // Step 4: Drain the source and store fluid
+        when (foundBlock.type) {
+            Material.WATER_CAULDRON -> {
+                val levelled = foundBlock.blockData as? org.bukkit.block.data.Levelled
+                if (levelled != null && levelled.level > 1) {
+                    levelled.level = levelled.level - 1
+                    foundBlock.blockData = levelled
+                } else {
+                    foundBlock.setType(Material.CAULDRON, false)
+                }
+            }
+            Material.LAVA_CAULDRON -> {
                 foundBlock.setType(Material.CAULDRON, false)
             }
-        } else {
-            // Lava cauldrons don't have levels
-            foundBlock.setType(Material.CAULDRON, false)
+            Material.WATER, Material.LAVA -> {
+                foundBlock.setType(Material.AIR, false)
+            }
+            else -> {}
         }
 
         storeFluid(fluidType)

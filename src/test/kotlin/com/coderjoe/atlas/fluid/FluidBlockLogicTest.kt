@@ -358,6 +358,91 @@ class FluidBlockLogicTest {
         io.mockk.verify { cauldronBlock.setType(Material.CAULDRON, false) }
     }
 
+    @Test
+    fun `pump extracts water from source block`() {
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
+
+        val waterBlock = mockk<Block>(relaxed = true)
+        val levelled = mockk<Levelled>(relaxed = true)
+        every { waterBlock.type } returns Material.WATER
+        every { waterBlock.blockData } returns levelled
+        every { levelled.level } returns 0
+        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns waterBlock
+
+        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+            val offset = face.direction
+            val block = mockk<Block>(relaxed = true)
+            every { block.type } returns Material.AIR
+            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+        }
+
+        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        solar.currentPower = 1
+        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+
+        pump.callFluidUpdate()
+        assertEquals(FluidType.WATER, pump.storedFluid)
+        assertEquals(FluidPump.PumpStatus.EXTRACTING, pump.pumpStatus)
+        io.mockk.verify { waterBlock.setType(Material.AIR, false) }
+    }
+
+    @Test
+    fun `pump extracts lava from source block`() {
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
+
+        val lavaBlock = mockk<Block>(relaxed = true)
+        val levelled = mockk<Levelled>(relaxed = true)
+        every { lavaBlock.type } returns Material.LAVA
+        every { lavaBlock.blockData } returns levelled
+        every { levelled.level } returns 0
+        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns lavaBlock
+
+        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+            val offset = face.direction
+            val block = mockk<Block>(relaxed = true)
+            every { block.type } returns Material.AIR
+            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+        }
+
+        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        solar.currentPower = 1
+        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+
+        pump.callFluidUpdate()
+        assertEquals(FluidType.LAVA, pump.storedFluid)
+        assertEquals(FluidPump.PumpStatus.EXTRACTING, pump.pumpStatus)
+        io.mockk.verify { lavaBlock.setType(Material.AIR, false) }
+    }
+
+    @Test
+    fun `pump ignores flowing water (non-source block)`() {
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
+
+        val flowingBlock = mockk<Block>(relaxed = true)
+        val levelled = mockk<Levelled>(relaxed = true)
+        every { flowingBlock.type } returns Material.WATER
+        every { flowingBlock.blockData } returns levelled
+        every { levelled.level } returns 3
+
+        for (face in listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+            val offset = face.direction
+            if (face == BlockFace.NORTH) {
+                every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns flowingBlock
+            } else {
+                val block = mockk<Block>(relaxed = true)
+                every { block.type } returns Material.AIR
+                every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            }
+        }
+
+        pump.callFluidUpdate()
+        assertEquals(FluidType.NONE, pump.storedFluid)
+        assertEquals(FluidPump.PumpStatus.NO_SOURCE, pump.pumpStatus)
+    }
+
     // --- FluidPipe specifics ---
 
     @Test
