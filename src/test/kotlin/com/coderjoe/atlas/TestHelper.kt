@@ -11,6 +11,10 @@ import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.transport.TransportBlock
+import com.coderjoe.atlas.transport.TransportBlockFactory
+import com.coderjoe.atlas.transport.TransportBlockRegistry
+import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
@@ -88,6 +92,12 @@ object TestHelper {
         method.invoke(this)
     }
 
+    fun TransportBlock.callTransportUpdate() {
+        val method = TransportBlock::class.java.getDeclaredMethod("transportUpdate")
+        method.isAccessible = true
+        method.invoke(this)
+    }
+
     fun addToRegistry(registry: PowerBlockRegistry, block: PowerBlock, blockId: String) {
         val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
         blocksField.isAccessible = true
@@ -100,6 +110,22 @@ object TestHelper {
         val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
 
         val key = PowerBlockRegistry.locationKey(block.location)
+        blocks[key] = block
+        blockIds[key] = blockId
+    }
+
+    fun addToRegistry(registry: TransportBlockRegistry, block: TransportBlock, blockId: String) {
+        val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
+        blocksField.isAccessible = true
+        @Suppress("UNCHECKED_CAST")
+        val blocks = blocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, TransportBlock>
+
+        val blockIdsField = BlockRegistry::class.java.getDeclaredField("blockIds")
+        blockIdsField.isAccessible = true
+        @Suppress("UNCHECKED_CAST")
+        val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
+
+        val key = TransportBlockRegistry.locationKey(block.location)
         blocks[key] = block
         blockIds[key] = blockId
     }
@@ -132,6 +158,12 @@ object TestHelper {
             instanceField.isAccessible = true
             instanceField.set(FluidBlockRegistry.Companion, null)
         } catch (_: Exception) {}
+
+        try {
+            val instanceField = TransportBlockRegistry.Companion::class.java.getDeclaredField("instance")
+            instanceField.isAccessible = true
+            instanceField.set(TransportBlockRegistry.Companion, null)
+        } catch (_: Exception) {}
     }
 
     fun initPowerFactory() {
@@ -149,8 +181,15 @@ object TestHelper {
         ))
     }
 
+    fun initTransportFactory() {
+        TransportBlockFactory.registerFromDescriptors(listOf(
+            ConveyorBelt.descriptor
+        ))
+    }
+
     private fun clearFactories() {
         PowerBlockFactory.clear()
         FluidBlockFactory.clear()
+        TransportBlockFactory.clear()
     }
 }

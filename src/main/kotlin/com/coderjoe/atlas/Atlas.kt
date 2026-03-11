@@ -10,6 +10,10 @@ import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockPersistence
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.transport.TransportBlockDialog
+import com.coderjoe.atlas.transport.TransportBlockFactory
+import com.coderjoe.atlas.transport.TransportBlockPersistence
+import com.coderjoe.atlas.transport.TransportBlockRegistry
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
@@ -20,6 +24,8 @@ class Atlas : JavaPlugin() {
     private lateinit var powerBlockPersistence: PowerBlockPersistence
     private lateinit var fluidBlockRegistry: FluidBlockRegistry
     private lateinit var fluidBlockPersistence: FluidBlockPersistence
+    private lateinit var transportBlockRegistry: TransportBlockRegistry
+    private lateinit var transportBlockPersistence: TransportBlockPersistence
     private var autoSaveTask: BukkitTask? = null
 
     override fun onEnable() {
@@ -42,9 +48,11 @@ class Atlas : JavaPlugin() {
 
         PowerBlockDialog.init(this)
         FluidBlockDialog.init(this)
+        TransportBlockDialog.init(this)
 
         initPowerSystem()
         initFluidSystem()
+        initTransportSystem()
 
         // Register unified listener
         val powerSystem = BlockSystem<com.coderjoe.atlas.power.PowerBlock>(
@@ -67,8 +75,18 @@ class Atlas : JavaPlugin() {
             }
         )
 
+        val transportSystem = BlockSystem<com.coderjoe.atlas.transport.TransportBlock>(
+            name = "transport",
+            registry = transportBlockRegistry,
+            factory = TransportBlockFactory,
+            descriptors = transportDescriptors(),
+            showDialog = { player, block ->
+                TransportBlockDialog.showTransportDialog(player, block as com.coderjoe.atlas.transport.TransportBlock, transportBlockRegistry)
+            }
+        )
+
         server.pluginManager.registerEvents(
-            AtlasBlockListener(this, listOf(powerSystem, fluidSystem)),
+            AtlasBlockListener(this, listOf(powerSystem, fluidSystem, transportSystem)),
             this
         )
 
@@ -76,6 +94,7 @@ class Atlas : JavaPlugin() {
         autoSaveTask = server.scheduler.runTaskTimer(this, Runnable {
             powerBlockPersistence.save(powerBlockRegistry)
             fluidBlockPersistence.save(fluidBlockRegistry)
+            transportBlockPersistence.save(transportBlockRegistry)
         }, 6000L, 6000L)
 
         logger.atlasInfo("Atlas plugin enabled!")
@@ -92,8 +111,13 @@ class Atlas : JavaPlugin() {
             fluidBlockPersistence.save(fluidBlockRegistry)
         }
 
+        if (::transportBlockPersistence.isInitialized && ::transportBlockRegistry.isInitialized) {
+            transportBlockPersistence.save(transportBlockRegistry)
+        }
+
         PowerBlockDialog.cleanup()
         FluidBlockDialog.cleanup()
+        TransportBlockDialog.cleanup()
 
         if (::powerBlockRegistry.isInitialized) {
             powerBlockRegistry.stopAll()
@@ -101,6 +125,10 @@ class Atlas : JavaPlugin() {
 
         if (::fluidBlockRegistry.isInitialized) {
             fluidBlockRegistry.stopAll()
+        }
+
+        if (::transportBlockRegistry.isInitialized) {
+            transportBlockRegistry.stopAll()
         }
 
         logger.atlasInfo("Atlas plugin has been disabled!")
@@ -122,6 +150,21 @@ class Atlas : JavaPlugin() {
         fluidBlockPersistence.load(fluidBlockRegistry)
 
         logger.atlasInfo("Fluid system initialized with ${FluidBlockFactory.getRegisteredBlockIds().size} block types")
+    }
+
+    fun initTransportSystem() {
+        TransportBlockFactory.registerFromDescriptors(transportDescriptors().values)
+        transportBlockRegistry = TransportBlockRegistry(this)
+        transportBlockPersistence = TransportBlockPersistence(this)
+        transportBlockPersistence.load(transportBlockRegistry)
+
+        logger.atlasInfo("Transport system initialized with ${TransportBlockFactory.getRegisteredBlockIds().size} block types")
+    }
+
+    private fun transportDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
+        return listOf(
+            com.coderjoe.atlas.transport.block.ConveyorBelt.descriptor
+        ).associateBy { it.baseBlockId }
     }
 
     private fun powerDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {

@@ -6,6 +6,9 @@ import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.transport.TransportBlockDialog
+import com.coderjoe.atlas.transport.TransportBlockFactory
+import com.coderjoe.atlas.transport.TransportBlockRegistry
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -16,6 +19,7 @@ class AtlasPluginTest {
         TestHelper.setup()
         PowerBlockDialog.init(TestHelper.mockPlugin)
         FluidBlockDialog.init(TestHelper.mockPlugin)
+        TransportBlockDialog.init(TestHelper.mockPlugin)
     }
 
     @AfterEach
@@ -36,6 +40,12 @@ class AtlasPluginTest {
     }
 
     @Test
+    fun `transport system initializes with 4 block types`() {
+        TestHelper.initTransportFactory()
+        assertEquals(4, TransportBlockFactory.getRegisteredBlockIds().size)
+    }
+
+    @Test
     fun `power registry is set after creation`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         assertNotNull(PowerBlockRegistry.instance)
@@ -50,10 +60,18 @@ class AtlasPluginTest {
     }
 
     @Test
+    fun `transport registry is set after creation`() {
+        val registry = TransportBlockRegistry(TestHelper.mockPlugin)
+        assertNotNull(TransportBlockRegistry.instance)
+        assertSame(registry, TransportBlockRegistry.instance)
+    }
+
+    @Test
     fun `dialog cleanup does not throw`() {
         assertDoesNotThrow {
             PowerBlockDialog.cleanup()
             FluidBlockDialog.cleanup()
+            TransportBlockDialog.cleanup()
         }
     }
 
@@ -71,6 +89,14 @@ class AtlasPluginTest {
         val registry = FluidBlockRegistry(TestHelper.mockPlugin)
         registry.stopAll()
         assertEquals(0, registry.getAllFluidBlocksWithIds().size)
+    }
+
+    @Test
+    fun `stopAll clears transport blocks`() {
+        TestHelper.initTransportFactory()
+        val registry = TransportBlockRegistry(TestHelper.mockPlugin)
+        registry.stopAll()
+        assertEquals(0, registry.getAllTransportBlocksWithIds().size)
     }
 
     @Test

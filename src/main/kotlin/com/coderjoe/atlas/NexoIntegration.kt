@@ -12,6 +12,7 @@ class NexoIntegration(private val plugin: JavaPlugin) {
     fun initialize() {
         copyItemConfigurations()
         copyTextures()
+        copyModels()
         copyRecipes()
         plugin.logger.atlasInfo("Atlas Nexo integration initialized")
     }
@@ -75,6 +76,28 @@ class NexoIntegration(private val plugin: JavaPlugin) {
                     ?: emptyList()
             }
             else -> emptyList()
+        }
+    }
+
+    private fun copyModels() {
+        val modelsFolder = File(nexoFolder, "pack/assets/atlas/models/block")
+        if (!modelsFolder.exists()) {
+            modelsFolder.mkdirs()
+        }
+
+        val prefix = "nexo/pack/assets/atlas/models/block/"
+        val modelPaths = discoverResources(prefix, ".json")
+
+        for (resourcePath in modelPaths) {
+            val fileName = resourcePath.substringAfterLast("/")
+            val modelFile = File(modelsFolder, fileName)
+            plugin.saveResource(resourcePath, true)
+            val sourceFile = File(plugin.dataFolder, resourcePath)
+            if (sourceFile.exists()) {
+                sourceFile.copyTo(modelFile, overwrite = true)
+                sourceFile.delete()
+                plugin.logger.atlasInfo("Copied ${fileName.removeSuffix(".json")} model to Nexo")
+            }
         }
     }
 

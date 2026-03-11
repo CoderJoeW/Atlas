@@ -2709,3 +2709,154 @@ lava_generator_active:
         loots:
           - nexo_item: lava_generator
             probability: 1.0
+
+# ─── Conveyor Belt ────────────────────────────────────────────────
+conveyor_belt:
+  itemname: "<gradient:#A0A0A0:#606060>Conveyor Belt"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/conveyor_belt
+    textures:
+      north: atlas:block/conveyor_belt_front
+      south: atlas:block/conveyor_belt_back
+      east: atlas:block/conveyor_belt_side
+      west: atlas:block/conveyor_belt_side
+      up: atlas:block/conveyor_belt_top_north
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 44
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: conveyor_belt
+            probability: 1.0
+
+conveyor_belt_north:
+  itemname: "<gradient:#A0A0A0:#606060>Conveyor Belt"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/conveyor_belt
+    textures:
+      north: atlas:block/conveyor_belt_front
+      south: atlas:block/conveyor_belt_back
+      east: atlas:block/conveyor_belt_side
+      west: atlas:block/conveyor_belt_side
+      up: atlas:block/conveyor_belt_top_north
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 45
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: conveyor_belt
+            probability: 1.0
+
+conveyor_belt_south:
+  itemname: "<gradient:#A0A0A0:#606060>Conveyor Belt"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/conveyor_belt
+    textures:
+      north: atlas:block/conveyor_belt_back
+      south: atlas:block/conveyor_belt_front
+      east: atlas:block/conveyor_belt_side
+      west: atlas:block/conveyor_belt_side
+      up: atlas:block/conveyor_belt_top_south
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 46
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: conveyor_belt
+            probability: 1.0
+
+conveyor_belt_east:
+  itemname: "<gradient:#A0A0A0:#606060>Conveyor Belt"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/conveyor_belt
+    textures:
+      north: atlas:block/conveyor_belt_side
+      south: atlas:block/conveyor_belt_side
+      east: atlas:block/conveyor_belt_front
+      west: atlas:block/conveyor_belt_back
+      up: atlas:block/conveyor_belt_top_east
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 47
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: conveyor_belt
+            probability: 1.0
+
+conveyor_belt_west:
+  itemname: "<gradient:#A0A0A0:#606060>Conveyor Belt"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/conveyor_belt
+    textures:
+      north: atlas:block/conveyor_belt_side
+      south: atlas:block/conveyor_belt_side
+      east: atlas:block/conveyor_belt_back
+      west: atlas:block/conveyor_belt_front
+      up: atlas:block/conveyor_belt_top_west
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 48
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: conveyor_belt
+            probability: 1.0

@@ -107,3 +107,15 @@ lava_generator_recipe:
     C:
       amount: 1
       minecraft_type: MAGMA_BLOCK
+
+conveyor_belt_recipe:
+  result:
+    nexo_item: conveyor_belt
+    amount: 4
+  ingredients:
+    A:
+      amount: 3
+      minecraft_type: IRON_INGOT
+    B:
+      amount: 3
+      minecraft_type: REDSTONE
