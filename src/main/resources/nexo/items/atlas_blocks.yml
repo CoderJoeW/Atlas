@@ -2860,3 +2860,273 @@ conveyor_belt_west:
         loots:
           - nexo_item: conveyor_belt
             probability: 1.0
+
+auto_smelter:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ns
+    textures:
+      north: atlas:block/auto_smelter_front
+      south: atlas:block/auto_smelter_back
+      east: atlas:block/auto_smelter_side
+      west: atlas:block/auto_smelter_side
+      up: atlas:block/auto_smelter_top_north
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 49
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0
+
+auto_smelter_north:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ns
+    textures:
+      north: atlas:block/auto_smelter_front
+      south: atlas:block/auto_smelter_back
+      east: atlas:block/auto_smelter_side
+      west: atlas:block/auto_smelter_side
+      up: atlas:block/auto_smelter_top_north
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 50
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0
+
+auto_smelter_south:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ns
+    textures:
+      north: atlas:block/auto_smelter_back
+      south: atlas:block/auto_smelter_front
+      east: atlas:block/auto_smelter_side
+      west: atlas:block/auto_smelter_side
+      up: atlas:block/auto_smelter_top_south
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 51
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0
+
+auto_smelter_east:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ew
+    textures:
+      north: atlas:block/auto_smelter_side
+      south: atlas:block/auto_smelter_side
+      east: atlas:block/auto_smelter_front
+      west: atlas:block/auto_smelter_back
+      up: atlas:block/auto_smelter_top_east
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 52
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0
+
+auto_smelter_west:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ew
+    textures:
+      north: atlas:block/auto_smelter_side
+      south: atlas:block/auto_smelter_side
+      east: atlas:block/auto_smelter_back
+      west: atlas:block/auto_smelter_front
+      up: atlas:block/auto_smelter_top_west
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 53
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0
+
+auto_smelter_north_on:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ns_on
+    textures:
+      north: atlas:block/auto_smelter_front
+      south: atlas:block/auto_smelter_back
+      east: atlas:block/auto_smelter_side
+      west: atlas:block/auto_smelter_side
+      up: atlas:block/auto_smelter_top_north
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 54
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0
+
+auto_smelter_south_on:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ns_on
+    textures:
+      north: atlas:block/auto_smelter_back
+      south: atlas:block/auto_smelter_front
+      east: atlas:block/auto_smelter_side
+      west: atlas:block/auto_smelter_side
+      up: atlas:block/auto_smelter_top_south
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 55
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0
+
+auto_smelter_east_on:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ew_on
+    textures:
+      north: atlas:block/auto_smelter_side
+      south: atlas:block/auto_smelter_side
+      east: atlas:block/auto_smelter_front
+      west: atlas:block/auto_smelter_back
+      up: atlas:block/auto_smelter_top_east
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 56
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0
+
+auto_smelter_west_on:
+  itemname: "<gradient:#FF6600:#CC3300>Auto Smelter"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: atlas:block/auto_smelter_ew_on
+    textures:
+      north: atlas:block/auto_smelter_side
+      south: atlas:block/auto_smelter_side
+      east: atlas:block/auto_smelter_back
+      west: atlas:block/auto_smelter_front
+      up: atlas:block/auto_smelter_top_west
+      down: atlas:block/conveyor_belt_bottom
+  Mechanics:
+    custom_block:
+      type: CHORUSBLOCK
+      custom_variation: 57
+      hardness: 3
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: auto_smelter
+            probability: 1.0

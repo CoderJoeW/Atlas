@@ -15,6 +15,7 @@ import com.coderjoe.atlas.transport.TransportBlock
 import com.coderjoe.atlas.transport.TransportBlockFactory
 import com.coderjoe.atlas.transport.TransportBlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
+import com.coderjoe.atlas.power.block.AutoSmelter
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
@@ -170,7 +171,7 @@ object TestHelper {
         PowerBlockFactory.registerFromDescriptors(listOf(
             SmallSolarPanel.descriptor, SmallDrill.descriptor,
             SmallBattery.descriptor, PowerCable.descriptor,
-            LavaGenerator.descriptor
+            LavaGenerator.descriptor, AutoSmelter.descriptor
         ))
     }
 
