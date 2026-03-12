@@ -23,6 +23,7 @@ object GuideBook {
     private const val FLUID_PIPE = "\uE106"
     private const val FLUID_CONTAINER = "\uE107"
     private const val CONVEYOR_BELT = "\uE108"
+    private const val AUTO_SMELTER = "\uE109"
 
     fun create(): ItemStack {
         val book = ItemStack(Material.WRITTEN_BOOK)
@@ -208,14 +209,26 @@ object GuideBook {
                 .append(Component.text("place after a drill\nto auto-collect mined\nblocks.", darkGray))
                 .build(),
 
-            // Page 13: Tips
+            // Page 13: Auto Smelter
+            Component.text()
+                .append(Component.text("Auto Smelter\n", Style.style(TextDecoration.BOLD).color(darkGreen)))
+                .append(Component.text("\n"))
+                .append(Component.text(AUTO_SMELTER))
+                .append(Component.text(" "))
+                .append(Component.text("Auto Smelter\n", Style.style(TextDecoration.BOLD).color(darkGreen)))
+                .append(Component.text("\nSmelts items passing\nthrough it. Conveyor\nbelt on the bottom,\nfire chamber on top.\n\n", darkGray))
+                .append(Component.text("Power cost: ", bold))
+                .append(Component.text("2 per item", darkGray))
+                .build(),
+
+            // Page 14: Tips
             Component.text()
                 .append(Component.text("Tips & Tricks\n", Style.style(TextDecoration.BOLD).color(darkRed)))
                 .append(Component.text("\n"))
                 .append(Component.text("Lava power pipeline:\n", bold))
                 .append(Component.text("Pump > Pipe >\nContainer > Lava Gen\n\n", darkGray))
                 .append(Component.text("Auto-mining:\n", bold))
-                .append(Component.text("Drill + Conveyor Belt\ncollects drops for you\n\n", darkGray))
+                .append(Component.text("Drill + Conveyor Belt\n+ Auto Smelter for\nauto ore processing\n\n", darkGray))
                 .append(Component.text("Placement:\n", bold))
                 .append(Component.text("blocks face where you\nlook. The pull direction\nis always from behind.", darkGray))
                 .build()

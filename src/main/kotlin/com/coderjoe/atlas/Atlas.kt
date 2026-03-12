@@ -179,7 +179,8 @@ class Atlas : JavaPlugin() {
             com.coderjoe.atlas.power.block.SmallDrill.descriptor,
             com.coderjoe.atlas.power.block.SmallBattery.descriptor,
             com.coderjoe.atlas.power.block.PowerCable.descriptor,
-            com.coderjoe.atlas.power.block.LavaGenerator.descriptor
+            com.coderjoe.atlas.power.block.LavaGenerator.descriptor,
+            com.coderjoe.atlas.power.block.AutoSmelter.descriptor
         ).associateBy { it.baseBlockId }
     }
 

@@ -119,3 +119,18 @@ conveyor_belt_recipe:
     B:
       amount: 3
       minecraft_type: REDSTONE
+
+auto_smelter_recipe:
+  result:
+    nexo_item: auto_smelter
+    amount: 1
+  ingredients:
+    A:
+      amount: 3
+      minecraft_type: IRON_INGOT
+    B:
+      amount: 3
+      minecraft_type: REDSTONE
+    C:
+      amount: 1
+      minecraft_type: FURNACE

@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.power.block.AutoSmelter
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
@@ -125,6 +126,7 @@ object PowerBlockDialog {
         is SmallDrill -> "Small Drill"
         is PowerCable -> "Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         is LavaGenerator -> "Lava Generator"
+        is AutoSmelter -> "Auto Smelter (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         else -> "Power Block"
     }
 
@@ -168,6 +170,8 @@ object PowerBlockDialog {
             is PowerCable -> Component.text("Cable - transfers power in facing direction")
                 .color(NamedTextColor.GRAY)
             is LavaGenerator -> Component.text("Generator - produces ${LavaGenerator.POWER_PER_LAVA} power per lava unit")
+                .color(NamedTextColor.GRAY)
+            is AutoSmelter -> Component.text("Machine - smelts items passing through, consumes ${AutoSmelter.POWER_PER_SMELT} power/item")
                 .color(NamedTextColor.GRAY)
             else -> Component.text("Power block")
                 .color(NamedTextColor.GRAY)
