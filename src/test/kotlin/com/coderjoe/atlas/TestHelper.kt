@@ -20,6 +20,7 @@ import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
+import com.coderjoe.atlas.power.block.MultiPowerCable
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.mockk.*
 import org.bukkit.Location
@@ -171,7 +172,8 @@ object TestHelper {
         PowerBlockFactory.registerFromDescriptors(listOf(
             SmallSolarPanel.descriptor, SmallDrill.descriptor,
             SmallBattery.descriptor, PowerCable.descriptor,
-            LavaGenerator.descriptor, AutoSmelter.descriptor
+            LavaGenerator.descriptor, AutoSmelter.descriptor,
+            MultiPowerCable.descriptor
         ))
     }
 

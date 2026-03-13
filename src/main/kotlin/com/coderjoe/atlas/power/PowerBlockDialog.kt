@@ -7,6 +7,7 @@ import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
+import com.coderjoe.atlas.power.block.MultiPowerCable
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
@@ -127,6 +128,7 @@ object PowerBlockDialog {
         is PowerCable -> "Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         is LavaGenerator -> "Lava Generator"
         is AutoSmelter -> "Auto Smelter (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+        is MultiPowerCable -> "Multi Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         else -> "Power Block"
     }
 
@@ -172,6 +174,8 @@ object PowerBlockDialog {
             is LavaGenerator -> Component.text("Generator - produces ${LavaGenerator.POWER_PER_LAVA} power per lava unit")
                 .color(NamedTextColor.GRAY)
             is AutoSmelter -> Component.text("Machine - smelts items passing through, consumes ${AutoSmelter.POWER_PER_SMELT} power/item")
+                .color(NamedTextColor.GRAY)
+            is MultiPowerCable -> Component.text("Cable - distributes power to all adjacent faces")
                 .color(NamedTextColor.GRAY)
             else -> Component.text("Power block")
                 .color(NamedTextColor.GRAY)
