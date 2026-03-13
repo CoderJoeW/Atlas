@@ -3130,3 +3130,388 @@ auto_smelter_west_on:
         loots:
           - nexo_item: auto_smelter
             probability: 1.0
+
+multi_power_cable:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_all
+    textures:
+      all: atlas:block/multi_power_cable_side
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 154
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_north:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_front
+      south: atlas:block/multi_power_cable_back
+      east: atlas:block/multi_power_cable_side
+      west: atlas:block/multi_power_cable_side
+      up: atlas:block/multi_power_cable_cap
+      down: atlas:block/multi_power_cable_cap
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 155
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_south:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_back
+      south: atlas:block/multi_power_cable_front
+      east: atlas:block/multi_power_cable_side
+      west: atlas:block/multi_power_cable_side
+      up: atlas:block/multi_power_cable_cap
+      down: atlas:block/multi_power_cable_cap
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 156
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_east:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_side
+      south: atlas:block/multi_power_cable_side
+      east: atlas:block/multi_power_cable_front
+      west: atlas:block/multi_power_cable_back
+      up: atlas:block/multi_power_cable_cap
+      down: atlas:block/multi_power_cable_cap
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 157
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_west:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_side
+      south: atlas:block/multi_power_cable_side
+      east: atlas:block/multi_power_cable_back
+      west: atlas:block/multi_power_cable_front
+      up: atlas:block/multi_power_cable_cap
+      down: atlas:block/multi_power_cable_cap
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 158
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_up:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_side
+      south: atlas:block/multi_power_cable_side
+      east: atlas:block/multi_power_cable_side
+      west: atlas:block/multi_power_cable_side
+      up: atlas:block/multi_power_cable_front
+      down: atlas:block/multi_power_cable_back
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 159
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_down:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_side
+      south: atlas:block/multi_power_cable_side
+      east: atlas:block/multi_power_cable_side
+      west: atlas:block/multi_power_cable_side
+      up: atlas:block/multi_power_cable_back
+      down: atlas:block/multi_power_cable_front
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 160
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_north_powered:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_front_powered
+      south: atlas:block/multi_power_cable_back_powered
+      east: atlas:block/multi_power_cable_side_powered
+      west: atlas:block/multi_power_cable_side_powered
+      up: atlas:block/multi_power_cable_cap_powered
+      down: atlas:block/multi_power_cable_cap_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 161
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_south_powered:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_back_powered
+      south: atlas:block/multi_power_cable_front_powered
+      east: atlas:block/multi_power_cable_side_powered
+      west: atlas:block/multi_power_cable_side_powered
+      up: atlas:block/multi_power_cable_cap_powered
+      down: atlas:block/multi_power_cable_cap_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 162
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_east_powered:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_side_powered
+      south: atlas:block/multi_power_cable_side_powered
+      east: atlas:block/multi_power_cable_front_powered
+      west: atlas:block/multi_power_cable_back_powered
+      up: atlas:block/multi_power_cable_cap_powered
+      down: atlas:block/multi_power_cable_cap_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 163
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_west_powered:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_side_powered
+      south: atlas:block/multi_power_cable_side_powered
+      east: atlas:block/multi_power_cable_back_powered
+      west: atlas:block/multi_power_cable_front_powered
+      up: atlas:block/multi_power_cable_cap_powered
+      down: atlas:block/multi_power_cable_cap_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 164
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_up_powered:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_side_powered
+      south: atlas:block/multi_power_cable_side_powered
+      east: atlas:block/multi_power_cable_side_powered
+      west: atlas:block/multi_power_cable_side_powered
+      up: atlas:block/multi_power_cable_front_powered
+      down: atlas:block/multi_power_cable_back_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 165
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.hit
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
+
+multi_power_cable_down_powered:
+  itemname: "<gradient:#FFD700:#FF8C00>Multi Power Cable"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/multi_power_cable_side_powered
+      south: atlas:block/multi_power_cable_side_powered
+      east: atlas:block/multi_power_cable_side_powered
+      west: atlas:block/multi_power_cable_side_powered
+      up: atlas:block/multi_power_cable_back_powered
+      down: atlas:block/multi_power_cable_front_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 166
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: multi_power_cable
+            probability: 1.0
