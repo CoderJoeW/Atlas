@@ -4,6 +4,7 @@ import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
+import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPump
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
@@ -71,6 +72,7 @@ object FluidBlockDialog {
         is FluidPump -> "Fluid Pump"
         is FluidPipe -> "Fluid Pipe (${fluidBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         is FluidContainer -> "Fluid Container (${fluidBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+        is FluidMerger -> "Fluid Merger (${fluidBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         else -> "Fluid Block"
     }
 
@@ -106,6 +108,8 @@ object FluidBlockDialog {
             is FluidPipe -> Component.text("Pipe - transports fluid in facing direction")
                 .color(NamedTextColor.GRAY)
             is FluidContainer -> Component.text("Container - stores up to ${FluidContainer.MAX_CAPACITY} units of fluid")
+                .color(NamedTextColor.GRAY)
+            is FluidMerger -> Component.text("Merger - merges fluid from all sides, outputs in facing direction")
                 .color(NamedTextColor.GRAY)
             else -> Component.text("Fluid block")
                 .color(NamedTextColor.GRAY)

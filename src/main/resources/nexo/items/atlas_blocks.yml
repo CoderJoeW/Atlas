@@ -2649,6 +2649,572 @@ fluid_container_down_lava_full:
           - nexo_item: fluid_container
             probability: 1.0
 
+# ─── Fluid Merger ────────────────────────────────────────────────
+fluid_merger:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_all
+    textures:
+      all: atlas:block/fluid_merger_side
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 184
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_north:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_front
+      south: atlas:block/fluid_merger_back
+      east: atlas:block/fluid_merger_side
+      west: atlas:block/fluid_merger_side
+      up: atlas:block/fluid_merger_top
+      down: atlas:block/fluid_merger_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 185
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_south:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_back
+      south: atlas:block/fluid_merger_front
+      east: atlas:block/fluid_merger_side
+      west: atlas:block/fluid_merger_side
+      up: atlas:block/fluid_merger_top
+      down: atlas:block/fluid_merger_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 186
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_east:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side
+      south: atlas:block/fluid_merger_side
+      east: atlas:block/fluid_merger_front
+      west: atlas:block/fluid_merger_back
+      up: atlas:block/fluid_merger_top
+      down: atlas:block/fluid_merger_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 187
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_west:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side
+      south: atlas:block/fluid_merger_side
+      east: atlas:block/fluid_merger_back
+      west: atlas:block/fluid_merger_front
+      up: atlas:block/fluid_merger_top
+      down: atlas:block/fluid_merger_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 188
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_up:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side
+      south: atlas:block/fluid_merger_side
+      east: atlas:block/fluid_merger_side
+      west: atlas:block/fluid_merger_side
+      up: atlas:block/fluid_merger_front
+      down: atlas:block/fluid_merger_back
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 189
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_down:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side
+      south: atlas:block/fluid_merger_side
+      east: atlas:block/fluid_merger_side
+      west: atlas:block/fluid_merger_side
+      up: atlas:block/fluid_merger_back
+      down: atlas:block/fluid_merger_front
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 190
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_north_filled:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_front_water
+      south: atlas:block/fluid_merger_back_water
+      east: atlas:block/fluid_merger_side_water
+      west: atlas:block/fluid_merger_side_water
+      up: atlas:block/fluid_merger_top_water
+      down: atlas:block/fluid_merger_bottom_water
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 191
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_south_filled:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_back_water
+      south: atlas:block/fluid_merger_front_water
+      east: atlas:block/fluid_merger_side_water
+      west: atlas:block/fluid_merger_side_water
+      up: atlas:block/fluid_merger_top_water
+      down: atlas:block/fluid_merger_bottom_water
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 192
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_east_filled:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side_water
+      south: atlas:block/fluid_merger_side_water
+      east: atlas:block/fluid_merger_front_water
+      west: atlas:block/fluid_merger_back_water
+      up: atlas:block/fluid_merger_top_water
+      down: atlas:block/fluid_merger_bottom_water
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 193
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_west_filled:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side_water
+      south: atlas:block/fluid_merger_side_water
+      east: atlas:block/fluid_merger_back_water
+      west: atlas:block/fluid_merger_front_water
+      up: atlas:block/fluid_merger_top_water
+      down: atlas:block/fluid_merger_bottom_water
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 194
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_up_filled:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side_water
+      south: atlas:block/fluid_merger_side_water
+      east: atlas:block/fluid_merger_side_water
+      west: atlas:block/fluid_merger_side_water
+      up: atlas:block/fluid_merger_front_water
+      down: atlas:block/fluid_merger_back_water
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 195
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_down_filled:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side_water
+      south: atlas:block/fluid_merger_side_water
+      east: atlas:block/fluid_merger_side_water
+      west: atlas:block/fluid_merger_side_water
+      up: atlas:block/fluid_merger_back_water
+      down: atlas:block/fluid_merger_front_water
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 196
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_north_filled_lava:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_front_lava
+      south: atlas:block/fluid_merger_back_lava
+      east: atlas:block/fluid_merger_side_lava
+      west: atlas:block/fluid_merger_side_lava
+      up: atlas:block/fluid_merger_top_lava
+      down: atlas:block/fluid_merger_bottom_lava
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 197
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_south_filled_lava:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_back_lava
+      south: atlas:block/fluid_merger_front_lava
+      east: atlas:block/fluid_merger_side_lava
+      west: atlas:block/fluid_merger_side_lava
+      up: atlas:block/fluid_merger_top_lava
+      down: atlas:block/fluid_merger_bottom_lava
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 198
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_east_filled_lava:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side_lava
+      south: atlas:block/fluid_merger_side_lava
+      east: atlas:block/fluid_merger_front_lava
+      west: atlas:block/fluid_merger_back_lava
+      up: atlas:block/fluid_merger_top_lava
+      down: atlas:block/fluid_merger_bottom_lava
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 199
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_west_filled_lava:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side_lava
+      south: atlas:block/fluid_merger_side_lava
+      east: atlas:block/fluid_merger_back_lava
+      west: atlas:block/fluid_merger_front_lava
+      up: atlas:block/fluid_merger_top_lava
+      down: atlas:block/fluid_merger_bottom_lava
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 200
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_up_filled_lava:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side_lava
+      south: atlas:block/fluid_merger_side_lava
+      east: atlas:block/fluid_merger_side_lava
+      west: atlas:block/fluid_merger_side_lava
+      up: atlas:block/fluid_merger_front_lava
+      down: atlas:block/fluid_merger_back_lava
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 201
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
+fluid_merger_down_filled_lava:
+  itemname: "<gradient:#2ECC71:#27AE60>Fluid Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/fluid_merger_side_lava
+      south: atlas:block/fluid_merger_side_lava
+      east: atlas:block/fluid_merger_side_lava
+      west: atlas:block/fluid_merger_side_lava
+      up: atlas:block/fluid_merger_back_lava
+      down: atlas:block/fluid_merger_front_lava
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 202
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: fluid_merger
+            probability: 1.0
+
 # ─── Lava Generator ───────────────────────────────────────────────
 lava_generator:
   itemname: "<gradient:#FF4500:#FF8C00>Lava Generator"
@@ -3514,4 +4080,512 @@ multi_power_cable_down_powered:
         silktouch: false
         loots:
           - nexo_item: multi_power_cable
+            probability: 1.0
+
+# ─── Cobblestone Generator ──────────────────────────────────────
+cobblestone_generator:
+  itemname: "<gradient:#8B8B8B:#C0C0C0>Cobblestone Generator"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/cobblestone_generator_side
+      south: atlas:block/cobblestone_generator_side
+      east: atlas:block/cobblestone_generator_side
+      west: atlas:block/cobblestone_generator_side
+      up: atlas:block/cobblestone_generator_top
+      down: atlas:block/cobblestone_generator_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 167
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: cobblestone_generator
+            probability: 1.0
+
+cobblestone_generator_active:
+  itemname: "<gradient:#8B8B8B:#C0C0C0>Cobblestone Generator"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/cobblestone_generator_side_active
+      south: atlas:block/cobblestone_generator_side_active
+      east: atlas:block/cobblestone_generator_side_active
+      west: atlas:block/cobblestone_generator_side_active
+      up: atlas:block/cobblestone_generator_top_active
+      down: atlas:block/cobblestone_generator_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 168
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: cobblestone_generator
+            probability: 1.0
+
+# ─── Obsidian Generator ─────────────────────────────────────────
+obsidian_generator:
+  itemname: "<gradient:#2D0047:#6A0DAD>Obsidian Generator"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/obsidian_generator_side
+      south: atlas:block/obsidian_generator_side
+      east: atlas:block/obsidian_generator_side
+      west: atlas:block/obsidian_generator_side
+      up: atlas:block/obsidian_generator_top
+      down: atlas:block/obsidian_generator_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 169
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: obsidian_generator
+            probability: 1.0
+
+obsidian_generator_active:
+  itemname: "<gradient:#2D0047:#6A0DAD>Obsidian Generator"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/obsidian_generator_side_active
+      south: atlas:block/obsidian_generator_side_active
+      east: atlas:block/obsidian_generator_side_active
+      west: atlas:block/obsidian_generator_side_active
+      up: atlas:block/obsidian_generator_top_active
+      down: atlas:block/obsidian_generator_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 170
+      hardness: 5
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: obsidian_generator
+            probability: 1.0
+
+# ─── Power Merger ────────────────────────────────────────────────
+power_merger:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube_all
+    textures:
+      all: atlas:block/power_merger_side
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 171
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_north:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_front
+      south: atlas:block/power_merger_back
+      east: atlas:block/power_merger_side
+      west: atlas:block/power_merger_side
+      up: atlas:block/power_merger_top
+      down: atlas:block/power_merger_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 172
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_south:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_back
+      south: atlas:block/power_merger_front
+      east: atlas:block/power_merger_side
+      west: atlas:block/power_merger_side
+      up: atlas:block/power_merger_top
+      down: atlas:block/power_merger_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 173
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_east:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_side
+      south: atlas:block/power_merger_side
+      east: atlas:block/power_merger_front
+      west: atlas:block/power_merger_back
+      up: atlas:block/power_merger_top
+      down: atlas:block/power_merger_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 174
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_west:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_side
+      south: atlas:block/power_merger_side
+      east: atlas:block/power_merger_back
+      west: atlas:block/power_merger_front
+      up: atlas:block/power_merger_top
+      down: atlas:block/power_merger_bottom
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 175
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_up:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_side
+      south: atlas:block/power_merger_side
+      east: atlas:block/power_merger_side
+      west: atlas:block/power_merger_side
+      up: atlas:block/power_merger_front
+      down: atlas:block/power_merger_back
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 176
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_down:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_side
+      south: atlas:block/power_merger_side
+      east: atlas:block/power_merger_side
+      west: atlas:block/power_merger_side
+      up: atlas:block/power_merger_back
+      down: atlas:block/power_merger_front
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 177
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_north_powered:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_front_powered
+      south: atlas:block/power_merger_back_powered
+      east: atlas:block/power_merger_side_powered
+      west: atlas:block/power_merger_side_powered
+      up: atlas:block/power_merger_top_powered
+      down: atlas:block/power_merger_bottom_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 178
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_south_powered:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_back_powered
+      south: atlas:block/power_merger_front_powered
+      east: atlas:block/power_merger_side_powered
+      west: atlas:block/power_merger_side_powered
+      up: atlas:block/power_merger_top_powered
+      down: atlas:block/power_merger_bottom_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 179
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_east_powered:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_side_powered
+      south: atlas:block/power_merger_side_powered
+      east: atlas:block/power_merger_front_powered
+      west: atlas:block/power_merger_back_powered
+      up: atlas:block/power_merger_top_powered
+      down: atlas:block/power_merger_bottom_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 180
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_west_powered:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_side_powered
+      south: atlas:block/power_merger_side_powered
+      east: atlas:block/power_merger_back_powered
+      west: atlas:block/power_merger_front_powered
+      up: atlas:block/power_merger_top_powered
+      down: atlas:block/power_merger_bottom_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 181
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_up_powered:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_side_powered
+      south: atlas:block/power_merger_side_powered
+      east: atlas:block/power_merger_side_powered
+      west: atlas:block/power_merger_side_powered
+      up: atlas:block/power_merger_front_powered
+      down: atlas:block/power_merger_back_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 182
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
+            probability: 1.0
+
+power_merger_down_powered:
+  itemname: "<gradient:#00CED1:#008B8B>Power Merger"
+  material: paper
+  Pack:
+    generate_model: true
+    parent_model: block/cube
+    textures:
+      north: atlas:block/power_merger_side_powered
+      south: atlas:block/power_merger_side_powered
+      east: atlas:block/power_merger_side_powered
+      west: atlas:block/power_merger_side_powered
+      up: atlas:block/power_merger_back_powered
+      down: atlas:block/power_merger_front_powered
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      custom_variation: 183
+      hardness: 2
+      block_sounds:
+        break_sound: block.metal.break
+        place_sound: block.metal.place
+        hit_sound: block.metal.hit
+        step_sound: block.metal.step
+        fall_sound: block.metal.fall
+      drop:
+        silktouch: false
+        loots:
+          - nexo_item: power_merger
             probability: 1.0

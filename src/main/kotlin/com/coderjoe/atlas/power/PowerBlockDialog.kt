@@ -8,6 +8,9 @@ import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.MultiPowerCable
+import com.coderjoe.atlas.power.block.CobblestoneGenerator
+import com.coderjoe.atlas.power.block.ObsidianGenerator
+import com.coderjoe.atlas.power.block.PowerMerger
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
@@ -129,6 +132,9 @@ object PowerBlockDialog {
         is LavaGenerator -> "Lava Generator"
         is AutoSmelter -> "Auto Smelter (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         is MultiPowerCable -> "Multi Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+        is CobblestoneGenerator -> "Cobblestone Generator"
+        is ObsidianGenerator -> "Obsidian Generator"
+        is PowerMerger -> "Power Merger (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         else -> "Power Block"
     }
 
@@ -176,6 +182,12 @@ object PowerBlockDialog {
             is AutoSmelter -> Component.text("Machine - smelts items passing through, consumes ${AutoSmelter.POWER_PER_SMELT} power/item")
                 .color(NamedTextColor.GRAY)
             is MultiPowerCable -> Component.text("Cable - distributes power to all adjacent faces")
+                .color(NamedTextColor.GRAY)
+            is CobblestoneGenerator -> Component.text("Machine - consumes ${CobblestoneGenerator.POWER_COST} power + water + lava → cobblestone")
+                .color(NamedTextColor.GRAY)
+            is ObsidianGenerator -> Component.text("Machine - consumes ${ObsidianGenerator.POWER_COST} power + water + lava → obsidian")
+                .color(NamedTextColor.GRAY)
+            is PowerMerger -> Component.text("Cable - merges power from all sides, outputs in facing direction")
                 .color(NamedTextColor.GRAY)
             else -> Component.text("Power block")
                 .color(NamedTextColor.GRAY)
