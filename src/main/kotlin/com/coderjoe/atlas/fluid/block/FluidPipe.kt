@@ -95,6 +95,13 @@ class FluidPipe(location: Location, override val facing: BlockFace) : FluidBlock
                     plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer")
                 }
             }
+            is FluidMerger -> {
+                if (source.hasFluid()) {
+                    val fluid = source.removeFluid()
+                    storeFluid(fluid)
+                    plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidMerger")
+                }
+            }
         }
     }
 }

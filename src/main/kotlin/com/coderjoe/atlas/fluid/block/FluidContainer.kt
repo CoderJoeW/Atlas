@@ -160,6 +160,16 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                     }
                 }
             }
+            is FluidMerger -> {
+                if (source.hasFluid()) {
+                    val fluid = source.removeFluid()
+                    if (storeFluid(fluid)) {
+                        plugin.logger.atlasInfo("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidMerger")
+                    } else {
+                        source.storeFluid(fluid)
+                    }
+                }
+            }
         }
     }
 
