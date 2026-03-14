@@ -6,6 +6,7 @@ import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.fluid.block.FluidContainer
+import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
@@ -80,6 +81,12 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
             }
             is FluidContainer -> {
                 if (source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == FluidType.LAVA) {
+                    source.removeFluid()
+                    return true
+                }
+            }
+            is FluidMerger -> {
+                if (source.hasFluid() && source.storedFluid == FluidType.LAVA) {
                     source.removeFluid()
                     return true
                 }

@@ -195,3 +195,75 @@ auto_smelter_recipe:
       minecraft_type: REDSTONE
     G:
       minecraft_type: FURNACE
+
+cobblestone_generator_recipe:
+  result:
+    nexo_item: cobblestone_generator
+    amount: 1
+  ingredients:
+    A:
+      minecraft_type: IRON_INGOT
+    B:
+      minecraft_type: IRON_INGOT
+    C:
+      minecraft_type: IRON_INGOT
+    D:
+      minecraft_type: REDSTONE
+    E:
+      minecraft_type: REDSTONE
+    F:
+      minecraft_type: REDSTONE
+    G:
+      minecraft_type: COBBLESTONE
+
+fluid_merger_recipe:
+  result:
+    nexo_item: fluid_merger
+    amount: 1
+  ingredients:
+    A:
+      minecraft_type: IRON_INGOT
+    B:
+      minecraft_type: IRON_INGOT
+    C:
+      minecraft_type: IRON_INGOT
+    D:
+      minecraft_type: IRON_INGOT
+    E:
+      minecraft_type: BUCKET
+
+power_merger_recipe:
+  result:
+    nexo_item: power_merger
+    amount: 1
+  ingredients:
+    A:
+      minecraft_type: COPPER_INGOT
+    B:
+      minecraft_type: COPPER_INGOT
+    C:
+      minecraft_type: COPPER_INGOT
+    D:
+      minecraft_type: COPPER_INGOT
+    E:
+      minecraft_type: REDSTONE
+
+obsidian_generator_recipe:
+  result:
+    nexo_item: obsidian_generator
+    amount: 1
+  ingredients:
+    A:
+      minecraft_type: IRON_INGOT
+    B:
+      minecraft_type: IRON_INGOT
+    C:
+      minecraft_type: IRON_INGOT
+    D:
+      minecraft_type: REDSTONE
+    E:
+      minecraft_type: REDSTONE
+    F:
+      minecraft_type: REDSTONE
+    G:
+      minecraft_type: OBSIDIAN

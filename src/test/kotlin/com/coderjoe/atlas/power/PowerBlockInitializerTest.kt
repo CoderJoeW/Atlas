@@ -26,8 +26,8 @@ class PowerBlockRegistrationTest {
         TestHelper.initPowerFactory()
         val ids = PowerBlockFactory.getRegisteredBlockIds()
 
-        // 1 solar + 6 drill + 4 battery + 6 cable + 2 lava generator + 8 auto smelter + 12 multi power cable = 39
-        assertEquals(39, ids.size)
+        // 1 solar + 6 drill + 4 battery + 6 cable + 2 lava generator + 8 auto smelter + 12 multi power cable + 2 cobblestone generator + 2 obsidian generator + 12 power merger = 55
+        assertEquals(55, ids.size)
     }
 
     @Test

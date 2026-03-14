@@ -7,6 +7,7 @@ import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
+import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockFactory
@@ -21,6 +22,9 @@ import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.MultiPowerCable
+import com.coderjoe.atlas.power.block.CobblestoneGenerator
+import com.coderjoe.atlas.power.block.ObsidianGenerator
+import com.coderjoe.atlas.power.block.PowerMerger
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.mockk.*
 import org.bukkit.Location
@@ -173,14 +177,15 @@ object TestHelper {
             SmallSolarPanel.descriptor, SmallDrill.descriptor,
             SmallBattery.descriptor, PowerCable.descriptor,
             LavaGenerator.descriptor, AutoSmelter.descriptor,
-            MultiPowerCable.descriptor
+            MultiPowerCable.descriptor, CobblestoneGenerator.descriptor,
+            ObsidianGenerator.descriptor, PowerMerger.descriptor
         ))
     }
 
     fun initFluidFactory() {
         FluidBlockFactory.registerFromDescriptors(listOf(
             FluidPump.descriptor, FluidPipe.descriptor,
-            FluidContainer.descriptor
+            FluidContainer.descriptor, FluidMerger.descriptor
         ))
     }
 
