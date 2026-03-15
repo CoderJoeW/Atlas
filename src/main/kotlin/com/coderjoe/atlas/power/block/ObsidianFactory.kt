@@ -16,15 +16,15 @@ import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.inventory.ItemStack
 
-class CobblestoneGenerator(location: Location) : PowerBlock(location, maxStorage = 2) {
+class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 100) {
 
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
 
     companion object {
-        const val BLOCK_ID = "cobblestone_generator"
-        const val BLOCK_ID_ACTIVE = "cobblestone_generator_active"
-        const val POWER_COST = 2
+        const val BLOCK_ID = "obsidian_factory"
+        const val BLOCK_ID_ACTIVE = "obsidian_factory_active"
+        const val POWER_COST = 100
 
         private val ADJACENT_FACES = listOf(
             BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
@@ -33,12 +33,12 @@ class CobblestoneGenerator(location: Location) : PowerBlock(location, maxStorage
 
         val descriptor = BlockDescriptor(
             baseBlockId = BLOCK_ID,
-            displayName = "Cobblestone Generator",
-            description = "Machine - consumes $POWER_COST power + water + lava → cobblestone",
+            displayName = "Obsidian Factory",
+            description = "Machine - consumes $POWER_COST power + water + lava → obsidian",
             placementType = PlacementType.SIMPLE,
             directionalVariants = emptyMap(),
             allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE),
-            constructor = { loc, _ -> CobblestoneGenerator(loc) }
+            constructor = { loc, _ -> ObsidianFactory(loc) }
         )
     }
 
@@ -92,9 +92,9 @@ class CobblestoneGenerator(location: Location) : PowerBlock(location, maxStorage
 
         val world = location.world ?: return
         val dropLocation = location.clone().add(0.5, 1.0, 0.5)
-        world.dropItemNaturally(dropLocation, ItemStack(Material.COBBLESTONE))
+        world.dropItemNaturally(dropLocation, ItemStack(Material.OBSIDIAN))
 
-        plugin.logger.atlasInfo("CobblestoneGenerator at ${location.blockX},${location.blockY},${location.blockZ} produced 1 cobblestone")
+        plugin.logger.atlasInfo("ObsidianFactory at ${location.blockX},${location.blockY},${location.blockZ} produced 1 obsidian")
     }
 
     private fun hasFluidAvailable(source: com.coderjoe.atlas.fluid.FluidBlock, face: BlockFace, fluidType: FluidType): Boolean {

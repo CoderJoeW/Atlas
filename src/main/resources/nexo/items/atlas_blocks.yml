@@ -4082,20 +4082,20 @@ multi_power_cable_down_powered:
           - nexo_item: multi_power_cable
             probability: 1.0
 
-# ─── Cobblestone Generator ──────────────────────────────────────
-cobblestone_generator:
-  itemname: "<gradient:#8B8B8B:#C0C0C0>Cobblestone Generator"
+# ─── Cobblestone Factory ──────────────────────────────────────
+cobblestone_factory:
+  itemname: "<gradient:#8B8B8B:#C0C0C0>Cobblestone Factory"
   material: paper
   Pack:
     generate_model: true
     parent_model: block/cube
     textures:
-      north: atlas:block/cobblestone_generator_side
-      south: atlas:block/cobblestone_generator_side
-      east: atlas:block/cobblestone_generator_side
-      west: atlas:block/cobblestone_generator_side
-      up: atlas:block/cobblestone_generator_top
-      down: atlas:block/cobblestone_generator_bottom
+      north: atlas:block/cobblestone_factory_side
+      south: atlas:block/cobblestone_factory_side
+      east: atlas:block/cobblestone_factory_side
+      west: atlas:block/cobblestone_factory_side
+      up: atlas:block/cobblestone_factory_top
+      down: atlas:block/cobblestone_factory_bottom
   Mechanics:
     custom_block:
       type: NOTEBLOCK
@@ -4110,22 +4110,22 @@ cobblestone_generator:
       drop:
         silktouch: false
         loots:
-          - nexo_item: cobblestone_generator
+          - nexo_item: cobblestone_factory
             probability: 1.0
 
-cobblestone_generator_active:
-  itemname: "<gradient:#8B8B8B:#C0C0C0>Cobblestone Generator"
+cobblestone_factory_active:
+  itemname: "<gradient:#8B8B8B:#C0C0C0>Cobblestone Factory"
   material: paper
   Pack:
     generate_model: true
     parent_model: block/cube
     textures:
-      north: atlas:block/cobblestone_generator_side_active
-      south: atlas:block/cobblestone_generator_side_active
-      east: atlas:block/cobblestone_generator_side_active
-      west: atlas:block/cobblestone_generator_side_active
-      up: atlas:block/cobblestone_generator_top_active
-      down: atlas:block/cobblestone_generator_bottom
+      north: atlas:block/cobblestone_factory_side_active
+      south: atlas:block/cobblestone_factory_side_active
+      east: atlas:block/cobblestone_factory_side_active
+      west: atlas:block/cobblestone_factory_side_active
+      up: atlas:block/cobblestone_factory_top_active
+      down: atlas:block/cobblestone_factory_bottom
   Mechanics:
     custom_block:
       type: NOTEBLOCK
@@ -4140,23 +4140,23 @@ cobblestone_generator_active:
       drop:
         silktouch: false
         loots:
-          - nexo_item: cobblestone_generator
+          - nexo_item: cobblestone_factory
             probability: 1.0
 
-# ─── Obsidian Generator ─────────────────────────────────────────
-obsidian_generator:
-  itemname: "<gradient:#2D0047:#6A0DAD>Obsidian Generator"
+# ─── Obsidian Factory ─────────────────────────────────────────
+obsidian_factory:
+  itemname: "<gradient:#2D0047:#6A0DAD>Obsidian Factory"
   material: paper
   Pack:
     generate_model: true
     parent_model: block/cube
     textures:
-      north: atlas:block/obsidian_generator_side
-      south: atlas:block/obsidian_generator_side
-      east: atlas:block/obsidian_generator_side
-      west: atlas:block/obsidian_generator_side
-      up: atlas:block/obsidian_generator_top
-      down: atlas:block/obsidian_generator_bottom
+      north: atlas:block/obsidian_factory_side
+      south: atlas:block/obsidian_factory_side
+      east: atlas:block/obsidian_factory_side
+      west: atlas:block/obsidian_factory_side
+      up: atlas:block/obsidian_factory_top
+      down: atlas:block/obsidian_factory_bottom
   Mechanics:
     custom_block:
       type: NOTEBLOCK
@@ -4171,22 +4171,22 @@ obsidian_generator:
       drop:
         silktouch: false
         loots:
-          - nexo_item: obsidian_generator
+          - nexo_item: obsidian_factory
             probability: 1.0
 
-obsidian_generator_active:
-  itemname: "<gradient:#2D0047:#6A0DAD>Obsidian Generator"
+obsidian_factory_active:
+  itemname: "<gradient:#2D0047:#6A0DAD>Obsidian Factory"
   material: paper
   Pack:
     generate_model: true
     parent_model: block/cube
     textures:
-      north: atlas:block/obsidian_generator_side_active
-      south: atlas:block/obsidian_generator_side_active
-      east: atlas:block/obsidian_generator_side_active
-      west: atlas:block/obsidian_generator_side_active
-      up: atlas:block/obsidian_generator_top_active
-      down: atlas:block/obsidian_generator_bottom
+      north: atlas:block/obsidian_factory_side_active
+      south: atlas:block/obsidian_factory_side_active
+      east: atlas:block/obsidian_factory_side_active
+      west: atlas:block/obsidian_factory_side_active
+      up: atlas:block/obsidian_factory_top_active
+      down: atlas:block/obsidian_factory_bottom
   Mechanics:
     custom_block:
       type: NOTEBLOCK
@@ -4201,7 +4201,7 @@ obsidian_generator_active:
       drop:
         silktouch: false
         loots:
-          - nexo_item: obsidian_generator
+          - nexo_item: obsidian_factory
             probability: 1.0
 
 # ─── Power Merger ────────────────────────────────────────────────

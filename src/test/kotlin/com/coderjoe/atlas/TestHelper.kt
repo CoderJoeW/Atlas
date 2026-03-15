@@ -22,8 +22,8 @@ import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.MultiPowerCable
-import com.coderjoe.atlas.power.block.CobblestoneGenerator
-import com.coderjoe.atlas.power.block.ObsidianGenerator
+import com.coderjoe.atlas.power.block.CobblestoneFactory
+import com.coderjoe.atlas.power.block.ObsidianFactory
 import com.coderjoe.atlas.power.block.PowerMerger
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.mockk.*
@@ -177,8 +177,8 @@ object TestHelper {
             SmallSolarPanel.descriptor, SmallDrill.descriptor,
             SmallBattery.descriptor, PowerCable.descriptor,
             LavaGenerator.descriptor, AutoSmelter.descriptor,
-            MultiPowerCable.descriptor, CobblestoneGenerator.descriptor,
-            ObsidianGenerator.descriptor, PowerMerger.descriptor
+            MultiPowerCable.descriptor, CobblestoneFactory.descriptor,
+            ObsidianFactory.descriptor, PowerMerger.descriptor
         ))
     }
 
