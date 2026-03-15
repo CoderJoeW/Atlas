@@ -13,7 +13,7 @@ class BlockPersistence<T : AtlasBlock>(
     private val yamlKey: String,
     private val factory: BlockFactory<T>,
     private val serialize: (T, String) -> Map<String, Any>,
-    private val restore: (T, Map<String, Any>) -> Unit
+    private val restore: (T, Map<String, Any>) -> Unit,
 ) {
     private val dataFile = File(plugin.dataFolder, fileName)
 
@@ -26,13 +26,14 @@ class BlockPersistence<T : AtlasBlock>(
         val blockDataList = mutableListOf<Map<String, Any>>()
 
         for ((block, blockId) in blocksWithIds) {
-            val map = mutableMapOf<String, Any>(
-                "blockId" to blockId,
-                "world" to (block.location.world?.name ?: "world"),
-                "x" to block.location.blockX,
-                "y" to block.location.blockY,
-                "z" to block.location.blockZ
-            )
+            val map =
+                mutableMapOf<String, Any>(
+                    "blockId" to blockId,
+                    "world" to (block.location.world?.name ?: "world"),
+                    "x" to block.location.blockX,
+                    "y" to block.location.blockY,
+                    "z" to block.location.blockZ,
+                )
             val facing = block.facing
             if (facing != BlockFace.SELF) {
                 map["facing"] = facing.name
@@ -83,11 +84,16 @@ class BlockPersistence<T : AtlasBlock>(
                 }
 
                 val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
-                val facing = if (facingStr != null) {
-                    try { BlockFace.valueOf(facingStr) } catch (_: Exception) { BlockFace.SELF }
-                } else {
-                    BlockFace.SELF
-                }
+                val facing =
+                    if (facingStr != null) {
+                        try {
+                            BlockFace.valueOf(facingStr)
+                        } catch (_: Exception) {
+                            BlockFace.SELF
+                        }
+                    } else {
+                        BlockFace.SELF
+                    }
 
                 val block = factory.create(blockId, location, facing)
                 if (block != null) {

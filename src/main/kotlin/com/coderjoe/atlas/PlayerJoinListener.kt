@@ -5,9 +5,8 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
 class PlayerJoinListener(
-    private val resourcePackManager: ResourcePackManager
+    private val resourcePackManager: ResourcePackManager,
 ) : Listener {
-
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player

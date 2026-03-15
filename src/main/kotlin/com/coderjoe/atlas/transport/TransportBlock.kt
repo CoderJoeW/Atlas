@@ -5,9 +5,8 @@ import com.coderjoe.atlas.core.BlockRegistry
 import org.bukkit.Location
 
 abstract class TransportBlock(
-    location: Location
+    location: Location,
 ) : AtlasBlock(location) {
-
     protected abstract fun transportUpdate()
 
     override fun blockUpdate() {
