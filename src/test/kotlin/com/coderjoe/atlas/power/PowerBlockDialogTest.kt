@@ -3,8 +3,8 @@ package com.coderjoe.atlas.power
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
-import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.utility.block.SmallDrill
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.block.BlockFace
