@@ -2,12 +2,12 @@ package com.coderjoe.atlas
 
 import com.coderjoe.atlas.core.AtlasBlockListener
 import com.coderjoe.atlas.core.BlockSystem
-import com.coderjoe.atlas.guide.GuideBook
-import com.coderjoe.atlas.guide.GuideBookListener
 import com.coderjoe.atlas.fluid.FluidBlockDialog
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockPersistence
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.guide.GuideBook
+import com.coderjoe.atlas.guide.GuideBookListener
 import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockPersistence
@@ -57,39 +57,46 @@ class Atlas : JavaPlugin() {
         initTransportSystem()
 
         // Register unified listener
-        val powerSystem = BlockSystem<com.coderjoe.atlas.power.PowerBlock>(
-            name = "power",
-            registry = powerBlockRegistry,
-            factory = PowerBlockFactory,
-            descriptors = powerDescriptors(),
-            showDialog = { player, block ->
-                PowerBlockDialog.showPowerDialog(player, block as com.coderjoe.atlas.power.PowerBlock, powerBlockRegistry)
-            }
-        )
+        val powerSystem =
+            BlockSystem<com.coderjoe.atlas.power.PowerBlock>(
+                name = "power",
+                registry = powerBlockRegistry,
+                factory = PowerBlockFactory,
+                descriptors = powerDescriptors(),
+                showDialog = { player, block ->
+                    PowerBlockDialog.showPowerDialog(player, block as com.coderjoe.atlas.power.PowerBlock, powerBlockRegistry)
+                },
+            )
 
-        val fluidSystem = BlockSystem<com.coderjoe.atlas.fluid.FluidBlock>(
-            name = "fluid",
-            registry = fluidBlockRegistry,
-            factory = FluidBlockFactory,
-            descriptors = fluidDescriptors(),
-            showDialog = { player, block ->
-                FluidBlockDialog.showFluidDialog(player, block as com.coderjoe.atlas.fluid.FluidBlock, fluidBlockRegistry)
-            }
-        )
+        val fluidSystem =
+            BlockSystem<com.coderjoe.atlas.fluid.FluidBlock>(
+                name = "fluid",
+                registry = fluidBlockRegistry,
+                factory = FluidBlockFactory,
+                descriptors = fluidDescriptors(),
+                showDialog = { player, block ->
+                    FluidBlockDialog.showFluidDialog(player, block as com.coderjoe.atlas.fluid.FluidBlock, fluidBlockRegistry)
+                },
+            )
 
-        val transportSystem = BlockSystem<com.coderjoe.atlas.transport.TransportBlock>(
-            name = "transport",
-            registry = transportBlockRegistry,
-            factory = TransportBlockFactory,
-            descriptors = transportDescriptors(),
-            showDialog = { player, block ->
-                TransportBlockDialog.showTransportDialog(player, block as com.coderjoe.atlas.transport.TransportBlock, transportBlockRegistry)
-            }
-        )
+        val transportSystem =
+            BlockSystem<com.coderjoe.atlas.transport.TransportBlock>(
+                name = "transport",
+                registry = transportBlockRegistry,
+                factory = TransportBlockFactory,
+                descriptors = transportDescriptors(),
+                showDialog = { player, block ->
+                    TransportBlockDialog.showTransportDialog(
+                        player,
+                        block as com.coderjoe.atlas.transport.TransportBlock,
+                        transportBlockRegistry,
+                    )
+                },
+            )
 
         server.pluginManager.registerEvents(
             AtlasBlockListener(this, listOf(powerSystem, fluidSystem, transportSystem)),
-            this
+            this,
         )
 
         val guideBookListener = GuideBookListener(this)
@@ -97,11 +104,16 @@ class Atlas : JavaPlugin() {
         server.addRecipe(GuideBook.createRecipe(this))
 
         // Auto-save every 5 minutes (6000 ticks)
-        autoSaveTask = server.scheduler.runTaskTimer(this, Runnable {
-            powerBlockPersistence.save(powerBlockRegistry)
-            fluidBlockPersistence.save(fluidBlockRegistry)
-            transportBlockPersistence.save(transportBlockRegistry)
-        }, 6000L, 6000L)
+        autoSaveTask =
+            server.scheduler.runTaskTimer(
+                this,
+                Runnable {
+                    powerBlockPersistence.save(powerBlockRegistry)
+                    fluidBlockPersistence.save(fluidBlockRegistry)
+                    transportBlockPersistence.save(transportBlockRegistry)
+                },
+                6000L, 6000L,
+            )
 
         logger.atlasInfo("Atlas plugin enabled!")
     }
@@ -169,7 +181,7 @@ class Atlas : JavaPlugin() {
 
     private fun transportDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
         return listOf(
-            com.coderjoe.atlas.transport.block.ConveyorBelt.descriptor
+            com.coderjoe.atlas.transport.block.ConveyorBelt.descriptor,
         ).associateBy { it.baseBlockId }
     }
 
@@ -184,7 +196,7 @@ class Atlas : JavaPlugin() {
             com.coderjoe.atlas.power.block.MultiPowerCable.descriptor,
             com.coderjoe.atlas.power.block.CobblestoneFactory.descriptor,
             com.coderjoe.atlas.power.block.ObsidianFactory.descriptor,
-            com.coderjoe.atlas.power.block.PowerMerger.descriptor
+            com.coderjoe.atlas.power.block.PowerMerger.descriptor,
         ).associateBy { it.baseBlockId }
     }
 
@@ -193,7 +205,7 @@ class Atlas : JavaPlugin() {
             com.coderjoe.atlas.fluid.block.FluidPump.descriptor,
             com.coderjoe.atlas.fluid.block.FluidPipe.descriptor,
             com.coderjoe.atlas.fluid.block.FluidContainer.descriptor,
-            com.coderjoe.atlas.fluid.block.FluidMerger.descriptor
+            com.coderjoe.atlas.fluid.block.FluidMerger.descriptor,
         ).associateBy { it.baseBlockId }
     }
 }

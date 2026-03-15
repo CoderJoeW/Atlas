@@ -57,7 +57,10 @@ class NexoIntegration(private val plugin: JavaPlugin) {
         }
     }
 
-    private fun discoverResources(prefix: String, suffix: String): List<String> {
+    private fun discoverResources(
+        prefix: String,
+        suffix: String,
+    ): List<String> {
         val url = javaClass.classLoader.getResource(prefix) ?: return emptyList()
 
         return when (url.protocol) {

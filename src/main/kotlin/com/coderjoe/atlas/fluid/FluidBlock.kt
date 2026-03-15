@@ -6,9 +6,8 @@ import org.bukkit.Location
 
 abstract class FluidBlock(
     location: Location,
-    var storedFluid: FluidType = FluidType.NONE
+    var storedFluid: FluidType = FluidType.NONE,
 ) : AtlasBlock(location) {
-
     open fun hasFluid(): Boolean = storedFluid != FluidType.NONE
 
     open fun storeFluid(type: FluidType): Boolean {

@@ -11,12 +11,11 @@ import org.bukkit.Material
 import org.bukkit.block.BlockFace
 
 class FluidPump(location: Location) : FluidBlock(location) {
-
     enum class PumpStatus {
         IDLE,
         NO_SOURCE,
         NO_POWER,
-        EXTRACTING
+        EXTRACTING,
     }
 
     override val updateIntervalTicks: Long = 20L
@@ -35,20 +34,26 @@ class FluidPump(location: Location) : FluidBlock(location) {
         const val BLOCK_ID_ACTIVE = "fluid_pump_active"
         const val BLOCK_ID_ACTIVE_LAVA = "fluid_pump_active_lava"
 
-        private val ADJACENT_FACES = listOf(
-            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
-            BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
-        )
+        private val ADJACENT_FACES =
+            listOf(
+                BlockFace.NORTH,
+                BlockFace.SOUTH,
+                BlockFace.EAST,
+                BlockFace.WEST,
+                BlockFace.UP,
+                BlockFace.DOWN,
+            )
 
-        val descriptor = BlockDescriptor(
-            baseBlockId = BLOCK_ID,
-            displayName = "Fluid Pump",
-            description = "Pump - extracts fluid from adjacent cauldrons or source blocks (1 power/s)",
-            placementType = PlacementType.SIMPLE,
-            directionalVariants = emptyMap(),
-            allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE, BLOCK_ID_ACTIVE_LAVA),
-            constructor = { loc, _ -> FluidPump(loc) }
-        )
+        val descriptor =
+            BlockDescriptor(
+                baseBlockId = BLOCK_ID,
+                displayName = "Fluid Pump",
+                description = "Pump - extracts fluid from adjacent cauldrons or source blocks (1 power/s)",
+                placementType = PlacementType.SIMPLE,
+                directionalVariants = emptyMap(),
+                allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE, BLOCK_ID_ACTIVE_LAVA),
+                constructor = { loc, _ -> FluidPump(loc) },
+            )
     }
 
     override val baseBlockId: String = BLOCK_ID
@@ -58,11 +63,12 @@ class FluidPump(location: Location) : FluidBlock(location) {
         return direction == cauldron.oppositeFace && hasFluid()
     }
 
-    override fun getVisualStateBlockId(): String = when (storedFluid) {
-        FluidType.WATER -> BLOCK_ID_ACTIVE
-        FluidType.LAVA -> BLOCK_ID_ACTIVE_LAVA
-        FluidType.NONE -> BLOCK_ID
-    }
+    override fun getVisualStateBlockId(): String =
+        when (storedFluid) {
+            FluidType.WATER -> BLOCK_ID_ACTIVE
+            FluidType.LAVA -> BLOCK_ID_ACTIVE_LAVA
+            FluidType.NONE -> BLOCK_ID
+        }
 
     override fun fluidUpdate() {
         val powerRegistry = PowerBlockRegistry.instance ?: return
@@ -82,25 +88,27 @@ class FluidPump(location: Location) : FluidBlock(location) {
 
         for (face in ADJACENT_FACES) {
             val offset = face.direction
-            val adjacentBlock = location.world?.getBlockAt(
-                location.blockX + offset.blockX,
-                location.blockY + offset.blockY,
-                location.blockZ + offset.blockZ
-            ) ?: continue
+            val adjacentBlock =
+                location.world?.getBlockAt(
+                    location.blockX + offset.blockX,
+                    location.blockY + offset.blockY,
+                    location.blockZ + offset.blockZ,
+                ) ?: continue
 
-            val type = when (adjacentBlock.type) {
-                Material.WATER_CAULDRON -> FluidType.WATER
-                Material.LAVA_CAULDRON -> FluidType.LAVA
-                Material.WATER -> {
-                    val levelData = adjacentBlock.blockData as? org.bukkit.block.data.Levelled
-                    if (levelData != null && levelData.level == 0) FluidType.WATER else continue
+            val type =
+                when (adjacentBlock.type) {
+                    Material.WATER_CAULDRON -> FluidType.WATER
+                    Material.LAVA_CAULDRON -> FluidType.LAVA
+                    Material.WATER -> {
+                        val levelData = adjacentBlock.blockData as? org.bukkit.block.data.Levelled
+                        if (levelData != null && levelData.level == 0) FluidType.WATER else continue
+                    }
+                    Material.LAVA -> {
+                        val levelData = adjacentBlock.blockData as? org.bukkit.block.data.Levelled
+                        if (levelData != null && levelData.level == 0) FluidType.LAVA else continue
+                    }
+                    else -> continue
                 }
-                Material.LAVA -> {
-                    val levelData = adjacentBlock.blockData as? org.bukkit.block.data.Levelled
-                    if (levelData != null && levelData.level == 0) FluidType.LAVA else continue
-                }
-                else -> continue
-            }
 
             foundFace = face
             foundBlock = adjacentBlock
