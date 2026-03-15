@@ -188,14 +188,14 @@ class Atlas : JavaPlugin() {
     private fun powerDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
         return listOf(
             com.coderjoe.atlas.power.block.SmallSolarPanel.descriptor,
-            com.coderjoe.atlas.power.block.SmallDrill.descriptor,
+            com.coderjoe.atlas.utility.block.SmallDrill.descriptor,
             com.coderjoe.atlas.power.block.SmallBattery.descriptor,
             com.coderjoe.atlas.power.block.PowerCable.descriptor,
             com.coderjoe.atlas.power.block.LavaGenerator.descriptor,
-            com.coderjoe.atlas.power.block.AutoSmelter.descriptor,
+            com.coderjoe.atlas.utility.block.AutoSmelter.descriptor,
             com.coderjoe.atlas.power.block.MultiPowerCable.descriptor,
-            com.coderjoe.atlas.power.block.CobblestoneFactory.descriptor,
-            com.coderjoe.atlas.power.block.ObsidianFactory.descriptor,
+            com.coderjoe.atlas.utility.block.CobblestoneFactory.descriptor,
+            com.coderjoe.atlas.utility.block.ObsidianFactory.descriptor,
             com.coderjoe.atlas.power.block.PowerMerger.descriptor,
         ).associateBy { it.baseBlockId }
     }

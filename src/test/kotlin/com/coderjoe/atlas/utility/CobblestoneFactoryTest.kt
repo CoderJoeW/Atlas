@@ -1,11 +1,12 @@
-package com.coderjoe.atlas.power
+package com.coderjoe.atlas.utility
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.power.block.CobblestoneFactory
+import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
