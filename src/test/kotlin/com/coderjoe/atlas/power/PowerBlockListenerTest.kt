@@ -14,18 +14,13 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class PowerBlockListenerTest {
-
     private lateinit var registry: PowerBlockRegistry
     private lateinit var listener: AtlasBlockListener
 
@@ -33,13 +28,14 @@ class PowerBlockListenerTest {
     fun setup() {
         TestHelper.setup()
         registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val system = BlockSystem<PowerBlock>(
-            name = "power",
-            registry = registry,
-            factory = PowerBlockFactory,
-            descriptors = emptyMap(),
-            showDialog = { _, _ -> }
-        )
+        val system =
+            BlockSystem<PowerBlock>(
+                name = "power",
+                registry = registry,
+                factory = PowerBlockFactory,
+                descriptors = emptyMap(),
+                showDialog = { _, _ -> },
+            )
         listener = AtlasBlockListener(TestHelper.mockPlugin, listOf(system))
     }
 
@@ -91,8 +87,9 @@ class PowerBlockListenerTest {
 
         try {
             listener.onBlockBreak(event)
-        } catch (_: NoClassDefFoundError) {}
-        catch (_: ExceptionInInitializerError) {}
+        } catch (_: NoClassDefFoundError) {
+        } catch (_: ExceptionInInitializerError) {
+        }
 
         assertNull(registry.getPowerBlock(loc))
     }
