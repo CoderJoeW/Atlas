@@ -9,7 +9,6 @@ import org.bukkit.Material
 import org.bukkit.block.BlockFace
 
 class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(location, maxStorage = 10) {
-
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
 
@@ -20,33 +19,34 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
         const val BLOCK_ID = "small_drill"
         private const val MAX_HORIZONTAL_RANGE = 64
 
-        val DIRECTIONAL_IDS = mapOf(
-            BlockFace.NORTH to "small_drill_north",
-            BlockFace.SOUTH to "small_drill_south",
-            BlockFace.EAST to "small_drill_east",
-            BlockFace.WEST to "small_drill_west",
-            BlockFace.UP to "small_drill_up",
-            BlockFace.DOWN to "small_drill_down",
-        )
+        val DIRECTIONAL_IDS =
+            mapOf(
+                BlockFace.NORTH to "small_drill_north",
+                BlockFace.SOUTH to "small_drill_south",
+                BlockFace.EAST to "small_drill_east",
+                BlockFace.WEST to "small_drill_west",
+                BlockFace.UP to "small_drill_up",
+                BlockFace.DOWN to "small_drill_down",
+            )
 
         val ALL_DIRECTIONAL_IDS: List<String> = DIRECTIONAL_IDS.values.toList()
 
-        val descriptor = BlockDescriptor(
-            baseBlockId = BLOCK_ID,
-            displayName = "Small Drill",
-            description = "Machine - consumes 10 power/s",
-            placementType = PlacementType.DIRECTIONAL_OPPOSITE,
-            directionalVariants = DIRECTIONAL_IDS,
-            allRegistrableIds = ALL_DIRECTIONAL_IDS,
-            constructor = { loc, facing -> SmallDrill(loc, facing) }
-        )
+        val descriptor =
+            BlockDescriptor(
+                baseBlockId = BLOCK_ID,
+                displayName = "Small Drill",
+                description = "Machine - consumes 10 power/s",
+                placementType = PlacementType.DIRECTIONAL_OPPOSITE,
+                directionalVariants = DIRECTIONAL_IDS,
+                allRegistrableIds = ALL_DIRECTIONAL_IDS,
+                constructor = { loc, facing -> SmallDrill(loc, facing) },
+            )
     }
 
     override val baseBlockId: String = BLOCK_ID
     override val facing: BlockFace get() = miningDirection
 
-    override fun getVisualStateBlockId(): String =
-        DIRECTIONAL_IDS[miningDirection] ?: BLOCK_ID
+    override fun getVisualStateBlockId(): String = DIRECTIONAL_IDS[miningDirection] ?: BLOCK_ID
 
     fun toggleEnabled() {
         enabled = !enabled
@@ -92,11 +92,12 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
             val dz = miningDirection.modZ
 
             for (i in 1..MAX_HORIZONTAL_RANGE) {
-                val block = world.getBlockAt(
-                    location.blockX + dx * i,
-                    location.blockY,
-                    location.blockZ + dz * i
-                )
+                val block =
+                    world.getBlockAt(
+                        location.blockX + dx * i,
+                        location.blockY,
+                        location.blockZ + dz * i,
+                    )
 
                 if (block.type == Material.AIR || block.type == Material.CAVE_AIR || block.type == Material.VOID_AIR) {
                     continue

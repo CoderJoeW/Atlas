@@ -7,9 +7,8 @@ import org.bukkit.Location
 abstract class PowerBlock(
     location: Location,
     val maxStorage: Int,
-    var currentPower: Int = 0
+    var currentPower: Int = 0,
 ) : AtlasBlock(location) {
-
     protected open val canReceivePower: Boolean = true
 
     fun hasPower(): Boolean = currentPower > 0

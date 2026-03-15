@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
 class GuideBookListener(private val plugin: JavaPlugin) : Listener {
-
     private val recipientsFile = File(plugin.dataFolder, "guide-recipients.yml")
     private val config = YamlConfiguration()
     private val recipients: MutableSet<String>

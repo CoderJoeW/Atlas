@@ -7,23 +7,18 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.bukkit.Location
-import org.bukkit.World
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Item
-import org.bukkit.util.BoundingBox
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 
 class ConveyorBeltTest {
-
     @BeforeEach
     fun setup() {
         TestHelper.setup()
@@ -129,9 +124,13 @@ class ConveyorBeltTest {
 
         belt.callTransportUpdate()
 
-        verify { mockItem.teleportAsync(match { loc ->
-            loc.z < 0.5 && loc.x == 0.5
-        }) }
+        verify {
+            mockItem.teleportAsync(
+                match { loc ->
+                    loc.z < 0.5 && loc.x == 0.5
+                },
+            )
+        }
     }
 
     @Test
@@ -148,9 +147,13 @@ class ConveyorBeltTest {
 
         belt.callTransportUpdate()
 
-        verify { mockItem.teleportAsync(match { loc ->
-            loc.x > 0.5 && loc.z == 0.5
-        }) }
+        verify {
+            mockItem.teleportAsync(
+                match { loc ->
+                    loc.x > 0.5 && loc.z == 0.5
+                },
+            )
+        }
     }
 
     @Test

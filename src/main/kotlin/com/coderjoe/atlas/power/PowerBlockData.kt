@@ -12,10 +12,13 @@ data class PowerBlockData(
     val z: Int,
     val currentPower: Int,
     val facing: String? = null,
-    val enabled: Boolean? = null
+    val enabled: Boolean? = null,
 ) {
     companion object {
-        fun fromPowerBlock(powerBlock: PowerBlock, blockId: String): PowerBlockData {
+        fun fromPowerBlock(
+            powerBlock: PowerBlock,
+            blockId: String,
+        ): PowerBlockData {
             val loc = powerBlock.location
             val facing = powerBlock.facing.let { if (it == BlockFace.SELF) null else it.name }
             val enabled = if (powerBlock is SmallDrill) powerBlock.enabled else null
@@ -27,7 +30,7 @@ data class PowerBlockData(
                 z = loc.blockZ,
                 currentPower = powerBlock.currentPower,
                 facing = facing,
-                enabled = enabled
+                enabled = enabled,
             )
         }
     }
@@ -39,7 +42,11 @@ data class PowerBlockData(
 
     fun toBlockFace(): BlockFace {
         return if (facing != null) {
-            try { BlockFace.valueOf(facing) } catch (_: Exception) { BlockFace.SELF }
+            try {
+                BlockFace.valueOf(facing)
+            } catch (_: Exception) {
+                BlockFace.SELF
+            }
         } else {
             BlockFace.SELF
         }

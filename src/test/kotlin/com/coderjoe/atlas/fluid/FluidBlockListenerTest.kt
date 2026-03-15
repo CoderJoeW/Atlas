@@ -4,7 +4,9 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.core.AtlasBlockListener
 import com.coderjoe.atlas.core.BlockSystem
 import com.coderjoe.atlas.fluid.block.FluidPump
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
@@ -12,15 +14,14 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class FluidBlockListenerTest {
-
     private lateinit var registry: FluidBlockRegistry
     private lateinit var listener: AtlasBlockListener
 
@@ -28,13 +29,14 @@ class FluidBlockListenerTest {
     fun setup() {
         TestHelper.setup()
         registry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val system = BlockSystem<FluidBlock>(
-            name = "fluid",
-            registry = registry,
-            factory = FluidBlockFactory,
-            descriptors = emptyMap(),
-            showDialog = { _, _ -> }
-        )
+        val system =
+            BlockSystem<FluidBlock>(
+                name = "fluid",
+                registry = registry,
+                factory = FluidBlockFactory,
+                descriptors = emptyMap(),
+                showDialog = { _, _ -> },
+            )
         listener = AtlasBlockListener(TestHelper.mockPlugin, listOf(system))
     }
 
@@ -86,8 +88,9 @@ class FluidBlockListenerTest {
 
         try {
             listener.onBlockBreak(event)
-        } catch (_: NoClassDefFoundError) {}
-        catch (_: ExceptionInInitializerError) {}
+        } catch (_: NoClassDefFoundError) {
+        } catch (_: ExceptionInInitializerError) {
+        }
 
         assertNull(registry.getFluidBlock(loc))
     }
