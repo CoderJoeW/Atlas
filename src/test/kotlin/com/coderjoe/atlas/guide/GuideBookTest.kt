@@ -1,7 +1,11 @@
 package com.coderjoe.atlas.guide
 
 import com.coderjoe.atlas.TestHelper
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
+import io.mockk.verify
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
