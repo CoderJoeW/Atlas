@@ -78,13 +78,20 @@ class PowerBlockRegistryTest {
     fun `getAdjacentPowerBlocks returns blocks in all 6 directions`() {
         val loc = TestHelper.createLocation(0.0, 64.0, 0.0)
 
+        val east = Triple(1.0, 0.0, 0.0)
+        val west = Triple(-1.0, 0.0, 0.0)
+        val north = Triple(0.0, 0.0, -1.0)
+        val south = Triple(0.0, 0.0, 1.0)
+        val up = Triple(0.0, 1.0, 0.0)
+        val down = Triple(0.0, -1.0, 0.0)
+
         val offsets = listOf(
-            Triple(1.0, 0.0, 0.0),   // east
-            Triple(-1.0, 0.0, 0.0),  // west
-            Triple(0.0, 1.0, 0.0),   // up
-            Triple(0.0, -1.0, 0.0),  // down
-            Triple(0.0, 0.0, 1.0),   // south
-            Triple(0.0, 0.0, -1.0)   // north
+            east,
+            west,
+            up,
+            down,
+            south,
+            north
         )
 
         for ((dx, dy, dz) in offsets) {
