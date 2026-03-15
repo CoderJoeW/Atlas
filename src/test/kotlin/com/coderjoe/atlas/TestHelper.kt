@@ -26,7 +26,9 @@ import com.coderjoe.atlas.power.block.CobblestoneFactory
 import com.coderjoe.atlas.power.block.ObsidianFactory
 import com.coderjoe.atlas.power.block.PowerMerger
 import com.coderjoe.atlas.power.block.SmallSolarPanel
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.unmockkAll
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.World
