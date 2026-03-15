@@ -27,44 +27,56 @@ class FluidMergerTest {
     }
 
     @Test
-    fun `visual state empty when no fluid`() {
-        val merger = FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals("fluid_merger_north", merger.getVisualStateBlockId())
+    fun `visual state always returns BLOCK_ID`() {
+        val merger =
+            FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
+        assertEquals(
+            "atlas:fluid_merger",
+            merger.getVisualStateBlockId(),
+        )
     }
 
     @Test
-    fun `visual state water when holding water`() {
-        val merger = FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
+    fun `visual state returns BLOCK_ID when holding water`() {
+        val merger =
+            FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
         merger.storeFluid(FluidType.WATER)
-        assertEquals("fluid_merger_north_filled", merger.getVisualStateBlockId())
+        assertEquals(
+            "atlas:fluid_merger",
+            merger.getVisualStateBlockId(),
+        )
     }
 
     @Test
-    fun `visual state lava when holding lava`() {
-        val merger = FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
+    fun `visual state returns BLOCK_ID when holding lava`() {
+        val merger =
+            FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
         merger.storeFluid(FluidType.LAVA)
-        assertEquals("fluid_merger_north_filled_lava", merger.getVisualStateBlockId())
-    }
-
-    @Test
-    fun `visual state varies by facing direction`() {
-        for ((face, expectedId) in FluidMerger.DIRECTIONAL_IDS) {
-            val merger = FluidMerger(TestHelper.createLocation(), face)
-            assertEquals(expectedId, merger.getVisualStateBlockId())
-        }
+        assertEquals(
+            "atlas:fluid_merger",
+            merger.getVisualStateBlockId(),
+        )
     }
 
     @Test
     fun `pulls fluid from non-facing pipe`() {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
-        TestHelper.addToRegistry(registry, merger, "fluid_merger_north")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:fluid_merger",
+        )
 
         // Pipe to the south (not facing direction)
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.NORTH)
         pipe.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(registry, pipe, "fluid_pipe_north_filled")
+        TestHelper.addToRegistry(
+            registry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         merger.callFluidUpdate()
 
@@ -77,13 +89,21 @@ class FluidMergerTest {
     fun `does not pull fluid from facing direction`() {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
-        TestHelper.addToRegistry(registry, merger, "fluid_merger_north")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:fluid_merger",
+        )
 
-        // Pipe to the north (facing direction — should NOT pull from here)
+        // Pipe to the north (facing direction)
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(registry, pipe, "fluid_pipe_south_filled")
+        TestHelper.addToRegistry(
+            registry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         merger.callFluidUpdate()
 
@@ -96,12 +116,20 @@ class FluidMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
         merger.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(registry, merger, "fluid_merger_north_filled")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:fluid_merger",
+        )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.NORTH)
         pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(registry, pipe, "fluid_pipe_north_filled_lava")
+        TestHelper.addToRegistry(
+            registry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         merger.callFluidUpdate()
 
@@ -111,15 +139,22 @@ class FluidMergerTest {
 
     @Test
     fun `pulls from multiple input directions`() {
-        // First pull from east
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
-        TestHelper.addToRegistry(registry, merger, "fluid_merger_north")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:fluid_merger",
+        )
 
         val pipeLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.WEST)
         pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(registry, pipe, "fluid_pipe_west_filled_lava")
+        TestHelper.addToRegistry(
+            registry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         merger.callFluidUpdate()
 
@@ -133,9 +168,12 @@ class FluidMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
         merger.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(registry, merger, "fluid_merger_north_filled")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:fluid_merger",
+        )
 
-        // Merger holds fluid; downstream blocks pull via their own update
         assertTrue(merger.hasFluid())
         val fluid = merger.removeFluid()
         assertEquals(FluidType.WATER, fluid)
@@ -145,11 +183,7 @@ class FluidMergerTest {
     @Test
     fun `descriptor has correct properties`() {
         val desc = FluidMerger.descriptor
-        assertEquals("fluid_merger", desc.baseBlockId)
+        assertEquals("atlas:fluid_merger", desc.baseBlockId)
         assertEquals("Fluid Merger", desc.displayName)
-        assertEquals(18, desc.allRegistrableIds.size)
-        assertTrue(desc.allRegistrableIds.contains("fluid_merger_north"))
-        assertTrue(desc.allRegistrableIds.contains("fluid_merger_north_filled"))
-        assertTrue(desc.allRegistrableIds.contains("fluid_merger_north_filled_lava"))
     }
 }

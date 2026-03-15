@@ -20,8 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
 class Atlas : JavaPlugin() {
-    private lateinit var resourcePackManager: ResourcePackManager
-    private lateinit var nexoIntegration: NexoIntegration
+    private lateinit var craftEngineIntegration: CraftEngineIntegration
     private lateinit var powerBlockRegistry: PowerBlockRegistry
     private lateinit var powerBlockPersistence: PowerBlockPersistence
     private lateinit var fluidBlockRegistry: FluidBlockRegistry
@@ -37,16 +36,10 @@ class Atlas : JavaPlugin() {
 
         AtlasConfig.load(this)
 
-        nexoIntegration = NexoIntegration(this)
-        nexoIntegration.initialize()
+        craftEngineIntegration = CraftEngineIntegration(this)
+        craftEngineIntegration.initialize()
 
-        resourcePackManager = ResourcePackManager(this)
-        resourcePackManager.load()
-
-        if (resourcePackManager.isConfigured()) {
-            logger.atlasInfo("Resource pack is configured and will be sent to players on join")
-            server.pluginManager.registerEvents(PlayerJoinListener(resourcePackManager), this)
-        }
+        server.pluginManager.registerEvents(PlayerJoinListener(), this)
 
         PowerBlockDialog.init(this)
         FluidBlockDialog.init(this)

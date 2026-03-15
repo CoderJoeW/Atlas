@@ -25,8 +25,8 @@ class FluidBlockFactoryTest {
 
     @Test
     fun `register and isRegistered returns true`() {
-        FluidBlockFactory.register("fluid_pump") { loc, _ -> FluidPump(loc) }
-        assertTrue(FluidBlockFactory.isRegistered("fluid_pump"))
+        FluidBlockFactory.register("atlas:fluid_pump") { loc, _ -> FluidPump(loc) }
+        assertTrue(FluidBlockFactory.isRegistered("atlas:fluid_pump"))
     }
 
     @Test
@@ -36,8 +36,8 @@ class FluidBlockFactoryTest {
 
     @Test
     fun `createFluidBlock returns correct instance`() {
-        FluidBlockFactory.register("fluid_pump") { loc, _ -> FluidPump(loc) }
-        val block = FluidBlockFactory.createFluidBlock("fluid_pump", TestHelper.createLocation())
+        FluidBlockFactory.register("atlas:fluid_pump") { loc, _ -> FluidPump(loc) }
+        val block = FluidBlockFactory.createFluidBlock("atlas:fluid_pump", TestHelper.createLocation())
         assertNotNull(block)
         assertTrue(block is FluidPump)
     }

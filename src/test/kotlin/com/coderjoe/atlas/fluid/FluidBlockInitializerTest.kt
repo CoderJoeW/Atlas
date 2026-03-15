@@ -26,8 +26,12 @@ class FluidBlockInitializerTest {
         TestHelper.initFluidFactory()
         val ids = FluidBlockFactory.getRegisteredBlockIds()
 
-        // 3 pump + 6 directional pipe + 6 water-filled + 6 lava-filled + 42 container + 18 fluid merger = 81
-        assertEquals(81, ids.size)
+        // FluidPump: 3 (base + active + active_lava)
+        // FluidPipe: 1 (base only)
+        // FluidContainer: 1 (base only)
+        // FluidMerger: 1 (base only)
+        // Total: 6
+        assertEquals(6, ids.size)
     }
 
     @Test
@@ -39,40 +43,31 @@ class FluidBlockInitializerTest {
     }
 
     @Test
-    fun `all pipe directional IDs are registered`() {
+    fun `pipe base ID is registered`() {
         TestHelper.initFluidFactory()
-        for (id in FluidPipe.DIRECTIONAL_IDS.values) {
-            assertTrue(FluidBlockFactory.isRegistered(id), "Missing: $id")
-        }
-    }
-
-    @Test
-    fun `all pipe water-filled IDs are registered`() {
-        TestHelper.initFluidFactory()
-        for (id in FluidPipe.WATER_FILLED_IDS.values) {
-            assertTrue(FluidBlockFactory.isRegistered(id), "Missing: $id")
-        }
-    }
-
-    @Test
-    fun `all pipe lava-filled IDs are registered`() {
-        TestHelper.initFluidFactory()
-        for (id in FluidPipe.LAVA_FILLED_IDS.values) {
-            assertTrue(FluidBlockFactory.isRegistered(id), "Missing: $id")
-        }
+        assertTrue(FluidBlockFactory.isRegistered(FluidPipe.BLOCK_ID))
     }
 
     @Test
     fun `pump ID creates FluidPump`() {
         TestHelper.initFluidFactory()
-        val block = FluidBlockFactory.createFluidBlock("fluid_pump", TestHelper.createLocation())
+        val block =
+            FluidBlockFactory.createFluidBlock(
+                "atlas:fluid_pump",
+                TestHelper.createLocation(),
+            )
         assertTrue(block is FluidPump)
     }
 
     @Test
     fun `pipe ID creates FluidPipe`() {
         TestHelper.initFluidFactory()
-        val block = FluidBlockFactory.createFluidBlock("fluid_pipe_north", TestHelper.createLocation(), BlockFace.NORTH)
+        val block =
+            FluidBlockFactory.createFluidBlock(
+                "atlas:fluid_pipe",
+                TestHelper.createLocation(),
+                BlockFace.NORTH,
+            )
         assertTrue(block is FluidPipe)
     }
 }

@@ -28,53 +28,60 @@ class PowerMergerTest {
 
     @Test
     fun `maxStorage is 2`() {
-        val merger = PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
+        val merger =
+            PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
         assertEquals(2, merger.maxStorage)
     }
 
     @Test
     fun `canReceivePower is false`() {
-        // PowerMerger does not use canReceivePower — it pulls manually from non-facing sides
-        val merger = PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
+        val merger =
+            PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
         assertFalse(merger.canAcceptPower())
     }
 
     @Test
-    fun `visual state unpowered when no power`() {
-        val merger = PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals("power_merger_north", merger.getVisualStateBlockId())
-    }
-
-    @Test
-    fun `visual state powered when has power`() {
-        val merger = PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
+    fun `visual state always returns BLOCK_ID`() {
+        val merger =
+            PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
+        assertEquals(
+            "atlas:power_merger",
+            merger.getVisualStateBlockId(),
+        )
         merger.currentPower = 1
-        assertEquals("power_merger_north_powered", merger.getVisualStateBlockId())
-    }
-
-    @Test
-    fun `visual state varies by facing direction`() {
-        for ((face, expectedId) in PowerMerger.DIRECTIONAL_IDS) {
-            val merger = PowerMerger(TestHelper.createLocation(), face)
-            assertEquals(expectedId, merger.getVisualStateBlockId())
-        }
+        assertEquals(
+            "atlas:power_merger",
+            merger.getVisualStateBlockId(),
+        )
     }
 
     @Test
     fun `pulls power from non-facing sides`() {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = PowerMerger(mergerLoc, BlockFace.NORTH)
-        TestHelper.addToRegistry(registry, merger, "power_merger_north")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:power_merger",
+        )
 
-        // Source to the south (opposite of facing — behind)
-        val source1 = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
+        val source1 =
+            SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
         source1.currentPower = 1
-        TestHelper.addToRegistry(registry, source1, "small_solar_panel")
+        TestHelper.addToRegistry(
+            registry,
+            source1,
+            "atlas:small_solar_panel",
+        )
 
-        // Source to the east (side)
-        val source2 = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val source2 =
+            SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         source2.currentPower = 1
-        TestHelper.addToRegistry(registry, source2, "small_solar_panel")
+        TestHelper.addToRegistry(
+            registry,
+            source2,
+            "atlas:small_solar_panel",
+        )
 
         merger.callPowerUpdate()
 
@@ -87,12 +94,22 @@ class PowerMergerTest {
     fun `does not pull power from facing direction`() {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = PowerMerger(mergerLoc, BlockFace.NORTH)
-        TestHelper.addToRegistry(registry, merger, "power_merger_north")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:power_merger",
+        )
 
-        // Source to the north (facing direction — should NOT pull from here)
-        val source = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, -1.0))
+        val source =
+            SmallSolarPanel(
+                TestHelper.createLocation(0.0, 64.0, -1.0),
+            )
         source.currentPower = 1
-        TestHelper.addToRegistry(registry, source, "small_solar_panel")
+        TestHelper.addToRegistry(
+            registry,
+            source,
+            "atlas:small_solar_panel",
+        )
 
         merger.callPowerUpdate()
 
@@ -105,11 +122,20 @@ class PowerMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = PowerMerger(mergerLoc, BlockFace.NORTH)
         merger.currentPower = 2
-        TestHelper.addToRegistry(registry, merger, "power_merger_north")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:power_merger",
+        )
 
-        val source = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
+        val source =
+            SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
         source.currentPower = 1
-        TestHelper.addToRegistry(registry, source, "small_solar_panel")
+        TestHelper.addToRegistry(
+            registry,
+            source,
+            "atlas:small_solar_panel",
+        )
 
         merger.callPowerUpdate()
 
@@ -120,11 +146,8 @@ class PowerMergerTest {
     @Test
     fun `descriptor has correct properties`() {
         val desc = PowerMerger.descriptor
-        assertEquals("power_merger", desc.baseBlockId)
+        assertEquals("atlas:power_merger", desc.baseBlockId)
         assertEquals("Power Merger", desc.displayName)
-        assertEquals(12, desc.allRegistrableIds.size)
-        assertTrue(desc.allRegistrableIds.contains("power_merger_north"))
-        assertTrue(desc.allRegistrableIds.contains("power_merger_north_powered"))
     }
 
     @Test
@@ -132,13 +155,23 @@ class PowerMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = PowerMerger(mergerLoc, BlockFace.NORTH)
         merger.currentPower = 2
-        TestHelper.addToRegistry(registry, merger, "power_merger_north")
+        TestHelper.addToRegistry(
+            registry,
+            merger,
+            "atlas:power_merger",
+        )
 
-        // Consumer to the north (facing direction) that pulls from adjacent
-        val consumer = com.coderjoe.atlas.utility.block.SmallDrill(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.DOWN)
-        TestHelper.addToRegistry(registry, consumer, "small_drill_down")
+        val consumer =
+            com.coderjoe.atlas.utility.block.SmallDrill(
+                TestHelper.createLocation(0.0, 64.0, -1.0),
+                BlockFace.DOWN,
+            )
+        TestHelper.addToRegistry(
+            registry,
+            consumer,
+            "atlas:small_drill",
+        )
 
-        // The merger stores power; downstream blocks pull from it via their own update
         assertTrue(merger.hasPower())
         val pulled = merger.removePower(1)
         assertEquals(1, pulled)

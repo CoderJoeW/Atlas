@@ -37,8 +37,8 @@ class FluidNetworkIntegrationTest {
         // Pipe at z=1, facing SOUTH (pulls from NORTH = z-1 = pump)
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
 
-        TestHelper.addToRegistry(fluidRegistry, pump, "fluid_pump")
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south")
+        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
         pipe.callFluidUpdate()
         assertEquals(FluidType.WATER, pipe.storedFluid)
@@ -52,8 +52,8 @@ class FluidNetworkIntegrationTest {
 
         val pipe2 = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
 
-        TestHelper.addToRegistry(fluidRegistry, pipe1, "fluid_pipe_south")
-        TestHelper.addToRegistry(fluidRegistry, pipe2, "fluid_pipe_south")
+        TestHelper.addToRegistry(fluidRegistry, pipe1, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(fluidRegistry, pipe2, "atlas:fluid_pipe")
 
         pipe2.callFluidUpdate()
         assertEquals(FluidType.LAVA, pipe2.storedFluid)
@@ -69,8 +69,8 @@ class FluidNetworkIntegrationTest {
         val source = FluidPipe(TestHelper.createLocation(1.0, 64.0, 0.0), BlockFace.NORTH)
         source.storeFluid(FluidType.WATER)
 
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_north")
-        TestHelper.addToRegistry(fluidRegistry, source, "fluid_pipe_north")
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(fluidRegistry, source, "atlas:fluid_pipe")
 
         pipe.callFluidUpdate()
         assertEquals(FluidType.NONE, pipe.storedFluid) // did not pull from side
@@ -83,8 +83,8 @@ class FluidNetworkIntegrationTest {
 
         val pipe2 = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
 
-        TestHelper.addToRegistry(fluidRegistry, pipe1, "fluid_pipe_south")
-        TestHelper.addToRegistry(fluidRegistry, pipe2, "fluid_pipe_south")
+        TestHelper.addToRegistry(fluidRegistry, pipe1, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(fluidRegistry, pipe2, "atlas:fluid_pipe")
 
         pipe2.callFluidUpdate()
         assertEquals(FluidType.WATER, pipe2.storedFluid) // same type
@@ -101,9 +101,9 @@ class FluidNetworkIntegrationTest {
         val pipe1 = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
         val pipe2 = FluidPipe(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
 
-        TestHelper.addToRegistry(fluidRegistry, pump, "fluid_pump")
-        TestHelper.addToRegistry(fluidRegistry, pipe1, "fluid_pipe_south")
-        TestHelper.addToRegistry(fluidRegistry, pipe2, "fluid_pipe_south")
+        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(fluidRegistry, pipe1, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(fluidRegistry, pipe2, "atlas:fluid_pipe")
 
         // Tick 1: pipe1 pulls from pump
         pipe1.callFluidUpdate()

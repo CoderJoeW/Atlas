@@ -8,7 +8,7 @@ $ARGUMENTS
 
 ## Instructions
 
-You are scaffolding a new block in a Minecraft plugin (Paper/Kotlin) that uses the Nexo resource pack system and a custom block framework. Follow the existing patterns exactly.
+You are scaffolding a new block in a Minecraft plugin (Paper/Kotlin) that uses the CraftEngine resource pack system and a custom block framework. Follow the existing patterns exactly.
 
 ### Step 1: Gather Info
 
@@ -76,67 +76,74 @@ class {ClassName}(location: Location) : {BaseClass}(location, maxStorage = {N}) 
 
 **DIRECTIONAL_OPPOSITE block** (like SmallDrill): Same directional pattern but placement type is `DIRECTIONAL_OPPOSITE`.
 
-### Step 3: Add Block Definitions to atlas_blocks.yml
+### Step 3: Add CraftEngine Block Configuration
 
-Append to `src/main/resources/nexo/items/atlas_blocks.yml`.
+Create `src/main/resources/atlas/configuration/{block_id}.yml`.
 
-Find the next available `custom_variation` number. Power blocks use 100+ range, fluid blocks use 1-43 range. Check the file for the highest used number in the relevant range and increment.
+Follow the CraftEngine configuration format. Each variant gets its own `items` section (use `items#1`, `items#2`, etc. for additional variants). The base variant uses `loot: template: default:loot_table/self`, while other variants use explicit loot pools that drop the base item.
 
-Each variant needs its own YAML entry:
+Reference existing configuration files (e.g., `small_solar_panel.yml`, `lava_generator.yml`) for the exact format. Here's the general structure:
+
 ```yaml
-{block_id}:
-  itemname: "<gradient:{color1}:{color2}>{Display Name}"
-  material: paper
-  Pack:
-    generate_model: true
-    parent_model: block/cube          # or block/cube_all for same texture on all faces
-    textures:
-      north: atlas:block/{texture_name}
-      south: atlas:block/{texture_name}
-      east: atlas:block/{texture_name}
-      west: atlas:block/{texture_name}
-      up: atlas:block/{texture_top}
-      down: atlas:block/{texture_bottom}
-  Mechanics:
-    custom_block:
-      type: NOTEBLOCK
-      custom_variation: {next_available_number}
-      hardness: 5
-      block_sounds:
-        break_sound: block.metal.break
-        place_sound: block.metal.place
-        hit_sound: block.metal.hit
-        step_sound: block.metal.step
-        fall_sound: block.metal.fall
-      drop:
-        silktouch: false
-        loots:
-          - nexo_item: {base_block_id}    # ALWAYS drops the base ID, not the variant
-            probability: 1.0
+items:
+  atlas:{block_id}:
+    material: paper
+    data:
+      item-name: "<!i><gradient:{color1}:{color2}>{Display Name}"
+    model: minecraft:block/custom/{block_id}
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        state:
+          auto-state: solid
+          model:
+            path: minecraft:block/custom/{block_id}
+            generation:
+              parent: minecraft:block/cube_bottom_top   # or block/cube, block/cube_all
+              textures:
+                top: minecraft:block/custom/{block_id}_top
+                bottom: minecraft:block/custom/{block_id}_bottom
+                side: minecraft:block/custom/{block_id}_side
 ```
 
-Notes:
-- All variant entries (active, directional, etc.) must each have a unique `custom_variation` number
-- The `drop` always references the base block ID so variants drop the right item
-- Use `block/cube_all` with `all:` texture if all 6 faces are the same
-- Use `block/cube` with individual face textures if faces differ
-- Use `block/cube_bottom_top` with `top:`, `bottom:`, `side:` if top/bottom differ from sides
+For additional variant entries (active states, directional, etc.), add `items#1`, `items#2`, etc. sections with explicit loot that drops the base item:
+```yaml
+items#1:
+  atlas:{block_id}_{variant}:
+    # ... same structure but with:
+    # loot pools that drop atlas:{block_id} (the base item)
+```
 
 ### Step 4: Add Recipe
 
-Append to `src/main/resources/nexo/recipes/shapeless/atlas_recipes.yml`:
+Add the recipe in the same configuration file. Append a `recipes:` section:
 ```yaml
-{block_id}_recipe:
-  result:
-    nexo_item: {block_id}
-    amount: 1
-  ingredients:
-    A:
-      amount: {n}
-      minecraft_type: {MATERIAL}
-    B:
-      amount: {n}
-      minecraft_type: {MATERIAL}
+recipes:
+  atlas:{block_id}:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:{material}
+      - minecraft:{material}
+    result:
+      id: atlas:{block_id}
+      count: 1
 ```
 
 ### Step 5: Register in Atlas.kt
@@ -178,7 +185,7 @@ For **fluid blocks**, edit `src/main/kotlin/com/coderjoe/atlas/fluid/FluidBlockD
 
 ### Step 8: Generate Placeholder Textures
 
-Create 128x128 PNG placeholder textures at `src/main/resources/nexo/pack/assets/atlas/textures/block/`.
+Create 128x128 PNG placeholder textures at `src/main/resources/atlas/resourcepack/assets/minecraft/textures/block/custom/`.
 
 Use Python with Pillow to generate dark industrial-style textures matching the project's art style:
 - Base color: dark gray/charcoal (~38,38,44 RGB)
@@ -194,8 +201,8 @@ Name textures following the convention: `{block_id}_{face}.png`, `{block_id}_{fa
 Before finishing, verify:
 - [ ] Block class created with correct descriptor
 - [ ] All variant IDs listed in `allRegistrableIds`
-- [ ] YAML entries added for every variant with unique `custom_variation` numbers
-- [ ] Recipe added
+- [ ] CraftEngine configuration YAML created with all variants
+- [ ] Recipe added in the configuration file
 - [ ] Descriptor registered in Atlas.kt
 - [ ] Dialog cases added
 - [ ] TestHelper updated with new descriptor

@@ -1,0 +1,92 @@
+items:
+  atlas:small_solar_panel:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#FFD700>Small Solar Panel"
+    model: minecraft:block/custom/small_solar_panel
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        state:
+          auto-state: solid
+          model:
+            path: minecraft:block/custom/small_solar_panel
+            generation:
+              parent: minecraft:block/cube_bottom_top
+              textures:
+                top: minecraft:block/custom/small_solar_panel
+                bottom: minecraft:block/custom/small_solar_panel_bottom
+                side: minecraft:block/custom/small_solar_panel_side
+
+items#1:
+  atlas:small_solar_panel_full:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#FFD700>Small Solar Panel"
+    model: minecraft:block/custom/small_solar_panel_full
+    behavior:
+      type: block_item
+      block:
+        loot:
+          pools:
+            - rolls: 1
+              entries:
+                - type: item
+                  item: atlas:small_solar_panel
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        state:
+          auto-state: solid
+          model:
+            path: minecraft:block/custom/small_solar_panel_full
+            generation:
+              parent: minecraft:block/cube_bottom_top
+              textures:
+                top: minecraft:block/custom/small_solar_panel_full
+                bottom: minecraft:block/custom/small_solar_panel_bottom
+                side: minecraft:block/custom/small_solar_panel_side
+
+recipes:
+  atlas:small_solar_panel:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:lapis_lazuli
+      - minecraft:lapis_lazuli
+      - minecraft:lapis_lazuli
+      - minecraft:redstone
+      - minecraft:redstone
+      - minecraft:redstone
+    result:
+      id: atlas:small_solar_panel
+      count: 1

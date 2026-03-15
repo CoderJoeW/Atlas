@@ -15,17 +15,10 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
     override val updateIntervalTicks: Long = 20L
 
     companion object {
-        const val BLOCK_ID = "small_battery"
-
-        val CHARGE_VARIANT_IDS =
-            mapOf(
-                0 to "small_battery",
-                1 to "small_battery_low",
-                2 to "small_battery_medium",
-                3 to "small_battery_full",
-            )
-
-        val ALL_VARIANT_IDS: List<String> = CHARGE_VARIANT_IDS.values.toList()
+        const val BLOCK_ID = "atlas:small_battery"
+        const val BLOCK_ID_LOW = "atlas:small_battery_low"
+        const val BLOCK_ID_MEDIUM = "atlas:small_battery_medium"
+        const val BLOCK_ID_FULL = "atlas:small_battery_full"
 
         val descriptor =
             BlockDescriptor(
@@ -33,8 +26,7 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
                 displayName = "Small Battery",
                 description = "Storage - holds up to 10 power",
                 placementType = PlacementType.SIMPLE,
-                directionalVariants = emptyMap(),
-                allRegistrableIds = ALL_VARIANT_IDS,
+                additionalBlockIds = listOf(BLOCK_ID_LOW, BLOCK_ID_MEDIUM, BLOCK_ID_FULL),
                 constructor = { loc, facing -> SmallBattery(loc, facing) },
             )
     }
@@ -49,13 +41,18 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
             else -> 3
         }
 
-    override fun getVisualStateBlockId(): String = CHARGE_VARIANT_IDS[chargeLevel()]!!
+    override fun getVisualStateBlockId(): String =
+        when (chargeLevel()) {
+            0 -> BLOCK_ID
+            1 -> BLOCK_ID_LOW
+            2 -> BLOCK_ID_MEDIUM
+            else -> BLOCK_ID_FULL
+        }
 
     override fun powerUpdate() {
         if (!canAcceptPower()) return
         val registry = PowerBlockRegistry.instance ?: return
 
-        // Pull from behind (opposite of facing), same as power cables
         val source = registry.getAdjacentPowerBlock(location, facing.oppositeFace)
 
         if (source != null && canAcceptPower() && source.hasPower()) {
@@ -63,9 +60,8 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
             if (pulled > 0) {
                 addPower(pulled)
                 plugin.logger.atlasInfo(
-                    """
-                    SmallBattery at ${'$'}{location.blockX},${'$'}{location.blockY},${'$'}{location.blockZ} pulled ${'$'}pulled power from ${'$'}{source::class.simpleName} (now ${'$'}currentPower/${'$'}maxStorage)
-                    """.trimIndent(),
+                    "SmallBattery at ${location.blockX},${location.blockY},${location.blockZ} " +
+                        "pulled $pulled power from ${source::class.simpleName} (now $currentPower/$maxStorage)",
                 )
             }
         }

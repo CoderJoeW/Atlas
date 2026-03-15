@@ -11,8 +11,8 @@ from PIL import Image
 
 OUTPUT_DIR = os.path.join(
     os.path.dirname(__file__), "..",
-    "src", "main", "resources", "nexo", "pack",
-    "assets", "atlas", "textures", "block"
+    "src", "main", "resources", "atlas", "resourcepack",
+    "assets", "minecraft", "textures", "block", "custom"
 )
 
 # Indicator light colors (2x2 block in bottom-right corner)

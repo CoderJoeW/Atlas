@@ -2,10 +2,10 @@ package com.coderjoe.atlas
 
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -21,30 +21,13 @@ class PlayerJoinListenerTest {
     }
 
     @Test
-    fun `onPlayerJoin sends pack when configured`() {
-        val manager = mockk<ResourcePackManager>(relaxed = true)
-        every { manager.isConfigured() } returns true
-
-        val listener = PlayerJoinListener(manager)
+    fun `onPlayerJoin does not throw`() {
+        val listener = PlayerJoinListener()
         val player = mockk<Player>(relaxed = true)
+        every { player.server } returns TestHelper.mockServer
         val event = mockk<PlayerJoinEvent>(relaxed = true)
         every { event.player } returns player
 
-        listener.onPlayerJoin(event)
-        verify(exactly = 1) { manager.sendToPlayer(player) }
-    }
-
-    @Test
-    fun `onPlayerJoin does not send when not configured`() {
-        val manager = mockk<ResourcePackManager>(relaxed = true)
-        every { manager.isConfigured() } returns false
-
-        val listener = PlayerJoinListener(manager)
-        val player = mockk<Player>(relaxed = true)
-        val event = mockk<PlayerJoinEvent>(relaxed = true)
-        every { event.player } returns player
-
-        listener.onPlayerJoin(event)
-        verify(exactly = 0) { manager.sendToPlayer(any()) }
+        assertDoesNotThrow { listener.onPlayerJoin(event) }
     }
 }

@@ -1,0 +1,244 @@
+items:
+  atlas:fluid_pipe:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Pipe"
+    model: minecraft:block/custom/fluid_pipe
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 2.0
+          resistance: 2.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        states:
+          properties:
+            facing:
+              type: direction
+              default: north
+            fluid:
+              type: string
+              values: [none, water, lava]
+              default: none
+          appearances:
+            north:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_front
+                    south: minecraft:block/custom/fluid_pipe_back
+                    east: minecraft:block/custom/fluid_pipe_side_right
+                    west: minecraft:block/custom/fluid_pipe_side_left
+                    up: minecraft:block/custom/fluid_pipe_side_up
+                    down: minecraft:block/custom/fluid_pipe_side_down
+            south:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe
+                y: 180
+            east:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe
+                y: 90
+            west:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe
+                y: 270
+            up:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_up
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_side_up
+                    south: minecraft:block/custom/fluid_pipe_side_down
+                    east: minecraft:block/custom/fluid_pipe_side_right
+                    west: minecraft:block/custom/fluid_pipe_side_left
+                    up: minecraft:block/custom/fluid_pipe_front
+                    down: minecraft:block/custom/fluid_pipe_back
+            down:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_down
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_side_down
+                    south: minecraft:block/custom/fluid_pipe_side_up
+                    east: minecraft:block/custom/fluid_pipe_side_right
+                    west: minecraft:block/custom/fluid_pipe_side_left
+                    up: minecraft:block/custom/fluid_pipe_back
+                    down: minecraft:block/custom/fluid_pipe_front
+            north_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_water
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_front_filled
+                    south: minecraft:block/custom/fluid_pipe_back_filled
+                    east: minecraft:block/custom/fluid_pipe_side_filled_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_left
+                    up: minecraft:block/custom/fluid_pipe_side_filled_up
+                    down: minecraft:block/custom/fluid_pipe_side_filled_down
+            south_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_water
+                y: 180
+            east_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_water
+                y: 90
+            west_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_water
+                y: 270
+            up_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_up_water
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_side_filled_up
+                    south: minecraft:block/custom/fluid_pipe_side_filled_down
+                    east: minecraft:block/custom/fluid_pipe_side_filled_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_left
+                    up: minecraft:block/custom/fluid_pipe_front_filled
+                    down: minecraft:block/custom/fluid_pipe_back_filled
+            down_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_down_water
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_side_filled_down
+                    south: minecraft:block/custom/fluid_pipe_side_filled_up
+                    east: minecraft:block/custom/fluid_pipe_side_filled_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_left
+                    up: minecraft:block/custom/fluid_pipe_back_filled
+                    down: minecraft:block/custom/fluid_pipe_front_filled
+            north_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_lava
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_front_filled_lava
+                    south: minecraft:block/custom/fluid_pipe_back_filled_lava
+                    east: minecraft:block/custom/fluid_pipe_side_filled_lava_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_lava_left
+                    up: minecraft:block/custom/fluid_pipe_side_filled_lava_up
+                    down: minecraft:block/custom/fluid_pipe_side_filled_lava_down
+            south_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_lava
+                y: 180
+            east_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_lava
+                y: 90
+            west_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_lava
+                y: 270
+            up_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_up_lava
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_side_filled_lava_up
+                    south: minecraft:block/custom/fluid_pipe_side_filled_lava_down
+                    east: minecraft:block/custom/fluid_pipe_side_filled_lava_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_lava_left
+                    up: minecraft:block/custom/fluid_pipe_front_filled_lava
+                    down: minecraft:block/custom/fluid_pipe_back_filled_lava
+            down_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_down_lava
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_side_filled_lava_down
+                    south: minecraft:block/custom/fluid_pipe_side_filled_lava_up
+                    east: minecraft:block/custom/fluid_pipe_side_filled_lava_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_lava_left
+                    up: minecraft:block/custom/fluid_pipe_back_filled_lava
+                    down: minecraft:block/custom/fluid_pipe_front_filled_lava
+          variants:
+            facing=north,fluid=none:
+              appearance: north
+            facing=south,fluid=none:
+              appearance: south
+            facing=east,fluid=none:
+              appearance: east
+            facing=west,fluid=none:
+              appearance: west
+            facing=up,fluid=none:
+              appearance: up
+            facing=down,fluid=none:
+              appearance: down
+            facing=north,fluid=water:
+              appearance: north_water
+            facing=south,fluid=water:
+              appearance: south_water
+            facing=east,fluid=water:
+              appearance: east_water
+            facing=west,fluid=water:
+              appearance: west_water
+            facing=up,fluid=water:
+              appearance: up_water
+            facing=down,fluid=water:
+              appearance: down_water
+            facing=north,fluid=lava:
+              appearance: north_lava
+            facing=south,fluid=lava:
+              appearance: south_lava
+            facing=east,fluid=lava:
+              appearance: east_lava
+            facing=west,fluid=lava:
+              appearance: west_lava
+            facing=up,fluid=lava:
+              appearance: up_lava
+            facing=down,fluid=lava:
+              appearance: down_lava
+
+recipes:
+  atlas:fluid_pipe:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:iron_ingot
+    result:
+      id: atlas:fluid_pipe
+      count: 1

@@ -18,8 +18,8 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
     override val updateIntervalTicks: Long = 20L
 
     companion object {
-        const val BLOCK_ID = "lava_generator"
-        const val BLOCK_ID_ACTIVE = "lava_generator_active"
+        const val BLOCK_ID = "atlas:lava_generator"
+        const val BLOCK_ID_ACTIVE = "atlas:lava_generator_active"
         const val POWER_PER_LAVA = 5
 
         private val ADJACENT_FACES =
@@ -38,8 +38,7 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
                 displayName = "Lava Generator",
                 description = "Generator - produces $POWER_PER_LAVA power per lava unit",
                 placementType = PlacementType.SIMPLE,
-                directionalVariants = emptyMap(),
-                allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE),
+                additionalBlockIds = listOf(BLOCK_ID_ACTIVE),
                 constructor = { loc, _ -> LavaGenerator(loc) },
             )
     }
@@ -67,9 +66,8 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
             if (lava) {
                 val generated = addPower(POWER_PER_LAVA)
                 plugin.logger.atlasInfo(
-                    """
-                    LavaGenerator at ${'$'}{location.blockX},${'$'}{location.blockY},${'$'}{location.blockZ} consumed 1 lava, generated ${'$'}generated power (now ${'$'}currentPower/${'$'}maxStorage)
-                    """.trimIndent(),
+                    "LavaGenerator at ${location.blockX},${location.blockY},${location.blockZ} " +
+                        "consumed 1 lava, generated $generated power (now $currentPower/$maxStorage)",
                 )
             }
         }

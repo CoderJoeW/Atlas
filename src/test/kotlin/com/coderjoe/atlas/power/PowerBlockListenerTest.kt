@@ -8,14 +8,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.bukkit.block.Block
-import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,7 +34,8 @@ class PowerBlockListenerTest {
                 descriptors = emptyMap(),
                 showDialog = { _, _ -> },
             )
-        listener = AtlasBlockListener(TestHelper.mockPlugin, listOf(system))
+        listener =
+            AtlasBlockListener(TestHelper.mockPlugin, listOf(system))
     }
 
     @AfterEach
@@ -77,7 +76,11 @@ class PowerBlockListenerTest {
     fun `onBlockBreak unregisters power block`() {
         val loc = TestHelper.createLocation()
         val panel = SmallSolarPanel(loc)
-        TestHelper.addToRegistry(registry, panel, "small_solar_panel")
+        TestHelper.addToRegistry(
+            registry,
+            panel,
+            "atlas:small_solar_panel",
+        )
 
         val block = mockk<Block>(relaxed = true)
         every { block.location } returns loc
@@ -130,7 +133,10 @@ class PowerBlockListenerTest {
         val player = mockk<Player>(relaxed = true)
         every { player.isSneaking } returns false
         val block = mockk<Block>(relaxed = true)
-        every { block.location } returns TestHelper.createLocation(99.0, 99.0, 99.0)
+        every { block.location } returns
+            TestHelper.createLocation(
+                99.0, 99.0, 99.0,
+            )
 
         val event = mockk<PlayerInteractEvent>(relaxed = true)
         every { event.action } returns Action.RIGHT_CLICK_BLOCK
@@ -139,89 +145,5 @@ class PowerBlockListenerTest {
 
         listener.onPlayerInteract(event)
         verify(exactly = 0) { event.isCancelled = true }
-    }
-
-    @Test
-    fun `getPlayerFacing returns UP when dy positive`() {
-        val placed = mockk<Block>(relaxed = true)
-        val against = mockk<Block>(relaxed = true)
-        every { placed.location } returns TestHelper.createLocation(0.0, 65.0, 0.0)
-        every { against.location } returns TestHelper.createLocation(0.0, 64.0, 0.0)
-
-        val event = mockk<BlockPlaceEvent>(relaxed = true)
-        every { event.block } returns placed
-        every { event.blockAgainst } returns against
-
-        assertEquals(BlockFace.UP, AtlasBlockListener.getPlayerFacing(event))
-    }
-
-    @Test
-    fun `getPlayerFacing returns DOWN when dy negative`() {
-        val placed = mockk<Block>(relaxed = true)
-        val against = mockk<Block>(relaxed = true)
-        every { placed.location } returns TestHelper.createLocation(0.0, 63.0, 0.0)
-        every { against.location } returns TestHelper.createLocation(0.0, 64.0, 0.0)
-
-        val event = mockk<BlockPlaceEvent>(relaxed = true)
-        every { event.block } returns placed
-        every { event.blockAgainst } returns against
-
-        assertEquals(BlockFace.DOWN, AtlasBlockListener.getPlayerFacing(event))
-    }
-
-    @Test
-    fun `getPlayerFacing returns EAST when dx positive`() {
-        val placed = mockk<Block>(relaxed = true)
-        val against = mockk<Block>(relaxed = true)
-        every { placed.location } returns TestHelper.createLocation(1.0, 64.0, 0.0)
-        every { against.location } returns TestHelper.createLocation(0.0, 64.0, 0.0)
-
-        val event = mockk<BlockPlaceEvent>(relaxed = true)
-        every { event.block } returns placed
-        every { event.blockAgainst } returns against
-
-        assertEquals(BlockFace.EAST, AtlasBlockListener.getPlayerFacing(event))
-    }
-
-    @Test
-    fun `getPlayerFacing returns WEST when dx negative`() {
-        val placed = mockk<Block>(relaxed = true)
-        val against = mockk<Block>(relaxed = true)
-        every { placed.location } returns TestHelper.createLocation(-1.0, 64.0, 0.0)
-        every { against.location } returns TestHelper.createLocation(0.0, 64.0, 0.0)
-
-        val event = mockk<BlockPlaceEvent>(relaxed = true)
-        every { event.block } returns placed
-        every { event.blockAgainst } returns against
-
-        assertEquals(BlockFace.WEST, AtlasBlockListener.getPlayerFacing(event))
-    }
-
-    @Test
-    fun `getPlayerFacing returns SOUTH when dz positive`() {
-        val placed = mockk<Block>(relaxed = true)
-        val against = mockk<Block>(relaxed = true)
-        every { placed.location } returns TestHelper.createLocation(0.0, 64.0, 1.0)
-        every { against.location } returns TestHelper.createLocation(0.0, 64.0, 0.0)
-
-        val event = mockk<BlockPlaceEvent>(relaxed = true)
-        every { event.block } returns placed
-        every { event.blockAgainst } returns against
-
-        assertEquals(BlockFace.SOUTH, AtlasBlockListener.getPlayerFacing(event))
-    }
-
-    @Test
-    fun `getPlayerFacing returns NORTH when dz negative`() {
-        val placed = mockk<Block>(relaxed = true)
-        val against = mockk<Block>(relaxed = true)
-        every { placed.location } returns TestHelper.createLocation(0.0, 64.0, -1.0)
-        every { against.location } returns TestHelper.createLocation(0.0, 64.0, 0.0)
-
-        val event = mockk<BlockPlaceEvent>(relaxed = true)
-        every { event.block } returns placed
-        every { event.blockAgainst } returns against
-
-        assertEquals(BlockFace.NORTH, AtlasBlockListener.getPlayerFacing(event))
     }
 }

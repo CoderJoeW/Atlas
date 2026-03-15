@@ -29,9 +29,9 @@ class PowerBlockDataTest {
         val loc = TestHelper.createLocation(10.0, 64.0, 20.0)
         val panel = SmallSolarPanel(loc)
         panel.currentPower = 1
-        val data = PowerBlockData.fromPowerBlock(panel, "small_solar_panel")
+        val data = PowerBlockData.fromPowerBlock(panel, "atlas:small_solar_panel")
 
-        assertEquals("small_solar_panel", data.blockId)
+        assertEquals("atlas:small_solar_panel", data.blockId)
         assertEquals("world", data.world)
         assertEquals(10, data.x)
         assertEquals(64, data.y)
@@ -44,7 +44,7 @@ class PowerBlockDataTest {
     @Test
     fun `fromPowerBlock for PowerCable captures facing`() {
         val cable = PowerCable(TestHelper.createLocation(), BlockFace.EAST)
-        val data = PowerBlockData.fromPowerBlock(cable, "power_cable_east")
+        val data = PowerBlockData.fromPowerBlock(cable, "atlas:power_cable")
         assertEquals("EAST", data.facing)
     }
 
@@ -52,7 +52,7 @@ class PowerBlockDataTest {
     fun `fromPowerBlock for SmallDrill captures facing and enabled`() {
         val drill = SmallDrill(TestHelper.createLocation(), BlockFace.NORTH)
         drill.enabled = false
-        val data = PowerBlockData.fromPowerBlock(drill, "small_drill_north")
+        val data = PowerBlockData.fromPowerBlock(drill, "atlas:small_drill")
         assertEquals("NORTH", data.facing)
         assertEquals(false, data.enabled)
     }
@@ -60,7 +60,7 @@ class PowerBlockDataTest {
     @Test
     fun `fromPowerBlock for SmallBattery captures facing`() {
         val battery = SmallBattery(TestHelper.createLocation(), BlockFace.UP)
-        val data = PowerBlockData.fromPowerBlock(battery, "small_battery")
+        val data = PowerBlockData.fromPowerBlock(battery, "atlas:small_battery")
         assertEquals("UP", data.facing)
     }
 
@@ -104,9 +104,9 @@ class PowerBlockDataTest {
         val loc = TestHelper.createLocation(1.0, 2.0, 3.0)
         val panel = SmallSolarPanel(loc)
         panel.currentPower = 1
-        val data = PowerBlockData.fromPowerBlock(panel, "small_solar_panel")
+        val data = PowerBlockData.fromPowerBlock(panel, "atlas:small_solar_panel")
 
-        assertEquals("small_solar_panel", data.blockId)
+        assertEquals("atlas:small_solar_panel", data.blockId)
         assertEquals(1, data.x)
         assertEquals(2, data.y)
         assertEquals(3, data.z)
@@ -118,7 +118,7 @@ class PowerBlockDataTest {
         val drill = SmallDrill(TestHelper.createLocation(), BlockFace.WEST)
         drill.enabled = true
         drill.currentPower = 5
-        val data = PowerBlockData.fromPowerBlock(drill, "small_drill_west")
+        val data = PowerBlockData.fromPowerBlock(drill, "atlas:small_drill")
 
         assertEquals("WEST", data.facing)
         assertEquals(true, data.enabled)

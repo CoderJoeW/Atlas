@@ -41,14 +41,20 @@ class LavaGeneratorTest {
     @Test
     fun `lava generator visual state idle when no power`() {
         val gen = LavaGenerator(TestHelper.createLocation())
-        assertEquals("lava_generator", gen.getVisualStateBlockId())
+        assertEquals(
+            "atlas:lava_generator",
+            gen.getVisualStateBlockId(),
+        )
     }
 
     @Test
     fun `lava generator visual state active when has power`() {
         val gen = LavaGenerator(TestHelper.createLocation())
         gen.currentPower = 5
-        assertEquals("lava_generator_active", gen.getVisualStateBlockId())
+        assertEquals(
+            "atlas:lava_generator_active",
+            gen.getVisualStateBlockId(),
+        )
     }
 
     @Test
@@ -58,13 +64,20 @@ class LavaGeneratorTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(powerRegistry, gen, "lava_generator")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:lava_generator",
+        )
 
-        // Place a lava-filled pipe to the north (z-1)
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south_filled_lava")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         gen.callPowerUpdate()
 
@@ -79,12 +92,20 @@ class LavaGeneratorTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(powerRegistry, gen, "lava_generator")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:lava_generator",
+        )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south_filled")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         gen.callPowerUpdate()
 
@@ -99,13 +120,20 @@ class LavaGeneratorTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(powerRegistry, gen, "lava_generator")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:lava_generator",
+        )
 
-        // Container to the south (z+1) facing north (toward generator)
         val containerLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val container = FluidContainer(containerLoc, BlockFace.NORTH)
         container.restoreState(FluidType.LAVA, 3)
-        TestHelper.addToRegistry(fluidRegistry, container, "fluid_container_north_lava_low")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            container,
+            "atlas:fluid_container",
+        )
 
         gen.callPowerUpdate()
 
@@ -120,13 +148,20 @@ class LavaGeneratorTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(powerRegistry, gen, "lava_generator")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:lava_generator",
+        )
 
-        // Container to the south (z+1) facing south (away from generator)
         val containerLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val container = FluidContainer(containerLoc, BlockFace.SOUTH)
         container.restoreState(FluidType.LAVA, 3)
-        TestHelper.addToRegistry(fluidRegistry, container, "fluid_container_south_lava_low")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            container,
+            "atlas:fluid_container",
+        )
 
         gen.callPowerUpdate()
 
@@ -142,17 +177,23 @@ class LavaGeneratorTest {
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
         gen.currentPower = 48
-        TestHelper.addToRegistry(powerRegistry, gen, "lava_generator")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:lava_generator",
+        )
 
-        // Two lava pipes adjacent - only one should be consumed (48 + 5 = 53 > 50, but 48+5=53, wait no - space is 2, less than 5)
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south_filled_lava")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         gen.callPowerUpdate()
 
-        // Should NOT consume because space (2) < POWER_PER_LAVA (5)
         assertEquals(48, gen.currentPower)
         assertTrue(pipe.hasFluid())
     }
@@ -164,19 +205,29 @@ class LavaGeneratorTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(powerRegistry, gen, "lava_generator")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:lava_generator",
+        )
 
-        // Pipe to the north
         val pipe1Loc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe1 = FluidPipe(pipe1Loc, BlockFace.SOUTH)
         pipe1.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, pipe1, "fluid_pipe_south_filled_lava")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            pipe1,
+            "atlas:fluid_pipe",
+        )
 
-        // Pipe to the south
         val pipe2Loc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val pipe2 = FluidPipe(pipe2Loc, BlockFace.NORTH)
         pipe2.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, pipe2, "fluid_pipe_north_filled_lava")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            pipe2,
+            "atlas:fluid_pipe",
+        )
 
         gen.callPowerUpdate()
 
@@ -205,12 +256,20 @@ class LavaGeneratorTest {
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
         gen.currentPower = 50
-        TestHelper.addToRegistry(powerRegistry, gen, "lava_generator")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:lava_generator",
+        )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south_filled_lava")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         gen.callPowerUpdate()
 
@@ -221,10 +280,13 @@ class LavaGeneratorTest {
     @Test
     fun `lava generator descriptor has correct properties`() {
         val desc = LavaGenerator.descriptor
-        assertEquals("lava_generator", desc.baseBlockId)
+        assertEquals("atlas:lava_generator", desc.baseBlockId)
         assertEquals("Lava Generator", desc.displayName)
-        assertEquals(2, desc.allRegistrableIds.size)
-        assertTrue(desc.allRegistrableIds.contains("lava_generator"))
-        assertTrue(desc.allRegistrableIds.contains("lava_generator_active"))
+        assertEquals(1, desc.additionalBlockIds.size)
+        assertTrue(
+            desc.additionalBlockIds.contains(
+                "atlas:lava_generator_active",
+            ),
+        )
     }
 }

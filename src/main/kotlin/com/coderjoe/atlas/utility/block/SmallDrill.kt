@@ -16,20 +16,8 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
     var enabled: Boolean = true
 
     companion object {
-        const val BLOCK_ID = "small_drill"
+        const val BLOCK_ID = "atlas:small_drill"
         private const val MAX_HORIZONTAL_RANGE = 64
-
-        val DIRECTIONAL_IDS =
-            mapOf(
-                BlockFace.NORTH to "small_drill_north",
-                BlockFace.SOUTH to "small_drill_south",
-                BlockFace.EAST to "small_drill_east",
-                BlockFace.WEST to "small_drill_west",
-                BlockFace.UP to "small_drill_up",
-                BlockFace.DOWN to "small_drill_down",
-            )
-
-        val ALL_DIRECTIONAL_IDS: List<String> = DIRECTIONAL_IDS.values.toList()
 
         val descriptor =
             BlockDescriptor(
@@ -37,8 +25,6 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
                 displayName = "Small Drill",
                 description = "Machine - consumes 10 power/s",
                 placementType = PlacementType.DIRECTIONAL_OPPOSITE,
-                directionalVariants = DIRECTIONAL_IDS,
-                allRegistrableIds = ALL_DIRECTIONAL_IDS,
                 constructor = { loc, facing -> SmallDrill(loc, facing) },
             )
     }
@@ -46,7 +32,7 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
     override val baseBlockId: String = BLOCK_ID
     override val facing: BlockFace get() = miningDirection
 
-    override fun getVisualStateBlockId(): String = DIRECTIONAL_IDS[miningDirection] ?: BLOCK_ID
+    override fun getVisualStateBlockId(): String = BLOCK_ID
 
     fun toggleEnabled() {
         enabled = !enabled
@@ -55,7 +41,6 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
     override fun powerUpdate() {
         if (!enabled) return
 
-        // Pull power from adjacent blocks
         if (canAcceptPower()) {
             val registry = PowerBlockRegistry.instance ?: return
             val neighbors = registry.getAdjacentPowerBlocks(location)

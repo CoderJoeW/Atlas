@@ -41,14 +41,20 @@ class CobblestoneFactoryTest {
     @Test
     fun `visual state idle when insufficient power`() {
         val gen = CobblestoneFactory(TestHelper.createLocation())
-        assertEquals("cobblestone_factory", gen.getVisualStateBlockId())
+        assertEquals(
+            "atlas:cobblestone_factory",
+            gen.getVisualStateBlockId(),
+        )
     }
 
     @Test
     fun `visual state active when power at cost`() {
         val gen = CobblestoneFactory(TestHelper.createLocation())
         gen.currentPower = 2
-        assertEquals("cobblestone_factory_active", gen.getVisualStateBlockId())
+        assertEquals(
+            "atlas:cobblestone_factory_active",
+            gen.getVisualStateBlockId(),
+        )
     }
 
     @Test
@@ -59,12 +65,20 @@ class CobblestoneFactoryTest {
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_factory")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:cobblestone_factory",
+        )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south_filled_water")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         gen.callPowerUpdate()
 
@@ -80,12 +94,20 @@ class CobblestoneFactoryTest {
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_factory")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:cobblestone_factory",
+        )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south_filled_lava")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            pipe,
+            "atlas:fluid_pipe",
+        )
 
         gen.callPowerUpdate()
 
@@ -101,17 +123,31 @@ class CobblestoneFactoryTest {
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         gen.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_factory")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:cobblestone_factory",
+        )
 
-        val waterPipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
+        val waterPipeLoc =
+            TestHelper.createLocation(0.0, 64.0, -1.0)
         val waterPipe = FluidPipe(waterPipeLoc, BlockFace.SOUTH)
         waterPipe.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, waterPipe, "fluid_pipe_south_filled_water")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            waterPipe,
+            "atlas:fluid_pipe",
+        )
 
-        val lavaPipeLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
+        val lavaPipeLoc =
+            TestHelper.createLocation(0.0, 64.0, 1.0)
         val lavaPipe = FluidPipe(lavaPipeLoc, BlockFace.NORTH)
         lavaPipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, lavaPipe, "fluid_pipe_north_filled_lava")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            lavaPipe,
+            "atlas:fluid_pipe",
+        )
 
         gen.callPowerUpdate()
 
@@ -128,22 +164,36 @@ class CobblestoneFactoryTest {
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_factory")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:cobblestone_factory",
+        )
 
-        val waterPipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
+        val waterPipeLoc =
+            TestHelper.createLocation(0.0, 64.0, -1.0)
         val waterPipe = FluidPipe(waterPipeLoc, BlockFace.SOUTH)
         waterPipe.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, waterPipe, "fluid_pipe_south_filled_water")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            waterPipe,
+            "atlas:fluid_pipe",
+        )
 
-        val lavaPipeLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
+        val lavaPipeLoc =
+            TestHelper.createLocation(0.0, 64.0, 1.0)
         val lavaPipe = FluidPipe(lavaPipeLoc, BlockFace.NORTH)
         lavaPipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, lavaPipe, "fluid_pipe_north_filled_lava")
+        TestHelper.addToRegistry(
+            fluidRegistry,
+            lavaPipe,
+            "atlas:fluid_pipe",
+        )
 
         try {
             gen.callPowerUpdate()
         } catch (_: Throwable) {
-            // ItemStack constructor triggers Registry init in test environment
+            // ItemStack constructor triggers Registry init
         }
 
         assertEquals(0, gen.currentPower)
@@ -154,11 +204,14 @@ class CobblestoneFactoryTest {
     @Test
     fun `descriptor has correct properties`() {
         val desc = CobblestoneFactory.descriptor
-        assertEquals("cobblestone_factory", desc.baseBlockId)
+        assertEquals("atlas:cobblestone_factory", desc.baseBlockId)
         assertEquals("Cobblestone Factory", desc.displayName)
-        assertEquals(2, desc.allRegistrableIds.size)
-        assertTrue(desc.allRegistrableIds.contains("cobblestone_factory"))
-        assertTrue(desc.allRegistrableIds.contains("cobblestone_factory_active"))
+        assertEquals(1, desc.additionalBlockIds.size)
+        assertTrue(
+            desc.additionalBlockIds.contains(
+                "atlas:cobblestone_factory_active",
+            ),
+        )
     }
 
     @Test
@@ -168,16 +221,27 @@ class CobblestoneFactoryTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_factory")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            gen,
+            "atlas:cobblestone_factory",
+        )
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
-        val battery = com.coderjoe.atlas.power.block.SmallBattery(batteryLoc, BlockFace.DOWN)
+        val battery =
+            com.coderjoe.atlas.power.block.SmallBattery(
+                batteryLoc,
+                BlockFace.DOWN,
+            )
         battery.currentPower = 5
-        TestHelper.addToRegistry(powerRegistry, battery, "small_battery")
+        TestHelper.addToRegistry(
+            powerRegistry,
+            battery,
+            "atlas:small_battery",
+        )
 
         gen.callPowerUpdate()
 
-        // Pulls 1 power per neighbor per tick
         assertEquals(1, gen.currentPower)
         assertEquals(4, battery.currentPower)
     }

@@ -32,7 +32,8 @@ open class BlockFactory<T : AtlasBlock> {
     @Suppress("UNCHECKED_CAST")
     fun registerFromDescriptors(descriptors: Collection<BlockDescriptor>) {
         for (desc in descriptors) {
-            for (id in desc.allRegistrableIds) {
+            register(desc.baseBlockId, desc.constructor as (Location, BlockFace) -> T)
+            for (id in desc.additionalBlockIds) {
                 register(id, desc.constructor as (Location, BlockFace) -> T)
             }
         }
