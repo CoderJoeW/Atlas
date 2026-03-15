@@ -2,3 +2,4 @@
 
 ## Code Style
 - Always use explicit imports — never use wildcard imports (e.g., `import com.example.Foo`, not `import com.example.*`)
+- No line should exceed 140 characters in length
