@@ -182,8 +182,8 @@ class Atlas : JavaPlugin() {
             com.coderjoe.atlas.power.block.LavaGenerator.descriptor,
             com.coderjoe.atlas.power.block.AutoSmelter.descriptor,
             com.coderjoe.atlas.power.block.MultiPowerCable.descriptor,
-            com.coderjoe.atlas.power.block.CobblestoneGenerator.descriptor,
-            com.coderjoe.atlas.power.block.ObsidianGenerator.descriptor,
+            com.coderjoe.atlas.power.block.CobblestoneFactory.descriptor,
+            com.coderjoe.atlas.power.block.ObsidianFactory.descriptor,
             com.coderjoe.atlas.power.block.PowerMerger.descriptor
         ).associateBy { it.baseBlockId }
     }

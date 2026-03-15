@@ -196,9 +196,9 @@ auto_smelter_recipe:
     G:
       minecraft_type: FURNACE
 
-cobblestone_generator_recipe:
+cobblestone_factory_recipe:
   result:
-    nexo_item: cobblestone_generator
+    nexo_item: cobblestone_factory
     amount: 1
   ingredients:
     A:
@@ -248,9 +248,9 @@ power_merger_recipe:
     E:
       minecraft_type: REDSTONE
 
-obsidian_generator_recipe:
+obsidian_factory_recipe:
   result:
-    nexo_item: obsidian_generator
+    nexo_item: obsidian_factory
     amount: 1
   ingredients:
     A:

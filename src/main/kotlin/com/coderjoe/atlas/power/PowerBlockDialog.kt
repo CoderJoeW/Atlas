@@ -8,8 +8,8 @@ import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.MultiPowerCable
-import com.coderjoe.atlas.power.block.CobblestoneGenerator
-import com.coderjoe.atlas.power.block.ObsidianGenerator
+import com.coderjoe.atlas.power.block.CobblestoneFactory
+import com.coderjoe.atlas.power.block.ObsidianFactory
 import com.coderjoe.atlas.power.block.PowerMerger
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.papermc.paper.dialog.Dialog
@@ -132,8 +132,8 @@ object PowerBlockDialog {
         is LavaGenerator -> "Lava Generator"
         is AutoSmelter -> "Auto Smelter (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         is MultiPowerCable -> "Multi Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
-        is CobblestoneGenerator -> "Cobblestone Generator"
-        is ObsidianGenerator -> "Obsidian Generator"
+        is CobblestoneFactory -> "Cobblestone Factory"
+        is ObsidianFactory -> "Obsidian Factory"
         is PowerMerger -> "Power Merger (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
         else -> "Power Block"
     }
@@ -183,9 +183,9 @@ object PowerBlockDialog {
                 .color(NamedTextColor.GRAY)
             is MultiPowerCable -> Component.text("Cable - distributes power to all adjacent faces")
                 .color(NamedTextColor.GRAY)
-            is CobblestoneGenerator -> Component.text("Machine - consumes ${CobblestoneGenerator.POWER_COST} power + water + lava → cobblestone")
+            is CobblestoneFactory -> Component.text("Machine - consumes ${CobblestoneFactory.POWER_COST} power + water + lava → cobblestone")
                 .color(NamedTextColor.GRAY)
-            is ObsidianGenerator -> Component.text("Machine - consumes ${ObsidianGenerator.POWER_COST} power + water + lava → obsidian")
+            is ObsidianFactory -> Component.text("Machine - consumes ${ObsidianFactory.POWER_COST} power + water + lava → obsidian")
                 .color(NamedTextColor.GRAY)
             is PowerMerger -> Component.text("Cable - merges power from all sides, outputs in facing direction")
                 .color(NamedTextColor.GRAY)

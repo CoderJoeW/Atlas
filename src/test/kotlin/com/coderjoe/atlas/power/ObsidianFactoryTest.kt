@@ -5,12 +5,12 @@ import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.power.block.CobblestoneGenerator
+import com.coderjoe.atlas.power.block.ObsidianFactory
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
-class CobblestoneGeneratorTest {
+class ObsidianFactoryTest {
 
     @BeforeEach
     fun setup() {
@@ -23,28 +23,29 @@ class CobblestoneGeneratorTest {
     }
 
     @Test
-    fun `cobblestone generator maxStorage is 2`() {
-        val gen = CobblestoneGenerator(TestHelper.createLocation())
-        assertEquals(2, gen.maxStorage)
+    fun `obsidian generator maxStorage is 100`() {
+        val gen = ObsidianFactory(TestHelper.createLocation())
+        assertEquals(100, gen.maxStorage)
     }
 
     @Test
-    fun `cobblestone generator canReceivePower is true`() {
-        val gen = CobblestoneGenerator(TestHelper.createLocation())
+    fun `obsidian generator canReceivePower is true`() {
+        val gen = ObsidianFactory(TestHelper.createLocation())
         assertTrue(gen.canAcceptPower())
     }
 
     @Test
     fun `visual state idle when insufficient power`() {
-        val gen = CobblestoneGenerator(TestHelper.createLocation())
-        assertEquals("cobblestone_generator", gen.getVisualStateBlockId())
+        val gen = ObsidianFactory(TestHelper.createLocation())
+        gen.currentPower = 99
+        assertEquals("obsidian_factory", gen.getVisualStateBlockId())
     }
 
     @Test
     fun `visual state active when power at cost`() {
-        val gen = CobblestoneGenerator(TestHelper.createLocation())
-        gen.currentPower = 2
-        assertEquals("cobblestone_generator_active", gen.getVisualStateBlockId())
+        val gen = ObsidianFactory(TestHelper.createLocation())
+        gen.currentPower = 100
+        assertEquals("obsidian_factory_active", gen.getVisualStateBlockId())
     }
 
     @Test
@@ -53,9 +54,9 @@ class CobblestoneGeneratorTest {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = CobblestoneGenerator(genLoc)
-        gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_generator")
+        val gen = ObsidianFactory(genLoc)
+        gen.currentPower = 100
+        TestHelper.addToRegistry(powerRegistry, gen, "obsidian_factory")
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
@@ -64,7 +65,7 @@ class CobblestoneGeneratorTest {
 
         gen.callPowerUpdate()
 
-        assertEquals(2, gen.currentPower)
+        assertEquals(100, gen.currentPower)
         assertTrue(pipe.hasFluid())
     }
 
@@ -74,9 +75,9 @@ class CobblestoneGeneratorTest {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = CobblestoneGenerator(genLoc)
-        gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_generator")
+        val gen = ObsidianFactory(genLoc)
+        gen.currentPower = 100
+        TestHelper.addToRegistry(powerRegistry, gen, "obsidian_factory")
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
@@ -85,7 +86,7 @@ class CobblestoneGeneratorTest {
 
         gen.callPowerUpdate()
 
-        assertEquals(2, gen.currentPower)
+        assertEquals(100, gen.currentPower)
         assertTrue(pipe.hasFluid())
     }
 
@@ -95,9 +96,9 @@ class CobblestoneGeneratorTest {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = CobblestoneGenerator(genLoc)
-        gen.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_generator")
+        val gen = ObsidianFactory(genLoc)
+        gen.currentPower = 99
+        TestHelper.addToRegistry(powerRegistry, gen, "obsidian_factory")
 
         val waterPipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val waterPipe = FluidPipe(waterPipeLoc, BlockFace.SOUTH)
@@ -111,7 +112,7 @@ class CobblestoneGeneratorTest {
 
         gen.callPowerUpdate()
 
-        assertEquals(1, gen.currentPower)
+        assertEquals(99, gen.currentPower)
         assertTrue(waterPipe.hasFluid())
         assertTrue(lavaPipe.hasFluid())
     }
@@ -122,9 +123,9 @@ class CobblestoneGeneratorTest {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = CobblestoneGenerator(genLoc)
-        gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_generator")
+        val gen = ObsidianFactory(genLoc)
+        gen.currentPower = 100
+        TestHelper.addToRegistry(powerRegistry, gen, "obsidian_factory")
 
         val waterPipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val waterPipe = FluidPipe(waterPipeLoc, BlockFace.SOUTH)
@@ -149,32 +150,32 @@ class CobblestoneGeneratorTest {
 
     @Test
     fun `descriptor has correct properties`() {
-        val desc = CobblestoneGenerator.descriptor
-        assertEquals("cobblestone_generator", desc.baseBlockId)
-        assertEquals("Cobblestone Generator", desc.displayName)
+        val desc = ObsidianFactory.descriptor
+        assertEquals("obsidian_factory", desc.baseBlockId)
+        assertEquals("Obsidian Factory", desc.displayName)
         assertEquals(2, desc.allRegistrableIds.size)
-        assertTrue(desc.allRegistrableIds.contains("cobblestone_generator"))
-        assertTrue(desc.allRegistrableIds.contains("cobblestone_generator_active"))
+        assertTrue(desc.allRegistrableIds.contains("obsidian_factory"))
+        assertTrue(desc.allRegistrableIds.contains("obsidian_factory_active"))
     }
 
     @Test
-    fun `pulls power from adjacent blocks`() {
+    fun `accumulates power over multiple ticks`() {
         FluidBlockRegistry(TestHelper.mockPlugin)
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = CobblestoneGenerator(genLoc)
-        TestHelper.addToRegistry(powerRegistry, gen, "cobblestone_generator")
+        val gen = ObsidianFactory(genLoc)
+        TestHelper.addToRegistry(powerRegistry, gen, "obsidian_factory")
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
         val battery = com.coderjoe.atlas.power.block.SmallBattery(batteryLoc, BlockFace.DOWN)
-        battery.currentPower = 5
+        battery.currentPower = 10
         TestHelper.addToRegistry(powerRegistry, battery, "small_battery")
 
         gen.callPowerUpdate()
 
-        // Pulls 1 power per neighbor per tick
-        assertEquals(1, gen.currentPower)
-        assertEquals(4, battery.currentPower)
+        // Should pull power but not yet have enough to generate
+        assertTrue(gen.currentPower > 0)
+        assertTrue(gen.currentPower < 100)
     }
 }
