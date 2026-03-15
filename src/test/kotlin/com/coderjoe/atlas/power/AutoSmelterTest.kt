@@ -9,13 +9,16 @@ import io.mockk.verify
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Item
-import org.bukkit.inventory.ItemStack
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 
 class AutoSmelterTest {
-
     @BeforeEach
     fun setup() {
         TestHelper.setup()
@@ -150,9 +153,13 @@ class AutoSmelterTest {
 
         smelter.callPowerUpdate()
 
-        verify { mockItem.teleportAsync(match { loc ->
-            loc.z < 0.5 && loc.x == 0.5
-        }) }
+        verify {
+            mockItem.teleportAsync(
+                match { loc ->
+                    loc.z < 0.5 && loc.x == 0.5
+                },
+            )
+        }
     }
 
     @Test
@@ -170,9 +177,13 @@ class AutoSmelterTest {
 
         smelter.callPowerUpdate()
 
-        verify { mockItem.teleportAsync(match { loc ->
-            loc.x > 0.5 && loc.z == 0.5
-        }) }
+        verify {
+            mockItem.teleportAsync(
+                match { loc ->
+                    loc.x > 0.5 && loc.z == 0.5
+                },
+            )
+        }
     }
 
     @Test
@@ -192,9 +203,13 @@ class AutoSmelterTest {
         smelter.callPowerUpdate()
 
         // Item should still be moved forward even without smelting
-        verify { mockItem.teleportAsync(match { loc ->
-            loc.z < 0.5 && loc.x == 0.5
-        }) }
+        verify {
+            mockItem.teleportAsync(
+                match { loc ->
+                    loc.z < 0.5 && loc.x == 0.5
+                },
+            )
+        }
         // Power should not be consumed since no recipe was found
         assertEquals(2, smelter.currentPower)
     }
