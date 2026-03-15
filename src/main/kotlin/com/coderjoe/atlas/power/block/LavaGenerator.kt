@@ -14,7 +14,6 @@ import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
 class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) {
-
     override val canReceivePower: Boolean = false
     override val updateIntervalTicks: Long = 20L
 
@@ -23,28 +22,35 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
         const val BLOCK_ID_ACTIVE = "lava_generator_active"
         const val POWER_PER_LAVA = 5
 
-        private val ADJACENT_FACES = listOf(
-            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
-            BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
-        )
+        private val ADJACENT_FACES =
+            listOf(
+                BlockFace.NORTH,
+                BlockFace.SOUTH,
+                BlockFace.EAST,
+                BlockFace.WEST,
+                BlockFace.UP,
+                BlockFace.DOWN,
+            )
 
-        val descriptor = BlockDescriptor(
-            baseBlockId = BLOCK_ID,
-            displayName = "Lava Generator",
-            description = "Generator - produces $POWER_PER_LAVA power per lava unit",
-            placementType = PlacementType.SIMPLE,
-            directionalVariants = emptyMap(),
-            allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE),
-            constructor = { loc, _ -> LavaGenerator(loc) }
-        )
+        val descriptor =
+            BlockDescriptor(
+                baseBlockId = BLOCK_ID,
+                displayName = "Lava Generator",
+                description = "Generator - produces $POWER_PER_LAVA power per lava unit",
+                placementType = PlacementType.SIMPLE,
+                directionalVariants = emptyMap(),
+                allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE),
+                constructor = { loc, _ -> LavaGenerator(loc) },
+            )
     }
 
     override val baseBlockId: String = BLOCK_ID
 
-    override fun getVisualStateBlockId(): String = when {
-        currentPower > 0 -> BLOCK_ID_ACTIVE
-        else -> BLOCK_ID
-    }
+    override fun getVisualStateBlockId(): String =
+        when {
+            currentPower > 0 -> BLOCK_ID_ACTIVE
+            else -> BLOCK_ID
+        }
 
     override fun powerUpdate() {
         if (currentPower >= maxStorage) return
@@ -60,12 +66,19 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
             val lava = tryPullLava(source, face)
             if (lava) {
                 val generated = addPower(POWER_PER_LAVA)
-                plugin.logger.atlasInfo("LavaGenerator at ${location.blockX},${location.blockY},${location.blockZ} consumed 1 lava, generated $generated power (now $currentPower/$maxStorage)")
+                plugin.logger.atlasInfo(
+                    """
+                    LavaGenerator at ${'$'}{location.blockX},${'$'}{location.blockY},${'$'}{location.blockZ} consumed 1 lava, generated ${'$'}generated power (now ${'$'}currentPower/${'$'}maxStorage)
+                    """.trimIndent(),
+                )
             }
         }
     }
 
-    private fun tryPullLava(source: com.coderjoe.atlas.fluid.FluidBlock, face: BlockFace): Boolean {
+    private fun tryPullLava(
+        source: com.coderjoe.atlas.fluid.FluidBlock,
+        face: BlockFace,
+    ): Boolean {
         when (source) {
             is FluidPump -> {
                 if (source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == FluidType.LAVA) {

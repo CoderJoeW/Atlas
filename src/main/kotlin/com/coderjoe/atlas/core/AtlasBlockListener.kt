@@ -14,9 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class AtlasBlockListener(
     private val plugin: JavaPlugin,
-    private val systems: List<BlockSystem<*>>
+    private val systems: List<BlockSystem<*>>,
 ) : Listener {
-
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
         val location = event.block.location
@@ -47,37 +46,44 @@ class AtlasBlockListener(
         event: BlockPlaceEvent,
         system: BlockSystem<*>,
         descriptor: BlockDescriptor,
-        blockId: String
+        blockId: String,
     ) {
         when (descriptor.placementType) {
             PlacementType.SIMPLE -> {
                 val location = event.block.location.clone()
-                val facing = if (descriptor.directionalVariants.isEmpty()) {
-                    getPlayerFacing(event)
-                } else {
-                    BlockFace.SELF
-                }
+                val facing =
+                    if (descriptor.directionalVariants.isEmpty()) {
+                        getPlayerFacing(event)
+                    } else {
+                        BlockFace.SELF
+                    }
                 createAndRegister(system, blockId, location, facing)
             }
             PlacementType.DIRECTIONAL -> {
                 val facing = getDirectionalFacing(event, descriptor)
                 val variantId = descriptor.directionalVariants[facing] ?: return
                 val location = event.block.location.clone()
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    location.block.setType(Material.AIR, false)
-                    NexoBlocks.place(variantId, location)
-                    createAndRegister(system, variantId, location, facing)
-                })
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        location.block.setType(Material.AIR, false)
+                        NexoBlocks.place(variantId, location)
+                        createAndRegister(system, variantId, location, facing)
+                    },
+                )
             }
             PlacementType.DIRECTIONAL_OPPOSITE -> {
                 val facing = getDirectionalFacing(event, descriptor, opposite = true)
                 val variantId = descriptor.directionalVariants[facing] ?: blockId
                 val location = event.block.location.clone()
-                plugin.server.scheduler.runTask(plugin, Runnable {
-                    location.block.setType(Material.AIR, false)
-                    NexoBlocks.place(variantId, location)
-                    createAndRegister(system, variantId, location, facing)
-                })
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        location.block.setType(Material.AIR, false)
+                        NexoBlocks.place(variantId, location)
+                        createAndRegister(system, variantId, location, facing)
+                    },
+                )
             }
         }
     }
@@ -87,7 +93,7 @@ class AtlasBlockListener(
         system: BlockSystem<*>,
         blockId: String,
         location: org.bukkit.Location,
-        facing: BlockFace
+        facing: BlockFace,
     ) {
         val factory = system.factory as BlockFactory<AtlasBlock>
         val registry = system.registry as BlockRegistry<AtlasBlock>
@@ -138,7 +144,10 @@ class AtlasBlockListener(
         }
     }
 
-    private fun resolveFacingFromVariant(descriptor: BlockDescriptor, blockId: String): BlockFace {
+    private fun resolveFacingFromVariant(
+        descriptor: BlockDescriptor,
+        blockId: String,
+    ): BlockFace {
         for ((face, id) in descriptor.directionalVariants) {
             if (id == blockId) return face
         }
@@ -146,7 +155,11 @@ class AtlasBlockListener(
     }
 
     companion object {
-        fun getDirectionalFacing(event: BlockPlaceEvent, descriptor: BlockDescriptor, opposite: Boolean = false): BlockFace {
+        fun getDirectionalFacing(
+            event: BlockPlaceEvent,
+            descriptor: BlockDescriptor,
+            opposite: Boolean = false,
+        ): BlockFace {
             val raw = getPlayerFacing(event)
             val facing = if (opposite) raw.oppositeFace else raw
             if (descriptor.directionalVariants.containsKey(facing)) return facing

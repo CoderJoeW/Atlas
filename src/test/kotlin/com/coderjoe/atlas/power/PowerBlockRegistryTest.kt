@@ -4,11 +4,15 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import org.bukkit.block.BlockFace
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class PowerBlockRegistryTest {
-
     private lateinit var registry: PowerBlockRegistry
 
     @BeforeEach
@@ -71,14 +75,22 @@ class PowerBlockRegistryTest {
     fun `getAdjacentPowerBlocks returns blocks in all 6 directions`() {
         val loc = TestHelper.createLocation(0.0, 64.0, 0.0)
 
-        val offsets = listOf(
-            Triple(1.0, 0.0, 0.0),   // east
-            Triple(-1.0, 0.0, 0.0),  // west
-            Triple(0.0, 1.0, 0.0),   // up
-            Triple(0.0, -1.0, 0.0),  // down
-            Triple(0.0, 0.0, 1.0),   // south
-            Triple(0.0, 0.0, -1.0)   // north
-        )
+        val east = Triple(1.0, 0.0, 0.0)
+        val west = Triple(-1.0, 0.0, 0.0)
+        val north = Triple(0.0, 0.0, -1.0)
+        val south = Triple(0.0, 0.0, 1.0)
+        val up = Triple(0.0, 1.0, 0.0)
+        val down = Triple(0.0, -1.0, 0.0)
+
+        val offsets =
+            listOf(
+                east,
+                west,
+                up,
+                down,
+                south,
+                north,
+            )
 
         for ((dx, dy, dz) in offsets) {
             val neighborLoc = TestHelper.createLocation(dx, 64.0 + dy, dz)

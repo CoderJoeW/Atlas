@@ -1,4 +1,4 @@
-name: CI
+name: Code Coverage
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  coverage:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,5 +20,11 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
-      - name: Build and verify
-        run: mvn clean verify --batch-mode
+      - name: Run tests with coverage
+        run: mvn test jacoco:report -B
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-report
+          path: target/site/jacoco/

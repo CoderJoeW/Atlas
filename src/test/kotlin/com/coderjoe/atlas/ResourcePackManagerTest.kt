@@ -1,14 +1,18 @@
 package com.coderjoe.atlas
 
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import net.kyori.adventure.resource.ResourcePackRequest
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class ResourcePackManagerTest {
-
     @BeforeEach
     fun setup() {
         TestHelper.setup()
@@ -19,7 +23,11 @@ class ResourcePackManagerTest {
         TestHelper.teardown()
     }
 
-    private fun createManagerWithConfig(enabled: Boolean, url: String = "", hash: String = ""): ResourcePackManager {
+    private fun createManagerWithConfig(
+        enabled: Boolean,
+        url: String = "",
+        hash: String = "",
+    ): ResourcePackManager {
         val config = YamlConfiguration()
         config.set("resource-pack.enabled", enabled)
         config.set("resource-pack.url", url)

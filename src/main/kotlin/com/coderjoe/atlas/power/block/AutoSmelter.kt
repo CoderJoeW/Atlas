@@ -12,7 +12,6 @@ import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.ItemStack
 
 class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : PowerBlock(location, maxStorage = 2) {
-
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
     override val baseBlockId: String = BLOCK_ID
@@ -26,38 +25,42 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
         const val POWER_PER_SMELT = 2
         private const val MOVE_DISTANCE = 1.0
 
-        val DIRECTIONAL_IDS = mapOf(
-            BlockFace.NORTH to "auto_smelter_north",
-            BlockFace.SOUTH to "auto_smelter_south",
-            BlockFace.EAST to "auto_smelter_east",
-            BlockFace.WEST to "auto_smelter_west"
-        )
+        val DIRECTIONAL_IDS =
+            mapOf(
+                BlockFace.NORTH to "auto_smelter_north",
+                BlockFace.SOUTH to "auto_smelter_south",
+                BlockFace.EAST to "auto_smelter_east",
+                BlockFace.WEST to "auto_smelter_west",
+            )
 
-        val POWERED_IDS = mapOf(
-            BlockFace.NORTH to "auto_smelter_north_on",
-            BlockFace.SOUTH to "auto_smelter_south_on",
-            BlockFace.EAST to "auto_smelter_east_on",
-            BlockFace.WEST to "auto_smelter_west_on"
-        )
+        val POWERED_IDS =
+            mapOf(
+                BlockFace.NORTH to "auto_smelter_north_on",
+                BlockFace.SOUTH to "auto_smelter_south_on",
+                BlockFace.EAST to "auto_smelter_east_on",
+                BlockFace.WEST to "auto_smelter_west_on",
+            )
 
-        val ID_TO_FACING: Map<String, BlockFace> = buildMap {
-            DIRECTIONAL_IDS.forEach { (face, id) -> put(id, face) }
-            POWERED_IDS.forEach { (face, id) -> put(id, face) }
-        }
+        val ID_TO_FACING: Map<String, BlockFace> =
+            buildMap {
+                DIRECTIONAL_IDS.forEach { (face, id) -> put(id, face) }
+                POWERED_IDS.forEach { (face, id) -> put(id, face) }
+            }
 
         val ALL_VARIANT_IDS: List<String> = DIRECTIONAL_IDS.values.toList() + POWERED_IDS.values.toList()
 
         fun facingFromBlockId(blockId: String): BlockFace? = ID_TO_FACING[blockId]
 
-        val descriptor = BlockDescriptor(
-            baseBlockId = BLOCK_ID,
-            displayName = "Auto Smelter",
-            description = "Smelts items passing through, consumes 2 power per item",
-            placementType = PlacementType.DIRECTIONAL,
-            directionalVariants = DIRECTIONAL_IDS,
-            allRegistrableIds = ALL_VARIANT_IDS,
-            constructor = { loc, face -> AutoSmelter(loc, face) }
-        )
+        val descriptor =
+            BlockDescriptor(
+                baseBlockId = BLOCK_ID,
+                displayName = "Auto Smelter",
+                description = "Smelts items passing through, consumes 2 power per item",
+                placementType = PlacementType.DIRECTIONAL,
+                directionalVariants = DIRECTIONAL_IDS,
+                allRegistrableIds = ALL_VARIANT_IDS,
+                constructor = { loc, face -> AutoSmelter(loc, face) },
+            )
 
         fun getSmeltingResult(input: ItemStack): ItemStack? {
             return try {
@@ -99,8 +102,9 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
 
         // Scan for items on the belt surface (same as conveyor belt)
         val scanCenter = location.clone().add(0.5, 0.75, 0.5)
-        val nearbyItems = world.getNearbyEntities(scanCenter, 0.5, 0.75, 0.5)
-            .filterIsInstance<Item>()
+        val nearbyItems =
+            world.getNearbyEntities(scanCenter, 0.5, 0.75, 0.5)
+                .filterIsInstance<Item>()
 
         if (nearbyItems.isEmpty()) return
 

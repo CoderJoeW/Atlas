@@ -3,14 +3,12 @@ package com.coderjoe.atlas
 import net.kyori.adventure.resource.ResourcePackInfo
 import net.kyori.adventure.resource.ResourcePackRequest
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.net.URI
 import java.util.UUID
 
 class ResourcePackManager(private val plugin: JavaPlugin) {
-
     private var packInfo: ResourcePackInfo? = null
     private var isRequired: Boolean = false
     private var promptMessage: Component? = null
@@ -39,11 +37,12 @@ class ResourcePackManager(private val plugin: JavaPlugin) {
         val packId = UUID.nameUUIDFromBytes(url.toByteArray())
 
         try {
-            packInfo = ResourcePackInfo.resourcePackInfo()
-                .uri(URI.create(url))
-                .hash(hash)
-                .id(packId)
-                .build()
+            packInfo =
+                ResourcePackInfo.resourcePackInfo()
+                    .uri(URI.create(url))
+                    .hash(hash)
+                    .id(packId)
+                    .build()
 
             if (prompt.isNotBlank()) {
                 promptMessage = Component.text(prompt)
@@ -58,14 +57,15 @@ class ResourcePackManager(private val plugin: JavaPlugin) {
     fun sendToPlayer(player: Player) {
         val info = packInfo ?: return
 
-        val request = ResourcePackRequest.resourcePackRequest()
-            .packs(info)
-            .required(isRequired)
-            .replace(true)
-            .apply {
-                promptMessage?.let { prompt(it) }
-            }
-            .build()
+        val request =
+            ResourcePackRequest.resourcePackRequest()
+                .packs(info)
+                .required(isRequired)
+                .replace(true)
+                .apply {
+                    promptMessage?.let { prompt(it) }
+                }
+                .build()
 
         player.sendResourcePacks(request)
 

@@ -5,8 +5,11 @@ import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
 object FluidBlockFactory : BlockFactory<FluidBlock>() {
-
-    fun createFluidBlock(blockId: String, location: Location, facing: BlockFace = BlockFace.SELF): FluidBlock? {
+    fun createFluidBlock(
+        blockId: String,
+        location: Location,
+        facing: BlockFace = BlockFace.SELF,
+    ): FluidBlock? {
         return create(blockId, location, facing)
     }
 }

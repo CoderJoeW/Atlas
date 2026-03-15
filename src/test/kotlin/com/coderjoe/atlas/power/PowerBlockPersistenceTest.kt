@@ -6,12 +6,16 @@ import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import org.bukkit.block.BlockFace
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class PowerBlockPersistenceTest {
-
     private lateinit var registry: PowerBlockRegistry
     private lateinit var persistence: PowerBlockPersistence
 

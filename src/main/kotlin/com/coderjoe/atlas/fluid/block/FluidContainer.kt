@@ -10,7 +10,6 @@ import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
 class FluidContainer(location: Location, override val facing: BlockFace) : FluidBlock(location) {
-
     var storedAmount: Int = 0
         private set
 
@@ -20,46 +19,51 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
         const val BLOCK_ID = "fluid_container"
         const val MAX_CAPACITY = 10
 
-        val DIRECTIONAL_IDS = mapOf(
-            BlockFace.NORTH to "fluid_container_north",
-            BlockFace.SOUTH to "fluid_container_south",
-            BlockFace.EAST to "fluid_container_east",
-            BlockFace.WEST to "fluid_container_west",
-            BlockFace.UP to "fluid_container_up",
-            BlockFace.DOWN to "fluid_container_down"
-        )
+        val DIRECTIONAL_IDS =
+            mapOf(
+                BlockFace.NORTH to "fluid_container_north",
+                BlockFace.SOUTH to "fluid_container_south",
+                BlockFace.EAST to "fluid_container_east",
+                BlockFace.WEST to "fluid_container_west",
+                BlockFace.UP to "fluid_container_up",
+                BlockFace.DOWN to "fluid_container_down",
+            )
 
         val ID_TO_FACING = DIRECTIONAL_IDS.entries.associate { (face, id) -> id to face }
 
         private val FILL_LEVELS = listOf("low", "medium", "full")
         private val FLUID_TYPES = listOf("water", "lava")
 
-        val FILLED_IDS: Map<BlockFace, Map<FluidType, Map<String, String>>> = BlockFace.values()
-            .filter { DIRECTIONAL_IDS.containsKey(it) }
-            .associateWith { face ->
-                val dir = face.name.lowercase()
-                mapOf(
-                    FluidType.WATER to mapOf(
-                        "low" to "fluid_container_${dir}_water_low",
-                        "medium" to "fluid_container_${dir}_water_medium",
-                        "full" to "fluid_container_${dir}_water_full"
-                    ),
-                    FluidType.LAVA to mapOf(
-                        "low" to "fluid_container_${dir}_lava_low",
-                        "medium" to "fluid_container_${dir}_lava_medium",
-                        "full" to "fluid_container_${dir}_lava_full"
+        val FILLED_IDS: Map<BlockFace, Map<FluidType, Map<String, String>>> =
+            BlockFace.values()
+                .filter { DIRECTIONAL_IDS.containsKey(it) }
+                .associateWith { face ->
+                    val dir = face.name.lowercase()
+                    mapOf(
+                        FluidType.WATER to
+                            mapOf(
+                                "low" to "fluid_container_${dir}_water_low",
+                                "medium" to "fluid_container_${dir}_water_medium",
+                                "full" to "fluid_container_${dir}_water_full",
+                            ),
+                        FluidType.LAVA to
+                            mapOf(
+                                "low" to "fluid_container_${dir}_lava_low",
+                                "medium" to "fluid_container_${dir}_lava_medium",
+                                "full" to "fluid_container_${dir}_lava_full",
+                            ),
                     )
-                )
-            }
+                }
 
-        val ALL_VARIANT_IDS: List<String> = buildList {
-            addAll(DIRECTIONAL_IDS.values)
-            for (face in FILLED_IDS.keys) {
-                for (fluidMap in FILLED_IDS[face]!!.values) {
-                    addAll(fluidMap.values)
+        val ALL_VARIANT_IDS: List<String> =
+            buildList {
+                addAll(DIRECTIONAL_IDS.values)
+                for (face in FILLED_IDS.keys) {
+                    for (fluidMap in FILLED_IDS[face]!!.values) {
+                        addAll(fluidMap.values)
+                    }
                 }
             }
-        }
 
         fun facingFromBlockId(blockId: String): BlockFace? {
             ID_TO_FACING[blockId]?.let { return it }
@@ -71,15 +75,16 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
             return null
         }
 
-        val descriptor = BlockDescriptor(
-            baseBlockId = BLOCK_ID,
-            displayName = "Fluid Container",
-            description = "Container - stores up to $MAX_CAPACITY units of fluid",
-            placementType = PlacementType.DIRECTIONAL,
-            directionalVariants = DIRECTIONAL_IDS,
-            allRegistrableIds = ALL_VARIANT_IDS,
-            constructor = { loc, facing -> FluidContainer(loc, facing) }
-        )
+        val descriptor =
+            BlockDescriptor(
+                baseBlockId = BLOCK_ID,
+                displayName = "Fluid Container",
+                description = "Container - stores up to $MAX_CAPACITY units of fluid",
+                placementType = PlacementType.DIRECTIONAL,
+                directionalVariants = DIRECTIONAL_IDS,
+                allRegistrableIds = ALL_VARIANT_IDS,
+                constructor = { loc, facing -> FluidContainer(loc, facing) },
+            )
     }
 
     override val baseBlockId: String = BLOCK_ID
@@ -108,12 +113,13 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
         return direction == facing && hasFluid()
     }
 
-    fun getFillLevel(): String = when (storedAmount) {
-        0 -> "empty"
-        in 1..3 -> "low"
-        in 4..7 -> "medium"
-        else -> "full"
-    }
+    fun getFillLevel(): String =
+        when (storedAmount) {
+            0 -> "empty"
+            in 1..3 -> "low"
+            in 4..7 -> "medium"
+            else -> "full"
+        }
 
     override fun getVisualStateBlockId(): String {
         if (storedAmount == 0 || storedFluid == FluidType.NONE) {
@@ -134,7 +140,11 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 if (source.canRemoveFluidFrom(facing)) {
                     val fluid = source.removeFluid()
                     if (storeFluid(fluid)) {
-                        plugin.logger.atlasInfo("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump")
+                        plugin.logger.atlasInfo(
+                            """
+                            FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump
+                            """.trimIndent(),
+                        )
                     } else {
                         source.storeFluid(fluid)
                     }
@@ -144,7 +154,11 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 if (source.hasFluid()) {
                     val fluid = source.removeFluid()
                     if (storeFluid(fluid)) {
-                        plugin.logger.atlasInfo("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe")
+                        plugin.logger.atlasInfo(
+                            """
+                            FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe
+                            """.trimIndent(),
+                        )
                     } else {
                         source.storeFluid(fluid)
                     }
@@ -154,7 +168,11 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 if (source.canRemoveFluidFrom(facing)) {
                     val fluid = source.removeFluid()
                     if (storeFluid(fluid)) {
-                        plugin.logger.atlasInfo("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer")
+                        plugin.logger.atlasInfo(
+                            """
+                            FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer
+                            """.trimIndent(),
+                        )
                     } else {
                         source.storeFluid(fluid)
                     }
@@ -164,7 +182,11 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 if (source.hasFluid()) {
                     val fluid = source.removeFluid()
                     if (storeFluid(fluid)) {
-                        plugin.logger.atlasInfo("FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidMerger")
+                        plugin.logger.atlasInfo(
+                            """
+                            FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidMerger
+                            """.trimIndent(),
+                        )
                     } else {
                         source.storeFluid(fluid)
                     }
@@ -173,7 +195,10 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
         }
     }
 
-    fun restoreState(type: FluidType, amount: Int) {
+    fun restoreState(
+        type: FluidType,
+        amount: Int,
+    ) {
         storedFluid = type
         storedAmount = amount.coerceIn(0, MAX_CAPACITY)
     }

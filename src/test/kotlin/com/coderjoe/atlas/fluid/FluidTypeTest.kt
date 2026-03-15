@@ -1,10 +1,10 @@
 package com.coderjoe.atlas.fluid
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class FluidTypeTest {
-
     @Test
     fun `all enum values exist`() {
         val values = FluidType.values()

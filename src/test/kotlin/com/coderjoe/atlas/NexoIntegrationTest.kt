@@ -1,12 +1,13 @@
 package com.coderjoe.atlas
 
-import io.mockk.*
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import io.mockk.every
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class NexoIntegrationTest {
-
     @BeforeEach
     fun setup() {
         TestHelper.setup()

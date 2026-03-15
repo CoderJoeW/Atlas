@@ -17,12 +17,19 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
         }
     }
 
-    fun register(block: T, blockId: String) {
+    fun register(
+        block: T,
+        blockId: String,
+    ) {
         val key = locationKey(block.location)
         blocks[key] = block
         blockIds[key] = blockId
         block.start()
-        plugin.logger.atlasInfo("Registered ${block::class.simpleName} at ${block.location.blockX},${block.location.blockY},${block.location.blockZ}")
+        plugin.logger.atlasInfo(
+            """
+            Registered ${block::class.simpleName} at ${block.location.blockX},${block.location.blockY},${block.location.blockZ}
+            """.trimIndent(),
+        )
     }
 
     fun unregister(location: Location): T? {
@@ -40,22 +47,40 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
         return blocks[locationKey(location)]
     }
 
-    fun getAdjacentBlock(location: Location, face: BlockFace): T? {
+    fun getAdjacentBlock(
+        location: Location,
+        face: BlockFace,
+    ): T? {
         val offset = face.direction
-        return getBlock(Location(location.world,
-            (location.blockX + offset.blockX).toDouble(),
-            (location.blockY + offset.blockY).toDouble(),
-            (location.blockZ + offset.blockZ).toDouble()))
+        return getBlock(
+            Location(
+                location.world,
+                (location.blockX + offset.blockX).toDouble(),
+                (location.blockY + offset.blockY).toDouble(),
+                (location.blockZ + offset.blockZ).toDouble(),
+            ),
+        )
     }
 
     fun getAdjacentBlocks(location: Location): List<T> {
-        val offsets = listOf(
-            intArrayOf(1, 0, 0), intArrayOf(-1, 0, 0),
-            intArrayOf(0, 1, 0), intArrayOf(0, -1, 0),
-            intArrayOf(0, 0, 1), intArrayOf(0, 0, -1)
-        )
+        val offsets =
+            listOf(
+                intArrayOf(1, 0, 0),
+                intArrayOf(-1, 0, 0),
+                intArrayOf(0, 1, 0),
+                intArrayOf(0, -1, 0),
+                intArrayOf(0, 0, 1),
+                intArrayOf(0, 0, -1),
+            )
         return offsets.mapNotNull { (dx, dy, dz) ->
-            getBlock(Location(location.world, (location.blockX + dx).toDouble(), (location.blockY + dy).toDouble(), (location.blockZ + dz).toDouble()))
+            getBlock(
+                Location(
+                    location.world,
+                    (location.blockX + dx).toDouble(),
+                    (location.blockY + dy).toDouble(),
+                    (location.blockZ + dz).toDouble(),
+                ),
+            )
         }
     }
 

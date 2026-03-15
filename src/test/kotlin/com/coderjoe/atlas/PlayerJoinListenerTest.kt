@@ -1,12 +1,15 @@
 package com.coderjoe.atlas
 
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class PlayerJoinListenerTest {
-
     @BeforeEach
     fun setup() {
         TestHelper.setup()

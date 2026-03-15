@@ -6,27 +6,29 @@ import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidMerger
+import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.block.AutoSmelter
+import com.coderjoe.atlas.power.block.CobblestoneFactory
+import com.coderjoe.atlas.power.block.LavaGenerator
+import com.coderjoe.atlas.power.block.MultiPowerCable
+import com.coderjoe.atlas.power.block.ObsidianFactory
+import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.PowerMerger
+import com.coderjoe.atlas.power.block.SmallBattery
+import com.coderjoe.atlas.power.block.SmallDrill
+import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.transport.TransportBlock
 import com.coderjoe.atlas.transport.TransportBlockFactory
 import com.coderjoe.atlas.transport.TransportBlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
-import com.coderjoe.atlas.power.block.AutoSmelter
-import com.coderjoe.atlas.power.block.LavaGenerator
-import com.coderjoe.atlas.power.block.PowerCable
-import com.coderjoe.atlas.power.block.SmallBattery
-import com.coderjoe.atlas.power.block.SmallDrill
-import com.coderjoe.atlas.power.block.MultiPowerCable
-import com.coderjoe.atlas.power.block.CobblestoneFactory
-import com.coderjoe.atlas.power.block.ObsidianFactory
-import com.coderjoe.atlas.power.block.PowerMerger
-import com.coderjoe.atlas.power.block.SmallSolarPanel
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.unmockkAll
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.World
@@ -37,7 +39,6 @@ import java.io.File
 import java.util.logging.Logger
 
 object TestHelper {
-
     lateinit var mockPlugin: Atlas
     lateinit var mockServer: Server
     lateinit var mockWorld: World
@@ -82,7 +83,12 @@ object TestHelper {
         dataFolder.deleteRecursively()
     }
 
-    fun createLocation(x: Double = 0.0, y: Double = 64.0, z: Double = 0.0, world: World? = null): Location {
+    fun createLocation(
+        x: Double = 0.0,
+        y: Double = 64.0,
+        z: Double = 0.0,
+        world: World? = null,
+    ): Location {
         return Location(world ?: mockWorld, x, y, z)
     }
 
@@ -104,7 +110,11 @@ object TestHelper {
         method.invoke(this)
     }
 
-    fun addToRegistry(registry: PowerBlockRegistry, block: PowerBlock, blockId: String) {
+    fun addToRegistry(
+        registry: PowerBlockRegistry,
+        block: PowerBlock,
+        blockId: String,
+    ) {
         val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
         blocksField.isAccessible = true
         @Suppress("UNCHECKED_CAST")
@@ -120,7 +130,11 @@ object TestHelper {
         blockIds[key] = blockId
     }
 
-    fun addToRegistry(registry: TransportBlockRegistry, block: TransportBlock, blockId: String) {
+    fun addToRegistry(
+        registry: TransportBlockRegistry,
+        block: TransportBlock,
+        blockId: String,
+    ) {
         val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
         blocksField.isAccessible = true
         @Suppress("UNCHECKED_CAST")
@@ -136,7 +150,11 @@ object TestHelper {
         blockIds[key] = blockId
     }
 
-    fun addToRegistry(registry: FluidBlockRegistry, block: FluidBlock, blockId: String) {
+    fun addToRegistry(
+        registry: FluidBlockRegistry,
+        block: FluidBlock,
+        blockId: String,
+    ) {
         val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
         blocksField.isAccessible = true
         @Suppress("UNCHECKED_CAST")
@@ -157,42 +175,53 @@ object TestHelper {
             val instanceField = PowerBlockRegistry.Companion::class.java.getDeclaredField("instance")
             instanceField.isAccessible = true
             instanceField.set(PowerBlockRegistry.Companion, null)
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
 
         try {
             val instanceField = FluidBlockRegistry.Companion::class.java.getDeclaredField("instance")
             instanceField.isAccessible = true
             instanceField.set(FluidBlockRegistry.Companion, null)
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
 
         try {
             val instanceField = TransportBlockRegistry.Companion::class.java.getDeclaredField("instance")
             instanceField.isAccessible = true
             instanceField.set(TransportBlockRegistry.Companion, null)
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
     }
 
     fun initPowerFactory() {
-        PowerBlockFactory.registerFromDescriptors(listOf(
-            SmallSolarPanel.descriptor, SmallDrill.descriptor,
-            SmallBattery.descriptor, PowerCable.descriptor,
-            LavaGenerator.descriptor, AutoSmelter.descriptor,
-            MultiPowerCable.descriptor, CobblestoneFactory.descriptor,
-            ObsidianFactory.descriptor, PowerMerger.descriptor
-        ))
+        PowerBlockFactory.registerFromDescriptors(
+            listOf(
+                SmallSolarPanel.descriptor, SmallDrill.descriptor,
+                SmallBattery.descriptor, PowerCable.descriptor,
+                LavaGenerator.descriptor, AutoSmelter.descriptor,
+                MultiPowerCable.descriptor, CobblestoneFactory.descriptor,
+                ObsidianFactory.descriptor, PowerMerger.descriptor,
+            ),
+        )
     }
 
     fun initFluidFactory() {
-        FluidBlockFactory.registerFromDescriptors(listOf(
-            FluidPump.descriptor, FluidPipe.descriptor,
-            FluidContainer.descriptor, FluidMerger.descriptor
-        ))
+        FluidBlockFactory.registerFromDescriptors(
+            listOf(
+                FluidPump.descriptor,
+                FluidPipe.descriptor,
+                FluidContainer.descriptor,
+                FluidMerger.descriptor,
+            ),
+        )
     }
 
     fun initTransportFactory() {
-        TransportBlockFactory.registerFromDescriptors(listOf(
-            ConveyorBelt.descriptor
-        ))
+        TransportBlockFactory.registerFromDescriptors(
+            listOf(
+                ConveyorBelt.descriptor,
+            ),
+        )
     }
 
     private fun clearFactories() {

@@ -17,7 +17,6 @@ import org.bukkit.block.BlockFace
 import org.bukkit.inventory.ItemStack
 
 class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 100) {
-
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
 
@@ -26,28 +25,35 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
         const val BLOCK_ID_ACTIVE = "obsidian_factory_active"
         const val POWER_COST = 100
 
-        private val ADJACENT_FACES = listOf(
-            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
-            BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
-        )
+        private val ADJACENT_FACES =
+            listOf(
+                BlockFace.NORTH,
+                BlockFace.SOUTH,
+                BlockFace.EAST,
+                BlockFace.WEST,
+                BlockFace.UP,
+                BlockFace.DOWN,
+            )
 
-        val descriptor = BlockDescriptor(
-            baseBlockId = BLOCK_ID,
-            displayName = "Obsidian Factory",
-            description = "Machine - consumes $POWER_COST power + water + lava → obsidian",
-            placementType = PlacementType.SIMPLE,
-            directionalVariants = emptyMap(),
-            allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE),
-            constructor = { loc, _ -> ObsidianFactory(loc) }
-        )
+        val descriptor =
+            BlockDescriptor(
+                baseBlockId = BLOCK_ID,
+                displayName = "Obsidian Factory",
+                description = "Machine - consumes $POWER_COST power + water + lava → obsidian",
+                placementType = PlacementType.SIMPLE,
+                directionalVariants = emptyMap(),
+                allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE),
+                constructor = { loc, _ -> ObsidianFactory(loc) },
+            )
     }
 
     override val baseBlockId: String = BLOCK_ID
 
-    override fun getVisualStateBlockId(): String = when {
-        currentPower >= POWER_COST -> BLOCK_ID_ACTIVE
-        else -> BLOCK_ID
-    }
+    override fun getVisualStateBlockId(): String =
+        when {
+            currentPower >= POWER_COST -> BLOCK_ID_ACTIVE
+            else -> BLOCK_ID
+        }
 
     override fun powerUpdate() {
         // Pull power from adjacent blocks
@@ -97,7 +103,11 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
         plugin.logger.atlasInfo("ObsidianFactory at ${location.blockX},${location.blockY},${location.blockZ} produced 1 obsidian")
     }
 
-    private fun hasFluidAvailable(source: com.coderjoe.atlas.fluid.FluidBlock, face: BlockFace, fluidType: FluidType): Boolean {
+    private fun hasFluidAvailable(
+        source: com.coderjoe.atlas.fluid.FluidBlock,
+        face: BlockFace,
+        fluidType: FluidType,
+    ): Boolean {
         return when (source) {
             is FluidPump -> source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == fluidType
             is FluidPipe -> source.hasFluid() && source.storedFluid == fluidType
@@ -107,7 +117,10 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
         }
     }
 
-    private fun pullFluid(source: com.coderjoe.atlas.fluid.FluidBlock, face: BlockFace) {
+    private fun pullFluid(
+        source: com.coderjoe.atlas.fluid.FluidBlock,
+        face: BlockFace,
+    ) {
         when (source) {
             is FluidPump -> source.removeFluid()
             is FluidPipe -> source.removeFluid()

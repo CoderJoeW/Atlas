@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
 abstract class AtlasBlock(
-    val location: Location
+    val location: Location,
 ) {
     private var updateTask: BukkitTask? = null
     protected val plugin: JavaPlugin get() = testPlugin ?: JavaPlugin.getPlugin(Atlas::class.java)
@@ -23,7 +23,9 @@ abstract class AtlasBlock(
     }
 
     protected abstract fun blockUpdate()
+
     abstract fun getVisualStateBlockId(): String
+
     abstract fun getRegistry(): BlockRegistry<*>
 
     open val facing: BlockFace get() = BlockFace.SELF
@@ -48,18 +50,30 @@ abstract class AtlasBlock(
     fun start() {
         currentVisualState = NexoBlocks.customBlockMechanic(location.block)?.itemID
 
-        plugin.server.scheduler.runTask(plugin, Runnable {
-            updateVisualState()
-        })
-
-        updateTask = plugin.server.scheduler.runTaskTimer(plugin, Runnable {
-            try {
-                blockUpdate()
+        plugin.server.scheduler.runTask(
+            plugin,
+            Runnable {
                 updateVisualState()
-            } catch (e: Exception) {
-                plugin.logger.warning("Error in block tick at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}")
-            }
-        }, updateIntervalTicks, updateIntervalTicks)
+            },
+        )
+
+        updateTask =
+            plugin.server.scheduler.runTaskTimer(
+                plugin,
+                Runnable {
+                    try {
+                        blockUpdate()
+                        updateVisualState()
+                    } catch (e: Exception) {
+                        plugin.logger.warning(
+                            """
+                            Error in block tick at ${'$'}{location.blockX},${'$'}{location.blockY},${'$'}{location.blockZ}: ${'$'}{e.message}
+                            """.trimIndent(),
+                        )
+                    }
+                },
+                updateIntervalTicks, updateIntervalTicks,
+            )
 
         plugin.logger.atlasInfo("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started")
     }

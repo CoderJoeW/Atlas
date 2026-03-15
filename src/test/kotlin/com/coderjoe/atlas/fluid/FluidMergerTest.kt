@@ -5,11 +5,14 @@ import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import org.bukkit.block.BlockFace
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class FluidMergerTest {
-
     private lateinit var registry: FluidBlockRegistry
 
     @BeforeEach
