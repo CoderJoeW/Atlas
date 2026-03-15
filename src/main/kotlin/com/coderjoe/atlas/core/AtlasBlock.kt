@@ -2,9 +2,9 @@ package com.coderjoe.atlas.core
 
 import com.coderjoe.atlas.Atlas
 import com.coderjoe.atlas.atlasInfo
-import com.nexomc.nexo.api.NexoBlocks
+import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks
+import net.momirealms.craftengine.core.util.Key
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
@@ -38,9 +38,12 @@ abstract class AtlasBlock(
             val key = BlockRegistry.locationKey(location)
             registry.updatingLocations.add(key)
             try {
-                location.block.setType(Material.AIR, false)
-                NexoBlocks.place(newState, location)
+                CraftEngineBlocks.place(location, Key.of(newState), false)
                 currentVisualState = newState
+            } catch (e: Throwable) {
+                plugin.logger.warning(
+                    "Failed to update visual state at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}"
+                )
             } finally {
                 registry.updatingLocations.remove(key)
             }
@@ -48,12 +51,20 @@ abstract class AtlasBlock(
     }
 
     fun start() {
-        currentVisualState = NexoBlocks.customBlockMechanic(location.block)?.itemID
+        try {
+            val state = CraftEngineBlocks.getCustomBlockState(location.block)
+            currentVisualState = state?.owner()?.value()?.id()?.toString()
+        } catch (_: Throwable) {
+            // CraftEngine not loaded
+        }
 
         plugin.server.scheduler.runTask(
             plugin,
             Runnable {
                 updateVisualState()
+                if (facing != BlockFace.SELF) {
+                    CraftEngineHelper.setFacing(location, facing)
+                }
             },
         )
 
@@ -67,7 +78,7 @@ abstract class AtlasBlock(
                     } catch (e: Exception) {
                         plugin.logger.warning(
                             """
-                            Error in block tick at ${'$'}{location.blockX},${'$'}{location.blockY},${'$'}{location.blockZ}: ${'$'}{e.message}
+                            Error in block tick at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}
                             """.trimIndent(),
                         )
                     }

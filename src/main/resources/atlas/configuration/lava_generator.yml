@@ -1,0 +1,90 @@
+items:
+  atlas:lava_generator:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#FF4500:#FFD700>Lava Generator"
+    model: minecraft:block/custom/lava_generator
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        state:
+          auto-state: solid
+          model:
+            path: minecraft:block/custom/lava_generator
+            generation:
+              parent: minecraft:block/cube_bottom_top
+              textures:
+                top: minecraft:block/custom/lava_generator_top
+                bottom: minecraft:block/custom/lava_generator_bottom
+                side: minecraft:block/custom/lava_generator_side
+
+items#1:
+  atlas:lava_generator_active:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#FF4500:#FFD700>Lava Generator"
+    model: minecraft:block/custom/lava_generator_active
+    behavior:
+      type: block_item
+      block:
+        loot:
+          pools:
+            - rolls: 1
+              entries:
+                - type: item
+                  item: atlas:lava_generator
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        state:
+          auto-state: solid
+          model:
+            path: minecraft:block/custom/lava_generator_active
+            generation:
+              parent: minecraft:block/cube_bottom_top
+              textures:
+                top: minecraft:block/custom/lava_generator_top_active
+                bottom: minecraft:block/custom/lava_generator_bottom
+                side: minecraft:block/custom/lava_generator_side_active
+
+recipes:
+  atlas:lava_generator:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:redstone
+      - minecraft:redstone
+      - minecraft:redstone
+      - minecraft:magma_block
+    result:
+      id: atlas:lava_generator
+      count: 1

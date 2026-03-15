@@ -1,0 +1,114 @@
+items:
+  atlas:small_drill:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#808080:#FFD700>Small Drill"
+    model: minecraft:block/custom/small_drill
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        states:
+          properties:
+            facing:
+              type: direction
+              default: down
+          appearances:
+            north:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/small_drill
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/small_drill_front
+                    south: minecraft:block/custom/small_drill
+                    east: minecraft:block/custom/small_drill_arrow_right
+                    west: minecraft:block/custom/small_drill_arrow_left
+                    up: minecraft:block/custom/small_drill_arrow_up
+                    down: minecraft:block/custom/small_drill_arrow_down
+            south:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/small_drill
+                y: 180
+            east:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/small_drill
+                y: 90
+            west:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/small_drill
+                y: 270
+            up:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/small_drill_up
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/small_drill_arrow_up
+                    south: minecraft:block/custom/small_drill_arrow_down
+                    east: minecraft:block/custom/small_drill_arrow_right
+                    west: minecraft:block/custom/small_drill_arrow_left
+                    up: minecraft:block/custom/small_drill_front
+                    down: minecraft:block/custom/small_drill
+            down:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/small_drill_down
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/small_drill_arrow_down
+                    south: minecraft:block/custom/small_drill_arrow_up
+                    east: minecraft:block/custom/small_drill_arrow_right
+                    west: minecraft:block/custom/small_drill_arrow_left
+                    up: minecraft:block/custom/small_drill
+                    down: minecraft:block/custom/small_drill_front
+          variants:
+            facing=north:
+              appearance: north
+            facing=south:
+              appearance: south
+            facing=east:
+              appearance: east
+            facing=west:
+              appearance: west
+            facing=up:
+              appearance: up
+            facing=down:
+              appearance: down
+
+recipes:
+  atlas:small_drill:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:redstone
+      - minecraft:redstone
+      - minecraft:redstone
+      - minecraft:diamond
+    result:
+      id: atlas:small_drill
+      count: 1

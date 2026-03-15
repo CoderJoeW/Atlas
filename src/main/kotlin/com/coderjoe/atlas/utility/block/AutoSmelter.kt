@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.utility.block
 
 import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
@@ -21,35 +22,9 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
     override val facing: BlockFace get() = direction
 
     companion object {
-        const val BLOCK_ID = "auto_smelter"
+        const val BLOCK_ID = "atlas:auto_smelter"
         const val POWER_PER_SMELT = 2
         private const val MOVE_DISTANCE = 1.0
-
-        val DIRECTIONAL_IDS =
-            mapOf(
-                BlockFace.NORTH to "auto_smelter_north",
-                BlockFace.SOUTH to "auto_smelter_south",
-                BlockFace.EAST to "auto_smelter_east",
-                BlockFace.WEST to "auto_smelter_west",
-            )
-
-        val POWERED_IDS =
-            mapOf(
-                BlockFace.NORTH to "auto_smelter_north_on",
-                BlockFace.SOUTH to "auto_smelter_south_on",
-                BlockFace.EAST to "auto_smelter_east_on",
-                BlockFace.WEST to "auto_smelter_west_on",
-            )
-
-        val ID_TO_FACING: Map<String, BlockFace> =
-            buildMap {
-                DIRECTIONAL_IDS.forEach { (face, id) -> put(id, face) }
-                POWERED_IDS.forEach { (face, id) -> put(id, face) }
-            }
-
-        val ALL_VARIANT_IDS: List<String> = DIRECTIONAL_IDS.values.toList() + POWERED_IDS.values.toList()
-
-        fun facingFromBlockId(blockId: String): BlockFace? = ID_TO_FACING[blockId]
 
         val descriptor =
             BlockDescriptor(
@@ -57,8 +32,6 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
                 displayName = "Auto Smelter",
                 description = "Smelts items passing through, consumes 2 power per item",
                 placementType = PlacementType.DIRECTIONAL,
-                directionalVariants = DIRECTIONAL_IDS,
-                allRegistrableIds = ALL_VARIANT_IDS,
                 constructor = { loc, face -> AutoSmelter(loc, face) },
             )
 
@@ -74,16 +47,9 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
         }
     }
 
-    override fun getVisualStateBlockId(): String {
-        return if (hasPower()) {
-            POWERED_IDS[direction]!!
-        } else {
-            DIRECTIONAL_IDS[direction]!!
-        }
-    }
+    override fun getVisualStateBlockId(): String = BLOCK_ID
 
     override fun powerUpdate() {
-        // Pull power from adjacent blocks
         if (canAcceptPower()) {
             val registry = PowerBlockRegistry.instance ?: return
             val neighbors = registry.getAdjacentPowerBlocks(location)
@@ -100,7 +66,6 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
 
         val world = location.world ?: return
 
-        // Scan for items on the belt surface (same as conveyor belt)
         val scanCenter = location.clone().add(0.5, 0.75, 0.5)
         val nearbyItems =
             world.getNearbyEntities(scanCenter, 0.5, 0.75, 0.5)
@@ -112,7 +77,6 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
         val dz = direction.direction.z * MOVE_DISTANCE
 
         for (item in nearbyItems) {
-            // Try to smelt the item if we have power
             if (currentPower >= POWER_PER_SMELT) {
                 val result = getSmeltingResult(item.itemStack)
                 if (result != null) {
@@ -123,8 +87,14 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
                 }
             }
 
-            // Always move items forward (conveyor belt behavior)
             item.teleportAsync(item.location.add(dx, 0.0, dz))
         }
+
+        updatePoweredState()
+    }
+
+    private fun updatePoweredState() {
+        val shouldBePowered = hasPower()
+        CraftEngineHelper.setBooleanProperty(location, "powered", shouldBePowered)
     }
 }

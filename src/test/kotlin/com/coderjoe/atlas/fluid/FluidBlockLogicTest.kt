@@ -15,7 +15,6 @@ import org.bukkit.block.data.Levelled
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -88,21 +87,24 @@ class FluidBlockLogicTest {
     @Test
     fun `pump visual state NONE`() {
         val pump = FluidPump(TestHelper.createLocation())
-        assertEquals("fluid_pump", pump.getVisualStateBlockId())
+        assertEquals("atlas:fluid_pump", pump.getVisualStateBlockId())
     }
 
     @Test
     fun `pump visual state WATER`() {
         val pump = FluidPump(TestHelper.createLocation())
         pump.storeFluid(FluidType.WATER)
-        assertEquals("fluid_pump_active", pump.getVisualStateBlockId())
+        assertEquals("atlas:fluid_pump_active", pump.getVisualStateBlockId())
     }
 
     @Test
     fun `pump visual state LAVA`() {
         val pump = FluidPump(TestHelper.createLocation())
         pump.storeFluid(FluidType.LAVA)
-        assertEquals("fluid_pump_active_lava", pump.getVisualStateBlockId())
+        assertEquals(
+            "atlas:fluid_pump_active_lava",
+            pump.getVisualStateBlockId()
+        )
     }
 
     @Test
@@ -133,12 +135,18 @@ class FluidBlockLogicTest {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
-        // Mock all 6 adjacent blocks as non-cauldron
-        for (face in listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
+            BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
         pump.callFluidUpdate()
@@ -150,17 +158,24 @@ class FluidBlockLogicTest {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
-        // Water cauldron to the NORTH
         val cauldronBlock = mockk<Block>(relaxed = true)
         every { cauldronBlock.type } returns Material.WATER_CAULDRON
-        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns cauldronBlock
+        every {
+            TestHelper.mockWorld.getBlockAt(0, 64, -1)
+        } returns cauldronBlock
 
-        // All other directions are air
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
         pump.callFluidUpdate()
@@ -172,26 +187,34 @@ class FluidBlockLogicTest {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
-        // Water cauldron to the NORTH
         val levelled = mockk<Levelled>(relaxed = true)
         every { levelled.level } returns 3
         val cauldronBlock = mockk<Block>(relaxed = true)
         every { cauldronBlock.type } returns Material.WATER_CAULDRON
         every { cauldronBlock.blockData } returns levelled
-        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns cauldronBlock
+        every {
+            TestHelper.mockWorld.getBlockAt(0, 64, -1)
+        } returns cauldronBlock
 
-        // Other directions are air
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
-        // Add a powered block adjacent
         val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+        TestHelper.addToRegistry(
+            powerRegistry, solar, "atlas:small_solar_panel"
+        )
 
         pump.callFluidUpdate()
         assertEquals(FluidPump.PumpStatus.EXTRACTING, pump.pumpStatus)
@@ -206,18 +229,29 @@ class FluidBlockLogicTest {
 
         val cauldronBlock = mockk<Block>(relaxed = true)
         every { cauldronBlock.type } returns Material.LAVA_CAULDRON
-        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns cauldronBlock
+        every {
+            TestHelper.mockWorld.getBlockAt(0, 64, -1)
+        } returns cauldronBlock
 
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
         val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+        TestHelper.addToRegistry(
+            powerRegistry, solar, "atlas:small_solar_panel"
+        )
 
         pump.callFluidUpdate()
         assertEquals(FluidType.LAVA, pump.storedFluid)
@@ -228,8 +262,8 @@ class FluidBlockLogicTest {
     fun `pump canRemoveFluidFrom returns true when direction matches`() {
         val pump = FluidPump(TestHelper.createLocation())
         pump.storeFluid(FluidType.WATER)
-        // Set cauldronFace to NORTH so oppositeFace = SOUTH
-        val field = FluidPump::class.java.getDeclaredField("cauldronFace")
+        val field =
+            FluidPump::class.java.getDeclaredField("cauldronFace")
         field.isAccessible = true
         field.set(pump, BlockFace.NORTH)
 
@@ -240,7 +274,8 @@ class FluidBlockLogicTest {
     fun `pump canRemoveFluidFrom returns false for wrong direction`() {
         val pump = FluidPump(TestHelper.createLocation())
         pump.storeFluid(FluidType.WATER)
-        val field = FluidPump::class.java.getDeclaredField("cauldronFace")
+        val field =
+            FluidPump::class.java.getDeclaredField("cauldronFace")
         field.isAccessible = true
         field.set(pump, BlockFace.NORTH)
 
@@ -250,7 +285,8 @@ class FluidBlockLogicTest {
     @Test
     fun `pump canRemoveFluidFrom returns false when no fluid`() {
         val pump = FluidPump(TestHelper.createLocation())
-        val field = FluidPump::class.java.getDeclaredField("cauldronFace")
+        val field =
+            FluidPump::class.java.getDeclaredField("cauldronFace")
         field.isAccessible = true
         field.set(pump, BlockFace.NORTH)
 
@@ -261,11 +297,13 @@ class FluidBlockLogicTest {
     fun `pump isPowered reflects adjacent power blocks`() {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
-        pump.storeFluid(FluidType.WATER) // so it hits IDLE and returns early after checking power
+        pump.storeFluid(FluidType.WATER)
 
         val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+        TestHelper.addToRegistry(
+            powerRegistry, solar, "atlas:small_solar_panel"
+        )
 
         pump.callFluidUpdate()
         assertTrue(pump.isPowered)
@@ -291,22 +329,35 @@ class FluidBlockLogicTest {
         val cauldronBlock = mockk<Block>(relaxed = true)
         every { cauldronBlock.type } returns Material.WATER_CAULDRON
         every { cauldronBlock.blockData } returns levelled
-        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns cauldronBlock
+        every {
+            TestHelper.mockWorld.getBlockAt(0, 64, -1)
+        } returns cauldronBlock
 
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
         val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+        TestHelper.addToRegistry(
+            powerRegistry, solar, "atlas:small_solar_panel"
+        )
 
         pump.callFluidUpdate()
         assertEquals(FluidType.WATER, pump.storedFluid)
-        io.mockk.verify { cauldronBlock.setType(Material.CAULDRON, false) }
+        io.mockk.verify {
+            cauldronBlock.setType(Material.CAULDRON, false)
+        }
     }
 
     @Test
@@ -319,18 +370,29 @@ class FluidBlockLogicTest {
         val cauldronBlock = mockk<Block>(relaxed = true)
         every { cauldronBlock.type } returns Material.WATER_CAULDRON
         every { cauldronBlock.blockData } returns levelled
-        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns cauldronBlock
+        every {
+            TestHelper.mockWorld.getBlockAt(0, 64, -1)
+        } returns cauldronBlock
 
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
         val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+        TestHelper.addToRegistry(
+            powerRegistry, solar, "atlas:small_solar_panel"
+        )
 
         pump.callFluidUpdate()
         io.mockk.verify { levelled.level = 2 }
@@ -344,22 +406,35 @@ class FluidBlockLogicTest {
 
         val cauldronBlock = mockk<Block>(relaxed = true)
         every { cauldronBlock.type } returns Material.LAVA_CAULDRON
-        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns cauldronBlock
+        every {
+            TestHelper.mockWorld.getBlockAt(0, 64, -1)
+        } returns cauldronBlock
 
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
         val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+        TestHelper.addToRegistry(
+            powerRegistry, solar, "atlas:small_solar_panel"
+        )
 
         pump.callFluidUpdate()
         assertEquals(FluidType.LAVA, pump.storedFluid)
-        io.mockk.verify { cauldronBlock.setType(Material.CAULDRON, false) }
+        io.mockk.verify {
+            cauldronBlock.setType(Material.CAULDRON, false)
+        }
     }
 
     @Test
@@ -372,18 +447,29 @@ class FluidBlockLogicTest {
         every { waterBlock.type } returns Material.WATER
         every { waterBlock.blockData } returns levelled
         every { levelled.level } returns 0
-        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns waterBlock
+        every {
+            TestHelper.mockWorld.getBlockAt(0, 64, -1)
+        } returns waterBlock
 
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
         val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+        TestHelper.addToRegistry(
+            powerRegistry, solar, "atlas:small_solar_panel"
+        )
 
         pump.callFluidUpdate()
         assertEquals(FluidType.WATER, pump.storedFluid)
@@ -401,18 +487,29 @@ class FluidBlockLogicTest {
         every { lavaBlock.type } returns Material.LAVA
         every { lavaBlock.blockData } returns levelled
         every { levelled.level } returns 0
-        every { TestHelper.mockWorld.getBlockAt(0, 64, -1) } returns lavaBlock
+        every {
+            TestHelper.mockWorld.getBlockAt(0, 64, -1)
+        } returns lavaBlock
 
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+            every {
+                TestHelper.mockWorld.getBlockAt(
+                    offset.blockX, 64 + offset.blockY, offset.blockZ
+                )
+            } returns block
         }
 
         val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "small_solar_panel")
+        TestHelper.addToRegistry(
+            powerRegistry, solar, "atlas:small_solar_panel"
+        )
 
         pump.callFluidUpdate()
         assertEquals(FluidType.LAVA, pump.storedFluid)
@@ -431,14 +528,25 @@ class FluidBlockLogicTest {
         every { flowingBlock.blockData } returns levelled
         every { levelled.level } returns 3
 
-        for (face in listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (face in listOf(
+            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
+            BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
+        )) {
             val offset = face.direction
             if (face == BlockFace.NORTH) {
-                every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns flowingBlock
+                every {
+                    TestHelper.mockWorld.getBlockAt(
+                        offset.blockX, 64 + offset.blockY, offset.blockZ
+                    )
+                } returns flowingBlock
             } else {
                 val block = mockk<Block>(relaxed = true)
                 every { block.type } returns Material.AIR
-                every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
+                every {
+                    TestHelper.mockWorld.getBlockAt(
+                        offset.blockX, 64 + offset.blockY, offset.blockZ
+                    )
+                } returns block
             }
         }
 
@@ -450,41 +558,16 @@ class FluidBlockLogicTest {
     // --- FluidPipe specifics ---
 
     @Test
-    fun `pipe visual state empty for all directions`() {
-        for ((face, id) in FluidPipe.DIRECTIONAL_IDS) {
-            val pipe = FluidPipe(TestHelper.createLocation(), face)
-            assertEquals(id, pipe.getVisualStateBlockId())
-        }
+    fun `pipe visual state returns BLOCK_ID`() {
+        val pipe = FluidPipe(TestHelper.createLocation(), BlockFace.NORTH)
+        assertEquals("atlas:fluid_pipe", pipe.getVisualStateBlockId())
     }
 
     @Test
-    fun `pipe visual state water-filled for all directions`() {
-        for ((face, id) in FluidPipe.WATER_FILLED_IDS) {
-            val pipe = FluidPipe(TestHelper.createLocation(), face)
-            pipe.storeFluid(FluidType.WATER)
-            assertEquals(id, pipe.getVisualStateBlockId())
-        }
-    }
-
-    @Test
-    fun `pipe visual state lava-filled for all directions`() {
-        for ((face, id) in FluidPipe.LAVA_FILLED_IDS) {
-            val pipe = FluidPipe(TestHelper.createLocation(), face)
-            pipe.storeFluid(FluidType.LAVA)
-            assertEquals(id, pipe.getVisualStateBlockId())
-        }
-    }
-
-    @Test
-    fun `pipe facingFromBlockId returns correct BlockFace`() {
-        for ((face, id) in FluidPipe.DIRECTIONAL_IDS) {
-            assertEquals(face, FluidPipe.facingFromBlockId(id))
-        }
-    }
-
-    @Test
-    fun `pipe facingFromBlockId returns null for unknown`() {
-        assertNull(FluidPipe.facingFromBlockId("unknown_pipe_id"))
+    fun `pipe visual state returns BLOCK_ID regardless of fluid`() {
+        val pipe = FluidPipe(TestHelper.createLocation(), BlockFace.EAST)
+        pipe.storeFluid(FluidType.WATER)
+        assertEquals("atlas:fluid_pipe", pipe.getVisualStateBlockId())
     }
 
     @Test
@@ -501,20 +584,23 @@ class FluidBlockLogicTest {
     fun `pipe pulls from FluidPump behind it`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        // Pipe facing SOUTH, pulls from behind (NORTH = z-1)
-        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        val pipe = FluidPipe(
+            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH
+        )
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
         pump.storeFluid(FluidType.WATER)
 
-        // Set pump's cauldronFace so canRemoveFluidFrom works
-        // canRemoveFluidFrom(SOUTH) checks if SOUTH == cauldronFace.oppositeFace
-        // So if cauldronFace = NORTH, oppositeFace = SOUTH ✓
-        val cauldronFaceField = FluidPump::class.java.getDeclaredField("cauldronFace")
+        val cauldronFaceField =
+            FluidPump::class.java.getDeclaredField("cauldronFace")
         cauldronFaceField.isAccessible = true
         cauldronFaceField.set(pump, BlockFace.NORTH)
 
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south")
-        TestHelper.addToRegistry(fluidRegistry, pump, "fluid_pump")
+        TestHelper.addToRegistry(
+            fluidRegistry, pipe, "atlas:fluid_pipe"
+        )
+        TestHelper.addToRegistry(
+            fluidRegistry, pump, "atlas:fluid_pump"
+        )
 
         pipe.callFluidUpdate()
         assertEquals(FluidType.WATER, pipe.storedFluid)
@@ -525,12 +611,20 @@ class FluidBlockLogicTest {
     fun `pipe pulls from FluidPipe behind it`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val pipe1 = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
-        val pipe2 = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH)
+        val pipe1 = FluidPipe(
+            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH
+        )
+        val pipe2 = FluidPipe(
+            TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH
+        )
         pipe2.storeFluid(FluidType.LAVA)
 
-        TestHelper.addToRegistry(fluidRegistry, pipe1, "fluid_pipe_south")
-        TestHelper.addToRegistry(fluidRegistry, pipe2, "fluid_pipe_south")
+        TestHelper.addToRegistry(
+            fluidRegistry, pipe1, "atlas:fluid_pipe"
+        )
+        TestHelper.addToRegistry(
+            fluidRegistry, pipe2, "atlas:fluid_pipe"
+        )
 
         pipe1.callFluidUpdate()
         assertEquals(FluidType.LAVA, pipe1.storedFluid)
@@ -541,12 +635,19 @@ class FluidBlockLogicTest {
     fun `pipe does nothing when source has no fluid`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
-        val sourcePipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH)
-        // source has no fluid
+        val pipe = FluidPipe(
+            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH
+        )
+        val sourcePipe = FluidPipe(
+            TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH
+        )
 
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south")
-        TestHelper.addToRegistry(fluidRegistry, sourcePipe, "fluid_pipe_south")
+        TestHelper.addToRegistry(
+            fluidRegistry, pipe, "atlas:fluid_pipe"
+        )
+        TestHelper.addToRegistry(
+            fluidRegistry, sourcePipe, "atlas:fluid_pipe"
+        )
 
         pipe.callFluidUpdate()
         assertEquals(FluidType.NONE, pipe.storedFluid)
@@ -556,8 +657,12 @@ class FluidBlockLogicTest {
     fun `pipe does nothing when no fluid block behind it`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "fluid_pipe_south")
+        val pipe = FluidPipe(
+            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH
+        )
+        TestHelper.addToRegistry(
+            fluidRegistry, pipe, "atlas:fluid_pipe"
+        )
 
         pipe.callFluidUpdate()
         assertEquals(FluidType.NONE, pipe.storedFluid)

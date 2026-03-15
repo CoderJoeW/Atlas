@@ -6,4 +6,4 @@ description: A power generation and transfer plugin
 author: CoderJoe
 
 depend:
-  - Nexo
+  - CraftEngine

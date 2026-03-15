@@ -10,7 +10,7 @@ class BlockSystem<T : AtlasBlock>(
     val showDialog: (Player, AtlasBlock) -> Unit,
 ) {
     fun findDescriptorForBlockId(blockId: String): BlockDescriptor? {
-        return descriptors.values.find { blockId in it.allRegistrableIds }
+        return descriptors.values.find { blockId == it.baseBlockId || blockId in it.additionalBlockIds }
     }
 
     fun findDescriptorByBaseId(blockId: String): BlockDescriptor? {

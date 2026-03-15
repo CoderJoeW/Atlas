@@ -1,8 +1,5 @@
 package com.coderjoe.atlas.core
 
-import com.nexomc.nexo.api.NexoBlocks
-import com.nexomc.nexo.api.NexoItems
-import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -23,20 +20,12 @@ class AtlasBlockListener(
 
         if (systems.any { it.registry.updatingLocations.contains(key) }) return
 
-        val mechanic = NexoBlocks.customBlockMechanic(event.block) ?: return
-        val blockId = mechanic.itemID
+        val blockId = CraftEngineHelper.getBlockId(event.block) ?: return
 
         for (system in systems) {
-            val baseDescriptor = system.findDescriptorByBaseId(blockId)
-            if (baseDescriptor != null) {
-                handlePlacement(event, system, baseDescriptor, blockId)
-                return
-            }
-
             val descriptor = system.findDescriptorForBlockId(blockId)
             if (descriptor != null) {
-                val facing = resolveFacingFromVariant(descriptor, blockId)
-                createAndRegister(system, blockId, event.block.location, facing)
+                handlePlacement(event, system, descriptor)
                 return
             }
         }
@@ -46,42 +35,39 @@ class AtlasBlockListener(
         event: BlockPlaceEvent,
         system: BlockSystem<*>,
         descriptor: BlockDescriptor,
-        blockId: String,
     ) {
+        val location = event.block.location.clone()
+
         when (descriptor.placementType) {
             PlacementType.SIMPLE -> {
-                val location = event.block.location.clone()
-                val facing =
-                    if (descriptor.directionalVariants.isEmpty()) {
-                        getPlayerFacing(event)
-                    } else {
-                        BlockFace.SELF
-                    }
-                createAndRegister(system, blockId, location, facing)
+                val facing = getPlayerFacing(event)
+                createAndRegister(system, descriptor.baseBlockId, location, facing)
             }
             PlacementType.DIRECTIONAL -> {
-                val facing = getDirectionalFacing(event, descriptor)
-                val variantId = descriptor.directionalVariants[facing] ?: return
-                val location = event.block.location.clone()
+                val facing = getPlayerFacing(event)
+                val playerFacing = event.player.facing
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        location.block.setType(Material.AIR, false)
-                        NexoBlocks.place(variantId, location)
-                        createAndRegister(system, variantId, location, facing)
+                        val actualFacing = if (CraftEngineHelper.setFacing(location, facing)) facing else {
+                            CraftEngineHelper.setFacing(location, playerFacing)
+                            playerFacing
+                        }
+                        createAndRegister(system, descriptor.baseBlockId, location, actualFacing)
                     },
                 )
             }
             PlacementType.DIRECTIONAL_OPPOSITE -> {
-                val facing = getDirectionalFacing(event, descriptor, opposite = true)
-                val variantId = descriptor.directionalVariants[facing] ?: blockId
-                val location = event.block.location.clone()
+                val facing = getPlayerFacing(event).oppositeFace
+                val playerFacing = event.player.facing.oppositeFace
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        location.block.setType(Material.AIR, false)
-                        NexoBlocks.place(variantId, location)
-                        createAndRegister(system, variantId, location, facing)
+                        val actualFacing = if (CraftEngineHelper.setFacing(location, facing)) facing else {
+                            CraftEngineHelper.setFacing(location, playerFacing)
+                            playerFacing
+                        }
+                        createAndRegister(system, descriptor.baseBlockId, location, actualFacing)
                     },
                 )
             }
@@ -113,16 +99,27 @@ class AtlasBlockListener(
         for (system in systems) {
             val block = system.registry.unregister(location)
             if (block != null) {
-                val baseItemId = block.baseBlockId.ifEmpty { null }
-                if (baseItemId != null) {
-                    val itemBuilder = NexoItems.itemFromId(baseItemId)
-                    if (itemBuilder != null) {
-                        val dropLocation = event.block.location.add(0.5, 0.5, 0.5)
-                        event.block.world.dropItemNaturally(dropLocation, itemBuilder.build())
-                        event.isDropItems = false
-                    }
-                }
                 return
+            }
+        }
+    }
+
+    companion object {
+        fun getPlayerFacing(event: BlockPlaceEvent): BlockFace {
+            val against = event.blockAgainst.location
+            val placed = event.block.location
+            val dx = placed.blockX - against.blockX
+            val dy = placed.blockY - against.blockY
+            val dz = placed.blockZ - against.blockZ
+
+            return when {
+                dy > 0 -> BlockFace.UP
+                dy < 0 -> BlockFace.DOWN
+                dx > 0 -> BlockFace.EAST
+                dx < 0 -> BlockFace.WEST
+                dz > 0 -> BlockFace.SOUTH
+                dz < 0 -> BlockFace.NORTH
+                else -> event.player.facing
             }
         }
     }
@@ -140,49 +137,6 @@ class AtlasBlockListener(
                 system.showDialog(event.player, block)
                 event.isCancelled = true
                 return
-            }
-        }
-    }
-
-    private fun resolveFacingFromVariant(
-        descriptor: BlockDescriptor,
-        blockId: String,
-    ): BlockFace {
-        for ((face, id) in descriptor.directionalVariants) {
-            if (id == blockId) return face
-        }
-        return BlockFace.SELF
-    }
-
-    companion object {
-        fun getDirectionalFacing(
-            event: BlockPlaceEvent,
-            descriptor: BlockDescriptor,
-            opposite: Boolean = false,
-        ): BlockFace {
-            val raw = getPlayerFacing(event)
-            val facing = if (opposite) raw.oppositeFace else raw
-            if (descriptor.directionalVariants.containsKey(facing)) return facing
-            // Fall back to the player's horizontal look direction
-            val fallback = event.player.facing
-            return if (opposite) fallback.oppositeFace else fallback
-        }
-
-        fun getPlayerFacing(event: BlockPlaceEvent): BlockFace {
-            val against = event.blockAgainst.location
-            val placed = event.block.location
-            val dx = placed.blockX - against.blockX
-            val dy = placed.blockY - against.blockY
-            val dz = placed.blockZ - against.blockZ
-
-            return when {
-                dy > 0 -> BlockFace.UP
-                dy < 0 -> BlockFace.DOWN
-                dx > 0 -> BlockFace.EAST
-                dx < 0 -> BlockFace.WEST
-                dz > 0 -> BlockFace.SOUTH
-                dz < 0 -> BlockFace.NORTH
-                else -> event.player.facing
             }
         }
     }

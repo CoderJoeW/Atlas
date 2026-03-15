@@ -30,9 +30,9 @@ class FluidPump(location: Location) : FluidBlock(location) {
         private set
 
     companion object {
-        const val BLOCK_ID = "fluid_pump"
-        const val BLOCK_ID_ACTIVE = "fluid_pump_active"
-        const val BLOCK_ID_ACTIVE_LAVA = "fluid_pump_active_lava"
+        const val BLOCK_ID = "atlas:fluid_pump"
+        const val BLOCK_ID_ACTIVE = "atlas:fluid_pump_active"
+        const val BLOCK_ID_ACTIVE_LAVA = "atlas:fluid_pump_active_lava"
 
         private val ADJACENT_FACES =
             listOf(
@@ -50,8 +50,7 @@ class FluidPump(location: Location) : FluidBlock(location) {
                 displayName = "Fluid Pump",
                 description = "Pump - extracts fluid from adjacent cauldrons or source blocks (1 power/s)",
                 placementType = PlacementType.SIMPLE,
-                directionalVariants = emptyMap(),
-                allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE, BLOCK_ID_ACTIVE_LAVA),
+                additionalBlockIds = listOf(BLOCK_ID_ACTIVE, BLOCK_ID_ACTIVE_LAVA),
                 constructor = { loc, _ -> FluidPump(loc) },
             )
     }
@@ -75,13 +74,11 @@ class FluidPump(location: Location) : FluidBlock(location) {
         val powerNeighbors = powerRegistry.getAdjacentPowerBlocks(location)
         isPowered = powerNeighbors.any { it.hasPower() }
 
-        // Step 1: If already holding fluid, skip — no power consumed
         if (hasFluid()) {
             pumpStatus = PumpStatus.IDLE
             return
         }
 
-        // Step 2: Scan for an adjacent cauldron
         var foundFace: BlockFace? = null
         var foundBlock: org.bukkit.block.Block? = null
         var fluidType = FluidType.NONE
@@ -121,7 +118,6 @@ class FluidPump(location: Location) : FluidBlock(location) {
             return
         }
 
-        // Step 3: Try to pull 1 power from an adjacent power block
         var poweredThisTick = false
         for (neighbor in powerNeighbors) {
             if (neighbor.hasPower()) {
@@ -138,7 +134,6 @@ class FluidPump(location: Location) : FluidBlock(location) {
             return
         }
 
-        // Step 4: Drain the source and store fluid
         when (foundBlock.type) {
             Material.WATER_CAULDRON -> {
                 val levelled = foundBlock.blockData as? org.bukkit.block.data.Levelled
@@ -162,9 +157,7 @@ class FluidPump(location: Location) : FluidBlock(location) {
         cauldronFace = foundFace
         pumpStatus = PumpStatus.EXTRACTING
         plugin.logger.atlasInfo(
-            """
-            FluidPump at ${location.blockX},${location.blockY},${location.blockZ} extracted ${fluidType.name} from $foundFace
-            """.trimIndent(),
+            "FluidPump at ${location.blockX},${location.blockY},${location.blockZ} extracted ${fluidType.name} from $foundFace",
         )
     }
 }

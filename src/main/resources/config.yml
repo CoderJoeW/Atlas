@@ -2,23 +2,3 @@
 
 # Enable or disable plugin logging (warnings and errors are always shown)
 logging: false
-
-resource-pack:
-  # Enable or disable resource pack distribution
-  enabled: false
-
-  # URL to the resource pack (must be a direct download link)
-  # For local testing, run-server.sh will automatically set this
-  url: ""
-
-  # SHA-1 hash of the resource pack (40 character hex string)
-  # Used for verification and caching
-  # For local testing, run-server.sh will automatically calculate this
-  hash: ""
-
-  # Whether the resource pack is required to play
-  # If true, players who decline will be disconnected
-  required: false
-
-  # Optional message shown when requesting the resource pack
-  prompt: "Atlas requires a resource pack for custom textures!"

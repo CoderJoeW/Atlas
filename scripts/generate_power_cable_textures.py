@@ -13,8 +13,8 @@ from PIL import Image, ImageDraw
 
 OUTPUT_DIR = os.path.join(
     os.path.dirname(__file__), "..",
-    "src", "main", "resources", "nexo", "pack",
-    "assets", "atlas", "textures", "block"
+    "src", "main", "resources", "atlas", "resourcepack",
+    "assets", "minecraft", "textures", "block", "custom"
 )
 
 # Colors

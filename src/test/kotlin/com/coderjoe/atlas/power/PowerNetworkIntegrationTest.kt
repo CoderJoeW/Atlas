@@ -40,8 +40,8 @@ class PowerNetworkIntegrationTest {
         // Cable at (0,64,1) facing SOUTH (pulls from NORTH = behind = z-1 = solar)
         val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
 
-        TestHelper.addToRegistry(registry, solar, "small_solar_panel")
-        TestHelper.addToRegistry(registry, cable, "power_cable_south")
+        TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
         // Solar generates
         solar.callPowerUpdate()
@@ -61,9 +61,9 @@ class PowerNetworkIntegrationTest {
         val cable1 = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
         val cable2 = PowerCable(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
 
-        TestHelper.addToRegistry(registry, solar, "small_solar_panel")
-        TestHelper.addToRegistry(registry, cable1, "power_cable_south")
-        TestHelper.addToRegistry(registry, cable2, "power_cable_south")
+        TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, cable1, "atlas:power_cable")
+        TestHelper.addToRegistry(registry, cable2, "atlas:power_cable")
 
         // Tick 1: solar generates
         solar.callPowerUpdate()
@@ -87,8 +87,8 @@ class PowerNetworkIntegrationTest {
         // Battery facing SOUTH, pulls from behind (NORTH = z-1 = solar)
         val battery = SmallBattery(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
 
-        TestHelper.addToRegistry(registry, solar, "small_solar_panel")
-        TestHelper.addToRegistry(registry, battery, "small_battery")
+        TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
         // Tick 1: solar generates, battery pulls
         solar.callPowerUpdate()
@@ -109,8 +109,8 @@ class PowerNetworkIntegrationTest {
         val source = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         source.currentPower = 1
 
-        TestHelper.addToRegistry(registry, cable, "power_cable_north")
-        TestHelper.addToRegistry(registry, source, "small_solar_panel")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+        TestHelper.addToRegistry(registry, source, "atlas:small_solar_panel")
 
         cable.callPowerUpdate()
         assertEquals(0, cable.currentPower) // did not pull
@@ -130,10 +130,10 @@ class PowerNetworkIntegrationTest {
         val source3 = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
         source3.currentPower = 1
 
-        TestHelper.addToRegistry(registry, drill, "small_drill_down")
-        TestHelper.addToRegistry(registry, source1, "small_solar_panel")
-        TestHelper.addToRegistry(registry, source2, "small_solar_panel")
-        TestHelper.addToRegistry(registry, source3, "small_solar_panel")
+        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
+        TestHelper.addToRegistry(registry, source1, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, source2, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, source3, "atlas:small_solar_panel")
 
         // Mock blocks below so mining scan doesn't error
         for (y in 63 downTo -64) {
@@ -155,10 +155,10 @@ class PowerNetworkIntegrationTest {
         val cable2 = PowerCable(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
         val battery = SmallBattery(TestHelper.createLocation(0.0, 64.0, 3.0), BlockFace.SOUTH)
 
-        TestHelper.addToRegistry(registry, solar, "small_solar_panel")
-        TestHelper.addToRegistry(registry, cable1, "power_cable_south")
-        TestHelper.addToRegistry(registry, cable2, "power_cable_south")
-        TestHelper.addToRegistry(registry, battery, "small_battery")
+        TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, cable1, "atlas:power_cable")
+        TestHelper.addToRegistry(registry, cable2, "atlas:power_cable")
+        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
         // Simulate several ticks of power flowing through the chain
         repeat(3) {

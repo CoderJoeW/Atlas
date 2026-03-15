@@ -14,7 +14,6 @@ data class BlockDescriptor(
     val displayName: String,
     val description: String,
     val placementType: PlacementType,
-    val directionalVariants: Map<BlockFace, String>,
-    val allRegistrableIds: List<String>,
+    val additionalBlockIds: List<String> = emptyList(),
     val constructor: (Location, BlockFace) -> AtlasBlock,
 )

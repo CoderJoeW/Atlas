@@ -21,8 +21,8 @@ class CobblestoneFactory(location: Location) : PowerBlock(location, maxStorage =
     override val updateIntervalTicks: Long = 20L
 
     companion object {
-        const val BLOCK_ID = "cobblestone_factory"
-        const val BLOCK_ID_ACTIVE = "cobblestone_factory_active"
+        const val BLOCK_ID = "atlas:cobblestone_factory"
+        const val BLOCK_ID_ACTIVE = "atlas:cobblestone_factory_active"
         const val POWER_COST = 2
 
         private val ADJACENT_FACES =
@@ -41,8 +41,7 @@ class CobblestoneFactory(location: Location) : PowerBlock(location, maxStorage =
                 displayName = "Cobblestone Factory",
                 description = "Machine - consumes $POWER_COST power + water + lava → cobblestone",
                 placementType = PlacementType.SIMPLE,
-                directionalVariants = emptyMap(),
-                allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE),
+                additionalBlockIds = listOf(BLOCK_ID_ACTIVE),
                 constructor = { loc, _ -> CobblestoneFactory(loc) },
             )
     }
@@ -56,7 +55,6 @@ class CobblestoneFactory(location: Location) : PowerBlock(location, maxStorage =
         }
 
     override fun powerUpdate() {
-        // Pull power from adjacent blocks
         if (canAcceptPower()) {
             val registry = PowerBlockRegistry.instance ?: return
             val neighbors = registry.getAdjacentPowerBlocks(location)
@@ -75,7 +73,6 @@ class CobblestoneFactory(location: Location) : PowerBlock(location, maxStorage =
 
         val fluidRegistry = FluidBlockRegistry.instance ?: return
 
-        // Check that BOTH water and lava are available before consuming either
         var waterSource: Pair<com.coderjoe.atlas.fluid.FluidBlock, BlockFace>? = null
         var lavaSource: Pair<com.coderjoe.atlas.fluid.FluidBlock, BlockFace>? = null
 
@@ -91,16 +88,17 @@ class CobblestoneFactory(location: Location) : PowerBlock(location, maxStorage =
 
         if (waterSource == null || lavaSource == null) return
 
-        // Both available — consume atomically
         pullFluid(waterSource.first, waterSource.second)
         pullFluid(lavaSource.first, lavaSource.second)
         removePower(POWER_COST)
 
         val world = location.world ?: return
-        val dropLocation = location.clone().add(0.5, 1.0, 0.5)
-        world.dropItemNaturally(dropLocation, ItemStack(Material.COBBLESTONE))
+        val dropLocation = location.clone().add(0.5, 1.5, 0.5)
+        world.dropItem(dropLocation, ItemStack(Material.COBBLESTONE))
 
-        plugin.logger.atlasInfo("CobblestoneFactory at ${location.blockX},${location.blockY},${location.blockZ} produced 1 cobblestone")
+        plugin.logger.atlasInfo(
+            "CobblestoneFactory at ${location.blockX},${location.blockY},${location.blockZ} produced 1 cobblestone",
+        )
     }
 
     private fun hasFluidAvailable(

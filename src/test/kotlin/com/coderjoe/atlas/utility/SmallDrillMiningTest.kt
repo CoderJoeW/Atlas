@@ -146,9 +146,9 @@ class SmallDrillMiningTest {
         val source2 = SmallSolarPanel(TestHelper.createLocation(-1.0, 64.0, 0.0))
         source2.currentPower = 1
 
-        TestHelper.addToRegistry(registry, drill, "small_drill_down")
-        TestHelper.addToRegistry(registry, source1, "small_solar_panel")
-        TestHelper.addToRegistry(registry, source2, "small_solar_panel")
+        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
+        TestHelper.addToRegistry(registry, source1, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, source2, "atlas:small_solar_panel")
 
         // Mock blocks below so drill doesn't crash during mining scan
         for (y in 63 downTo -64) {
@@ -235,9 +235,9 @@ class SmallDrillMiningTest {
         val source2 = SmallSolarPanel(TestHelper.createLocation(-1.0, 64.0, 0.0))
         source2.currentPower = 1
 
-        TestHelper.addToRegistry(registry, drill, "small_drill_down")
-        TestHelper.addToRegistry(registry, source1, "small_solar_panel")
-        TestHelper.addToRegistry(registry, source2, "small_solar_panel")
+        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
+        TestHelper.addToRegistry(registry, source1, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, source2, "atlas:small_solar_panel")
 
         // Mock blocks below - stone at 63 so it mines
         val stoneBlock = mockBlockAt(0, 63, 0, Material.STONE)

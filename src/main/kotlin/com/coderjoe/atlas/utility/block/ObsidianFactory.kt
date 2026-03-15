@@ -21,8 +21,8 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
     override val updateIntervalTicks: Long = 20L
 
     companion object {
-        const val BLOCK_ID = "obsidian_factory"
-        const val BLOCK_ID_ACTIVE = "obsidian_factory_active"
+        const val BLOCK_ID = "atlas:obsidian_factory"
+        const val BLOCK_ID_ACTIVE = "atlas:obsidian_factory_active"
         const val POWER_COST = 100
 
         private val ADJACENT_FACES =
@@ -41,8 +41,7 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
                 displayName = "Obsidian Factory",
                 description = "Machine - consumes $POWER_COST power + water + lava → obsidian",
                 placementType = PlacementType.SIMPLE,
-                directionalVariants = emptyMap(),
-                allRegistrableIds = listOf(BLOCK_ID, BLOCK_ID_ACTIVE),
+                additionalBlockIds = listOf(BLOCK_ID_ACTIVE),
                 constructor = { loc, _ -> ObsidianFactory(loc) },
             )
     }
@@ -56,7 +55,6 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
         }
 
     override fun powerUpdate() {
-        // Pull power from adjacent blocks
         if (canAcceptPower()) {
             val registry = PowerBlockRegistry.instance ?: return
             val neighbors = registry.getAdjacentPowerBlocks(location)
@@ -75,7 +73,6 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
 
         val fluidRegistry = FluidBlockRegistry.instance ?: return
 
-        // Check that BOTH water and lava are available before consuming either
         var waterSource: Pair<com.coderjoe.atlas.fluid.FluidBlock, BlockFace>? = null
         var lavaSource: Pair<com.coderjoe.atlas.fluid.FluidBlock, BlockFace>? = null
 
@@ -91,16 +88,17 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
 
         if (waterSource == null || lavaSource == null) return
 
-        // Both available — consume atomically
         pullFluid(waterSource.first, waterSource.second)
         pullFluid(lavaSource.first, lavaSource.second)
         removePower(POWER_COST)
 
         val world = location.world ?: return
-        val dropLocation = location.clone().add(0.5, 1.0, 0.5)
-        world.dropItemNaturally(dropLocation, ItemStack(Material.OBSIDIAN))
+        val dropLocation = location.clone().add(0.5, 1.5, 0.5)
+        world.dropItem(dropLocation, ItemStack(Material.OBSIDIAN))
 
-        plugin.logger.atlasInfo("ObsidianFactory at ${location.blockX},${location.blockY},${location.blockZ} produced 1 obsidian")
+        plugin.logger.atlasInfo(
+            "ObsidianFactory at ${location.blockX},${location.blockY},${location.blockZ} produced 1 obsidian",
+        )
     }
 
     private fun hasFluidAvailable(

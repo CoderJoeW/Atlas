@@ -26,9 +26,9 @@ class FluidBlockDataTest {
     fun `fromFluidBlock for FluidPump`() {
         val pump = FluidPump(TestHelper.createLocation(1.0, 2.0, 3.0))
         pump.storeFluid(FluidType.WATER)
-        val data = FluidBlockData.fromFluidBlock(pump, "fluid_pump")
+        val data = FluidBlockData.fromFluidBlock(pump, "atlas:fluid_pump")
 
-        assertEquals("fluid_pump", data.blockId)
+        assertEquals("atlas:fluid_pump", data.blockId)
         assertEquals("world", data.world)
         assertEquals(1, data.x)
         assertEquals(2, data.y)
@@ -40,7 +40,7 @@ class FluidBlockDataTest {
     @Test
     fun `fromFluidBlock for FluidPipe captures facing`() {
         val pipe = FluidPipe(TestHelper.createLocation(), BlockFace.EAST)
-        val data = FluidBlockData.fromFluidBlock(pipe, "fluid_pipe_east")
+        val data = FluidBlockData.fromFluidBlock(pipe, "atlas:fluid_pipe")
         assertEquals("EAST", data.facing)
     }
 
@@ -106,9 +106,9 @@ class FluidBlockDataTest {
     fun `round-trip FluidPipe preserves all fields`() {
         val pipe = FluidPipe(TestHelper.createLocation(1.0, 2.0, 3.0), BlockFace.NORTH)
         pipe.storeFluid(FluidType.LAVA)
-        val data = FluidBlockData.fromFluidBlock(pipe, "fluid_pipe_north")
+        val data = FluidBlockData.fromFluidBlock(pipe, "atlas:fluid_pipe")
 
-        assertEquals("fluid_pipe_north", data.blockId)
+        assertEquals("atlas:fluid_pipe", data.blockId)
         assertEquals("NORTH", data.facing)
         assertEquals("LAVA", data.fluidType)
         assertEquals(BlockFace.NORTH, data.toBlockFace())

@@ -1,0 +1,107 @@
+items:
+  atlas:conveyor_belt:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#808080:#C0C0C0>Conveyor Belt"
+    model: minecraft:block/custom/conveyor_belt
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 2.0
+          resistance: 2.0
+          is-suffocating: false
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        states:
+          properties:
+            facing:
+              type: horizontal_direction
+              default: north
+          appearances:
+            north:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/conveyor_belt
+                generation:
+                  parent: minecraft:block/custom/conveyor_belt_base
+                  textures:
+                    north: minecraft:block/custom/conveyor_belt_front
+                    south: minecraft:block/custom/conveyor_belt_back
+                    east: minecraft:block/custom/conveyor_belt_side
+                    west: minecraft:block/custom/conveyor_belt_side
+                    up: minecraft:block/custom/conveyor_belt_top_north
+                    down: minecraft:block/custom/conveyor_belt_bottom
+            south:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/conveyor_belt_south
+                generation:
+                  parent: minecraft:block/custom/conveyor_belt_base
+                  textures:
+                    north: minecraft:block/custom/conveyor_belt_back
+                    south: minecraft:block/custom/conveyor_belt_front
+                    east: minecraft:block/custom/conveyor_belt_side
+                    west: minecraft:block/custom/conveyor_belt_side
+                    up: minecraft:block/custom/conveyor_belt_top_south
+                    down: minecraft:block/custom/conveyor_belt_bottom
+            east:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/conveyor_belt_east
+                generation:
+                  parent: minecraft:block/custom/conveyor_belt_base
+                  textures:
+                    north: minecraft:block/custom/conveyor_belt_side
+                    south: minecraft:block/custom/conveyor_belt_side
+                    east: minecraft:block/custom/conveyor_belt_front
+                    west: minecraft:block/custom/conveyor_belt_back
+                    up: minecraft:block/custom/conveyor_belt_top_east
+                    down: minecraft:block/custom/conveyor_belt_bottom
+            west:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/conveyor_belt_west
+                generation:
+                  parent: minecraft:block/custom/conveyor_belt_base
+                  textures:
+                    north: minecraft:block/custom/conveyor_belt_side
+                    south: minecraft:block/custom/conveyor_belt_side
+                    east: minecraft:block/custom/conveyor_belt_back
+                    west: minecraft:block/custom/conveyor_belt_front
+                    up: minecraft:block/custom/conveyor_belt_top_west
+                    down: minecraft:block/custom/conveyor_belt_bottom
+          variants:
+            facing=north:
+              appearance: north
+            facing=south:
+              appearance: south
+            facing=east:
+              appearance: east
+            facing=west:
+              appearance: west
+
+recipes:
+  atlas:conveyor_belt:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:redstone
+      - minecraft:redstone
+      - minecraft:redstone
+    result:
+      id: atlas:conveyor_belt
+      count: 4

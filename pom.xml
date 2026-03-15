@@ -27,9 +27,8 @@
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>nexomc</id>
-            <name>NexoMC Repository</name>
-            <url>https://repo.nexomc.com/releases</url>
+            <id>momirealms-repo</id>
+            <url>https://repo.momirealms.net/releases/</url>
         </repository>
     </repositories>
 
@@ -184,16 +183,16 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.nexomc</groupId>
-            <artifactId>nexo</artifactId>
-            <version>1.20.1</version>
+            <groupId>net.momirealms</groupId>
+            <artifactId>craft-engine-core</artifactId>
+            <version>0.0.67</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.momirealms</groupId>
+            <artifactId>craft-engine-bukkit</artifactId>
+            <version>0.0.67</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -32,7 +32,7 @@ class FluidBlockPersistenceTest {
     fun `save and load round-trip`() {
         val pump = FluidPump(TestHelper.createLocation(1.0, 64.0, 2.0))
         pump.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(registry, pump, "fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         persistence.save(registry)
 
@@ -41,7 +41,7 @@ class FluidBlockPersistenceTest {
 
         val loaded = loadRegistry.getAllFluidBlocksWithIds()
         assertEquals(1, loaded.size)
-        assertEquals("fluid_pump", loaded[0].second)
+        assertEquals("atlas:fluid_pump", loaded[0].second)
         assertEquals(FluidType.WATER, loaded[0].first.storedFluid)
     }
 
@@ -56,7 +56,7 @@ class FluidBlockPersistenceTest {
     fun `fluid type LAVA persists correctly`() {
         val pump = FluidPump(TestHelper.createLocation())
         pump.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(registry, pump, "fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         persistence.save(registry)
 
@@ -70,7 +70,7 @@ class FluidBlockPersistenceTest {
     fun `fluid type NONE persists correctly`() {
         val pump = FluidPump(TestHelper.createLocation())
         // storedFluid defaults to NONE
-        TestHelper.addToRegistry(registry, pump, "fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         persistence.save(registry)
 
@@ -83,7 +83,7 @@ class FluidBlockPersistenceTest {
     @Test
     fun `facing direction persists for pipes`() {
         val pipe = FluidPipe(TestHelper.createLocation(), BlockFace.EAST)
-        TestHelper.addToRegistry(registry, pipe, "fluid_pipe_east")
+        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
 
         persistence.save(registry)
 
@@ -101,8 +101,8 @@ class FluidBlockPersistenceTest {
         val pipe = FluidPipe(TestHelper.createLocation(1.0, 64.0, 0.0), BlockFace.NORTH)
         pipe.storeFluid(FluidType.LAVA)
 
-        TestHelper.addToRegistry(registry, pump, "fluid_pump")
-        TestHelper.addToRegistry(registry, pipe, "fluid_pipe_north")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
 
         persistence.save(registry)
 

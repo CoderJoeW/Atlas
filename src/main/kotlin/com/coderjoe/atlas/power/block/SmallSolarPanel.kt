@@ -11,7 +11,8 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 1)
     override val updateIntervalTicks: Long = 1200L
 
     companion object {
-        const val BLOCK_ID = "small_solar_panel"
+        const val BLOCK_ID = "atlas:small_solar_panel"
+        const val BLOCK_ID_FULL = "atlas:small_solar_panel_full"
 
         val descriptor =
             BlockDescriptor(
@@ -19,8 +20,7 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 1)
                 displayName = "Small Solar Panel",
                 description = "Generator - produces 1 power/min during daytime",
                 placementType = PlacementType.SIMPLE,
-                directionalVariants = emptyMap(),
-                allRegistrableIds = listOf(BLOCK_ID),
+                additionalBlockIds = listOf(BLOCK_ID_FULL),
                 constructor = { loc, _ -> SmallSolarPanel(loc) },
             )
     }
@@ -29,8 +29,8 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 1)
 
     override fun getVisualStateBlockId(): String =
         when (currentPower) {
-            0 -> "small_solar_panel"
-            else -> "small_solar_panel_full"
+            0 -> BLOCK_ID
+            else -> BLOCK_ID_FULL
         }
 
     override fun powerUpdate() {
@@ -41,19 +41,15 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 1)
             val generated = addPower(1)
             if (generated > 0) {
                 plugin.logger.atlasInfo(
-                    """
-                    SmallSolarPanel at ${'$'}{location.blockX},${'$'}{location.blockY},${'$'}{location.blockZ} generated ${'$'}generated power (now ${'$'}currentPower/${'$'}maxStorage)
-                    """.trimIndent(),
+                    "SmallSolarPanel at ${location.blockX},${location.blockY},${location.blockZ} " +
+                        "generated $generated power (now $currentPower/$maxStorage)",
                 )
             }
         } else {
             plugin.logger.atlasInfo(
-                """
-                SmallSolarPanel at ${'$'}{location.blockX},${'$'}{location.blockY},${'$'}{location.blockZ} is not generating power because it is not daytime.
-                """.trimIndent(),
+                "SmallSolarPanel at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "is not generating power because it is not daytime.",
             )
         }
-
-        // TODO: Implement power transfer to connected blocks
     }
 }

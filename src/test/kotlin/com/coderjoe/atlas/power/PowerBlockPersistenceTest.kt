@@ -45,7 +45,7 @@ class PowerBlockPersistenceTest {
     fun `save and load round-trip preserves data`() {
         val panel = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 2.0))
         panel.currentPower = 1
-        TestHelper.addToRegistry(registry, panel, "small_solar_panel")
+        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
 
         persistence.save(registry)
 
@@ -55,7 +55,7 @@ class PowerBlockPersistenceTest {
 
         val loaded = loadRegistry.getAllPowerBlocksWithIds()
         assertEquals(1, loaded.size)
-        assertEquals("small_solar_panel", loaded[0].second)
+        assertEquals("atlas:small_solar_panel", loaded[0].second)
         assertEquals(1, loaded[0].first.currentPower)
     }
 
@@ -71,7 +71,7 @@ class PowerBlockPersistenceTest {
         val drill = SmallDrill(TestHelper.createLocation(), BlockFace.DOWN)
         drill.enabled = true
         drill.currentPower = 5
-        TestHelper.addToRegistry(registry, drill, "small_drill_down")
+        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
 
         persistence.save(registry)
 
@@ -88,7 +88,7 @@ class PowerBlockPersistenceTest {
     fun `drill enabled false persists correctly`() {
         val drill = SmallDrill(TestHelper.createLocation(), BlockFace.NORTH)
         drill.enabled = false
-        TestHelper.addToRegistry(registry, drill, "small_drill_north")
+        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
 
         persistence.save(registry)
 
@@ -102,7 +102,7 @@ class PowerBlockPersistenceTest {
     @Test
     fun `facing direction persists for cables`() {
         val cable = PowerCable(TestHelper.createLocation(), BlockFace.EAST)
-        TestHelper.addToRegistry(registry, cable, "power_cable_east")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
         persistence.save(registry)
 
@@ -117,7 +117,7 @@ class PowerBlockPersistenceTest {
     fun `current power level persists accurately`() {
         val drill = SmallDrill(TestHelper.createLocation(), BlockFace.DOWN)
         drill.currentPower = 7
-        TestHelper.addToRegistry(registry, drill, "small_drill_down")
+        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
 
         persistence.save(registry)
 
@@ -131,7 +131,7 @@ class PowerBlockPersistenceTest {
     fun `battery round-trip preserves facing and power`() {
         val battery = SmallBattery(TestHelper.createLocation(5.0, 64.0, 3.0), BlockFace.EAST)
         battery.currentPower = 7
-        TestHelper.addToRegistry(registry, battery, "small_battery")
+        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
         persistence.save(registry)
 
@@ -153,9 +153,9 @@ class PowerBlockPersistenceTest {
         val drill = SmallDrill(TestHelper.createLocation(2.0, 64.0, 0.0), BlockFace.DOWN)
         drill.currentPower = 5
 
-        TestHelper.addToRegistry(registry, panel, "small_solar_panel")
-        TestHelper.addToRegistry(registry, cable, "power_cable_north")
-        TestHelper.addToRegistry(registry, drill, "small_drill_down")
+        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
 
         persistence.save(registry)
 
