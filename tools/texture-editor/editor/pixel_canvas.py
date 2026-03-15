@@ -1,10 +1,13 @@
+from PIL import Image as PILImage
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPainter, QColor, QImage, QMouseEvent, QWheelEvent, QPen
 
+from editor.tools import BrushTool
+
 
 class PixelCanvas(QWidget):
-    """Grid-based pixel editor with zoom, pan, and brush size support."""
+    """Grid-based pixel editor with zoom, pan, and tool delegation."""
 
     MIN_ZOOM = 1.0
     MAX_ZOOM = 64.0
@@ -13,34 +16,51 @@ class PixelCanvas(QWidget):
         super().__init__(parent)
         self.model = model
         self._cached_image = None
-        self._painting = False
+        self._cached_reference = None
+        self._ref_bytes = None
         self._panning = False
         self._last_pan_pos = None
         self._zoom = 0.0  # 0 = fit-to-widget, >0 = manual zoom level (pixels per cell)
         self._pan_x = 0.0  # pan offset in widget pixels
         self._pan_y = 0.0
+        self._active_tool = BrushTool(model)
         self.setMinimumSize(256, 256)
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
         self.model.face_updated.connect(self._on_face_updated)
+        self.model.reference_changed.connect(self._on_reference_changed)
         self._rebuild_cache()
+
+    def set_tool(self, tool):
+        self._active_tool = tool
+        self._previous_tool = None
+        self.update()
+
+    def activate_one_shot(self, tool):
+        """Temporarily switch to a one-shot tool, reverting after one click."""
+        self._previous_tool = self._active_tool
+        self._active_tool = tool
+        self.update()
 
     def _on_face_updated(self, face):
         self._rebuild_cache()
         self.update()
 
+    def _on_reference_changed(self):
+        self._rebuild_cache()
+        self.update()
+
     def _cell_size(self):
         """Return the current cell size in widget pixels."""
-        img = self.model.get_image()
         if self._zoom > 0:
             return self._zoom
         # Fit to widget
-        fit = min(self.width(), self.height()) / max(img.width, img.height)
+        fit = min(self.width(), self.height()) / max(self.model.size, 1)
         return max(1.0, fit)
 
     def _rebuild_cache(self):
-        img = self.model.get_image()
-        w, h = img.width, img.height
+        composite = self.model.get_composite()
+        w, h = composite.width, composite.height
         cell = self._cell_size()
         cell_int = max(1, int(cell))
         canvas_w = cell_int * w
@@ -64,8 +84,8 @@ class PixelCanvas(QWidget):
                         check_size, check_size, check_color,
                     )
 
-        # Scale up the texture image with nearest-neighbor and draw it on top
-        scaled = img.resize(
+        # Scale up the composite with nearest-neighbor and draw it on top
+        scaled = composite.resize(
             (canvas_w, canvas_h), resample=0,  # 0 = NEAREST
         )
         raw = scaled.tobytes("raw", "BGRA")
@@ -86,12 +106,25 @@ class PixelCanvas(QWidget):
         painter.end()
         self._cached_image = qimg
 
+        # Reference image cache
+        if self.model.reference_image is not None:
+            ref = self.model.reference_image
+            scaled_ref = ref.resize((canvas_w, canvas_h), PILImage.Resampling.BILINEAR)
+            ref_raw = scaled_ref.tobytes("raw", "BGRA")
+            self._ref_bytes = ref_raw
+            self._cached_reference = QImage(
+                ref_raw, canvas_w, canvas_h, QImage.Format.Format_ARGB32,
+            )
+        else:
+            self._cached_reference = None
+            self._ref_bytes = None
+
     def _canvas_origin(self):
         """Top-left corner of the canvas in widget coordinates."""
-        img = self.model.get_image()
         cell = max(1, int(self._cell_size()))
-        canvas_w = cell * img.width
-        canvas_h = cell * img.height
+        size = self.model.size
+        canvas_w = cell * size
+        canvas_h = cell * size
         ox = (self.width() - canvas_w) / 2.0 + self._pan_x
         oy = (self.height() - canvas_h) / 2.0 + self._pan_y
         return ox, oy
@@ -104,16 +137,15 @@ class PixelCanvas(QWidget):
         ox, oy = self._canvas_origin()
         painter.drawImage(int(ox), int(oy), self._cached_image)
 
-        # Draw brush cursor
-        if self.underMouse() and not self._panning:
-            pos = self.mapFromGlobal(self.cursor().pos())
-            px, py = self._pixel_at(pos)
-            brush = self.model.brush_size
-            cell = max(1, int(self._cell_size()))
-            cx = int(ox + (px - brush // 2) * cell)
-            cy = int(oy + (py - brush // 2) * cell)
-            painter.setPen(QColor(255, 255, 255, 160))
-            painter.drawRect(cx, cy, brush * cell, brush * cell)
+        # Reference image overlay
+        if self._cached_reference is not None:
+            painter.setOpacity(self.model.reference_opacity)
+            painter.drawImage(int(ox), int(oy), self._cached_reference)
+            painter.setOpacity(1.0)
+
+        # Delegate overlay drawing to the active tool
+        if not self._panning:
+            self._active_tool.draw_overlay(painter, self)
 
         painter.end()
 
@@ -128,12 +160,8 @@ class PixelCanvas(QWidget):
         y = int((pos.y() - oy) / cell)
         return x, y
 
-    def _paint_at(self, pos):
-        """Paint a brush_size square centered on the pixel under pos."""
-        cx, cy = self._pixel_at(pos)
-        self.model.paint_brush(cx, cy, self.model.brush_size)
-
     def mousePressEvent(self, event: QMouseEvent):
+        # Middle button: pan (universal)
         if event.button() == Qt.MouseButton.MiddleButton:
             self._panning = True
             self._last_pan_pos = event.position()
@@ -141,16 +169,23 @@ class PixelCanvas(QWidget):
             return
 
         pos = event.position().toPoint()
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.model.begin_stroke()
-            self._paint_at(pos)
-            self._painting = True
-        elif event.button() == Qt.MouseButton.RightButton:
+
+        # Right button: eyedropper (universal)
+        if event.button() == Qt.MouseButton.RightButton:
             x, y = self._pixel_at(pos)
             color = self.model.get_pixel(x, y)
             if color:
                 self.model.current_color = tuple(color)
                 self.model.color_changed.emit()
+            return
+
+        # Left button: delegate to active tool
+        x, y = self._pixel_at(pos)
+        handled = self._active_tool.on_press(x, y, event.button(), event.modifiers())
+        if handled and self._active_tool.one_shot and self._previous_tool:
+            self._active_tool = self._previous_tool
+            self._previous_tool = None
+            self.update()
 
     def mouseMoveEvent(self, event: QMouseEvent):
         if self._panning and self._last_pan_pos is not None:
@@ -162,10 +197,10 @@ class PixelCanvas(QWidget):
             self.update()
             return
 
-        if self._painting:
-            self._paint_at(event.position().toPoint())
+        x, y = self._pixel_at(event.position().toPoint())
+        self._active_tool.on_move(x, y, event.buttons(), event.modifiers())
 
-        # Update brush cursor position
+        # Repaint for cursor / overlay updates
         self.update()
 
     def mouseReleaseEvent(self, event: QMouseEvent):
@@ -175,9 +210,14 @@ class PixelCanvas(QWidget):
             self.setCursor(Qt.CursorShape.ArrowCursor)
             return
 
-        if event.button() == Qt.MouseButton.LeftButton and self._painting:
-            self._painting = False
-            self.model.end_stroke()
+        x, y = self._pixel_at(event.position().toPoint())
+        self._active_tool.on_release(x, y, event.button(), event.modifiers())
+
+    def keyPressEvent(self, event):
+        if self._active_tool.on_key_press(event.key(), event.modifiers()):
+            self.update()
+            return
+        super().keyPressEvent(event)
 
     def wheelEvent(self, event: QWheelEvent):
         delta = event.angleDelta().y()
@@ -202,9 +242,9 @@ class PixelCanvas(QWidget):
         new_cell = self._cell_size()
 
         # Adjust pan so the pixel under the cursor stays in place
-        img = self.model.get_image()
-        new_canvas_w = int(new_cell) * img.width
-        new_canvas_h = int(new_cell) * img.height
+        size = self.model.size
+        new_canvas_w = int(new_cell) * size
+        new_canvas_h = int(new_cell) * size
         new_center_ox = (self.width() - new_canvas_w) / 2.0
         new_center_oy = (self.height() - new_canvas_h) / 2.0
         target_ox = mouse_pos.x() - px_before * new_cell

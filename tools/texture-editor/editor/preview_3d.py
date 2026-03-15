@@ -4,7 +4,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMouseEvent, QWheelEvent
 
 from OpenGL.GL import (
-    glClearColor, glClear, glEnable,
+    glClearColor, glClear, glEnable, glDisable,
     GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST,
     GL_TEXTURE_2D, GL_BLEND, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
     glBlendFunc, glDepthMask, GL_FALSE, GL_TRUE,
@@ -54,7 +54,7 @@ class Preview3D(QOpenGLWidget):
 
     def _upload_all_textures(self):
         for face in FACE_NAMES:
-            img = self.model.get_image(face)
+            img = self.model.get_composite(face)
             tex_id = glGenTextures(1)
             glBindTexture(GL_TEXTURE_2D, tex_id)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -71,7 +71,7 @@ class Preview3D(QOpenGLWidget):
 
     def _on_face_updated(self, face):
         self.makeCurrent()
-        img = self.model.get_image(face)
+        img = self.model.get_composite(face)
         tex_id = self._textures.get(face)
         if tex_id is not None:
             glBindTexture(GL_TEXTURE_2D, tex_id)
@@ -87,7 +87,7 @@ class Preview3D(QOpenGLWidget):
     def _on_state_changed(self, index):
         self.makeCurrent()
         for face in FACE_NAMES:
-            img = self.model.get_image(face)
+            img = self.model.get_composite(face)
             tex_id = self._textures.get(face)
             if tex_id is not None:
                 glBindTexture(GL_TEXTURE_2D, tex_id)
@@ -110,11 +110,10 @@ class Preview3D(QOpenGLWidget):
 
     def _face_has_transparency(self, tex_key):
         """Check if a face texture contains any transparent pixels."""
-        img = self.model.get_image(tex_key)
+        img = self.model.get_composite(tex_key)
         if img.mode != "RGBA":
             return False
         extrema = img.getextrema()
-        # extrema[3] is (min_alpha, max_alpha)
         return extrema[3][0] < 255
 
     def _draw_face(self, face_data):
@@ -156,12 +155,12 @@ class Preview3D(QOpenGLWidget):
                 else:
                     opaque.append(face_data)
 
-        # Pass 1: opaque faces with depth write on
+        # Pass 1: opaque faces
         glDepthMask(GL_TRUE)
         for face_data in opaque:
             self._draw_face(face_data)
 
-        # Pass 2: transparent faces with depth write off
+        # Pass 2: transparent faces
         if transparent:
             glDepthMask(GL_FALSE)
             for face_data in transparent:

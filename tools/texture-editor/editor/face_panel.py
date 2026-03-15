@@ -1,10 +1,11 @@
 import os
 import yaml
+from PIL import Image
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-    QComboBox, QFileDialog, QLabel, QMessageBox, QCompleter,
+    QComboBox, QFileDialog, QLabel, QMessageBox, QCompleter, QSlider,
 )
-from PyQt6.QtCore import Qt, QSortFilterProxyModel, QStringListModel
+from PyQt6.QtCore import Qt
 
 from editor.texture_model import FACE_NAMES
 
@@ -42,7 +43,10 @@ class FacePanel(QWidget):
         self.size_combo = QComboBox()
         for s in TEXTURE_SIZES:
             self.size_combo.addItem(f"{s}x{s}", s)
-        current_idx = TEXTURE_SIZES.index(self.model.size) if self.model.size in TEXTURE_SIZES else 1
+        current_idx = (
+            TEXTURE_SIZES.index(self.model.size)
+            if self.model.size in TEXTURE_SIZES else 1
+        )
         self.size_combo.setCurrentIndex(current_idx)
         self.size_combo.currentIndexChanged.connect(self._on_size_changed)
         size_row.addWidget(self.size_combo, stretch=1)
@@ -88,7 +92,9 @@ class FacePanel(QWidget):
             btn = QPushButton(face.capitalize())
             btn.setCheckable(True)
             btn.setFixedWidth(70)
-            btn.clicked.connect(lambda checked, f=face: self._on_face_clicked(f))
+            btn.clicked.connect(
+                lambda checked, f=face: self._on_face_clicked(f),
+            )
             self._face_buttons[face] = btn
             if i < 3:
                 row1.addWidget(btn)
@@ -98,6 +104,20 @@ class FacePanel(QWidget):
         face_grid.addLayout(row2)
         layout.addLayout(face_grid)
         self._face_buttons[self.model.active_face].setChecked(True)
+
+        # Copy face
+        layout.addSpacing(4)
+        copy_row = QHBoxLayout()
+        copy_row.addWidget(QLabel("Copy to:"))
+        self.copy_target_combo = QComboBox()
+        for face in FACE_NAMES:
+            self.copy_target_combo.addItem(face.capitalize(), face)
+        copy_row.addWidget(self.copy_target_combo, stretch=1)
+        copy_btn = QPushButton("Copy")
+        copy_btn.setFixedWidth(50)
+        copy_btn.clicked.connect(self._copy_face)
+        copy_row.addWidget(copy_btn)
+        layout.addLayout(copy_row)
 
         # File I/O
         layout.addSpacing(8)
@@ -110,9 +130,46 @@ class FacePanel(QWidget):
         save_btn.clicked.connect(self._save_face)
         layout.addWidget(save_btn)
 
-        save_all_btn = QPushButton("Save All...")
+        self.save_block_btn = QPushButton("Save Block")
+        self.save_block_btn.setToolTip("Save all faces to their original file paths")
+        self.save_block_btn.clicked.connect(self._save_block)
+        self.save_block_btn.setEnabled(False)
+        layout.addWidget(self.save_block_btn)
+
+        save_all_btn = QPushButton("Save All As...")
         save_all_btn.clicked.connect(self._save_all)
         layout.addWidget(save_all_btn)
+
+        # Reference image
+        layout.addSpacing(8)
+        self._ref_label = QLabel("Reference:")
+        self._ref_label.setVisible(False)
+        layout.addWidget(self._ref_label)
+        ref_row = QHBoxLayout()
+        ref_load_btn = QPushButton("Load Reference...")
+        ref_load_btn.setToolTip("Load a reference image to overlay on the canvas")
+        ref_load_btn.clicked.connect(self._load_reference)
+        ref_row.addWidget(ref_load_btn)
+        self._ref_clear_btn = QPushButton("Clear")
+        self._ref_clear_btn.setVisible(False)
+        self._ref_clear_btn.clicked.connect(self._clear_reference)
+        ref_row.addWidget(self._ref_clear_btn)
+        layout.addLayout(ref_row)
+
+        self._ref_opacity_row = QWidget()
+        ref_opacity_layout = QHBoxLayout(self._ref_opacity_row)
+        ref_opacity_layout.setContentsMargins(0, 0, 0, 0)
+        ref_opacity_layout.addWidget(QLabel("Ref opacity:"))
+        self.ref_opacity_slider = QSlider(Qt.Orientation.Horizontal)
+        self.ref_opacity_slider.setRange(0, 100)
+        self.ref_opacity_slider.setValue(30)
+        self.ref_opacity_slider.valueChanged.connect(self._on_ref_opacity_changed)
+        ref_opacity_layout.addWidget(self.ref_opacity_slider)
+        self.ref_opacity_label = QLabel("30%")
+        self.ref_opacity_label.setFixedWidth(40)
+        ref_opacity_layout.addWidget(self.ref_opacity_label)
+        self._ref_opacity_row.setVisible(False)
+        layout.addWidget(self._ref_opacity_row)
 
         layout.addStretch()
 
@@ -127,13 +184,11 @@ class FacePanel(QWidget):
         """Discover available blocks from YAML configs and texture filenames."""
         block_ids = set()
 
-        # From YAML config files (primary source of truth)
         if os.path.isdir(CONFIG_DIR):
             for fname in os.listdir(CONFIG_DIR):
                 if fname.endswith(".yml"):
                     block_ids.add(fname[:-4])
 
-        # From texture filenames — only add blocks with a clear multi-face layout
         if os.path.isdir(self._texture_dir):
             texture_names = set()
             for fname in os.listdir(self._texture_dir):
@@ -150,18 +205,16 @@ class FacePanel(QWidget):
             for candidate in candidates:
                 if candidate in block_ids:
                     continue
-                # Skip if this candidate is a sub-texture of an already-known block
-                # e.g. "conveyor_belt_top" is a face of "conveyor_belt"
                 is_sub_texture = any(
                     candidate.startswith(bid + "_") for bid in block_ids
                 )
                 if is_sub_texture:
                     continue
-                # cube_bottom_top: needs all three of _top, _bottom, _side
-                has_cbt = (f"{candidate}_top" in texture_names
-                           and f"{candidate}_bottom" in texture_names
-                           and f"{candidate}_side" in texture_names)
-                # cube: needs 3+ directional faces
+                has_cbt = (
+                    f"{candidate}_top" in texture_names
+                    and f"{candidate}_bottom" in texture_names
+                    and f"{candidate}_side" in texture_names
+                )
                 dir_count = sum(
                     1 for f in ("north", "south", "east", "west")
                     if f"{candidate}_{f}" in texture_names
@@ -201,7 +254,6 @@ class FacePanel(QWidget):
         if not block_id:
             return
 
-        # Try YAML config first
         yaml_path = os.path.join(CONFIG_DIR, f"{block_id}.yml")
         if os.path.exists(yaml_path):
             with open(yaml_path, "r") as f:
@@ -210,24 +262,38 @@ class FacePanel(QWidget):
                 self.model.load_block_from_yaml(data, self._texture_dir)
                 self._refresh_state_combo()
                 self._sync_size_combo()
+                self._update_save_block_btn()
                 return
 
-        # Fallback to filename scanning
-        loaded = self.model.load_block_by_filename(block_id, self._texture_dir)
+        loaded = self.model.load_block_by_filename(
+            block_id, self._texture_dir,
+        )
         self._refresh_state_combo()
         self._sync_size_combo()
+        self._update_save_block_btn()
         if not loaded:
             QMessageBox.warning(
                 self, "Not Found",
                 f"No textures found for block '{block_id}'.",
             )
 
+    def _update_save_block_btn(self):
+        self.save_block_btn.setEnabled(self.model.has_source_paths())
+
     def _sync_size_combo(self):
-        """Update the size dropdown to reflect the model's current texture size."""
         self.size_combo.blockSignals(True)
         if self.model.size in TEXTURE_SIZES:
-            self.size_combo.setCurrentIndex(TEXTURE_SIZES.index(self.model.size))
+            self.size_combo.setCurrentIndex(
+                TEXTURE_SIZES.index(self.model.size),
+            )
         self.size_combo.blockSignals(False)
+
+    def _copy_face(self):
+        dst = self.copy_target_combo.currentData()
+        src = self.model.active_face
+        if src == dst:
+            return
+        self.model.copy_face(src, dst)
 
     def _open_face(self):
         filepath, _ = QFileDialog.getOpenFileName(
@@ -249,6 +315,16 @@ class FacePanel(QWidget):
                 filepath += ".png"
             self.model.save_face(self.model.active_face, filepath)
 
+    def _save_block(self):
+        """Save all faces back to their original file paths."""
+        saved, skipped = self.model.save_to_source_paths()
+        if skipped:
+            QMessageBox.information(
+                self, "Save Block",
+                f"Saved {saved} textures.\n"
+                f"Skipped {len(skipped)} faces with no source path.",
+            )
+
     def _save_all(self):
         directory = QFileDialog.getExistingDirectory(
             self, "Save All Textures To",
@@ -256,11 +332,34 @@ class FacePanel(QWidget):
         )
         if not directory:
             return
-        for state in self.model.states:
+        for si, state in enumerate(self.model.states):
             for face in FACE_NAMES:
                 filename = f"{state.name}_{face}.png"
                 filepath = os.path.join(directory, filename)
-                state.faces[face].save(filepath, "PNG")
+                self.model.get_composite(face, si).save(filepath, "PNG")
+
+    def _load_reference(self):
+        filepath, _ = QFileDialog.getOpenFileName(
+            self, "Load Reference Image",
+            self._texture_dir,
+            "Images (*.png *.jpg *.jpeg *.bmp)",
+        )
+        if filepath:
+            img = Image.open(filepath).convert("RGBA")
+            self.model.set_reference(img)
+            self._ref_label.setVisible(True)
+            self._ref_clear_btn.setVisible(True)
+            self._ref_opacity_row.setVisible(True)
+
+    def _clear_reference(self):
+        self.model.set_reference(None)
+        self._ref_label.setVisible(False)
+        self._ref_clear_btn.setVisible(False)
+        self._ref_opacity_row.setVisible(False)
+
+    def _on_ref_opacity_changed(self, value):
+        self.model.set_reference_opacity(value / 100.0)
+        self.ref_opacity_label.setText(f"{value}%")
 
     def select_face_by_number(self, num):
         """Select face by number 1-6."""
