@@ -10,18 +10,12 @@ import io.mockk.verify
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class SmallDrillMiningTest {
-
     private lateinit var registry: PowerBlockRegistry
 
     @BeforeEach
@@ -35,7 +29,12 @@ class SmallDrillMiningTest {
         TestHelper.teardown()
     }
 
-    private fun mockBlockAt(x: Int, y: Int, z: Int, material: Material): Block {
+    private fun mockBlockAt(
+        x: Int,
+        y: Int,
+        z: Int,
+        material: Material,
+    ): Block {
         val block = mockk<Block>(relaxed = true)
         every { block.type } returns material
         every { block.getDrops() } returns emptyList()
