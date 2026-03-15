@@ -78,28 +78,44 @@ class FluidPipe(location: Location, override val facing: BlockFace) : FluidBlock
                 if (source.canRemoveFluidFrom(facing)) {
                     val fluid = source.removeFluid()
                     storeFluid(fluid)
-                    plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump")
+                    plugin.logger.atlasInfo(
+                        """
+                        FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump
+                        """.trimIndent(),
+                    )
                 }
             }
             is FluidPipe -> {
                 if (source.hasFluid()) {
                     val fluid = source.removeFluid()
                     storeFluid(fluid)
-                    plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe")
+                    plugin.logger.atlasInfo(
+                        """
+                        FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe
+                        """.trimIndent(),
+                    )
                 }
             }
             is FluidContainer -> {
                 if (source.canRemoveFluidFrom(facing)) {
                     val fluid = source.removeFluid()
                     storeFluid(fluid)
-                    plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer")
+                    plugin.logger.atlasInfo(
+                        """
+                        FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer
+                        """.trimIndent(),
+                    )
                 }
             }
             is FluidMerger -> {
                 if (source.hasFluid()) {
                     val fluid = source.removeFluid()
                     storeFluid(fluid)
-                    plugin.logger.atlasInfo("FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidMerger")
+                    plugin.logger.atlasInfo(
+                        """
+                        FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidMerger
+                        """.trimIndent(),
+                    )
                 }
             }
         }

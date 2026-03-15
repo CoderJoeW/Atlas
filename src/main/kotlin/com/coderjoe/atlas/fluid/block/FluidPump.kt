@@ -153,6 +153,10 @@ class FluidPump(location: Location) : FluidBlock(location) {
         storeFluid(fluidType)
         cauldronFace = foundFace
         pumpStatus = PumpStatus.EXTRACTING
-        plugin.logger.atlasInfo("FluidPump at ${location.blockX},${location.blockY},${location.blockZ} extracted ${fluidType.name} from $foundFace")
+        plugin.logger.atlasInfo(
+            """
+            FluidPump at ${location.blockX},${location.blockY},${location.blockZ} extracted ${fluidType.name} from $foundFace
+            """.trimIndent(),
+        )
     }
 }

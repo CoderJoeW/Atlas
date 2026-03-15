@@ -83,7 +83,11 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
                     if (source.canRemoveFluidFrom(face.oppositeFace) && source.hasFluid()) {
                         val fluid = source.removeFluid()
                         storeFluid(fluid)
-                        plugin.logger.atlasInfo("FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump at ${face.name}")
+                        plugin.logger.atlasInfo(
+                            """
+                            FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPump at ${face.name}
+                            """.trimIndent(),
+                        )
                         return
                     }
                 }
@@ -91,7 +95,11 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
                     if (source.hasFluid()) {
                         val fluid = source.removeFluid()
                         storeFluid(fluid)
-                        plugin.logger.atlasInfo("FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe at ${face.name}")
+                        plugin.logger.atlasInfo(
+                            """
+                            FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidPipe at ${face.name}
+                            """.trimIndent(),
+                        )
                         return
                     }
                 }
@@ -99,7 +107,11 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
                     if (source.canRemoveFluidFrom(face.oppositeFace) && source.hasFluid()) {
                         val fluid = source.removeFluid()
                         storeFluid(fluid)
-                        plugin.logger.atlasInfo("FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer at ${face.name}")
+                        plugin.logger.atlasInfo(
+                            """
+                            FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidContainer at ${face.name}
+                            """.trimIndent(),
+                        )
                         return
                     }
                 }
@@ -107,7 +119,11 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
                     if (source.hasFluid()) {
                         val fluid = source.removeFluid()
                         storeFluid(fluid)
-                        plugin.logger.atlasInfo("FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidMerger at ${face.name}")
+                        plugin.logger.atlasInfo(
+                            """
+                            FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} pulled ${fluid.name} from FluidMerger at ${face.name}
+                            """.trimIndent(),
+                        )
                         return
                     }
                 }

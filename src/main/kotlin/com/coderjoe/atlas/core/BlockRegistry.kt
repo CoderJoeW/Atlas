@@ -22,7 +22,11 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
         blocks[key] = block
         blockIds[key] = blockId
         block.start()
-        plugin.logger.atlasInfo("Registered ${block::class.simpleName} at ${block.location.blockX},${block.location.blockY},${block.location.blockZ}")
+        plugin.logger.atlasInfo(
+            """
+            Registered ${block::class.simpleName} at ${block.location.blockX},${block.location.blockY},${block.location.blockZ}
+            """.trimIndent(),
+        )
     }
 
     fun unregister(location: Location): T? {

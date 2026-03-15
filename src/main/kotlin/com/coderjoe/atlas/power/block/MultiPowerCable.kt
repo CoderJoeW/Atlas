@@ -66,7 +66,11 @@ class MultiPowerCable(location: Location, override val facing: BlockFace) : Powe
             val pulled = source.removePower(minOf(remaining, source.currentPower))
             if (pulled > 0) {
                 addPower(pulled)
-                plugin.logger.atlasInfo("MultiPowerCable at ${location.blockX},${location.blockY},${location.blockZ} pulled $pulled power (now $currentPower/$maxStorage)")
+                plugin.logger.atlasInfo(
+                    """
+                    MultiPowerCable at ${location.blockX},${location.blockY},${location.blockZ} pulled $pulled power (now $currentPower/$maxStorage)
+                    """.trimIndent(),
+                )
             }
         }
 
@@ -83,7 +87,11 @@ class MultiPowerCable(location: Location, override val facing: BlockFace) : Powe
                 val pushed = removePower(1)
                 if (pushed > 0) {
                     target.addPower(pushed)
-                    plugin.logger.atlasInfo("MultiPowerCable at ${location.blockX},${location.blockY},${location.blockZ} pushed $pushed power to ${target::class.simpleName} at ${face.name}")
+                    plugin.logger.atlasInfo(
+                        """
+                        MultiPowerCable at ${location.blockX},${location.blockY},${location.blockZ} pushed $pushed power to ${target::class.simpleName} at ${face.name}
+                        """.trimIndent(),
+                    )
                 }
             }
         }
