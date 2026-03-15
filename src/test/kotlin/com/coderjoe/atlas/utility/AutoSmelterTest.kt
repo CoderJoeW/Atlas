@@ -43,11 +43,13 @@ class AutoSmelterTest {
             AutoSmelter(TestHelper.createLocation(), BlockFace.NORTH)
         smelter.currentPower = 0
         assertEquals(
-            "atlas:auto_smelter", smelter.getVisualStateBlockId()
+            "atlas:auto_smelter",
+            smelter.getVisualStateBlockId(),
         )
         smelter.currentPower = 2
         assertEquals(
-            "atlas:auto_smelter", smelter.getVisualStateBlockId()
+            "atlas:auto_smelter",
+            smelter.getVisualStateBlockId(),
         )
     }
 
@@ -70,7 +72,7 @@ class AutoSmelterTest {
         val desc = AutoSmelter.descriptor
         assertEquals(
             com.coderjoe.atlas.core.PlacementType.DIRECTIONAL,
-            desc.placementType
+            desc.placementType,
         )
     }
 
@@ -78,18 +80,19 @@ class AutoSmelterTest {
     fun `base ID is registered`() {
         TestHelper.initPowerFactory()
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:auto_smelter")
+            PowerBlockFactory.isRegistered("atlas:auto_smelter"),
         )
     }
 
     @Test
     fun `factory creates AutoSmelter from base ID`() {
         TestHelper.initPowerFactory()
-        val block = PowerBlockFactory.createPowerBlock(
-            "atlas:auto_smelter",
-            TestHelper.createLocation(),
-            BlockFace.NORTH
-        )
+        val block =
+            PowerBlockFactory.createPowerBlock(
+                "atlas:auto_smelter",
+                TestHelper.createLocation(),
+                BlockFace.NORTH,
+            )
         assertTrue(block is AutoSmelter)
         assertEquals(BlockFace.NORTH, block!!.facing)
     }
@@ -109,7 +112,7 @@ class AutoSmelterTest {
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns emptyList()
 
@@ -121,9 +124,11 @@ class AutoSmelterTest {
     @Test
     fun `power update moves item forward without smelting when no power`() {
         PowerBlockRegistry(TestHelper.mockPlugin)
-        val smelter = AutoSmelter(
-            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH
-        )
+        val smelter =
+            AutoSmelter(
+                TestHelper.createLocation(0.0, 64.0, 0.0),
+                BlockFace.NORTH,
+            )
         smelter.currentPower = 0
 
         val itemLoc =
@@ -135,7 +140,7 @@ class AutoSmelterTest {
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns listOf(mockItem)
 
@@ -153,9 +158,11 @@ class AutoSmelterTest {
     @Test
     fun `power update moves item east`() {
         PowerBlockRegistry(TestHelper.mockPlugin)
-        val smelter = AutoSmelter(
-            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.EAST
-        )
+        val smelter =
+            AutoSmelter(
+                TestHelper.createLocation(0.0, 64.0, 0.0),
+                BlockFace.EAST,
+            )
         smelter.currentPower = 0
 
         val itemLoc =
@@ -167,7 +174,7 @@ class AutoSmelterTest {
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns listOf(mockItem)
 
@@ -185,9 +192,11 @@ class AutoSmelterTest {
     @Test
     fun `items still move forward when powered but no smelting recipe`() {
         PowerBlockRegistry(TestHelper.mockPlugin)
-        val smelter = AutoSmelter(
-            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH
-        )
+        val smelter =
+            AutoSmelter(
+                TestHelper.createLocation(0.0, 64.0, 0.0),
+                BlockFace.NORTH,
+            )
         smelter.currentPower = 2
 
         val itemLoc =
@@ -199,7 +208,7 @@ class AutoSmelterTest {
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns listOf(mockItem)
 
@@ -221,21 +230,27 @@ class AutoSmelterTest {
         val smelterLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val smelter = AutoSmelter(smelterLoc, BlockFace.NORTH)
         TestHelper.addToRegistry(
-            registry, smelter, "atlas:auto_smelter"
+            registry,
+            smelter,
+            "atlas:auto_smelter",
         )
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
-        val battery = com.coderjoe.atlas.power.block.SmallBattery(
-            batteryLoc, BlockFace.WEST
-        )
+        val battery =
+            com.coderjoe.atlas.power.block.SmallBattery(
+                batteryLoc,
+                BlockFace.WEST,
+            )
         battery.currentPower = 5
         TestHelper.addToRegistry(
-            registry, battery, "atlas:small_battery"
+            registry,
+            battery,
+            "atlas:small_battery",
         )
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns emptyList()
 
@@ -252,21 +267,27 @@ class AutoSmelterTest {
         val smelter = AutoSmelter(smelterLoc, BlockFace.NORTH)
         smelter.currentPower = 2
         TestHelper.addToRegistry(
-            registry, smelter, "atlas:auto_smelter"
+            registry,
+            smelter,
+            "atlas:auto_smelter",
         )
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
-        val battery = com.coderjoe.atlas.power.block.SmallBattery(
-            batteryLoc, BlockFace.WEST
-        )
+        val battery =
+            com.coderjoe.atlas.power.block.SmallBattery(
+                batteryLoc,
+                BlockFace.WEST,
+            )
         battery.currentPower = 5
         TestHelper.addToRegistry(
-            registry, battery, "atlas:small_battery"
+            registry,
+            battery,
+            "atlas:small_battery",
         )
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns emptyList()
 

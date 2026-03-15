@@ -31,7 +31,8 @@ class FluidMergerTest {
         val merger =
             FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
         assertEquals(
-            "atlas:fluid_merger", merger.getVisualStateBlockId()
+            "atlas:fluid_merger",
+            merger.getVisualStateBlockId(),
         )
     }
 
@@ -41,7 +42,8 @@ class FluidMergerTest {
             FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
         merger.storeFluid(FluidType.WATER)
         assertEquals(
-            "atlas:fluid_merger", merger.getVisualStateBlockId()
+            "atlas:fluid_merger",
+            merger.getVisualStateBlockId(),
         )
     }
 
@@ -51,7 +53,8 @@ class FluidMergerTest {
             FluidMerger(TestHelper.createLocation(), BlockFace.NORTH)
         merger.storeFluid(FluidType.LAVA)
         assertEquals(
-            "atlas:fluid_merger", merger.getVisualStateBlockId()
+            "atlas:fluid_merger",
+            merger.getVisualStateBlockId(),
         )
     }
 
@@ -60,7 +63,9 @@ class FluidMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
         TestHelper.addToRegistry(
-            registry, merger, "atlas:fluid_merger"
+            registry,
+            merger,
+            "atlas:fluid_merger",
         )
 
         // Pipe to the south (not facing direction)
@@ -68,7 +73,9 @@ class FluidMergerTest {
         val pipe = FluidPipe(pipeLoc, BlockFace.NORTH)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            registry, pipe, "atlas:fluid_pipe"
+            registry,
+            pipe,
+            "atlas:fluid_pipe",
         )
 
         merger.callFluidUpdate()
@@ -83,7 +90,9 @@ class FluidMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
         TestHelper.addToRegistry(
-            registry, merger, "atlas:fluid_merger"
+            registry,
+            merger,
+            "atlas:fluid_merger",
         )
 
         // Pipe to the north (facing direction)
@@ -91,7 +100,9 @@ class FluidMergerTest {
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            registry, pipe, "atlas:fluid_pipe"
+            registry,
+            pipe,
+            "atlas:fluid_pipe",
         )
 
         merger.callFluidUpdate()
@@ -106,14 +117,18 @@ class FluidMergerTest {
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
         merger.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            registry, merger, "atlas:fluid_merger"
+            registry,
+            merger,
+            "atlas:fluid_merger",
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.NORTH)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            registry, pipe, "atlas:fluid_pipe"
+            registry,
+            pipe,
+            "atlas:fluid_pipe",
         )
 
         merger.callFluidUpdate()
@@ -127,14 +142,18 @@ class FluidMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
         TestHelper.addToRegistry(
-            registry, merger, "atlas:fluid_merger"
+            registry,
+            merger,
+            "atlas:fluid_merger",
         )
 
         val pipeLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.WEST)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            registry, pipe, "atlas:fluid_pipe"
+            registry,
+            pipe,
+            "atlas:fluid_pipe",
         )
 
         merger.callFluidUpdate()
@@ -150,7 +169,9 @@ class FluidMergerTest {
         val merger = FluidMerger(mergerLoc, BlockFace.NORTH)
         merger.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            registry, merger, "atlas:fluid_merger"
+            registry,
+            merger,
+            "atlas:fluid_merger",
         )
 
         assertTrue(merger.hasFluid())

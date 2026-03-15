@@ -77,7 +77,9 @@ class PowerBlockListenerTest {
         val loc = TestHelper.createLocation()
         val panel = SmallSolarPanel(loc)
         TestHelper.addToRegistry(
-            registry, panel, "atlas:small_solar_panel"
+            registry,
+            panel,
+            "atlas:small_solar_panel",
         )
 
         val block = mockk<Block>(relaxed = true)
@@ -131,9 +133,10 @@ class PowerBlockListenerTest {
         val player = mockk<Player>(relaxed = true)
         every { player.isSneaking } returns false
         val block = mockk<Block>(relaxed = true)
-        every { block.location } returns TestHelper.createLocation(
-            99.0, 99.0, 99.0
-        )
+        every { block.location } returns
+            TestHelper.createLocation(
+                99.0, 99.0, 99.0,
+            )
 
         val event = mockk<PlayerInteractEvent>(relaxed = true)
         every { event.action } returns Action.RIGHT_CLICK_BLOCK

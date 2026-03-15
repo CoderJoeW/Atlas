@@ -42,7 +42,7 @@ abstract class AtlasBlock(
                 currentVisualState = newState
             } catch (e: Throwable) {
                 plugin.logger.warning(
-                    "Failed to update visual state at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}"
+                    "Failed to update visual state at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}",
                 )
             } finally {
                 registry.updatingLocations.remove(key)

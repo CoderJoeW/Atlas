@@ -40,7 +40,8 @@ class ConveyorBeltTest {
         val belt =
             ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
         assertEquals(
-            "atlas:conveyor_belt", belt.getVisualStateBlockId()
+            "atlas:conveyor_belt",
+            belt.getVisualStateBlockId(),
         )
     }
 
@@ -63,7 +64,7 @@ class ConveyorBeltTest {
         val desc = ConveyorBelt.descriptor
         assertEquals(
             com.coderjoe.atlas.core.PlacementType.DIRECTIONAL,
-            desc.placementType
+            desc.placementType,
         )
     }
 
@@ -71,18 +72,19 @@ class ConveyorBeltTest {
     fun `base ID is registered`() {
         TestHelper.initTransportFactory()
         assertTrue(
-            TransportBlockFactory.isRegistered("atlas:conveyor_belt")
+            TransportBlockFactory.isRegistered("atlas:conveyor_belt"),
         )
     }
 
     @Test
     fun `factory creates ConveyorBelt from base ID`() {
         TestHelper.initTransportFactory()
-        val block = TransportBlockFactory.createTransportBlock(
-            "atlas:conveyor_belt",
-            TestHelper.createLocation(),
-            BlockFace.NORTH
-        )
+        val block =
+            TransportBlockFactory.createTransportBlock(
+                "atlas:conveyor_belt",
+                TestHelper.createLocation(),
+                BlockFace.NORTH,
+            )
         assertTrue(block is ConveyorBelt)
         assertEquals(BlockFace.NORTH, block!!.facing)
     }
@@ -95,7 +97,7 @@ class ConveyorBeltTest {
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns emptyList()
 
@@ -107,9 +109,11 @@ class ConveyorBeltTest {
     @Test
     fun `transport update moves item north`() {
         TransportBlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(
-            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH
-        )
+        val belt =
+            ConveyorBelt(
+                TestHelper.createLocation(0.0, 64.0, 0.0),
+                BlockFace.NORTH,
+            )
 
         val itemLoc =
             Location(TestHelper.mockWorld, 0.5, 64.375, 0.5)
@@ -120,7 +124,7 @@ class ConveyorBeltTest {
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns listOf(mockItem)
 
@@ -138,9 +142,11 @@ class ConveyorBeltTest {
     @Test
     fun `transport update moves item east`() {
         TransportBlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(
-            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.EAST
-        )
+        val belt =
+            ConveyorBelt(
+                TestHelper.createLocation(0.0, 64.0, 0.0),
+                BlockFace.EAST,
+            )
 
         val itemLoc =
             Location(TestHelper.mockWorld, 0.5, 64.375, 0.5)
@@ -151,7 +157,7 @@ class ConveyorBeltTest {
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns listOf(mockItem)
 
@@ -169,9 +175,11 @@ class ConveyorBeltTest {
     @Test
     fun `transport update moves multiple items`() {
         TransportBlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(
-            TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH
-        )
+        val belt =
+            ConveyorBelt(
+                TestHelper.createLocation(0.0, 64.0, 0.0),
+                BlockFace.SOUTH,
+            )
 
         val item1 = mockk<Item>(relaxed = true)
         val item2 = mockk<Item>(relaxed = true)
@@ -186,7 +194,7 @@ class ConveyorBeltTest {
 
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns listOf(item1, item2)
 
@@ -206,7 +214,7 @@ class ConveyorBeltTest {
             mockk<org.bukkit.entity.Player>(relaxed = true)
         every {
             TestHelper.mockWorld.getNearbyEntities(
-                any<Location>(), any(), any(), any()
+                any<Location>(), any(), any(), any(),
             )
         } returns listOf(mockPlayer)
 
@@ -218,7 +226,7 @@ class ConveyorBeltTest {
     @Test
     fun `descriptor description mentions direction`() {
         assertTrue(
-            ConveyorBelt.descriptor.description.contains("forward")
+            ConveyorBelt.descriptor.description.contains("forward"),
         )
     }
 }

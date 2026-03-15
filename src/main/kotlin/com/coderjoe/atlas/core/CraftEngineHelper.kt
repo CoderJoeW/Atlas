@@ -7,14 +7,15 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 
 object CraftEngineHelper {
-    private val CE_FACING_TO_BLOCK_FACE = mapOf(
-        "north" to BlockFace.NORTH,
-        "south" to BlockFace.SOUTH,
-        "east" to BlockFace.EAST,
-        "west" to BlockFace.WEST,
-        "up" to BlockFace.UP,
-        "down" to BlockFace.DOWN,
-    )
+    private val CE_FACING_TO_BLOCK_FACE =
+        mapOf(
+            "north" to BlockFace.NORTH,
+            "south" to BlockFace.SOUTH,
+            "east" to BlockFace.EAST,
+            "west" to BlockFace.WEST,
+            "up" to BlockFace.UP,
+            "down" to BlockFace.DOWN,
+        )
 
     fun getBlockId(block: Block): String? {
         return try {
@@ -37,7 +38,10 @@ object CraftEngineHelper {
         }
     }
 
-    fun setFacing(location: Location, facing: BlockFace): Boolean {
+    fun setFacing(
+        location: Location,
+        facing: BlockFace,
+    ): Boolean {
         return try {
             val block = location.block
             val state = CraftEngineBlocks.getCustomBlockState(block) ?: return false
@@ -49,9 +53,10 @@ object CraftEngineHelper {
                 @Suppress("UNCHECKED_CAST")
                 val typedProp = facingProp as Property<Comparable<Comparable<*>>>
                 val possibleValues = typedProp.possibleValues()
-                val targetValue = possibleValues.find {
-                    typedProp.valueName(it) == targetFacing
-                } ?: return false
+                val targetValue =
+                    possibleValues.find {
+                        typedProp.valueName(it) == targetFacing
+                    } ?: return false
                 val newState = state.with(typedProp, targetValue)
                 CraftEngineBlocks.place(location, newState, false)
             }
@@ -61,7 +66,11 @@ object CraftEngineHelper {
         }
     }
 
-    fun setBooleanProperty(location: Location, propertyName: String, value: Boolean) {
+    fun setBooleanProperty(
+        location: Location,
+        propertyName: String,
+        value: Boolean,
+    ) {
         try {
             val block = location.block
             val state = CraftEngineBlocks.getCustomBlockState(block) ?: return
@@ -79,18 +88,24 @@ object CraftEngineHelper {
         }
     }
 
-    fun setStringProperty(location: Location, propertyName: String, value: String) {
+    fun setStringProperty(
+        location: Location,
+        propertyName: String,
+        value: String,
+    ) {
         try {
             val block = location.block
             val state = CraftEngineBlocks.getCustomBlockState(block) ?: return
             val customBlock = state.owner().value()
             val prop = customBlock.getProperty(propertyName) ?: return
+
             @Suppress("UNCHECKED_CAST")
             val typedProp = prop as Property<Comparable<Comparable<*>>>
             val possibleValues = typedProp.possibleValues()
-            val targetValue = possibleValues.find {
-                typedProp.valueName(it) == value
-            } ?: return
+            val targetValue =
+                possibleValues.find {
+                    typedProp.valueName(it) == value
+                } ?: return
             val currentValue = state.get(typedProp)
             if (currentValue != targetValue) {
                 val newState = state.with(typedProp, targetValue)
@@ -101,7 +116,11 @@ object CraftEngineHelper {
         }
     }
 
-    fun setIntProperty(location: Location, propertyName: String, value: Int) {
+    fun setIntProperty(
+        location: Location,
+        propertyName: String,
+        value: Int,
+    ) {
         try {
             val block = location.block
             val state = CraftEngineBlocks.getCustomBlockState(block) ?: return

@@ -43,7 +43,8 @@ class ObsidianFactoryTest {
         val gen = ObsidianFactory(TestHelper.createLocation())
         gen.currentPower = 99
         assertEquals(
-            "atlas:obsidian_factory", gen.getVisualStateBlockId()
+            "atlas:obsidian_factory",
+            gen.getVisualStateBlockId(),
         )
     }
 
@@ -53,7 +54,7 @@ class ObsidianFactoryTest {
         gen.currentPower = 100
         assertEquals(
             "atlas:obsidian_factory_active",
-            gen.getVisualStateBlockId()
+            gen.getVisualStateBlockId(),
         )
     }
 
@@ -66,14 +67,18 @@ class ObsidianFactoryTest {
         val gen = ObsidianFactory(genLoc)
         gen.currentPower = 100
         TestHelper.addToRegistry(
-            powerRegistry, gen, "atlas:obsidian_factory"
+            powerRegistry,
+            gen,
+            "atlas:obsidian_factory",
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            fluidRegistry, pipe, "atlas:fluid_pipe"
+            fluidRegistry,
+            pipe,
+            "atlas:fluid_pipe",
         )
 
         gen.callPowerUpdate()
@@ -91,14 +96,18 @@ class ObsidianFactoryTest {
         val gen = ObsidianFactory(genLoc)
         gen.currentPower = 100
         TestHelper.addToRegistry(
-            powerRegistry, gen, "atlas:obsidian_factory"
+            powerRegistry,
+            gen,
+            "atlas:obsidian_factory",
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
         val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            fluidRegistry, pipe, "atlas:fluid_pipe"
+            fluidRegistry,
+            pipe,
+            "atlas:fluid_pipe",
         )
 
         gen.callPowerUpdate()
@@ -116,7 +125,9 @@ class ObsidianFactoryTest {
         val gen = ObsidianFactory(genLoc)
         gen.currentPower = 99
         TestHelper.addToRegistry(
-            powerRegistry, gen, "atlas:obsidian_factory"
+            powerRegistry,
+            gen,
+            "atlas:obsidian_factory",
         )
 
         val waterPipeLoc =
@@ -124,7 +135,9 @@ class ObsidianFactoryTest {
         val waterPipe = FluidPipe(waterPipeLoc, BlockFace.SOUTH)
         waterPipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            fluidRegistry, waterPipe, "atlas:fluid_pipe"
+            fluidRegistry,
+            waterPipe,
+            "atlas:fluid_pipe",
         )
 
         val lavaPipeLoc =
@@ -132,7 +145,9 @@ class ObsidianFactoryTest {
         val lavaPipe = FluidPipe(lavaPipeLoc, BlockFace.NORTH)
         lavaPipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            fluidRegistry, lavaPipe, "atlas:fluid_pipe"
+            fluidRegistry,
+            lavaPipe,
+            "atlas:fluid_pipe",
         )
 
         gen.callPowerUpdate()
@@ -151,7 +166,9 @@ class ObsidianFactoryTest {
         val gen = ObsidianFactory(genLoc)
         gen.currentPower = 100
         TestHelper.addToRegistry(
-            powerRegistry, gen, "atlas:obsidian_factory"
+            powerRegistry,
+            gen,
+            "atlas:obsidian_factory",
         )
 
         val waterPipeLoc =
@@ -159,7 +176,9 @@ class ObsidianFactoryTest {
         val waterPipe = FluidPipe(waterPipeLoc, BlockFace.SOUTH)
         waterPipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            fluidRegistry, waterPipe, "atlas:fluid_pipe"
+            fluidRegistry,
+            waterPipe,
+            "atlas:fluid_pipe",
         )
 
         val lavaPipeLoc =
@@ -167,7 +186,9 @@ class ObsidianFactoryTest {
         val lavaPipe = FluidPipe(lavaPipeLoc, BlockFace.NORTH)
         lavaPipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            fluidRegistry, lavaPipe, "atlas:fluid_pipe"
+            fluidRegistry,
+            lavaPipe,
+            "atlas:fluid_pipe",
         )
 
         try {
@@ -189,8 +210,8 @@ class ObsidianFactoryTest {
         assertEquals(1, desc.additionalBlockIds.size)
         assertTrue(
             desc.additionalBlockIds.contains(
-                "atlas:obsidian_factory_active"
-            )
+                "atlas:obsidian_factory_active",
+            ),
         )
     }
 
@@ -202,16 +223,22 @@ class ObsidianFactoryTest {
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
         TestHelper.addToRegistry(
-            powerRegistry, gen, "atlas:obsidian_factory"
+            powerRegistry,
+            gen,
+            "atlas:obsidian_factory",
         )
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
-        val battery = com.coderjoe.atlas.power.block.SmallBattery(
-            batteryLoc, BlockFace.DOWN
-        )
+        val battery =
+            com.coderjoe.atlas.power.block.SmallBattery(
+                batteryLoc,
+                BlockFace.DOWN,
+            )
         battery.currentPower = 10
         TestHelper.addToRegistry(
-            powerRegistry, battery, "atlas:small_battery"
+            powerRegistry,
+            battery,
+            "atlas:small_battery",
         )
 
         gen.callPowerUpdate()

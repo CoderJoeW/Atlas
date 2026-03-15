@@ -140,7 +140,7 @@ class PowerBlockLogicTest {
         val panel = SmallSolarPanel(TestHelper.createLocation())
         assertEquals(
             "atlas:small_solar_panel",
-            panel.getVisualStateBlockId()
+            panel.getVisualStateBlockId(),
         )
     }
 
@@ -150,7 +150,7 @@ class PowerBlockLogicTest {
         panel.currentPower = 1
         assertEquals(
             "atlas:small_solar_panel_full",
-            panel.getVisualStateBlockId()
+            panel.getVisualStateBlockId(),
         )
     }
 
@@ -201,7 +201,7 @@ class PowerBlockLogicTest {
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
         assertEquals(
             "atlas:small_battery",
-            battery.getVisualStateBlockId()
+            battery.getVisualStateBlockId(),
         )
     }
 
@@ -214,7 +214,7 @@ class PowerBlockLogicTest {
             assertEquals(
                 "atlas:small_battery_low",
                 battery.getVisualStateBlockId(),
-                "Failed for power=$p"
+                "Failed for power=$p",
             )
         }
     }
@@ -228,7 +228,7 @@ class PowerBlockLogicTest {
             assertEquals(
                 "atlas:small_battery_medium",
                 battery.getVisualStateBlockId(),
-                "Failed for power=$p"
+                "Failed for power=$p",
             )
         }
     }
@@ -242,7 +242,7 @@ class PowerBlockLogicTest {
             assertEquals(
                 "atlas:small_battery_full",
                 battery.getVisualStateBlockId(),
-                "Failed for power=$p"
+                "Failed for power=$p",
             )
         }
     }
@@ -258,10 +258,14 @@ class PowerBlockLogicTest {
         source.currentPower = 1
 
         TestHelper.addToRegistry(
-            registry, battery, "atlas:small_battery"
+            registry,
+            battery,
+            "atlas:small_battery",
         )
         TestHelper.addToRegistry(
-            registry, source, "atlas:small_solar_panel"
+            registry,
+            source,
+            "atlas:small_solar_panel",
         )
 
         battery.callPowerUpdate()
@@ -294,11 +298,13 @@ class PowerBlockLogicTest {
         val cable =
             PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
         assertEquals(
-            "atlas:power_cable", cable.getVisualStateBlockId()
+            "atlas:power_cable",
+            cable.getVisualStateBlockId(),
         )
         cable.currentPower = 1
         assertEquals(
-            "atlas:power_cable", cable.getVisualStateBlockId()
+            "atlas:power_cable",
+            cable.getVisualStateBlockId(),
         )
     }
 
@@ -313,10 +319,14 @@ class PowerBlockLogicTest {
         source.currentPower = 1
 
         TestHelper.addToRegistry(
-            registry, cable, "atlas:power_cable"
+            registry,
+            cable,
+            "atlas:power_cable",
         )
         TestHelper.addToRegistry(
-            registry, source, "atlas:small_solar_panel"
+            registry,
+            source,
+            "atlas:small_solar_panel",
         )
 
         cable.callPowerUpdate()
@@ -335,10 +345,14 @@ class PowerBlockLogicTest {
         source.currentPower = 1
 
         TestHelper.addToRegistry(
-            registry, cable, "atlas:power_cable"
+            registry,
+            cable,
+            "atlas:power_cable",
         )
         TestHelper.addToRegistry(
-            registry, source, "atlas:small_solar_panel"
+            registry,
+            source,
+            "atlas:small_solar_panel",
         )
 
         cable.callPowerUpdate()
@@ -382,7 +396,8 @@ class PowerBlockLogicTest {
         val drill =
             SmallDrill(TestHelper.createLocation(), BlockFace.NORTH)
         assertEquals(
-            "atlas:small_drill", drill.getVisualStateBlockId()
+            "atlas:small_drill",
+            drill.getVisualStateBlockId(),
         )
     }
 
@@ -460,10 +475,14 @@ class PowerBlockLogicTest {
         source.currentPower = 0
 
         TestHelper.addToRegistry(
-            registry, battery, "atlas:small_battery"
+            registry,
+            battery,
+            "atlas:small_battery",
         )
         TestHelper.addToRegistry(
-            registry, source, "atlas:small_solar_panel"
+            registry,
+            source,
+            "atlas:small_solar_panel",
         )
 
         battery.callPowerUpdate()
@@ -476,7 +495,9 @@ class PowerBlockLogicTest {
         val battery =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
         TestHelper.addToRegistry(
-            registry, battery, "atlas:small_battery"
+            registry,
+            battery,
+            "atlas:small_battery",
         )
 
         battery.callPowerUpdate()

@@ -49,10 +49,13 @@ class AtlasBlockListener(
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        val actualFacing = if (CraftEngineHelper.setFacing(location, facing)) facing else {
-                            CraftEngineHelper.setFacing(location, playerFacing)
-                            playerFacing
-                        }
+                        val actualFacing =
+                            if (CraftEngineHelper.setFacing(location, facing)) {
+                                facing
+                            } else {
+                                CraftEngineHelper.setFacing(location, playerFacing)
+                                playerFacing
+                            }
                         createAndRegister(system, descriptor.baseBlockId, location, actualFacing)
                     },
                 )
@@ -63,10 +66,13 @@ class AtlasBlockListener(
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        val actualFacing = if (CraftEngineHelper.setFacing(location, facing)) facing else {
-                            CraftEngineHelper.setFacing(location, playerFacing)
-                            playerFacing
-                        }
+                        val actualFacing =
+                            if (CraftEngineHelper.setFacing(location, facing)) {
+                                facing
+                            } else {
+                                CraftEngineHelper.setFacing(location, playerFacing)
+                                playerFacing
+                            }
                         createAndRegister(system, descriptor.baseBlockId, location, actualFacing)
                     },
                 )

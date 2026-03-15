@@ -46,7 +46,7 @@ class PowerBlockInitializerTest {
     fun `solar panel ID is registered`() {
         TestHelper.initPowerFactory()
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:small_solar_panel")
+            PowerBlockFactory.isRegistered("atlas:small_solar_panel"),
         )
     }
 
@@ -54,7 +54,7 @@ class PowerBlockInitializerTest {
     fun `drill base ID is registered`() {
         TestHelper.initPowerFactory()
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:small_drill")
+            PowerBlockFactory.isRegistered("atlas:small_drill"),
         )
     }
 
@@ -62,18 +62,18 @@ class PowerBlockInitializerTest {
     fun `battery base and variant IDs are registered`() {
         TestHelper.initPowerFactory()
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:small_battery")
+            PowerBlockFactory.isRegistered("atlas:small_battery"),
         )
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:small_battery_low")
+            PowerBlockFactory.isRegistered("atlas:small_battery_low"),
         )
         assertTrue(
             PowerBlockFactory.isRegistered(
-                "atlas:small_battery_medium"
-            )
+                "atlas:small_battery_medium",
+            ),
         )
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:small_battery_full")
+            PowerBlockFactory.isRegistered("atlas:small_battery_full"),
         )
     }
 
@@ -81,49 +81,54 @@ class PowerBlockInitializerTest {
     fun `cable base ID is registered`() {
         TestHelper.initPowerFactory()
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:power_cable")
+            PowerBlockFactory.isRegistered("atlas:power_cable"),
         )
     }
 
     @Test
     fun `solar panel ID creates SmallSolarPanel`() {
         TestHelper.initPowerFactory()
-        val block = PowerBlockFactory.createPowerBlock(
-            "atlas:small_solar_panel", TestHelper.createLocation()
-        )
+        val block =
+            PowerBlockFactory.createPowerBlock(
+                "atlas:small_solar_panel",
+                TestHelper.createLocation(),
+            )
         assertTrue(block is SmallSolarPanel)
     }
 
     @Test
     fun `drill ID creates SmallDrill`() {
         TestHelper.initPowerFactory()
-        val block = PowerBlockFactory.createPowerBlock(
-            "atlas:small_drill",
-            TestHelper.createLocation(),
-            BlockFace.NORTH
-        )
+        val block =
+            PowerBlockFactory.createPowerBlock(
+                "atlas:small_drill",
+                TestHelper.createLocation(),
+                BlockFace.NORTH,
+            )
         assertTrue(block is SmallDrill)
     }
 
     @Test
     fun `battery ID creates SmallBattery`() {
         TestHelper.initPowerFactory()
-        val block = PowerBlockFactory.createPowerBlock(
-            "atlas:small_battery",
-            TestHelper.createLocation(),
-            BlockFace.DOWN
-        )
+        val block =
+            PowerBlockFactory.createPowerBlock(
+                "atlas:small_battery",
+                TestHelper.createLocation(),
+                BlockFace.DOWN,
+            )
         assertTrue(block is SmallBattery)
     }
 
     @Test
     fun `cable ID creates PowerCable`() {
         TestHelper.initPowerFactory()
-        val block = PowerBlockFactory.createPowerBlock(
-            "atlas:power_cable",
-            TestHelper.createLocation(),
-            BlockFace.NORTH
-        )
+        val block =
+            PowerBlockFactory.createPowerBlock(
+                "atlas:power_cable",
+                TestHelper.createLocation(),
+                BlockFace.NORTH,
+            )
         assertTrue(block is PowerCable)
     }
 }

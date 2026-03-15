@@ -31,11 +31,12 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
     private fun updateFluidState() {
-        val fluidValue = when (storedFluid) {
-            FluidType.WATER -> "water"
-            FluidType.LAVA -> "lava"
-            FluidType.NONE -> "none"
-        }
+        val fluidValue =
+            when (storedFluid) {
+                FluidType.WATER -> "water"
+                FluidType.LAVA -> "lava"
+                FluidType.NONE -> "none"
+            }
         CraftEngineHelper.setStringProperty(location, "fluid", fluidValue)
     }
 

@@ -45,11 +45,13 @@ class PowerMergerTest {
         val merger =
             PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
         assertEquals(
-            "atlas:power_merger", merger.getVisualStateBlockId()
+            "atlas:power_merger",
+            merger.getVisualStateBlockId(),
         )
         merger.currentPower = 1
         assertEquals(
-            "atlas:power_merger", merger.getVisualStateBlockId()
+            "atlas:power_merger",
+            merger.getVisualStateBlockId(),
         )
     }
 
@@ -58,21 +60,27 @@ class PowerMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = PowerMerger(mergerLoc, BlockFace.NORTH)
         TestHelper.addToRegistry(
-            registry, merger, "atlas:power_merger"
+            registry,
+            merger,
+            "atlas:power_merger",
         )
 
         val source1 =
             SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
         source1.currentPower = 1
         TestHelper.addToRegistry(
-            registry, source1, "atlas:small_solar_panel"
+            registry,
+            source1,
+            "atlas:small_solar_panel",
         )
 
         val source2 =
             SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         source2.currentPower = 1
         TestHelper.addToRegistry(
-            registry, source2, "atlas:small_solar_panel"
+            registry,
+            source2,
+            "atlas:small_solar_panel",
         )
 
         merger.callPowerUpdate()
@@ -87,15 +95,20 @@ class PowerMergerTest {
         val mergerLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val merger = PowerMerger(mergerLoc, BlockFace.NORTH)
         TestHelper.addToRegistry(
-            registry, merger, "atlas:power_merger"
+            registry,
+            merger,
+            "atlas:power_merger",
         )
 
-        val source = SmallSolarPanel(
-            TestHelper.createLocation(0.0, 64.0, -1.0)
-        )
+        val source =
+            SmallSolarPanel(
+                TestHelper.createLocation(0.0, 64.0, -1.0),
+            )
         source.currentPower = 1
         TestHelper.addToRegistry(
-            registry, source, "atlas:small_solar_panel"
+            registry,
+            source,
+            "atlas:small_solar_panel",
         )
 
         merger.callPowerUpdate()
@@ -110,14 +123,18 @@ class PowerMergerTest {
         val merger = PowerMerger(mergerLoc, BlockFace.NORTH)
         merger.currentPower = 2
         TestHelper.addToRegistry(
-            registry, merger, "atlas:power_merger"
+            registry,
+            merger,
+            "atlas:power_merger",
         )
 
         val source =
             SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
         source.currentPower = 1
         TestHelper.addToRegistry(
-            registry, source, "atlas:small_solar_panel"
+            registry,
+            source,
+            "atlas:small_solar_panel",
         )
 
         merger.callPowerUpdate()
@@ -139,14 +156,20 @@ class PowerMergerTest {
         val merger = PowerMerger(mergerLoc, BlockFace.NORTH)
         merger.currentPower = 2
         TestHelper.addToRegistry(
-            registry, merger, "atlas:power_merger"
+            registry,
+            merger,
+            "atlas:power_merger",
         )
 
-        val consumer = com.coderjoe.atlas.utility.block.SmallDrill(
-            TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.DOWN
-        )
+        val consumer =
+            com.coderjoe.atlas.utility.block.SmallDrill(
+                TestHelper.createLocation(0.0, 64.0, -1.0),
+                BlockFace.DOWN,
+            )
         TestHelper.addToRegistry(
-            registry, consumer, "atlas:small_drill"
+            registry,
+            consumer,
+            "atlas:small_drill",
         )
 
         assertTrue(merger.hasPower())

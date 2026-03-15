@@ -11,17 +11,21 @@ class PlayerJoinListener : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
         val plugin = player.server.pluginManager.getPlugin("Atlas") ?: return
-        player.server.scheduler.runTaskLater(plugin, Runnable {
-            val iterator = Bukkit.recipeIterator()
-            while (iterator.hasNext()) {
-                val recipe = iterator.next()
-                if (recipe is Keyed) {
-                    val key = recipe.key
-                    if (key.namespace == "atlas") {
-                        player.discoverRecipe(key)
+        player.server.scheduler.runTaskLater(
+            plugin,
+            Runnable {
+                val iterator = Bukkit.recipeIterator()
+                while (iterator.hasNext()) {
+                    val recipe = iterator.next()
+                    if (recipe is Keyed) {
+                        val key = recipe.key
+                        if (key.namespace == "atlas") {
+                            player.discoverRecipe(key)
+                        }
                     }
                 }
-            }
-        }, 20L)
+            },
+            20L,
+        )
     }
 }

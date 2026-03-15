@@ -37,12 +37,12 @@ class MultiPowerCableTest {
         cable.currentPower = 0
         assertEquals(
             "atlas:multi_power_cable",
-            cable.getVisualStateBlockId()
+            cable.getVisualStateBlockId(),
         )
         cable.currentPower = 5
         assertEquals(
             "atlas:multi_power_cable",
-            cable.getVisualStateBlockId()
+            cable.getVisualStateBlockId(),
         )
     }
 
@@ -65,7 +65,7 @@ class MultiPowerCableTest {
         val desc = MultiPowerCable.descriptor
         assertEquals(
             com.coderjoe.atlas.core.PlacementType.DIRECTIONAL,
-            desc.placementType
+            desc.placementType,
         )
     }
 
@@ -73,18 +73,19 @@ class MultiPowerCableTest {
     fun `base ID is registered`() {
         TestHelper.initPowerFactory()
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:multi_power_cable")
+            PowerBlockFactory.isRegistered("atlas:multi_power_cable"),
         )
     }
 
     @Test
     fun `factory creates MultiPowerCable from base ID`() {
         TestHelper.initPowerFactory()
-        val block = PowerBlockFactory.createPowerBlock(
-            "atlas:multi_power_cable",
-            TestHelper.createLocation(),
-            BlockFace.NORTH
-        )
+        val block =
+            PowerBlockFactory.createPowerBlock(
+                "atlas:multi_power_cable",
+                TestHelper.createLocation(),
+                BlockFace.NORTH,
+            )
         assertTrue(block is MultiPowerCable)
         assertEquals(BlockFace.NORTH, block!!.facing)
     }
@@ -102,14 +103,18 @@ class MultiPowerCableTest {
         val cableLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val cable = MultiPowerCable(cableLoc, BlockFace.NORTH)
         TestHelper.addToRegistry(
-            registry, cable, "atlas:multi_power_cable"
+            registry,
+            cable,
+            "atlas:multi_power_cable",
         )
 
         val batteryLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val battery = SmallBattery(batteryLoc, BlockFace.NORTH)
         battery.currentPower = 5
         TestHelper.addToRegistry(
-            registry, battery, "atlas:small_battery"
+            registry,
+            battery,
+            "atlas:small_battery",
         )
 
         cable.callPowerUpdate()
@@ -125,21 +130,27 @@ class MultiPowerCableTest {
         val cable = MultiPowerCable(cableLoc, BlockFace.NORTH)
         cable.currentPower = 5
         TestHelper.addToRegistry(
-            registry, cable, "atlas:multi_power_cable"
+            registry,
+            cable,
+            "atlas:multi_power_cable",
         )
 
         val eastBatteryLoc =
             TestHelper.createLocation(1.0, 64.0, 0.0)
         val eastBattery = SmallBattery(eastBatteryLoc, BlockFace.WEST)
         TestHelper.addToRegistry(
-            registry, eastBattery, "atlas:small_battery"
+            registry,
+            eastBattery,
+            "atlas:small_battery",
         )
 
         val westBatteryLoc =
             TestHelper.createLocation(-1.0, 64.0, 0.0)
         val westBattery = SmallBattery(westBatteryLoc, BlockFace.EAST)
         TestHelper.addToRegistry(
-            registry, westBattery, "atlas:small_battery"
+            registry,
+            westBattery,
+            "atlas:small_battery",
         )
 
         val northBatteryLoc =
@@ -147,7 +158,9 @@ class MultiPowerCableTest {
         val northBattery =
             SmallBattery(northBatteryLoc, BlockFace.SOUTH)
         TestHelper.addToRegistry(
-            registry, northBattery, "atlas:small_battery"
+            registry,
+            northBattery,
+            "atlas:small_battery",
         )
 
         cable.callPowerUpdate()
@@ -165,14 +178,18 @@ class MultiPowerCableTest {
         val cable = MultiPowerCable(cableLoc, BlockFace.NORTH)
         cable.currentPower = 10
         TestHelper.addToRegistry(
-            registry, cable, "atlas:multi_power_cable"
+            registry,
+            cable,
+            "atlas:multi_power_cable",
         )
 
         val batteryLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val battery = SmallBattery(batteryLoc, BlockFace.NORTH)
         battery.currentPower = 5
         TestHelper.addToRegistry(
-            registry, battery, "atlas:small_battery"
+            registry,
+            battery,
+            "atlas:small_battery",
         )
 
         cable.callPowerUpdate()
