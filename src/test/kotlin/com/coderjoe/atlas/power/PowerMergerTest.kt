@@ -135,7 +135,7 @@ class PowerMergerTest {
         TestHelper.addToRegistry(registry, merger, "power_merger_north")
 
         // Consumer to the north (facing direction) that pulls from adjacent
-        val consumer = com.coderjoe.atlas.power.block.SmallDrill(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.DOWN)
+        val consumer = com.coderjoe.atlas.utility.block.SmallDrill(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.DOWN)
         TestHelper.addToRegistry(registry, consumer, "small_drill_down")
 
         // The merger stores power; downstream blocks pull from it via their own update

@@ -2,16 +2,16 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.power.block.AutoSmelter
-import com.coderjoe.atlas.power.block.CobblestoneFactory
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.MultiPowerCable
-import com.coderjoe.atlas.power.block.ObsidianFactory
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.PowerMerger
 import com.coderjoe.atlas.power.block.SmallBattery
-import com.coderjoe.atlas.power.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.utility.block.AutoSmelter
+import com.coderjoe.atlas.utility.block.CobblestoneFactory
+import com.coderjoe.atlas.utility.block.ObsidianFactory
+import com.coderjoe.atlas.utility.block.SmallDrill
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
 import io.papermc.paper.registry.data.dialog.DialogBase

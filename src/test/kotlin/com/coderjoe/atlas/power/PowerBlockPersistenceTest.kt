@@ -3,7 +3,7 @@ package com.coderjoe.atlas.power
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
-import com.coderjoe.atlas.power.block.SmallDrill
+import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach

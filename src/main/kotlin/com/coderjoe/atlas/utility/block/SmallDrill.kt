@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.power.block
+package com.coderjoe.atlas.utility.block
 
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType

@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.power
 
-import com.coderjoe.atlas.power.block.SmallDrill
+import com.coderjoe.atlas.utility.block.SmallDrill
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 

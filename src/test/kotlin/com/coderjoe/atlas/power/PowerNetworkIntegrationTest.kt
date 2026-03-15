@@ -4,7 +4,7 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
-import com.coderjoe.atlas.power.block.SmallDrill
+import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.mockk.every
 import io.mockk.mockk

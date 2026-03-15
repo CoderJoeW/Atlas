@@ -1,8 +1,10 @@
-package com.coderjoe.atlas.power
+package com.coderjoe.atlas.utility
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
-import com.coderjoe.atlas.power.block.AutoSmelter
+import com.coderjoe.atlas.power.PowerBlockFactory
+import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.utility.block.AutoSmelter
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
