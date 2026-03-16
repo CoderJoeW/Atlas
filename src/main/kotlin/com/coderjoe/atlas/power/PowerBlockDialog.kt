@@ -3,7 +3,7 @@ package com.coderjoe.atlas.power
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.power.block.LavaGenerator
-import com.coderjoe.atlas.power.block.MultiPowerCable
+import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.PowerMerger
 import com.coderjoe.atlas.power.block.SmallBattery
@@ -155,7 +155,7 @@ object PowerBlockDialog {
             is PowerCable -> "Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
             is LavaGenerator -> "Lava Generator"
             is AutoSmelter -> "Auto Smelter (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
-            is MultiPowerCable -> "Multi Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+            is PowerSplitter -> "Power Splitter (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
             is CobblestoneFactory -> "Cobblestone Factory"
             is ObsidianFactory -> "Obsidian Factory"
             is PowerMerger -> "Power Merger (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
@@ -217,7 +217,7 @@ object PowerBlockDialog {
                 is AutoSmelter ->
                     Component.text("Machine - smelts items passing through, consumes ${AutoSmelter.POWER_PER_SMELT} power/item")
                         .color(NamedTextColor.GRAY)
-                is MultiPowerCable ->
+                is PowerSplitter ->
                     Component.text("Cable - distributes power to all adjacent faces")
                         .color(NamedTextColor.GRAY)
                 is CobblestoneFactory ->

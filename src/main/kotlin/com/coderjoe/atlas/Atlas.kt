@@ -186,7 +186,7 @@ class Atlas : JavaPlugin() {
             com.coderjoe.atlas.power.block.PowerCable.descriptor,
             com.coderjoe.atlas.power.block.LavaGenerator.descriptor,
             com.coderjoe.atlas.utility.block.AutoSmelter.descriptor,
-            com.coderjoe.atlas.power.block.MultiPowerCable.descriptor,
+            com.coderjoe.atlas.power.block.PowerSplitter.descriptor,
             com.coderjoe.atlas.utility.block.CobblestoneFactory.descriptor,
             com.coderjoe.atlas.utility.block.ObsidianFactory.descriptor,
             com.coderjoe.atlas.power.block.PowerMerger.descriptor,
