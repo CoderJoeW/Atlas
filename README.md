@@ -121,7 +121,7 @@ Atlas ships with a **custom-built desktop texture editor** purpose-made for crea
 
 **Launch it:**
 ```bash
-python3 tools/texture-editor/main.py --block fluid_pump
+python3 tools/texture-editor/main.py
 ```
 
 Requires Python 3 with PyQt6, PyOpenGL, Pillow, PyYAML, and numpy (see `tools/texture-editor/requirements.txt`).
