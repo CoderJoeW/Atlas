@@ -16,6 +16,8 @@ Ever wished vanilla Minecraft had real engineering? Atlas brings **power grids, 
 
 Harness solar energy, pump lava through pipelines, smelt ores automatically, and build conveyor-belt assembly lines — all with **16 custom blocks**, unique textures, crafting recipes, and a built-in guide book to teach your players everything.
 
+Atlas is designed to feel like a natural extension of vanilla Minecraft, not a separate system bolted on top. Every block is crafted from vanilla materials, follows vanilla placement and breaking mechanics, and blends seamlessly with the look and feel of the base game. It's the industrial update Minecraft never got.
+
 ## Why Atlas?
 
 - **Zero client mods required.** Atlas uses server-side resource packs through CraftEngine. Players join and it just works.
@@ -99,6 +101,30 @@ logging: true  # Toggle plugin logging
 ```
 
 Block data is auto-saved to JSON every 5 minutes and persists across restarts.
+
+---
+
+## Texture Editor
+
+Atlas ships with a **custom-built desktop texture editor** purpose-made for creating block textures. No need to juggle Photoshop or Aseprite — this editor understands Minecraft blocks natively.
+
+**Built for blocks, not generic images.** Load any Atlas block by ID and edit all six faces at once with a real-time 3D preview showing exactly how your texture will look in-game. Switch between block states and variants without leaving the editor.
+
+**Features:**
+- **Layer system** — multiple layers per face with opacity, visibility, and merge controls
+- **Shape tools** — brush, line, rectangle, ellipse, gradient, flood fill, and eyedropper
+- **Symmetry modes** — mirror your strokes horizontally, vertically, or across all four quadrants for perfectly balanced textures
+- **Reference overlay** — load any image as a semi-transparent tracing guide
+- **3D preview** — real-time OpenGL cube preview with your textures applied, plus a tiling preview to catch seam issues
+- **100-level undo** — delta-compressed history so you can experiment freely
+- **Keyboard-driven workflow** — hotkeys for every tool, face, and action
+
+**Launch it:**
+```bash
+python3 tools/texture-editor/main.py --block fluid_pump
+```
+
+Requires Python 3 with PyQt6, PyOpenGL, Pillow, PyYAML, and numpy (see `tools/texture-editor/requirements.txt`).
 
 ---
 
