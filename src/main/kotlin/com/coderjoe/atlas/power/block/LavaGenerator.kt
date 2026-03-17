@@ -3,6 +3,7 @@ package com.coderjoe.atlas.power.block
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.power.PowerBlock
@@ -60,7 +61,7 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
     }
 
     private fun tryPullLava(
-        source: com.coderjoe.atlas.fluid.FluidBlock,
+        source: FluidBlock,
         face: BlockFace,
     ): Boolean {
         if (source.canProvideFluid(face.oppositeFace) && source.storedFluid == FluidType.LAVA) {

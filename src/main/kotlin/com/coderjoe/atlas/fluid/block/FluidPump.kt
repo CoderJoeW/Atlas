@@ -9,6 +9,7 @@ import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
+import org.bukkit.block.data.Levelled
 
 class FluidPump(location: Location) : FluidBlock(location) {
     enum class PumpStatus {
@@ -128,7 +129,7 @@ class FluidPump(location: Location) : FluidBlock(location) {
 
         when (foundBlock.type) {
             Material.WATER_CAULDRON -> {
-                val levelled = foundBlock.blockData as? org.bukkit.block.data.Levelled
+                val levelled = foundBlock.blockData as? Levelled
                 if (levelled != null && levelled.level > 1) {
                     levelled.level = levelled.level - 1
                     foundBlock.blockData = levelled

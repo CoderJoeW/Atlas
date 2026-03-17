@@ -3,6 +3,7 @@ package com.coderjoe.atlas.utility.block
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.power.PowerBlock
@@ -46,8 +47,8 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
 
         val fluidRegistry = FluidBlockRegistry.instance ?: return
 
-        var waterSource: Pair<com.coderjoe.atlas.fluid.FluidBlock, BlockFace>? = null
-        var lavaSource: Pair<com.coderjoe.atlas.fluid.FluidBlock, BlockFace>? = null
+        var waterSource: Pair<FluidBlock, BlockFace>? = null
+        var lavaSource: Pair<FluidBlock, BlockFace>? = null
 
         for (face in ADJACENT_FACES) {
             val source = fluidRegistry.getAdjacentFluidBlock(location, face) ?: continue
@@ -75,7 +76,7 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
     }
 
     private fun hasFluidAvailable(
-        source: com.coderjoe.atlas.fluid.FluidBlock,
+        source: FluidBlock,
         face: BlockFace,
         fluidType: FluidType,
     ): Boolean {
