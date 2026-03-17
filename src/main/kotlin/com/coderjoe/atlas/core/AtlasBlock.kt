@@ -20,6 +20,16 @@ abstract class AtlasBlock(
     companion object {
         @JvmStatic
         internal var testPlugin: JavaPlugin? = null
+
+        val ADJACENT_FACES =
+            listOf(
+                BlockFace.NORTH,
+                BlockFace.SOUTH,
+                BlockFace.EAST,
+                BlockFace.WEST,
+                BlockFace.UP,
+                BlockFace.DOWN,
+            )
     }
 
     protected abstract fun blockUpdate()

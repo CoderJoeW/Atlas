@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.core.CraftEngineHelper
 import org.bukkit.Location
 
 abstract class PowerBlock(
@@ -26,6 +27,25 @@ abstract class PowerBlock(
         val toRemove = minOf(amount, currentPower)
         currentPower -= toRemove
         return toRemove
+    }
+
+    protected fun pullPowerFromNeighbors() {
+        if (!canAcceptPower()) return
+        val registry = PowerBlockRegistry.instance ?: return
+        val neighbors = registry.getAdjacentPowerBlocks(location)
+        for (neighbor in neighbors) {
+            if (!canAcceptPower()) break
+            if (neighbor.hasPower()) {
+                val pulled = neighbor.removePower(1)
+                if (pulled > 0) {
+                    addPower(pulled)
+                }
+            }
+        }
+    }
+
+    protected fun updatePoweredState() {
+        CraftEngineHelper.setBooleanProperty(location, "powered", hasPower())
     }
 
     protected abstract fun powerUpdate()

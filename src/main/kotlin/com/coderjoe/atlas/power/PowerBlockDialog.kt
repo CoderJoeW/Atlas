@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.core.displayName
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.PowerMerger
@@ -64,35 +65,7 @@ object PowerBlockDialog {
     ) {
         val title = Component.text(getBlockDisplayName(powerBlock))
         val bodyText = buildPowerInfo(powerBlock)
-        val body = DialogBody.plainMessage(bodyText)
-
-        val closeAction =
-            DialogAction.customClick(
-                DialogActionCallback { _, audience ->
-                    val p = audience as? Player ?: return@DialogActionCallback
-                    onClose(p)
-                },
-                ClickCallback.Options.builder().build(),
-            )
-
-        val closeButton =
-            ActionButton.builder(Component.text("Close"))
-                .action(closeAction)
-                .build()
-
-        val dialog =
-            Dialog.create { factory ->
-                factory.empty()
-                    .base(
-                        DialogBase.builder(title)
-                            .body(listOf(body))
-                            .canCloseWithEscape(false)
-                            .afterAction(DialogBase.DialogAfterAction.CLOSE)
-                            .build(),
-                    )
-                    .type(DialogType.notice(closeButton))
-            }
-
+        val dialog = AtlasBlockDialog.createNoticeDialog(title, bodyText, onClose)
         player.showDialog(dialog)
     }
 
@@ -152,13 +125,13 @@ object PowerBlockDialog {
             is SmallSolarPanel -> "Small Solar Panel"
             is SmallBattery -> "Small Battery"
             is SmallDrill -> "Small Drill"
-            is PowerCable -> "Power Cable (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+            is PowerCable -> "Power Cable (${powerBlock.facing.displayName()})"
             is LavaGenerator -> "Lava Generator"
-            is AutoSmelter -> "Auto Smelter (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
-            is PowerSplitter -> "Power Splitter (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+            is AutoSmelter -> "Auto Smelter (${powerBlock.facing.displayName()})"
+            is PowerSplitter -> "Power Splitter (${powerBlock.facing.displayName()})"
             is CobblestoneFactory -> "Cobblestone Factory"
             is ObsidianFactory -> "Obsidian Factory"
-            is PowerMerger -> "Power Merger (${powerBlock.facing.name.lowercase().replaceFirstChar { it.uppercase() }})"
+            is PowerMerger -> "Power Merger (${powerBlock.facing.displayName()})"
             else -> "Power Block"
         }
 
@@ -203,7 +176,7 @@ object PowerBlockDialog {
                     Component.text("Storage - holds up to 10 power")
                         .color(NamedTextColor.GRAY)
                 is SmallDrill -> {
-                    val directionName = powerBlock.miningDirection.name.lowercase().replaceFirstChar { it.uppercase() }
+                    val directionName = powerBlock.miningDirection.displayName()
                     val status = if (powerBlock.enabled) "ON" else "OFF"
                     Component.text("Machine - mining $directionName, $status, consumes 10 power/s")
                         .color(NamedTextColor.GRAY)

@@ -3,7 +3,6 @@ package com.coderjoe.atlas.utility.block
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
-import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -41,19 +40,7 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
     override fun powerUpdate() {
         if (!enabled) return
 
-        if (canAcceptPower()) {
-            val registry = PowerBlockRegistry.instance ?: return
-            val neighbors = registry.getAdjacentPowerBlocks(location)
-            for (neighbor in neighbors) {
-                if (!canAcceptPower()) break
-                if (neighbor.hasPower()) {
-                    val pulled = neighbor.removePower(1)
-                    if (pulled > 0) {
-                        addPower(pulled)
-                    }
-                }
-            }
-        }
+        pullPowerFromNeighbors()
 
         if (currentPower < 10) return
 

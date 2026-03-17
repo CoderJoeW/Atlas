@@ -3,12 +3,15 @@ package com.coderjoe.atlas.fluid
 import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.core.BlockRegistry
 import org.bukkit.Location
+import org.bukkit.block.BlockFace
 
 abstract class FluidBlock(
     location: Location,
     var storedFluid: FluidType = FluidType.NONE,
 ) : AtlasBlock(location) {
     open fun hasFluid(): Boolean = storedFluid != FluidType.NONE
+
+    open fun canProvideFluid(requestDirection: BlockFace): Boolean = hasFluid()
 
     open fun storeFluid(type: FluidType): Boolean {
         if (storedFluid != FluidType.NONE) return false

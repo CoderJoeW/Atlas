@@ -1,21 +1,40 @@
 package com.coderjoe.atlas
 
 import com.coderjoe.atlas.core.AtlasBlockListener
+import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockSystem
+import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockDialog
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockPersistence
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.fluid.block.FluidContainer
+import com.coderjoe.atlas.fluid.block.FluidMerger
+import com.coderjoe.atlas.fluid.block.FluidPipe
+import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.guide.GuideBook
 import com.coderjoe.atlas.guide.GuideBookListener
+import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockPersistence
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.block.LavaGenerator
+import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.PowerMerger
+import com.coderjoe.atlas.power.block.PowerSplitter
+import com.coderjoe.atlas.power.block.SmallBattery
+import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.transport.TransportBlock
 import com.coderjoe.atlas.transport.TransportBlockDialog
 import com.coderjoe.atlas.transport.TransportBlockFactory
 import com.coderjoe.atlas.transport.TransportBlockPersistence
 import com.coderjoe.atlas.transport.TransportBlockRegistry
+import com.coderjoe.atlas.transport.block.ConveyorBelt
+import com.coderjoe.atlas.utility.block.AutoSmelter
+import com.coderjoe.atlas.utility.block.CobblestoneFactory
+import com.coderjoe.atlas.utility.block.ObsidianFactory
+import com.coderjoe.atlas.utility.block.SmallDrill
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
@@ -51,29 +70,29 @@ class Atlas : JavaPlugin() {
 
         // Register unified listener
         val powerSystem =
-            BlockSystem<com.coderjoe.atlas.power.PowerBlock>(
+            BlockSystem<PowerBlock>(
                 name = "power",
                 registry = powerBlockRegistry,
                 factory = PowerBlockFactory,
                 descriptors = powerDescriptors(),
                 showDialog = { player, block ->
-                    PowerBlockDialog.showPowerDialog(player, block as com.coderjoe.atlas.power.PowerBlock, powerBlockRegistry)
+                    PowerBlockDialog.showPowerDialog(player, block as PowerBlock, powerBlockRegistry)
                 },
             )
 
         val fluidSystem =
-            BlockSystem<com.coderjoe.atlas.fluid.FluidBlock>(
+            BlockSystem<FluidBlock>(
                 name = "fluid",
                 registry = fluidBlockRegistry,
                 factory = FluidBlockFactory,
                 descriptors = fluidDescriptors(),
                 showDialog = { player, block ->
-                    FluidBlockDialog.showFluidDialog(player, block as com.coderjoe.atlas.fluid.FluidBlock, fluidBlockRegistry)
+                    FluidBlockDialog.showFluidDialog(player, block as FluidBlock, fluidBlockRegistry)
                 },
             )
 
         val transportSystem =
-            BlockSystem<com.coderjoe.atlas.transport.TransportBlock>(
+            BlockSystem<TransportBlock>(
                 name = "transport",
                 registry = transportBlockRegistry,
                 factory = TransportBlockFactory,
@@ -81,7 +100,7 @@ class Atlas : JavaPlugin() {
                 showDialog = { player, block ->
                     TransportBlockDialog.showTransportDialog(
                         player,
-                        block as com.coderjoe.atlas.transport.TransportBlock,
+                        block as TransportBlock,
                         transportBlockRegistry,
                     )
                 },
@@ -172,33 +191,33 @@ class Atlas : JavaPlugin() {
         logger.atlasInfo("Transport system initialized with ${TransportBlockFactory.getRegisteredBlockIds().size} block types")
     }
 
-    private fun transportDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
+    private fun transportDescriptors(): Map<String, BlockDescriptor> {
         return listOf(
-            com.coderjoe.atlas.transport.block.ConveyorBelt.descriptor,
+            ConveyorBelt.descriptor,
         ).associateBy { it.baseBlockId }
     }
 
-    private fun powerDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
+    private fun powerDescriptors(): Map<String, BlockDescriptor> {
         return listOf(
-            com.coderjoe.atlas.power.block.SmallSolarPanel.descriptor,
-            com.coderjoe.atlas.utility.block.SmallDrill.descriptor,
-            com.coderjoe.atlas.power.block.SmallBattery.descriptor,
-            com.coderjoe.atlas.power.block.PowerCable.descriptor,
-            com.coderjoe.atlas.power.block.LavaGenerator.descriptor,
-            com.coderjoe.atlas.utility.block.AutoSmelter.descriptor,
-            com.coderjoe.atlas.power.block.PowerSplitter.descriptor,
-            com.coderjoe.atlas.utility.block.CobblestoneFactory.descriptor,
-            com.coderjoe.atlas.utility.block.ObsidianFactory.descriptor,
-            com.coderjoe.atlas.power.block.PowerMerger.descriptor,
+            SmallSolarPanel.descriptor,
+            SmallDrill.descriptor,
+            SmallBattery.descriptor,
+            PowerCable.descriptor,
+            LavaGenerator.descriptor,
+            AutoSmelter.descriptor,
+            PowerSplitter.descriptor,
+            CobblestoneFactory.descriptor,
+            ObsidianFactory.descriptor,
+            PowerMerger.descriptor,
         ).associateBy { it.baseBlockId }
     }
 
-    private fun fluidDescriptors(): Map<String, com.coderjoe.atlas.core.BlockDescriptor> {
+    private fun fluidDescriptors(): Map<String, BlockDescriptor> {
         return listOf(
-            com.coderjoe.atlas.fluid.block.FluidPump.descriptor,
-            com.coderjoe.atlas.fluid.block.FluidPipe.descriptor,
-            com.coderjoe.atlas.fluid.block.FluidContainer.descriptor,
-            com.coderjoe.atlas.fluid.block.FluidMerger.descriptor,
+            FluidPump.descriptor,
+            FluidPipe.descriptor,
+            FluidContainer.descriptor,
+            FluidMerger.descriptor,
         ).associateBy { it.baseBlockId }
     }
 }

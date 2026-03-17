@@ -3,14 +3,10 @@ package com.coderjoe.atlas.utility.block
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidMerger
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
-import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -24,16 +20,6 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
         const val BLOCK_ID = "atlas:obsidian_factory"
         const val BLOCK_ID_ACTIVE = "atlas:obsidian_factory_active"
         const val POWER_COST = 100
-
-        private val ADJACENT_FACES =
-            listOf(
-                BlockFace.NORTH,
-                BlockFace.SOUTH,
-                BlockFace.EAST,
-                BlockFace.WEST,
-                BlockFace.UP,
-                BlockFace.DOWN,
-            )
 
         val descriptor =
             BlockDescriptor(
@@ -55,26 +41,14 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
         }
 
     override fun powerUpdate() {
-        if (canAcceptPower()) {
-            val registry = PowerBlockRegistry.instance ?: return
-            val neighbors = registry.getAdjacentPowerBlocks(location)
-            for (neighbor in neighbors) {
-                if (!canAcceptPower()) break
-                if (neighbor.hasPower()) {
-                    val pulled = neighbor.removePower(1)
-                    if (pulled > 0) {
-                        addPower(pulled)
-                    }
-                }
-            }
-        }
+        pullPowerFromNeighbors()
 
         if (currentPower < POWER_COST) return
 
         val fluidRegistry = FluidBlockRegistry.instance ?: return
 
-        var waterSource: Pair<com.coderjoe.atlas.fluid.FluidBlock, BlockFace>? = null
-        var lavaSource: Pair<com.coderjoe.atlas.fluid.FluidBlock, BlockFace>? = null
+        var waterSource: Pair<FluidBlock, BlockFace>? = null
+        var lavaSource: Pair<FluidBlock, BlockFace>? = null
 
         for (face in ADJACENT_FACES) {
             val source = fluidRegistry.getAdjacentFluidBlock(location, face) ?: continue
@@ -88,8 +62,8 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
 
         if (waterSource == null || lavaSource == null) return
 
-        pullFluid(waterSource.first, waterSource.second)
-        pullFluid(lavaSource.first, lavaSource.second)
+        waterSource.first.removeFluid()
+        lavaSource.first.removeFluid()
         removePower(POWER_COST)
 
         val world = location.world ?: return
@@ -102,28 +76,10 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
     }
 
     private fun hasFluidAvailable(
-        source: com.coderjoe.atlas.fluid.FluidBlock,
+        source: FluidBlock,
         face: BlockFace,
         fluidType: FluidType,
     ): Boolean {
-        return when (source) {
-            is FluidPump -> source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == fluidType
-            is FluidPipe -> source.hasFluid() && source.storedFluid == fluidType
-            is FluidContainer -> source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == fluidType
-            is FluidMerger -> source.hasFluid() && source.storedFluid == fluidType
-            else -> false
-        }
-    }
-
-    private fun pullFluid(
-        source: com.coderjoe.atlas.fluid.FluidBlock,
-        face: BlockFace,
-    ) {
-        when (source) {
-            is FluidPump -> source.removeFluid()
-            is FluidPipe -> source.removeFluid()
-            is FluidContainer -> source.removeFluid()
-            is FluidMerger -> source.removeFluid()
-        }
+        return source.canProvideFluid(face.oppositeFace) && source.storedFluid == fluidType
     }
 }

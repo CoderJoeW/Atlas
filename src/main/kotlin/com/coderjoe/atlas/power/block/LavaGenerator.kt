@@ -3,12 +3,9 @@ package com.coderjoe.atlas.power.block
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidMerger
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
@@ -21,16 +18,6 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
         const val BLOCK_ID = "atlas:lava_generator"
         const val BLOCK_ID_ACTIVE = "atlas:lava_generator_active"
         const val POWER_PER_LAVA = 5
-
-        private val ADJACENT_FACES =
-            listOf(
-                BlockFace.NORTH,
-                BlockFace.SOUTH,
-                BlockFace.EAST,
-                BlockFace.WEST,
-                BlockFace.UP,
-                BlockFace.DOWN,
-            )
 
         val descriptor =
             BlockDescriptor(
@@ -74,34 +61,12 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
     }
 
     private fun tryPullLava(
-        source: com.coderjoe.atlas.fluid.FluidBlock,
+        source: FluidBlock,
         face: BlockFace,
     ): Boolean {
-        when (source) {
-            is FluidPump -> {
-                if (source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == FluidType.LAVA) {
-                    source.removeFluid()
-                    return true
-                }
-            }
-            is FluidPipe -> {
-                if (source.hasFluid() && source.storedFluid == FluidType.LAVA) {
-                    source.removeFluid()
-                    return true
-                }
-            }
-            is FluidContainer -> {
-                if (source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == FluidType.LAVA) {
-                    source.removeFluid()
-                    return true
-                }
-            }
-            is FluidMerger -> {
-                if (source.hasFluid() && source.storedFluid == FluidType.LAVA) {
-                    source.removeFluid()
-                    return true
-                }
-            }
+        if (source.canProvideFluid(face.oppositeFace) && source.storedFluid == FluidType.LAVA) {
+            source.removeFluid()
+            return true
         }
         return false
     }

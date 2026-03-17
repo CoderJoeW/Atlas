@@ -55,55 +55,15 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
         for (face in inputFaces) {
             val source = registry.getAdjacentFluidBlock(location, face) ?: continue
 
-            when (source) {
-                is FluidPump -> {
-                    if (source.canRemoveFluidFrom(face.oppositeFace) && source.hasFluid()) {
-                        val fluid = source.removeFluid()
-                        storeFluid(fluid)
-                        plugin.logger.atlasInfo(
-                            "FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} " +
-                                "pulled ${fluid.name} from FluidPump at ${face.name}",
-                        )
-                        updateFluidState()
-                        return
-                    }
-                }
-                is FluidPipe -> {
-                    if (source.hasFluid()) {
-                        val fluid = source.removeFluid()
-                        storeFluid(fluid)
-                        plugin.logger.atlasInfo(
-                            "FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} " +
-                                "pulled ${fluid.name} from FluidPipe at ${face.name}",
-                        )
-                        updateFluidState()
-                        return
-                    }
-                }
-                is FluidContainer -> {
-                    if (source.canRemoveFluidFrom(face.oppositeFace) && source.hasFluid()) {
-                        val fluid = source.removeFluid()
-                        storeFluid(fluid)
-                        plugin.logger.atlasInfo(
-                            "FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} " +
-                                "pulled ${fluid.name} from FluidContainer at ${face.name}",
-                        )
-                        updateFluidState()
-                        return
-                    }
-                }
-                is FluidMerger -> {
-                    if (source.hasFluid()) {
-                        val fluid = source.removeFluid()
-                        storeFluid(fluid)
-                        plugin.logger.atlasInfo(
-                            "FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} " +
-                                "pulled ${fluid.name} from FluidMerger at ${face.name}",
-                        )
-                        updateFluidState()
-                        return
-                    }
-                }
+            if (source.canProvideFluid(face.oppositeFace)) {
+                val fluid = source.removeFluid()
+                storeFluid(fluid)
+                plugin.logger.atlasInfo(
+                    "FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} " +
+                        "pulled ${fluid.name} from ${source::class.simpleName} at ${face.name}",
+                )
+                updateFluidState()
+                return
             }
         }
 

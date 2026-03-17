@@ -9,6 +9,7 @@ import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
+import org.bukkit.block.data.Levelled
 
 class FluidPump(location: Location) : FluidBlock(location) {
     enum class PumpStatus {
@@ -34,16 +35,6 @@ class FluidPump(location: Location) : FluidBlock(location) {
         const val BLOCK_ID_ACTIVE = "atlas:fluid_pump_active"
         const val BLOCK_ID_ACTIVE_LAVA = "atlas:fluid_pump_active_lava"
 
-        private val ADJACENT_FACES =
-            listOf(
-                BlockFace.NORTH,
-                BlockFace.SOUTH,
-                BlockFace.EAST,
-                BlockFace.WEST,
-                BlockFace.UP,
-                BlockFace.DOWN,
-            )
-
         val descriptor =
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
@@ -61,6 +52,8 @@ class FluidPump(location: Location) : FluidBlock(location) {
         val cauldron = cauldronFace ?: return false
         return direction == cauldron.oppositeFace && hasFluid()
     }
+
+    override fun canProvideFluid(requestDirection: BlockFace): Boolean = canRemoveFluidFrom(requestDirection)
 
     override fun getVisualStateBlockId(): String =
         when (storedFluid) {
@@ -136,7 +129,7 @@ class FluidPump(location: Location) : FluidBlock(location) {
 
         when (foundBlock.type) {
             Material.WATER_CAULDRON -> {
-                val levelled = foundBlock.blockData as? org.bukkit.block.data.Levelled
+                val levelled = foundBlock.blockData as? Levelled
                 if (levelled != null && levelled.level > 1) {
                     levelled.level = levelled.level - 1
                     foundBlock.blockData = levelled
