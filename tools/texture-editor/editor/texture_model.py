@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 from collections import deque
@@ -99,11 +100,239 @@ DEFAULT_GEOMETRY = [{
 }]
 
 
+def _element_to_geometry(from_pos, to_pos, faces_dict):
+    """Convert a single element's Minecraft coords to GL render geometry.
+
+    from_pos/to_pos: [x, y, z] in 0-16 space.
+    faces_dict: {face_name: {"texture": "#x", "uv": [...], "cullface": ...}}
+    Returns a geometry dict with "faces" key.
+    """
+    x1 = from_pos[0] / 16.0 - 0.5
+    y1 = from_pos[1] / 16.0 - 0.5
+    z1 = from_pos[2] / 16.0 - 0.5
+    x2 = to_pos[0] / 16.0 - 0.5
+    y2 = to_pos[1] / 16.0 - 0.5
+    z2 = to_pos[2] / 16.0 - 0.5
+
+    face_defs = {
+        "north": ((x1, y1, z1), (x2, y1, z1), (x2, y2, z1), (x1, y2, z1), (0, 0, -1)),
+        "south": ((x2, y1, z2), (x1, y1, z2), (x1, y2, z2), (x2, y2, z2), (0, 0, 1)),
+        "east": ((x2, y1, z1), (x2, y1, z2), (x2, y2, z2), (x2, y2, z1), (1, 0, 0)),
+        "west": ((x1, y1, z2), (x1, y1, z1), (x1, y2, z1), (x1, y2, z2), (-1, 0, 0)),
+        "up": ((x1, y2, z1), (x2, y2, z1), (x2, y2, z2), (x1, y2, z2), (0, 1, 0)),
+        "down": ((x1, y1, z2), (x2, y1, z2), (x2, y1, z1), (x1, y1, z1), (0, -1, 0)),
+    }
+
+    faces = {}
+    for face_dir, face_data in faces_dict.items():
+        if face_dir not in face_defs:
+            continue
+        v0, v1, v2, v3, normal = face_defs[face_dir]
+
+        tex_ref = face_data.get("texture", "")
+        tex_key = tex_ref.lstrip("#") if tex_ref.startswith("#") else face_dir
+
+        if "uv" in face_data:
+            mu1, mv1, mu2, mv2 = face_data["uv"]
+        else:
+            mu1, mv1, mu2, mv2 = 0, 0, 16, 16
+
+        nu1 = mu1 / 16.0
+        nu2 = mu2 / 16.0
+        gl_v_bottom = 1.0 - mv2 / 16.0
+        gl_v_top = 1.0 - mv1 / 16.0
+        tc = [
+            (nu1, gl_v_bottom), (nu2, gl_v_bottom),
+            (nu2, gl_v_top), (nu1, gl_v_top),
+        ]
+
+        faces[face_dir] = {
+            "texture_key": tex_key,
+            "vertices": [v0, v1, v2, v3],
+            "tex_coords": tc,
+            "normal": normal,
+        }
+
+    return {"faces": faces}
+
+
+class ModelElement:
+    """One axis-aligned cuboid element in Minecraft 0-16 coordinate space."""
+
+    def __init__(self, from_pos=None, to_pos=None, faces=None):
+        self.from_pos = list(from_pos) if from_pos else [0, 0, 0]
+        self.to_pos = list(to_pos) if to_pos else [16, 16, 16]
+        if faces is not None:
+            self.faces = faces
+        else:
+            self.faces = {}
+            for face in FACE_NAMES:
+                self.faces[face] = {
+                    "texture": f"#{face}",
+                    "uv": [0, 0, 16, 16],
+                }
+
+    def to_dict(self):
+        """Serialize to Minecraft model JSON element format."""
+        result = {
+            "from": list(self.from_pos),
+            "to": list(self.to_pos),
+            "faces": {},
+        }
+        for face_name, face_data in self.faces.items():
+            entry = {"texture": face_data.get("texture", f"#{face_name}")}
+            uv = face_data.get("uv")
+            if uv and uv != [0, 0, 16, 16]:
+                entry["uv"] = list(uv)
+            cullface = face_data.get("cullface")
+            if cullface:
+                entry["cullface"] = cullface
+            result["faces"][face_name] = entry
+        return result
+
+    def to_geometry(self):
+        """Convert this element to GL render geometry."""
+        return _element_to_geometry(self.from_pos, self.to_pos, self.faces)
+
+
+class ModelData:
+    """Editable block model in Minecraft JSON format — source of truth for geometry."""
+
+    def __init__(self, elements=None, textures=None, source_path=None):
+        self.elements = elements if elements else []
+        self.textures = textures if textures else {}
+        self.source_path = source_path
+        self._undo_stack = []
+        self._redo_stack = []
+
+    def to_geometry(self):
+        """Convert all elements to render-format geometry list."""
+        return [elem.to_geometry() for elem in self.elements]
+
+    def to_json(self):
+        """Serialize to Minecraft model JSON dict."""
+        result = {}
+        if self.textures:
+            result["textures"] = dict(self.textures)
+        result["elements"] = [elem.to_dict() for elem in self.elements]
+        return result
+
+    @staticmethod
+    def from_json(data, source_path=None):
+        """Parse a Minecraft model JSON dict into a ModelData instance."""
+        textures = data.get("textures", {})
+        elements = []
+        for elem_data in data.get("elements", []):
+            faces = {}
+            for face_name, face_info in elem_data.get("faces", {}).items():
+                faces[face_name] = {
+                    "texture": face_info.get("texture", f"#{face_name}"),
+                    "uv": list(face_info.get("uv", [0, 0, 16, 16])),
+                }
+                if "cullface" in face_info:
+                    faces[face_name]["cullface"] = face_info["cullface"]
+            elements.append(ModelElement(
+                from_pos=elem_data.get("from", [0, 0, 0]),
+                to_pos=elem_data.get("to", [16, 16, 16]),
+                faces=faces,
+            ))
+        return ModelData(elements=elements, textures=textures, source_path=source_path)
+
+    # ------------------------------------------------------------------
+    # Snapshot-based undo / redo
+    # ------------------------------------------------------------------
+
+    def _push_undo(self):
+        snapshot = copy.deepcopy(self.elements)
+        self._undo_stack.append(snapshot)
+        if len(self._undo_stack) > 50:
+            self._undo_stack.pop(0)
+        self._redo_stack.clear()
+
+    def undo(self):
+        if not self._undo_stack:
+            return False
+        self._redo_stack.append(copy.deepcopy(self.elements))
+        self.elements = self._undo_stack.pop()
+        return True
+
+    def redo(self):
+        if not self._redo_stack:
+            return False
+        self._undo_stack.append(copy.deepcopy(self.elements))
+        self.elements = self._redo_stack.pop()
+        return True
+
+    # ------------------------------------------------------------------
+    # Element mutations (all push undo before mutating)
+    # ------------------------------------------------------------------
+
+    def add_element(self, from_pos=None, to_pos=None):
+        self._push_undo()
+        elem = ModelElement(from_pos=from_pos, to_pos=to_pos)
+        self.elements.append(elem)
+        return len(self.elements) - 1
+
+    def remove_element(self, idx):
+        if 0 <= idx < len(self.elements):
+            self._push_undo()
+            self.elements.pop(idx)
+
+    def duplicate_element(self, idx):
+        if 0 <= idx < len(self.elements):
+            self._push_undo()
+            elem = copy.deepcopy(self.elements[idx])
+            self.elements.insert(idx + 1, elem)
+            return idx + 1
+        return -1
+
+    def update_element(self, idx, from_pos=None, to_pos=None):
+        if 0 <= idx < len(self.elements):
+            self._push_undo()
+            if from_pos is not None:
+                self.elements[idx].from_pos = list(from_pos)
+            if to_pos is not None:
+                self.elements[idx].to_pos = list(to_pos)
+
+    def set_face_visible(self, elem_idx, face, visible):
+        if not (0 <= elem_idx < len(self.elements)):
+            return
+        self._push_undo()
+        elem = self.elements[elem_idx]
+        if visible:
+            if face not in elem.faces:
+                elem.faces[face] = {
+                    "texture": f"#{face}",
+                    "uv": [0, 0, 16, 16],
+                }
+        else:
+            elem.faces.pop(face, None)
+
+    def set_face_uv(self, elem_idx, face, uv):
+        if not (0 <= elem_idx < len(self.elements)):
+            return
+        elem = self.elements[elem_idx]
+        if face in elem.faces:
+            self._push_undo()
+            elem.faces[face]["uv"] = list(uv)
+
+    def set_face_cullface(self, elem_idx, face, cullface):
+        if not (0 <= elem_idx < len(self.elements)):
+            return
+        elem = self.elements[elem_idx]
+        if face in elem.faces:
+            self._push_undo()
+            if cullface:
+                elem.faces[face]["cullface"] = cullface
+            else:
+                elem.faces[face].pop("cullface", None)
+
+
 def parse_model_json(model_ref):
     """Load and parse a Minecraft block model JSON from a resource reference.
 
     model_ref: e.g. 'minecraft:block/custom/conveyor_belt_base'
-    Returns parsed geometry list, or None if not found.
+    Returns (ModelData, geometry_list) tuple, or (None, None) if not found.
     """
     if ":" in model_ref:
         _, path = model_ref.split(":", 1)
@@ -111,95 +340,18 @@ def parse_model_json(model_ref):
         path = model_ref
     json_path = os.path.join(MODELS_DIR, path + ".json")
     if not os.path.exists(json_path):
-        return None
+        return None, None
 
     with open(json_path, "r") as f:
-        model_data = json.load(f)
+        raw_data = json.load(f)
 
-    elements = model_data.get("elements", [])
+    elements = raw_data.get("elements", [])
     if not elements:
-        return None
+        return None, None
 
-    geometry = []
-    for element in elements:
-        from_pos = element["from"]
-        to_pos = element["to"]
-
-        x1 = from_pos[0] / 16.0 - 0.5
-        y1 = from_pos[1] / 16.0 - 0.5
-        z1 = from_pos[2] / 16.0 - 0.5
-        x2 = to_pos[0] / 16.0 - 0.5
-        y2 = to_pos[1] / 16.0 - 0.5
-        z2 = to_pos[2] / 16.0 - 0.5
-
-        faces = {}
-        for face_dir, face_data in element.get("faces", {}).items():
-            tex_ref = face_data.get("texture", "")
-            tex_key = tex_ref.lstrip("#") if tex_ref.startswith("#") else face_dir
-
-            if "uv" in face_data:
-                mu1, mv1, mu2, mv2 = face_data["uv"]
-            else:
-                mu1, mv1, mu2, mv2 = 0, 0, 16, 16
-
-            nu1 = mu1 / 16.0
-            nu2 = mu2 / 16.0
-            gl_v_bottom = 1.0 - mv2 / 16.0
-            gl_v_top = 1.0 - mv1 / 16.0
-            tc = [
-                (nu1, gl_v_bottom), (nu2, gl_v_bottom),
-                (nu2, gl_v_top), (nu1, gl_v_top),
-            ]
-
-            if face_dir == "north":
-                verts = [
-                    (x1, y1, z1), (x2, y1, z1),
-                    (x2, y2, z1), (x1, y2, z1),
-                ]
-                normal = (0, 0, -1)
-            elif face_dir == "south":
-                verts = [
-                    (x2, y1, z2), (x1, y1, z2),
-                    (x1, y2, z2), (x2, y2, z2),
-                ]
-                normal = (0, 0, 1)
-            elif face_dir == "east":
-                verts = [
-                    (x2, y1, z1), (x2, y1, z2),
-                    (x2, y2, z2), (x2, y2, z1),
-                ]
-                normal = (1, 0, 0)
-            elif face_dir == "west":
-                verts = [
-                    (x1, y1, z2), (x1, y1, z1),
-                    (x1, y2, z1), (x1, y2, z2),
-                ]
-                normal = (-1, 0, 0)
-            elif face_dir == "up":
-                verts = [
-                    (x1, y2, z1), (x2, y2, z1),
-                    (x2, y2, z2), (x1, y2, z2),
-                ]
-                normal = (0, 1, 0)
-            elif face_dir == "down":
-                verts = [
-                    (x1, y1, z2), (x2, y1, z2),
-                    (x2, y1, z1), (x1, y1, z1),
-                ]
-                normal = (0, -1, 0)
-            else:
-                continue
-
-            faces[face_dir] = {
-                "texture_key": tex_key,
-                "vertices": verts,
-                "tex_coords": tc,
-                "normal": normal,
-            }
-
-        geometry.append({"faces": faces})
-
-    return geometry
+    md = ModelData.from_json(raw_data, source_path=json_path)
+    geometry = md.to_geometry()
+    return md, geometry
 
 
 class Layer:
@@ -231,6 +383,7 @@ class BlockState:
     def __init__(self, name, size=32):
         self.name = name
         self.geometry = None
+        self.model_data = None   # ModelData instance when editable model is loaded
         self.layers = {}        # face -> [Layer, ...]
         self.active_layer = {}   # face -> int (index into layers list)
         self.source_paths = {}   # face -> original file path
@@ -247,6 +400,7 @@ class TextureModel(QObject):
     color_changed = pyqtSignal()
     layers_changed = pyqtSignal()
     reference_changed = pyqtSignal()
+    geometry_changed = pyqtSignal()
 
     def __init__(self, size=32):
         super().__init__()
@@ -258,6 +412,7 @@ class TextureModel(QObject):
         self.brush_size = 1
         self.symmetry = SYMMETRY_NONE
         self.selection_rect = None       # (x, y, w, h) or None — set by SelectionTool
+        self.selected_model_element = -1  # index of selected element in model panel
         self.reference_image = None      # PIL Image or None
         self.reference_opacity = 0.3
         self._undo_stack = []
@@ -274,6 +429,9 @@ class TextureModel(QObject):
 
     def get_geometry(self):
         """Return the active state's geometry, or the default cube."""
+        md = self.active_state.model_data
+        if md is not None:
+            return md.to_geometry()
         geo = self.active_state.geometry
         return geo if geo is not None else DEFAULT_GEOMETRY
 
@@ -286,6 +444,56 @@ class TextureModel(QObject):
         state = self.states[state_index]
         idx = state.active_layer[face]
         return state.layers[face][idx].image
+
+    def get_active_face_dimensions_pixels(self):
+        """Return the face dimensions for the active face in pixel coordinates.
+
+        Computes the physical face size from the element's from/to positions.
+        Returns (width, height) in pixel space, or None if no model data.
+        """
+        md = self.active_state.model_data
+        idx = self.selected_model_element
+        if md is None or not (0 <= idx < len(md.elements)):
+            return None
+        elem = md.elements[idx]
+        face = self.active_face
+        if face not in elem.faces:
+            return None
+        fp = elem.from_pos
+        tp = elem.to_pos
+        dx = abs(tp[0] - fp[0])
+        dy = abs(tp[1] - fp[1])
+        dz = abs(tp[2] - fp[2])
+        if face in ("north", "south"):
+            fw, fh = dx, dy
+        elif face in ("east", "west"):
+            fw, fh = dz, dy
+        else:  # up, down
+            fw, fh = dx, dz
+        scale = self.size / 16.0
+        return (int(fw * scale), int(fh * scale))
+
+    def get_active_face_uv_pixels(self):
+        """Return the UV region for the active face in pixel coordinates.
+
+        Returns (x1, y1, x2, y2) in pixel space, or None if unavailable.
+        """
+        md = self.active_state.model_data
+        idx = self.selected_model_element
+        if md is None or not (0 <= idx < len(md.elements)):
+            return None
+        elem = md.elements[idx]
+        face = self.active_face
+        if face not in elem.faces:
+            return None
+        uv = elem.faces[face].get("uv", [0, 0, 16, 16])
+        scale = self.size / 16.0
+        return (
+            int(uv[0] * scale),
+            int(uv[1] * scale),
+            int(uv[2] * scale),
+            int(uv[3] * scale),
+        )
 
     def get_composite(self, face=None, state_index=None):
         """Return the flattened composite of all visible layers for a face."""
@@ -735,9 +943,10 @@ class TextureModel(QObject):
                     block_state.source_paths[face] = filepath
 
         if parent_type == "cube" and parent:
-            parsed = parse_model_json(parent)
+            md, parsed = parse_model_json(parent)
             if parsed:
                 block_state.geometry = parsed
+                block_state.model_data = md
 
         return block_state
 

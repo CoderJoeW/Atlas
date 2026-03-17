@@ -29,6 +29,7 @@ class PixelCanvas(QWidget):
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
         self.model.face_updated.connect(self._on_face_updated)
         self.model.reference_changed.connect(self._on_reference_changed)
+        self.model.geometry_changed.connect(self._on_geometry_changed)
         self._rebuild_cache()
 
     def set_tool(self, tool):
@@ -47,6 +48,10 @@ class PixelCanvas(QWidget):
         self.update()
 
     def _on_reference_changed(self):
+        self._rebuild_cache()
+        self.update()
+
+    def _on_geometry_changed(self):
         self._rebuild_cache()
         self.update()
 
@@ -142,6 +147,37 @@ class PixelCanvas(QWidget):
             painter.setOpacity(self.model.reference_opacity)
             painter.drawImage(int(ox), int(oy), self._cached_reference)
             painter.setOpacity(1.0)
+
+        # UV region overlay — dim areas outside, cyan border around mapped region
+        uv_rect = self.model.get_active_face_uv_pixels()
+        if uv_rect is not None:
+            cell = max(1, int(self._cell_size()))
+            size = self.model.size
+            canvas_w = cell * size
+            canvas_h = cell * size
+            ux1 = int(ox + uv_rect[0] * cell)
+            uy1 = int(oy + uv_rect[1] * cell)
+            ux2 = int(ox + uv_rect[2] * cell)
+            uy2 = int(oy + uv_rect[3] * cell)
+            ix, iy = int(ox), int(oy)
+            dim = QColor(0, 0, 0, 120)
+            # Top
+            if uy1 > iy:
+                painter.fillRect(ix, iy, canvas_w, uy1 - iy, dim)
+            # Bottom
+            if uy2 < iy + canvas_h:
+                painter.fillRect(ix, uy2, canvas_w, iy + canvas_h - uy2, dim)
+            # Left
+            if ux1 > ix:
+                painter.fillRect(ix, uy1, ux1 - ix, uy2 - uy1, dim)
+            # Right
+            if ux2 < ix + canvas_w:
+                painter.fillRect(ux2, uy1, ix + canvas_w - ux2, uy2 - uy1, dim)
+            # Cyan border
+            pen = QPen(QColor(0, 200, 255, 180))
+            pen.setWidth(2)
+            painter.setPen(pen)
+            painter.drawRect(ux1, uy1, ux2 - ux1, uy2 - uy1)
 
         # Delegate overlay drawing to the active tool
         if not self._panning:

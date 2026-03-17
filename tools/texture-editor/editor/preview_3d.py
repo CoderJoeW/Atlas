@@ -14,10 +14,12 @@ from OpenGL.GL import (
     GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE,
     GL_RGBA, GL_UNSIGNED_BYTE,
     glBegin, glEnd, glVertex3f, glTexCoord2f, glNormal3f,
-    GL_QUADS,
+    GL_QUADS, GL_LINES,
     glMatrixMode, glLoadIdentity, glTranslatef, glRotatef,
     GL_PROJECTION, GL_MODELVIEW,
     glViewport,
+    glColor3f, glLineWidth,
+    glPushAttrib, glPopAttrib, GL_ALL_ATTRIB_BITS,
 )
 from OpenGL.GLU import gluPerspective
 
@@ -37,9 +39,11 @@ class Preview3D(QOpenGLWidget):
         self._zoom = -3.0
         self._last_mouse_pos = None
         self._textures = {}
+        self._selected_element_index = -1
 
         self.model.face_updated.connect(self._on_face_updated)
         self.model.state_changed.connect(self._on_state_changed)
+        self.model.geometry_changed.connect(self._on_geometry_changed)
 
     def initializeGL(self):
         glClearColor(0.15, 0.15, 0.15, 1.0)
@@ -100,6 +104,13 @@ class Preview3D(QOpenGLWidget):
         self.doneCurrent()
         self.update()
 
+    def _on_geometry_changed(self):
+        self.update()
+
+    def set_selected_element(self, index):
+        self._selected_element_index = index
+        self.update()
+
     def resizeGL(self, w, h):
         glViewport(0, 0, w, h)
         glMatrixMode(GL_PROJECTION)
@@ -140,6 +151,7 @@ class Preview3D(QOpenGLWidget):
         glRotatef(self._azimuth, 0, 1, 0)
 
         glEnable(GL_TEXTURE_2D)
+        glColor3f(1.0, 1.0, 1.0)
 
         # Collect all faces, split into opaque and transparent
         opaque = []
@@ -166,6 +178,47 @@ class Preview3D(QOpenGLWidget):
             for face_data in transparent:
                 self._draw_face(face_data)
             glDepthMask(GL_TRUE)
+
+        # Pass 3: wireframe highlight for selected element
+        md = self.model.active_state.model_data
+        idx = self._selected_element_index
+        if md is not None and 0 <= idx < len(md.elements):
+            self._draw_element_wireframe(md.elements[idx])
+
+    def _draw_element_wireframe(self, elem):
+        """Draw a wireframe box around the given element for selection highlight."""
+        fp = elem.from_pos
+        tp = elem.to_pos
+        x1 = fp[0] / 16.0 - 0.5
+        y1 = fp[1] / 16.0 - 0.5
+        z1 = fp[2] / 16.0 - 0.5
+        x2 = tp[0] / 16.0 - 0.5
+        y2 = tp[1] / 16.0 - 0.5
+        z2 = tp[2] / 16.0 - 0.5
+
+        corners = [
+            (x1, y1, z1), (x2, y1, z1), (x2, y2, z1), (x1, y2, z1),
+            (x1, y1, z2), (x2, y1, z2), (x2, y2, z2), (x1, y2, z2),
+        ]
+        edges = [
+            (0, 1), (1, 2), (2, 3), (3, 0),  # front face (z1)
+            (4, 5), (5, 6), (6, 7), (7, 4),  # back face (z2)
+            (0, 4), (1, 5), (2, 6), (3, 7),  # connecting edges
+        ]
+
+        glPushAttrib(GL_ALL_ATTRIB_BITS)
+        glDisable(GL_DEPTH_TEST)
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND)
+        glDepthMask(GL_FALSE)
+        glLineWidth(2.0)
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        for i, j in edges:
+            glVertex3f(*corners[i])
+            glVertex3f(*corners[j])
+        glEnd()
+        glPopAttrib()
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
