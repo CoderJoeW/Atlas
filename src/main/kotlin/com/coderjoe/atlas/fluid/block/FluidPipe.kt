@@ -50,47 +50,13 @@ class FluidPipe(location: Location, override val facing: BlockFace) : FluidBlock
         val behind = facing.oppositeFace
         val source = registry.getAdjacentFluidBlock(location, behind) ?: return
 
-        when (source) {
-            is FluidPump -> {
-                if (source.canRemoveFluidFrom(facing)) {
-                    val fluid = source.removeFluid()
-                    storeFluid(fluid)
-                    plugin.logger.atlasInfo(
-                        "FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} " +
-                            "pulled ${fluid.name} from FluidPump",
-                    )
-                }
-            }
-            is FluidPipe -> {
-                if (source.hasFluid()) {
-                    val fluid = source.removeFluid()
-                    storeFluid(fluid)
-                    plugin.logger.atlasInfo(
-                        "FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} " +
-                            "pulled ${fluid.name} from FluidPipe",
-                    )
-                }
-            }
-            is FluidContainer -> {
-                if (source.canRemoveFluidFrom(facing)) {
-                    val fluid = source.removeFluid()
-                    storeFluid(fluid)
-                    plugin.logger.atlasInfo(
-                        "FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} " +
-                            "pulled ${fluid.name} from FluidContainer",
-                    )
-                }
-            }
-            is FluidMerger -> {
-                if (source.hasFluid()) {
-                    val fluid = source.removeFluid()
-                    storeFluid(fluid)
-                    plugin.logger.atlasInfo(
-                        "FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} " +
-                            "pulled ${fluid.name} from FluidMerger",
-                    )
-                }
-            }
+        if (source.canProvideFluid(facing)) {
+            val fluid = source.removeFluid()
+            storeFluid(fluid)
+            plugin.logger.atlasInfo(
+                "FluidPipe at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "pulled ${fluid.name} from ${source::class.simpleName}",
+            )
         }
 
         updateFluidState()

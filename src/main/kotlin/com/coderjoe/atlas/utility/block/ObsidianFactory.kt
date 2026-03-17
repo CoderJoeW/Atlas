@@ -5,10 +5,6 @@ import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidMerger
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Location
 import org.bukkit.Material
@@ -65,8 +61,8 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
 
         if (waterSource == null || lavaSource == null) return
 
-        pullFluid(waterSource.first, waterSource.second)
-        pullFluid(lavaSource.first, lavaSource.second)
+        waterSource.first.removeFluid()
+        lavaSource.first.removeFluid()
         removePower(POWER_COST)
 
         val world = location.world ?: return
@@ -83,24 +79,6 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
         face: BlockFace,
         fluidType: FluidType,
     ): Boolean {
-        return when (source) {
-            is FluidPump -> source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == fluidType
-            is FluidPipe -> source.hasFluid() && source.storedFluid == fluidType
-            is FluidContainer -> source.canRemoveFluidFrom(face.oppositeFace) && source.storedFluid == fluidType
-            is FluidMerger -> source.hasFluid() && source.storedFluid == fluidType
-            else -> false
-        }
-    }
-
-    private fun pullFluid(
-        source: com.coderjoe.atlas.fluid.FluidBlock,
-        face: BlockFace,
-    ) {
-        when (source) {
-            is FluidPump -> source.removeFluid()
-            is FluidPipe -> source.removeFluid()
-            is FluidContainer -> source.removeFluid()
-            is FluidMerger -> source.removeFluid()
-        }
+        return source.canProvideFluid(face.oppositeFace) && source.storedFluid == fluidType
     }
 }

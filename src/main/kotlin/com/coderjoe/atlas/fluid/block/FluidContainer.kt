@@ -56,6 +56,8 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
         return direction == facing && hasFluid()
     }
 
+    override fun canProvideFluid(requestDirection: BlockFace): Boolean = canRemoveFluidFrom(requestDirection)
+
     fun getFillLevel(): Int =
         when (storedAmount) {
             0 -> 0
@@ -91,58 +93,15 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 return
             }
 
-        when (source) {
-            is FluidPump -> {
-                if (source.canRemoveFluidFrom(facing)) {
-                    val fluid = source.removeFluid()
-                    if (storeFluid(fluid)) {
-                        plugin.logger.atlasInfo(
-                            "FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} " +
-                                "pulled ${fluid.name} from FluidPump",
-                        )
-                    } else {
-                        source.storeFluid(fluid)
-                    }
-                }
-            }
-            is FluidPipe -> {
-                if (source.hasFluid()) {
-                    val fluid = source.removeFluid()
-                    if (storeFluid(fluid)) {
-                        plugin.logger.atlasInfo(
-                            "FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} " +
-                                "pulled ${fluid.name} from FluidPipe",
-                        )
-                    } else {
-                        source.storeFluid(fluid)
-                    }
-                }
-            }
-            is FluidContainer -> {
-                if (source.canRemoveFluidFrom(facing)) {
-                    val fluid = source.removeFluid()
-                    if (storeFluid(fluid)) {
-                        plugin.logger.atlasInfo(
-                            "FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} " +
-                                "pulled ${fluid.name} from FluidContainer",
-                        )
-                    } else {
-                        source.storeFluid(fluid)
-                    }
-                }
-            }
-            is FluidMerger -> {
-                if (source.hasFluid()) {
-                    val fluid = source.removeFluid()
-                    if (storeFluid(fluid)) {
-                        plugin.logger.atlasInfo(
-                            "FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} " +
-                                "pulled ${fluid.name} from FluidMerger",
-                        )
-                    } else {
-                        source.storeFluid(fluid)
-                    }
-                }
+        if (source.canProvideFluid(facing)) {
+            val fluid = source.removeFluid()
+            if (storeFluid(fluid)) {
+                plugin.logger.atlasInfo(
+                    "FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} " +
+                        "pulled ${fluid.name} from ${source::class.simpleName}",
+                )
+            } else {
+                source.storeFluid(fluid)
             }
         }
 

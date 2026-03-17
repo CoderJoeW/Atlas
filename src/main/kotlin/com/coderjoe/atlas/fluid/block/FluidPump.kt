@@ -52,6 +52,8 @@ class FluidPump(location: Location) : FluidBlock(location) {
         return direction == cauldron.oppositeFace && hasFluid()
     }
 
+    override fun canProvideFluid(requestDirection: BlockFace): Boolean = canRemoveFluidFrom(requestDirection)
+
     override fun getVisualStateBlockId(): String =
         when (storedFluid) {
             FluidType.WATER -> BLOCK_ID_ACTIVE
