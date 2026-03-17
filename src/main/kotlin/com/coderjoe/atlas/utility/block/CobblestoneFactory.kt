@@ -10,7 +10,6 @@ import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlock
-import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -55,19 +54,7 @@ class CobblestoneFactory(location: Location) : PowerBlock(location, maxStorage =
         }
 
     override fun powerUpdate() {
-        if (canAcceptPower()) {
-            val registry = PowerBlockRegistry.instance ?: return
-            val neighbors = registry.getAdjacentPowerBlocks(location)
-            for (neighbor in neighbors) {
-                if (!canAcceptPower()) break
-                if (neighbor.hasPower()) {
-                    val pulled = neighbor.removePower(1)
-                    if (pulled > 0) {
-                        addPower(pulled)
-                    }
-                }
-            }
-        }
+        pullPowerFromNeighbors()
 
         if (currentPower < POWER_COST) return
 

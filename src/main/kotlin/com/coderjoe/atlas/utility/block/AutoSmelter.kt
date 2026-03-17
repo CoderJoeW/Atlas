@@ -4,7 +4,6 @@ import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
-import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
@@ -50,19 +49,7 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
     override fun powerUpdate() {
-        if (canAcceptPower()) {
-            val registry = PowerBlockRegistry.instance ?: return
-            val neighbors = registry.getAdjacentPowerBlocks(location)
-            for (neighbor in neighbors) {
-                if (!canAcceptPower()) break
-                if (neighbor.hasPower()) {
-                    val pulled = neighbor.removePower(1)
-                    if (pulled > 0) {
-                        addPower(pulled)
-                    }
-                }
-            }
-        }
+        pullPowerFromNeighbors()
 
         val world = location.world ?: return
 

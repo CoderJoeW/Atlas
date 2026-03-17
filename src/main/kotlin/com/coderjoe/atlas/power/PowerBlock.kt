@@ -28,6 +28,21 @@ abstract class PowerBlock(
         return toRemove
     }
 
+    protected fun pullPowerFromNeighbors() {
+        if (!canAcceptPower()) return
+        val registry = PowerBlockRegistry.instance ?: return
+        val neighbors = registry.getAdjacentPowerBlocks(location)
+        for (neighbor in neighbors) {
+            if (!canAcceptPower()) break
+            if (neighbor.hasPower()) {
+                val pulled = neighbor.removePower(1)
+                if (pulled > 0) {
+                    addPower(pulled)
+                }
+            }
+        }
+    }
+
     protected abstract fun powerUpdate()
 
     override fun blockUpdate() {
