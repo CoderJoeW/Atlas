@@ -34,16 +34,6 @@ class FluidPump(location: Location) : FluidBlock(location) {
         const val BLOCK_ID_ACTIVE = "atlas:fluid_pump_active"
         const val BLOCK_ID_ACTIVE_LAVA = "atlas:fluid_pump_active_lava"
 
-        private val ADJACENT_FACES =
-            listOf(
-                BlockFace.NORTH,
-                BlockFace.SOUTH,
-                BlockFace.EAST,
-                BlockFace.WEST,
-                BlockFace.UP,
-                BlockFace.DOWN,
-            )
-
         val descriptor =
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,

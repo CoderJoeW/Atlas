@@ -24,16 +24,6 @@ class ObsidianFactory(location: Location) : PowerBlock(location, maxStorage = 10
         const val BLOCK_ID_ACTIVE = "atlas:obsidian_factory_active"
         const val POWER_COST = 100
 
-        private val ADJACENT_FACES =
-            listOf(
-                BlockFace.NORTH,
-                BlockFace.SOUTH,
-                BlockFace.EAST,
-                BlockFace.WEST,
-                BlockFace.UP,
-                BlockFace.DOWN,
-            )
-
         val descriptor =
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
