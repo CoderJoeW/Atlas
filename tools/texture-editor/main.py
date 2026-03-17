@@ -5,7 +5,9 @@ import sys
 import os
 import argparse
 
-from PyQt6.QtWidgets import QApplication, QMainWindow, QSplitter, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QSplitter, QVBoxLayout, QWidget, QScrollArea,
+)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut
 
@@ -16,6 +18,7 @@ from editor.preview_3d import Preview3D
 from editor.face_panel import FacePanel
 from editor.tile_preview import TilePreview
 from editor.layer_panel import LayerPanel
+from editor.model_panel import ModelPanel
 from editor.tools import ALL_TOOLS, ACTION_TOOLS, DragShapeTool, GradientTool
 
 
@@ -23,7 +26,7 @@ class TextureEditor(QMainWindow):
     def __init__(self, size=32, block_id=None):
         super().__init__()
         self.setWindowTitle("Atlas Texture Editor")
-        self.resize(1400, 850)
+        self.showMaximized()
 
         self.model = TextureModel(size)
 
@@ -56,9 +59,16 @@ class TextureEditor(QMainWindow):
 
         splitter.addWidget(middle)
 
-        # Right side: face panel + layer panel
-        right = QWidget()
-        right_layout = QVBoxLayout(right)
+        # Right side: face panel + layer panel + model panel in scrollable column
+        right_scroll = QScrollArea()
+        right_scroll.setWidgetResizable(True)
+        right_scroll.setFixedWidth(296)
+        right_scroll.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
+
+        right_inner = QWidget()
+        right_layout = QVBoxLayout(right_inner)
         right_layout.setContentsMargins(0, 0, 0, 0)
         right_layout.setSpacing(0)
 
@@ -68,8 +78,12 @@ class TextureEditor(QMainWindow):
         self.layer_panel = LayerPanel(self.model)
         right_layout.addWidget(self.layer_panel)
 
-        right.setFixedWidth(280)
-        splitter.addWidget(right)
+        self.model_panel = ModelPanel(self.model)
+        right_layout.addWidget(self.model_panel)
+
+        right_layout.addStretch()
+        right_scroll.setWidget(right_inner)
+        splitter.addWidget(right_scroll)
 
         splitter.setSizes([500, 420, 280])
         self.setCentralWidget(splitter)
@@ -93,6 +107,9 @@ class TextureEditor(QMainWindow):
             lambda: self._activate_action("Eyedropper"))
         self.color_picker.fill_clicked.connect(
             lambda: self._activate_action("Fill"))
+
+        # Connect model panel element selection to 3D preview wireframe
+        self.model.geometry_changed.connect(self._sync_wireframe_selection)
 
         self._setup_shortcuts()
 
@@ -135,6 +152,11 @@ class TextureEditor(QMainWindow):
         if isinstance(tool, GradientTool):
             tool.end_color = color
 
+    def _sync_wireframe_selection(self):
+        self.preview.set_selected_element(
+            self.model_panel.get_selected_element_index()
+        )
+
     def _activate_action(self, name):
         tool = self._action_tools.get(name)
         if tool:
@@ -153,13 +175,13 @@ class TextureEditor(QMainWindow):
         save_sc = QShortcut(QKeySequence("Ctrl+S"), self)
         save_sc.activated.connect(self.face_panel._save_face)
 
-        # Ctrl+Z: undo
+        # Ctrl+Z: undo (focus-based dispatch)
         undo_sc = QShortcut(QKeySequence("Ctrl+Z"), self)
-        undo_sc.activated.connect(self.model.undo)
+        undo_sc.activated.connect(self._undo)
 
-        # Ctrl+Shift+Z: redo
+        # Ctrl+Shift+Z: redo (focus-based dispatch)
         redo_sc = QShortcut(QKeySequence("Ctrl+Shift+Z"), self)
-        redo_sc.activated.connect(self.model.redo)
+        redo_sc.activated.connect(self._redo)
 
         # 1-6: face selection
         for i in range(1, 7):
@@ -178,6 +200,22 @@ class TextureEditor(QMainWindow):
                           ("E", "Ellipse"), ("G", "Gradient"), ("M", "Selection")]:
             sc = QShortcut(QKeySequence(key), self)
             sc.activated.connect(lambda n=name: self._select_tool(n))
+
+    def _model_panel_has_focus(self):
+        focus = QApplication.focusWidget()
+        return focus is not None and self.model_panel.isAncestorOf(focus)
+
+    def _undo(self):
+        if self._model_panel_has_focus():
+            self.model_panel.model_undo()
+        else:
+            self.model.undo()
+
+    def _redo(self):
+        if self._model_panel_has_focus():
+            self.model_panel.model_redo()
+        else:
+            self.model.redo()
 
     def _decrease_brush(self):
         new_val = max(1, self.model.brush_size - 1)
