@@ -31,7 +31,11 @@ object AtlasBlockDialog {
         activeDialogs.clear()
     }
 
-    fun createNoticeDialog(title: Component, body: Component, onClose: (Player) -> Unit): Dialog {
+    fun createNoticeDialog(
+        title: Component,
+        body: Component,
+        onClose: (Player) -> Unit,
+    ): Dialog {
         val closeAction =
             DialogAction.customClick(
                 DialogActionCallback { _, audience ->

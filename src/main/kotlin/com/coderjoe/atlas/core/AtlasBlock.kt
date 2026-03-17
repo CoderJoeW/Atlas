@@ -23,7 +23,12 @@ abstract class AtlasBlock(
 
         val ADJACENT_FACES =
             listOf(
-                BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN,
+                BlockFace.NORTH,
+                BlockFace.SOUTH,
+                BlockFace.EAST,
+                BlockFace.WEST,
+                BlockFace.UP,
+                BlockFace.DOWN,
             )
     }
 
