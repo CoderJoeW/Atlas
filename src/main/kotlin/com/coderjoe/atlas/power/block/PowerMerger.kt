@@ -2,7 +2,6 @@ package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
@@ -54,10 +53,5 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
         }
 
         updatePoweredState()
-    }
-
-    private fun updatePoweredState() {
-        val shouldBePowered = currentPower > 0
-        CraftEngineHelper.setBooleanProperty(location, "powered", shouldBePowered)
     }
 }

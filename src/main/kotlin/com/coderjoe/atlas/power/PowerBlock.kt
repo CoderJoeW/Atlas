@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.core.CraftEngineHelper
 import org.bukkit.Location
 
 abstract class PowerBlock(
@@ -41,6 +42,10 @@ abstract class PowerBlock(
                 }
             }
         }
+    }
+
+    protected fun updatePoweredState() {
+        CraftEngineHelper.setBooleanProperty(location, "powered", hasPower())
     }
 
     protected abstract fun powerUpdate()

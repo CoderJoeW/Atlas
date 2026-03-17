@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.utility.block
 
 import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Bukkit
@@ -78,10 +77,5 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
         }
 
         updatePoweredState()
-    }
-
-    private fun updatePoweredState() {
-        val shouldBePowered = hasPower()
-        CraftEngineHelper.setBooleanProperty(location, "powered", shouldBePowered)
     }
 }
