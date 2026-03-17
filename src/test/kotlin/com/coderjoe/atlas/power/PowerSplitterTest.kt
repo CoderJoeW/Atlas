@@ -2,7 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
-import com.coderjoe.atlas.power.block.MultiPowerCable
+import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class MultiPowerCableTest {
+class PowerSplitterTest {
     @BeforeEach
     fun setup() {
         TestHelper.setup()
@@ -24,45 +24,45 @@ class MultiPowerCableTest {
     }
 
     @Test
-    fun `multi power cable has correct facing`() {
-        val cable =
-            MultiPowerCable(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(BlockFace.NORTH, cable.facing)
+    fun `power splitter has correct facing`() {
+        val splitter =
+            PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
+        assertEquals(BlockFace.NORTH, splitter.facing)
     }
 
     @Test
     fun `visual state always returns BLOCK_ID`() {
-        val cable =
-            MultiPowerCable(TestHelper.createLocation(), BlockFace.NORTH)
-        cable.currentPower = 0
+        val splitter =
+            PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
+        splitter.currentPower = 0
         assertEquals(
-            "atlas:multi_power_cable",
-            cable.getVisualStateBlockId(),
+            "atlas:power_splitter",
+            splitter.getVisualStateBlockId(),
         )
-        cable.currentPower = 5
+        splitter.currentPower = 5
         assertEquals(
-            "atlas:multi_power_cable",
-            cable.getVisualStateBlockId(),
+            "atlas:power_splitter",
+            splitter.getVisualStateBlockId(),
         )
     }
 
     @Test
-    fun `base block ID is atlas multi_power_cable`() {
-        val cable =
-            MultiPowerCable(TestHelper.createLocation(), BlockFace.SOUTH)
-        assertEquals("atlas:multi_power_cable", cable.baseBlockId)
+    fun `base block ID is atlas power_splitter`() {
+        val splitter =
+            PowerSplitter(TestHelper.createLocation(), BlockFace.SOUTH)
+        assertEquals("atlas:power_splitter", splitter.baseBlockId)
     }
 
     @Test
     fun `descriptor has correct properties`() {
-        val desc = MultiPowerCable.descriptor
-        assertEquals("atlas:multi_power_cable", desc.baseBlockId)
-        assertEquals("Multi Power Cable", desc.displayName)
+        val desc = PowerSplitter.descriptor
+        assertEquals("atlas:power_splitter", desc.baseBlockId)
+        assertEquals("Power Splitter", desc.displayName)
     }
 
     @Test
     fun `descriptor has directional placement`() {
-        val desc = MultiPowerCable.descriptor
+        val desc = PowerSplitter.descriptor
         assertEquals(
             com.coderjoe.atlas.core.PlacementType.DIRECTIONAL,
             desc.placementType,
@@ -73,39 +73,39 @@ class MultiPowerCableTest {
     fun `base ID is registered`() {
         TestHelper.initPowerFactory()
         assertTrue(
-            PowerBlockFactory.isRegistered("atlas:multi_power_cable"),
+            PowerBlockFactory.isRegistered("atlas:power_splitter"),
         )
     }
 
     @Test
-    fun `factory creates MultiPowerCable from base ID`() {
+    fun `factory creates PowerSplitter from base ID`() {
         TestHelper.initPowerFactory()
         val block =
             PowerBlockFactory.createPowerBlock(
-                "atlas:multi_power_cable",
+                "atlas:power_splitter",
                 TestHelper.createLocation(),
                 BlockFace.NORTH,
             )
-        assertTrue(block is MultiPowerCable)
+        assertTrue(block is PowerSplitter)
         assertEquals(BlockFace.NORTH, block!!.facing)
     }
 
     @Test
     fun `max storage is 10`() {
-        val cable =
-            MultiPowerCable(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(10, cable.maxStorage)
+        val splitter =
+            PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
+        assertEquals(10, splitter.maxStorage)
     }
 
     @Test
     fun `pulls power from behind`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val cableLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val cable = MultiPowerCable(cableLoc, BlockFace.NORTH)
+        val splitterLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
+        val splitter = PowerSplitter(splitterLoc, BlockFace.NORTH)
         TestHelper.addToRegistry(
             registry,
-            cable,
-            "atlas:multi_power_cable",
+            splitter,
+            "atlas:power_splitter",
         )
 
         val batteryLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
@@ -117,22 +117,22 @@ class MultiPowerCableTest {
             "atlas:small_battery",
         )
 
-        cable.callPowerUpdate()
+        splitter.callPowerUpdate()
 
-        assertTrue(cable.currentPower > 0)
+        assertTrue(splitter.currentPower > 0)
         assertTrue(battery.currentPower < 5)
     }
 
     @Test
     fun `distributes power to multiple outputs`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val cableLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val cable = MultiPowerCable(cableLoc, BlockFace.NORTH)
-        cable.currentPower = 5
+        val splitterLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
+        val splitter = PowerSplitter(splitterLoc, BlockFace.NORTH)
+        splitter.currentPower = 5
         TestHelper.addToRegistry(
             registry,
-            cable,
-            "atlas:multi_power_cable",
+            splitter,
+            "atlas:power_splitter",
         )
 
         val eastBatteryLoc =
@@ -163,24 +163,24 @@ class MultiPowerCableTest {
             "atlas:small_battery",
         )
 
-        cable.callPowerUpdate()
+        splitter.callPowerUpdate()
 
         assertTrue(eastBattery.currentPower > 0)
         assertTrue(westBattery.currentPower > 0)
         assertTrue(northBattery.currentPower > 0)
-        assertEquals(2, cable.currentPower)
+        assertEquals(2, splitter.currentPower)
     }
 
     @Test
     fun `does not exceed max storage when pulling power`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val cableLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val cable = MultiPowerCable(cableLoc, BlockFace.NORTH)
-        cable.currentPower = 10
+        val splitterLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
+        val splitter = PowerSplitter(splitterLoc, BlockFace.NORTH)
+        splitter.currentPower = 10
         TestHelper.addToRegistry(
             registry,
-            cable,
-            "atlas:multi_power_cable",
+            splitter,
+            "atlas:power_splitter",
         )
 
         val batteryLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
@@ -192,20 +192,20 @@ class MultiPowerCableTest {
             "atlas:small_battery",
         )
 
-        cable.callPowerUpdate()
+        splitter.callPowerUpdate()
 
-        assertEquals(10, cable.maxStorage)
+        assertEquals(10, splitter.maxStorage)
         assertEquals(5, battery.currentPower)
     }
 
     @Test
     fun `does not crash with no adjacent blocks`() {
         PowerBlockRegistry(TestHelper.mockPlugin)
-        val cable =
-            MultiPowerCable(TestHelper.createLocation(), BlockFace.NORTH)
+        val splitter =
+            PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
 
         assertDoesNotThrow {
-            cable.callPowerUpdate()
+            splitter.callPowerUpdate()
         }
     }
 }

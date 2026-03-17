@@ -1,0 +1,180 @@
+items:
+  atlas:power_splitter:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#FFD700:#FF4500>Power Splitter"
+    model: minecraft:block/custom/power_splitter
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 2.0
+          resistance: 2.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        states:
+          properties:
+            facing:
+              type: direction
+              default: north
+            powered:
+              type: boolean
+              default: false
+          appearances:
+            north:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/power_splitter_front
+                    south: minecraft:block/custom/power_splitter_back
+                    east: minecraft:block/custom/power_splitter_side
+                    west: minecraft:block/custom/power_splitter_side
+                    up: minecraft:block/custom/power_splitter_cap
+                    down: minecraft:block/custom/power_splitter_cap
+            south:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter
+                y: 180
+            east:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter
+                y: 90
+            west:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter
+                y: 270
+            up:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter_up
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/power_splitter_side
+                    south: minecraft:block/custom/power_splitter_side
+                    east: minecraft:block/custom/power_splitter_side
+                    west: minecraft:block/custom/power_splitter_side
+                    up: minecraft:block/custom/power_splitter_front
+                    down: minecraft:block/custom/power_splitter_back
+            down:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter_down
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/power_splitter_side
+                    south: minecraft:block/custom/power_splitter_side
+                    east: minecraft:block/custom/power_splitter_side
+                    west: minecraft:block/custom/power_splitter_side
+                    up: minecraft:block/custom/power_splitter_back
+                    down: minecraft:block/custom/power_splitter_front
+            north_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter_powered
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/power_splitter_front_powered
+                    south: minecraft:block/custom/power_splitter_back_powered
+                    east: minecraft:block/custom/power_splitter_side_powered
+                    west: minecraft:block/custom/power_splitter_side_powered
+                    up: minecraft:block/custom/power_splitter_cap_powered
+                    down: minecraft:block/custom/power_splitter_cap_powered
+            south_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter_powered
+                y: 180
+            east_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter_powered
+                y: 90
+            west_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter_powered
+                y: 270
+            up_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter_up_powered
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/power_splitter_side_powered
+                    south: minecraft:block/custom/power_splitter_side_powered
+                    east: minecraft:block/custom/power_splitter_side_powered
+                    west: minecraft:block/custom/power_splitter_side_powered
+                    up: minecraft:block/custom/power_splitter_front_powered
+                    down: minecraft:block/custom/power_splitter_back_powered
+            down_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/power_splitter_down_powered
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/power_splitter_side_powered
+                    south: minecraft:block/custom/power_splitter_side_powered
+                    east: minecraft:block/custom/power_splitter_side_powered
+                    west: minecraft:block/custom/power_splitter_side_powered
+                    up: minecraft:block/custom/power_splitter_back_powered
+                    down: minecraft:block/custom/power_splitter_front_powered
+          variants:
+            facing=north,powered=false:
+              appearance: north
+            facing=south,powered=false:
+              appearance: south
+            facing=east,powered=false:
+              appearance: east
+            facing=west,powered=false:
+              appearance: west
+            facing=up,powered=false:
+              appearance: up
+            facing=down,powered=false:
+              appearance: down
+            facing=north,powered=true:
+              appearance: north_powered
+            facing=south,powered=true:
+              appearance: south_powered
+            facing=east,powered=true:
+              appearance: east_powered
+            facing=west,powered=true:
+              appearance: west_powered
+            facing=up,powered=true:
+              appearance: up_powered
+            facing=down,powered=true:
+              appearance: down_powered
+
+recipes:
+  atlas:power_splitter:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:copper_ingot
+      - minecraft:copper_ingot
+      - minecraft:copper_ingot
+      - minecraft:copper_ingot
+    result:
+      id: atlas:power_splitter
+      count: 1

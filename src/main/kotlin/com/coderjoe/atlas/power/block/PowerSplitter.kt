@@ -9,17 +9,17 @@ import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-class MultiPowerCable(location: Location, override val facing: BlockFace) : PowerBlock(location, maxStorage = 10) {
+class PowerSplitter(location: Location, override val facing: BlockFace) : PowerBlock(location, maxStorage = 10) {
     companion object {
-        const val BLOCK_ID = "atlas:multi_power_cable"
+        const val BLOCK_ID = "atlas:power_splitter"
 
         val descriptor =
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
-                displayName = "Multi Power Cable",
+                displayName = "Power Splitter",
                 description = "Cable - distributes power to all adjacent faces",
                 placementType = PlacementType.DIRECTIONAL,
-                constructor = { loc, facing -> MultiPowerCable(loc, facing) },
+                constructor = { loc, facing -> PowerSplitter(loc, facing) },
             )
     }
 
@@ -40,7 +40,7 @@ class MultiPowerCable(location: Location, override val facing: BlockFace) : Powe
             if (pulled > 0) {
                 addPower(pulled)
                 plugin.logger.atlasInfo(
-                    "MultiPowerCable at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "PowerSplitter at ${location.blockX},${location.blockY},${location.blockZ} " +
                         "pulled $pulled power (now $currentPower/$maxStorage)",
                 )
             }
@@ -59,7 +59,7 @@ class MultiPowerCable(location: Location, override val facing: BlockFace) : Powe
                     if (pushed > 0) {
                         target.addPower(pushed)
                         plugin.logger.atlasInfo(
-                            "MultiPowerCable at ${location.blockX},${location.blockY},${location.blockZ} " +
+                            "PowerSplitter at ${location.blockX},${location.blockY},${location.blockZ} " +
                                 "pushed $pushed power to ${target::class.simpleName} at ${face.name}",
                         )
                     }

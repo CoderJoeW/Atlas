@@ -13,9 +13,9 @@ import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.block.LavaGenerator
-import com.coderjoe.atlas.power.block.MultiPowerCable
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.PowerMerger
+import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.transport.TransportBlock
@@ -199,7 +199,7 @@ object TestHelper {
                 SmallSolarPanel.descriptor, SmallDrill.descriptor,
                 SmallBattery.descriptor, PowerCable.descriptor,
                 LavaGenerator.descriptor, AutoSmelter.descriptor,
-                MultiPowerCable.descriptor, CobblestoneFactory.descriptor,
+                PowerSplitter.descriptor, CobblestoneFactory.descriptor,
                 ObsidianFactory.descriptor, PowerMerger.descriptor,
             ),
         )

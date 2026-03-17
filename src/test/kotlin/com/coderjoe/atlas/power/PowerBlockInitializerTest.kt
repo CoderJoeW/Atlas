@@ -34,7 +34,7 @@ class PowerBlockInitializerTest {
         // PowerCable: 1
         // LavaGenerator: 2 (base + active)
         // AutoSmelter: 1
-        // MultiPowerCable: 1
+        // PowerSplitter: 1
         // CobblestoneFactory: 2 (base + active)
         // ObsidianFactory: 2 (base + active)
         // PowerMerger: 1

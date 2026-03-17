@@ -57,7 +57,7 @@ Atlas has three core systems that chain together to enable full automation.
 | **Lava Generator** | Burns lava for serious output. Feed it from your fluid pipeline |
 | **Small Battery** | Buffers power between generators and machines. Glowing charge indicator |
 | **Power Cable** | Moves power in one direction, block by block |
-| **Multi Power Cable** | Transfers power across multiple directions at once |
+| **Power Splitter** | Transfers power across multiple directions at once |
 | **Power Merger** | Funnels power from several sources into one output |
 
 <details>
