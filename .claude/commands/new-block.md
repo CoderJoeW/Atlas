@@ -16,11 +16,11 @@ Before writing any code, determine from the user's description:
 
 1. **Block name** (snake_case ID, e.g., `lava_generator`)
 2. **Display name** (e.g., "Lava Generator")
-3. **System type**: `power` or `fluid` — determines base class (`PowerBlock` or `FluidBlock`) and which registry/factory/dialog to integrate with
+3. **System type**: `power`, `fluid`, `transport`, or `utility` — determines base class (`PowerBlock`, `FluidBlock`, `TransportBlock`) and which registry/factory/dialog to integrate with. Utility blocks use the power system (extend `PowerBlock`) but live in the `utility` package.
 4. **Placement type**: `SIMPLE` (no direction), `DIRECTIONAL` (faces toward placement direction), or `DIRECTIONAL_OPPOSITE` (faces away)
 5. **Visual states**: What variants does the block have? (e.g., inactive/active, charge levels, facing directions)
 6. **Key properties**: maxStorage, updateIntervalTicks, canReceivePower, etc.
-7. **Behavior**: What happens during powerUpdate()/fluidUpdate()?
+7. **Behavior**: What happens during powerUpdate()/fluidUpdate()/transportUpdate()?
 8. **Recipe ingredients**: What materials craft it?
 9. **Gradient colors** for the item name (hex pair, e.g., `#FF4500:#FF8C00`)
 
@@ -51,15 +51,15 @@ class {ClassName}(location: Location) : {BaseClass}(location, maxStorage = {N}) 
         // Add variant IDs as needed, e.g.:
         // const val BLOCK_ID_ACTIVE = "{block_id}_active"
 
-        val descriptor = BlockDescriptor(
-            baseBlockId = BLOCK_ID,
-            displayName = "{Display Name}",
-            description = "{short description}",
-            placementType = PlacementType.SIMPLE,
-            directionalVariants = emptyMap(),
-            allRegistrableIds = listOf(BLOCK_ID),  // include all variant IDs
-            constructor = { loc, _ -> {ClassName}(loc) }
-        )
+        val descriptor =
+            BlockDescriptor(
+                baseBlockId = BLOCK_ID,
+                displayName = "{Display Name}",
+                description = "{short description}",
+                placementType = PlacementType.SIMPLE,
+                additionalBlockIds = listOf(),  // include any variant IDs beyond the base
+                constructor = { loc, _ -> {ClassName}(loc) },
+            )
     }
 
     override val baseBlockId: String = BLOCK_ID
@@ -72,17 +72,21 @@ class {ClassName}(location: Location) : {BaseClass}(location, maxStorage = {N}) 
 }
 ```
 
-**DIRECTIONAL block** (like PowerCable, FluidPipe): Include `facing` property, `DIRECTIONAL_IDS` map for all 6 faces (NORTH, SOUTH, EAST, WEST, UP, DOWN), and use `ID_TO_FACING` reverse lookup. Constructor takes `(Location, BlockFace)`.
+**DIRECTIONAL block** (like PowerCable, FluidPipe): Include `facing` property via `override val facing: BlockFace` in the constructor. Constructor takes `(Location, BlockFace)`. Use `ADJACENT_FACES` (inherited from `AtlasBlock`) when iterating over all 6 block faces — never hardcode the face list.
 
 **DIRECTIONAL_OPPOSITE block** (like SmallDrill): Same directional pattern but placement type is `DIRECTIONAL_OPPOSITE`.
+
+### Important code patterns
+
+- **Fluid transfer ordering**: When transferring fluid between blocks, always `removeFluid()` first to capture the value, then call `target.storeFluid(fluid)`. If `storeFluid` fails, restore with `storeFluid(fluid)` on self. Never pass `storedFluid` directly to another block's `storeFluid()` — the mutable field could become stale.
+- **Face iteration**: Use the inherited `ADJACENT_FACES` constant from `AtlasBlock` instead of creating a new `listOf(BlockFace.NORTH, ...)`. Filter it as needed (e.g., `ADJACENT_FACES.filter { it != facing.oppositeFace }`).
+- **BlockDescriptor fields**: The descriptor uses `additionalBlockIds` (not `allRegistrableIds`) for variant IDs beyond the base. The total registered count = 1 (base) + additionalBlockIds.size.
 
 ### Step 3: Add CraftEngine Block Configuration
 
 Create `src/main/resources/atlas/configuration/{block_id}.yml`.
 
-Follow the CraftEngine configuration format. Each variant gets its own `items` section (use `items#1`, `items#2`, etc. for additional variants). The base variant uses `loot: template: default:loot_table/self`, while other variants use explicit loot pools that drop the base item.
-
-Reference existing configuration files (e.g., `small_solar_panel.yml`, `lava_generator.yml`) for the exact format. Here's the general structure:
+Follow the CraftEngine configuration format. Reference existing configuration files for the exact format. Here's the general structure for a **non-directional** block:
 
 ```yaml
 items:
@@ -121,13 +125,12 @@ items:
                 side: minecraft:block/custom/{block_id}_side
 ```
 
-For additional variant entries (active states, directional, etc.), add `items#1`, `items#2`, etc. sections with explicit loot that drops the base item:
-```yaml
-items#1:
-  atlas:{block_id}_{variant}:
-    # ... same structure but with:
-    # loot pools that drop atlas:{block_id} (the base item)
-```
+For **directional** blocks, use `states` with `properties`, `appearances`, and `variants` sections. Reference `power_splitter.yml` (facing + boolean property), `fluid_merger.yml` (facing + string property), or `fluid_pipe.yml` for the exact format. Key pattern:
+- Define properties (facing: direction, plus any state property like powered/fluid)
+- Define appearances for each direction (north uses full generation block, south/east/west use y-rotation, up/down use separate models with remapped textures)
+- Map variants to appearances
+
+For additional variant entries (active states, etc.), add `items#1`, `items#2`, etc. sections with explicit loot that drops the base item.
 
 ### Step 4: Add Recipe
 
@@ -146,16 +149,20 @@ recipes:
       count: 1
 ```
 
+Ensure the recipe ingredients are unique — no two blocks should have identical shapeless recipes.
+
 ### Step 5: Register in Atlas.kt
 
 Add the descriptor to `src/main/kotlin/com/coderjoe/atlas/Atlas.kt`:
 
-- **Power blocks**: Add `com.coderjoe.atlas.power.block.{ClassName}.descriptor` to the list in `powerDescriptors()`
-- **Fluid blocks**: Add `com.coderjoe.atlas.fluid.block.{ClassName}.descriptor` to the list in `fluidDescriptors()`
+- **Power blocks**: Add to the list in `powerDescriptors()`
+- **Fluid blocks**: Add to the list in `fluidDescriptors()`
+- **Transport blocks**: Add to the list in `transportDescriptors()`
+- **Utility blocks**: Add to `powerDescriptors()` (utility blocks use the power system)
 
 ### Step 6: Add Dialog Integration
 
-For **power blocks**, edit `src/main/kotlin/com/coderjoe/atlas/power/PowerBlockDialog.kt`:
+For **power blocks** (including utility), edit `src/main/kotlin/com/coderjoe/atlas/power/PowerBlockDialog.kt`:
 1. Add import for the new class
 2. Add `is {ClassName} -> "{Display Name}"` case in `getBlockDisplayName()`
 3. Add description case in `getBlockDescription()`:
@@ -166,21 +173,23 @@ For **power blocks**, edit `src/main/kotlin/com/coderjoe/atlas/power/PowerBlockD
 
 For **fluid blocks**, edit `src/main/kotlin/com/coderjoe/atlas/fluid/FluidBlockDialog.kt` following the same pattern.
 
+For **transport blocks**, edit `src/main/kotlin/com/coderjoe/atlas/transport/TransportBlockDialog.kt` following the same pattern.
+
 ### Step 7: Update Tests
 
-1. **Update `TestHelper.initPowerFactory()`** (or `initFluidFactory()`) in `src/test/kotlin/com/coderjoe/atlas/TestHelper.kt` — add the new descriptor to the registration list.
+1. **Update `TestHelper.initPowerFactory()`** (or `initFluidFactory()` / `initTransportFactory()`) in `src/test/kotlin/com/coderjoe/atlas/TestHelper.kt` — add the new descriptor to the registration list.
 
 2. **Update block count assertions** in:
-   - `src/test/kotlin/com/coderjoe/atlas/AtlasPluginTest.kt` — update the count in `power system initializes with N block types` (or fluid equivalent)
-   - `src/test/kotlin/com/coderjoe/atlas/power/PowerBlockInitializerTest.kt` (or fluid equivalent) — update the count and comment
+   - `src/test/kotlin/com/coderjoe/atlas/AtlasPluginTest.kt` — update the count in the relevant `{system} system initializes with N block types` test
+   - `src/test/kotlin/com/coderjoe/atlas/power/PowerBlockInitializerTest.kt` (or fluid/transport equivalent) — update the count and comment
 
-   The count = total number of IDs across all `allRegistrableIds` lists. Add the number of new variant IDs to the existing count.
+   The count = total number of registered IDs (1 base + additionalBlockIds per block). Add the number of new IDs to the existing count.
 
 3. **Create block test file** at `src/test/kotlin/com/coderjoe/atlas/{system}/{ClassName}Test.kt` with tests for:
    - Key properties (maxStorage, canReceivePower, etc.)
    - Visual state transitions
-   - Core behavior (powerUpdate/fluidUpdate logic)
-   - Descriptor properties (baseBlockId, displayName, allRegistrableIds count)
+   - Core behavior (powerUpdate/fluidUpdate/transportUpdate logic)
+   - Descriptor properties (baseBlockId, displayName)
    - Edge cases (full storage, no adjacent blocks, wrong fluid type, etc.)
 
 ### Step 8: Generate Placeholder Textures
@@ -200,9 +209,11 @@ Name textures following the convention: `{block_id}_{face}.png`, `{block_id}_{fa
 
 Before finishing, verify:
 - [ ] Block class created with correct descriptor
-- [ ] All variant IDs listed in `allRegistrableIds`
+- [ ] `additionalBlockIds` includes all variant IDs beyond the base
+- [ ] Uses `ADJACENT_FACES` constant (not hardcoded face lists) when iterating faces
+- [ ] Fluid transfers use remove-first-then-store pattern
 - [ ] CraftEngine configuration YAML created with all variants
-- [ ] Recipe added in the configuration file
+- [ ] Recipe added in the configuration file (with unique ingredients)
 - [ ] Descriptor registered in Atlas.kt
 - [ ] Dialog cases added
 - [ ] TestHelper updated with new descriptor
