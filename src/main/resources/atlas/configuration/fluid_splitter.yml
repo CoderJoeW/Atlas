@@ -1,0 +1,247 @@
+items:
+  atlas:fluid_splitter:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Splitter"
+    model: minecraft:block/custom/fluid_splitter
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 2.0
+          resistance: 2.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        states:
+          properties:
+            facing:
+              type: direction
+              default: north
+            fluid:
+              type: string
+              values: [none, water, lava]
+              default: none
+          appearances:
+            north:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_front
+                    south: minecraft:block/custom/fluid_splitter_back
+                    east: minecraft:block/custom/fluid_splitter_side
+                    west: minecraft:block/custom/fluid_splitter_side
+                    up: minecraft:block/custom/fluid_splitter_top
+                    down: minecraft:block/custom/fluid_splitter_bottom
+            south:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter
+                y: 180
+            east:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter
+                y: 90
+            west:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter
+                y: 270
+            up:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_up
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_side
+                    south: minecraft:block/custom/fluid_splitter_side
+                    east: minecraft:block/custom/fluid_splitter_side
+                    west: minecraft:block/custom/fluid_splitter_side
+                    up: minecraft:block/custom/fluid_splitter_back
+                    down: minecraft:block/custom/fluid_splitter_front
+            down:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_down
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_side
+                    south: minecraft:block/custom/fluid_splitter_side
+                    east: minecraft:block/custom/fluid_splitter_side
+                    west: minecraft:block/custom/fluid_splitter_side
+                    up: minecraft:block/custom/fluid_splitter_front
+                    down: minecraft:block/custom/fluid_splitter_back
+            north_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_water
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_front_water
+                    south: minecraft:block/custom/fluid_splitter_back_water
+                    east: minecraft:block/custom/fluid_splitter_side_water
+                    west: minecraft:block/custom/fluid_splitter_side_water
+                    up: minecraft:block/custom/fluid_splitter_top_water
+                    down: minecraft:block/custom/fluid_splitter_bottom_water
+            south_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_water
+                y: 180
+            east_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_water
+                y: 90
+            west_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_water
+                y: 270
+            up_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_up_water
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_side_water
+                    south: minecraft:block/custom/fluid_splitter_side_water
+                    east: minecraft:block/custom/fluid_splitter_side_water
+                    west: minecraft:block/custom/fluid_splitter_side_water
+                    up: minecraft:block/custom/fluid_splitter_back_water
+                    down: minecraft:block/custom/fluid_splitter_front_water
+            down_water:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_down_water
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_side_water
+                    south: minecraft:block/custom/fluid_splitter_side_water
+                    east: minecraft:block/custom/fluid_splitter_side_water
+                    west: minecraft:block/custom/fluid_splitter_side_water
+                    up: minecraft:block/custom/fluid_splitter_front_water
+                    down: minecraft:block/custom/fluid_splitter_back_water
+            north_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_lava
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_front_lava
+                    south: minecraft:block/custom/fluid_splitter_back_lava
+                    east: minecraft:block/custom/fluid_splitter_side_lava
+                    west: minecraft:block/custom/fluid_splitter_side_lava
+                    up: minecraft:block/custom/fluid_splitter_top_lava
+                    down: minecraft:block/custom/fluid_splitter_bottom_lava
+            south_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_lava
+                y: 180
+            east_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_lava
+                y: 90
+            west_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_lava
+                y: 270
+            up_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_up_lava
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_side_lava
+                    south: minecraft:block/custom/fluid_splitter_side_lava
+                    east: minecraft:block/custom/fluid_splitter_side_lava
+                    west: minecraft:block/custom/fluid_splitter_side_lava
+                    up: minecraft:block/custom/fluid_splitter_back_lava
+                    down: minecraft:block/custom/fluid_splitter_front_lava
+            down_lava:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_splitter_down_lava
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_splitter_side_lava
+                    south: minecraft:block/custom/fluid_splitter_side_lava
+                    east: minecraft:block/custom/fluid_splitter_side_lava
+                    west: minecraft:block/custom/fluid_splitter_side_lava
+                    up: minecraft:block/custom/fluid_splitter_front_lava
+                    down: minecraft:block/custom/fluid_splitter_back_lava
+          variants:
+            facing=north,fluid=none:
+              appearance: north
+            facing=south,fluid=none:
+              appearance: south
+            facing=east,fluid=none:
+              appearance: east
+            facing=west,fluid=none:
+              appearance: west
+            facing=up,fluid=none:
+              appearance: up
+            facing=down,fluid=none:
+              appearance: down
+            facing=north,fluid=water:
+              appearance: north_water
+            facing=south,fluid=water:
+              appearance: south_water
+            facing=east,fluid=water:
+              appearance: east_water
+            facing=west,fluid=water:
+              appearance: west_water
+            facing=up,fluid=water:
+              appearance: up_water
+            facing=down,fluid=water:
+              appearance: down_water
+            facing=north,fluid=lava:
+              appearance: north_lava
+            facing=south,fluid=lava:
+              appearance: south_lava
+            facing=east,fluid=lava:
+              appearance: east_lava
+            facing=west,fluid=lava:
+              appearance: west_lava
+            facing=up,fluid=lava:
+              appearance: up_lava
+            facing=down,fluid=lava:
+              appearance: down_lava
+
+recipes:
+  atlas:fluid_splitter:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+    result:
+      id: atlas:fluid_splitter
+      count: 1

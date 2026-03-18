@@ -30,8 +30,9 @@ class FluidBlockInitializerTest {
         // FluidPipe: 1 (base only)
         // FluidContainer: 1 (base only)
         // FluidMerger: 1 (base only)
-        // Total: 6
-        assertEquals(6, ids.size)
+        // FluidSplitter: 1 (base only)
+        // Total: 7
+        assertEquals(7, ids.size)
     }
 
     @Test

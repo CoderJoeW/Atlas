@@ -9,6 +9,7 @@ import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.fluid.block.FluidSplitter
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
@@ -212,6 +213,7 @@ object TestHelper {
                 FluidPipe.descriptor,
                 FluidContainer.descriptor,
                 FluidMerger.descriptor,
+                FluidSplitter.descriptor,
             ),
         )
     }

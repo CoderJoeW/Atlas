@@ -7,6 +7,7 @@ import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.fluid.block.FluidSplitter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -49,6 +50,7 @@ object FluidBlockDialog {
             is FluidPipe -> "Fluid Pipe (${fluidBlock.facing.displayName()})"
             is FluidContainer -> "Fluid Container (${fluidBlock.facing.displayName()})"
             is FluidMerger -> "Fluid Merger (${fluidBlock.facing.displayName()})"
+            is FluidSplitter -> "Fluid Splitter (${fluidBlock.facing.displayName()})"
             else -> "Fluid Block"
         }
 
@@ -94,6 +96,9 @@ object FluidBlockDialog {
                         .color(NamedTextColor.GRAY)
                 is FluidMerger ->
                     Component.text("Merger - merges fluid from all sides, outputs in facing direction")
+                        .color(NamedTextColor.GRAY)
+                is FluidSplitter ->
+                    Component.text("Splitter - distributes fluid to all adjacent faces")
                         .color(NamedTextColor.GRAY)
                 else ->
                     Component.text("Fluid block")
