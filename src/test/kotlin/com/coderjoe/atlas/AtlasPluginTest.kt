@@ -38,9 +38,9 @@ class AtlasPluginTest {
     }
 
     @Test
-    fun `fluid system initializes with 6 block types`() {
+    fun `fluid system initializes with 7 block types`() {
         TestHelper.initFluidFactory()
-        assertEquals(6, FluidBlockFactory.getRegisteredBlockIds().size)
+        assertEquals(7, FluidBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.fluid.block.FluidSplitter
 import com.coderjoe.atlas.guide.GuideBook
 import com.coderjoe.atlas.guide.GuideBookListener
 import com.coderjoe.atlas.power.PowerBlock
@@ -218,6 +219,7 @@ class Atlas : JavaPlugin() {
             FluidPipe.descriptor,
             FluidContainer.descriptor,
             FluidMerger.descriptor,
+            FluidSplitter.descriptor,
         ).associateBy { it.baseBlockId }
     }
 }
