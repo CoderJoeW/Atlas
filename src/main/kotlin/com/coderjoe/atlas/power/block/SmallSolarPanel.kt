@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
@@ -41,13 +42,13 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 1)
             val generated = addPower(1)
             if (generated > 0) {
                 plugin.logger.atlasInfo(
-                    "SmallSolarPanel at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "SmallSolarPanel at ${location.coordinates} " +
                         "generated $generated power (now $currentPower/$maxStorage)",
                 )
             }
         } else {
             plugin.logger.atlasInfo(
-                "SmallSolarPanel at ${location.blockX},${location.blockY},${location.blockZ} " +
+                "SmallSolarPanel at ${location.coordinates} " +
                     "is not generating power because it is not daytime.",
             )
         }

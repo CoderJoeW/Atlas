@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
@@ -39,7 +40,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
             if (pulled > 0) {
                 addPower(pulled)
                 plugin.logger.atlasInfo(
-                    "PowerSplitter at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "PowerSplitter at ${location.coordinates} " +
                         "pulled $pulled power (now $currentPower/$maxStorage)",
                 )
             }
@@ -56,7 +57,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
                     if (pushed > 0) {
                         target.addPower(pushed)
                         plugin.logger.atlasInfo(
-                            "PowerSplitter at ${location.blockX},${location.blockY},${location.blockZ} " +
+                            "PowerSplitter at ${location.coordinates} " +
                                 "pushed $pushed power to ${target::class.simpleName} at ${face.name}",
                         )
                     }

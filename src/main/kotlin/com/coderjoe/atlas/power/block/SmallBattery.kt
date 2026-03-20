@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
@@ -60,7 +61,7 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
             if (pulled > 0) {
                 addPower(pulled)
                 plugin.logger.atlasInfo(
-                    "SmallBattery at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "SmallBattery at ${location.coordinates} " +
                         "pulled $pulled power from ${source::class.simpleName} (now $currentPower/$maxStorage)",
                 )
             }

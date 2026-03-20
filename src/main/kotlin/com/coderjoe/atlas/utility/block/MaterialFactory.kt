@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.utility.block
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
@@ -19,6 +20,13 @@ abstract class MaterialFactory(
 
     protected abstract val powerCost: Int
     protected abstract val outputMaterial: Material
+    protected abstract val activeBlockId: String
+
+    override fun getVisualStateBlockId(): String =
+        when {
+            currentPower >= powerCost -> activeBlockId
+            else -> baseBlockId
+        }
 
     override fun powerUpdate() {
         pullPowerFromNeighbors()
@@ -51,7 +59,7 @@ abstract class MaterialFactory(
         world.dropItem(dropLocation, ItemStack(outputMaterial))
 
         plugin.logger.atlasInfo(
-            "${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} " +
+            "${this::class.simpleName} at ${location.coordinates} " +
                 "produced 1 ${outputMaterial.name.lowercase()}",
         )
     }

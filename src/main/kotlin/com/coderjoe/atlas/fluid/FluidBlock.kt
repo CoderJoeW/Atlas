@@ -13,7 +13,7 @@ abstract class FluidBlock(
     open fun hasFluid(): Boolean = storedFluid != FluidType.NONE
 
     protected fun updateFluidState() {
-        CraftEngineHelper.setStringProperty(location, "fluid", storedFluid.propertyName)
+        CraftEngineHelper.setStringProperty(location, "fluid", storedFluid.name.lowercase())
     }
 
     open fun canProvideFluid(requestDirection: BlockFace): Boolean = hasFluid()

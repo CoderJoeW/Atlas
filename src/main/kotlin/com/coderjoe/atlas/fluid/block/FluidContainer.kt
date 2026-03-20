@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.fluid.block
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
@@ -91,7 +92,7 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
             val fluid = source.removeFluid()
             if (storeFluid(fluid)) {
                 plugin.logger.atlasInfo(
-                    "FluidContainer at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "FluidContainer at ${location.coordinates} " +
                         "pulled ${fluid.name} from ${source::class.simpleName}",
                 )
             } else {

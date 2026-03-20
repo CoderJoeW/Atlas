@@ -23,12 +23,7 @@ class ObsidianFactory(location: Location) : MaterialFactory(location, maxStorage
     }
 
     override val baseBlockId: String = BLOCK_ID
+    override val activeBlockId: String = BLOCK_ID_ACTIVE
     override val powerCost: Int = POWER_COST
     override val outputMaterial: Material = Material.OBSIDIAN
-
-    override fun getVisualStateBlockId(): String =
-        when {
-            currentPower >= POWER_COST -> BLOCK_ID_ACTIVE
-            else -> BLOCK_ID
-        }
 }

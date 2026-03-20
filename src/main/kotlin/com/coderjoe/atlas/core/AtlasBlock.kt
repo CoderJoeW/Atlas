@@ -2,6 +2,7 @@ package com.coderjoe.atlas.core
 
 import com.coderjoe.atlas.Atlas
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks
 import net.momirealms.craftengine.core.util.Key
 import org.bukkit.Location
@@ -52,7 +53,7 @@ abstract class AtlasBlock(
                 currentVisualState = newState
             } catch (e: Throwable) {
                 plugin.logger.warning(
-                    "Failed to update visual state at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}",
+                    "Failed to update visual state at ${location.coordinates}: ${e.message}",
                 )
             } finally {
                 registry.updatingLocations.remove(key)
@@ -88,7 +89,7 @@ abstract class AtlasBlock(
                     } catch (e: Exception) {
                         plugin.logger.warning(
                             """
-                            Error in block tick at ${location.blockX},${location.blockY},${location.blockZ}: ${e.message}
+                            Error in block tick at ${location.coordinates}: ${e.message}
                             """.trimIndent(),
                         )
                     }
@@ -96,12 +97,12 @@ abstract class AtlasBlock(
                 updateIntervalTicks, updateIntervalTicks,
             )
 
-        plugin.logger.atlasInfo("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} started")
+        plugin.logger.atlasInfo("${this::class.simpleName} at ${location.coordinates} started")
     }
 
     fun stop() {
         updateTask?.cancel()
         updateTask = null
-        plugin.logger.atlasInfo("${this::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ} stopped")
+        plugin.logger.atlasInfo("${this::class.simpleName} at ${location.coordinates} stopped")
     }
 }

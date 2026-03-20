@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.core
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.plugin.java.JavaPlugin
@@ -13,7 +14,7 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
 
     companion object {
         fun locationKey(location: Location): String {
-            return "${location.world?.name}:${location.blockX},${location.blockY},${location.blockZ}"
+            return "${location.world?.name}:${location.coordinates}"
         }
     }
 
@@ -27,7 +28,7 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
         block.start()
         plugin.logger.atlasInfo(
             """
-            Registered ${block::class.simpleName} at ${block.location.blockX},${block.location.blockY},${block.location.blockZ}
+            Registered ${block::class.simpleName} at ${block.location.coordinates}
             """.trimIndent(),
         )
     }
@@ -38,7 +39,7 @@ open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
         blockIds.remove(key)
         block?.stop()
         if (block != null) {
-            plugin.logger.atlasInfo("Unregistered ${block::class.simpleName} at ${location.blockX},${location.blockY},${location.blockZ}")
+            plugin.logger.atlasInfo("Unregistered ${block::class.simpleName} at ${location.coordinates}")
         }
         return block
     }
