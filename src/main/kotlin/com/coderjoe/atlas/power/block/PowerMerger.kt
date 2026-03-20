@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
@@ -32,9 +33,7 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 
-        val inputFaces =
-            listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)
-                .filter { it != facing }
+        val inputFaces = ADJACENT_FACES.filter { it != facing }
 
         for (face in inputFaces) {
             if (currentPower >= maxStorage) break
@@ -44,7 +43,7 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
                 if (pulled > 0) {
                     addPower(pulled)
                     plugin.logger.atlasInfo(
-                        "PowerMerger at ${location.blockX},${location.blockY},${location.blockZ} " +
+                        "PowerMerger at ${location.coordinates} " +
                             "pulled $pulled power from ${source::class.simpleName} at ${face.name} " +
                             "(now $currentPower/$maxStorage)",
                     )
