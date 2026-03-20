@@ -46,9 +46,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
         }
 
         if (hasPower()) {
-            val outputFaces =
-                listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)
-                    .filter { it != facing.oppositeFace }
+            val outputFaces = ADJACENT_FACES.filter { it != facing.oppositeFace }
 
             for (face in outputFaces) {
                 if (!hasPower()) break

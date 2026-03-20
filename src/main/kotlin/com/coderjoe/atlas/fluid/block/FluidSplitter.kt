@@ -2,11 +2,9 @@ package com.coderjoe.atlas.fluid.block
 
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
-import com.coderjoe.atlas.fluid.FluidType
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
@@ -29,16 +27,6 @@ class FluidSplitter(location: Location, override val facing: BlockFace) : FluidB
     override val baseBlockId: String = BLOCK_ID
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
-
-    private fun updateFluidState() {
-        val fluidValue =
-            when (storedFluid) {
-                FluidType.WATER -> "water"
-                FluidType.LAVA -> "lava"
-                FluidType.NONE -> "none"
-            }
-        CraftEngineHelper.setStringProperty(location, "fluid", fluidValue)
-    }
 
     override fun fluidUpdate() {
         val registry = FluidBlockRegistry.instance ?: return
