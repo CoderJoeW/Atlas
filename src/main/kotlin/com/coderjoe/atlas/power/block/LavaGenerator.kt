@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
@@ -53,7 +54,7 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) 
             if (lava) {
                 val generated = addPower(POWER_PER_LAVA)
                 plugin.logger.atlasInfo(
-                    "LavaGenerator at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "LavaGenerator at ${location.coordinates} " +
                         "consumed 1 lava, generated $generated power (now $currentPower/$maxStorage)",
                 )
             }

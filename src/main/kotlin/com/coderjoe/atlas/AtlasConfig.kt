@@ -1,5 +1,6 @@
 package com.coderjoe.atlas
 
+import org.bukkit.Location
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
 
@@ -18,3 +19,6 @@ fun Logger.atlasInfo(message: String) {
         info(message)
     }
 }
+
+val Location.coordinates: String
+    get() = "$blockX,$blockY,$blockZ"

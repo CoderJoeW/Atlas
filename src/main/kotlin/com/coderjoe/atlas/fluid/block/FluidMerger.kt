@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.fluid.block
 
 import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
@@ -45,7 +46,7 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
                 val fluid = source.removeFluid()
                 storeFluid(fluid)
                 plugin.logger.atlasInfo(
-                    "FluidMerger at ${location.blockX},${location.blockY},${location.blockZ} " +
+                    "FluidMerger at ${location.coordinates} " +
                         "pulled ${fluid.name} from ${source::class.simpleName} at ${face.name}",
                 )
                 updateFluidState()
