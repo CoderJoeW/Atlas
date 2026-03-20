@@ -2,6 +2,7 @@ package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.core.CraftEngineHelper
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
@@ -10,6 +11,10 @@ abstract class FluidBlock(
     var storedFluid: FluidType = FluidType.NONE,
 ) : AtlasBlock(location) {
     open fun hasFluid(): Boolean = storedFluid != FluidType.NONE
+
+    protected fun updateFluidState() {
+        CraftEngineHelper.setStringProperty(location, "fluid", storedFluid.propertyName)
+    }
 
     open fun canProvideFluid(requestDirection: BlockFace): Boolean = hasFluid()
 

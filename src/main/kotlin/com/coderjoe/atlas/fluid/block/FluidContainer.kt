@@ -69,13 +69,7 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
     private fun updateProperties() {
-        val fluidValue =
-            when (storedFluid) {
-                FluidType.WATER -> "water"
-                FluidType.LAVA -> "lava"
-                FluidType.NONE -> "none"
-            }
-        CraftEngineHelper.setStringProperty(location, "fluid", fluidValue)
+        updateFluidState()
         CraftEngineHelper.setIntProperty(location, "fill_level", getFillLevel())
     }
 
