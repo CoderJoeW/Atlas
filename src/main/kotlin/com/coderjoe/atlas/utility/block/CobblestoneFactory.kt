@@ -23,12 +23,7 @@ class CobblestoneFactory(location: Location) : MaterialFactory(location, maxStor
     }
 
     override val baseBlockId: String = BLOCK_ID
+    override val activeBlockId: String = BLOCK_ID_ACTIVE
     override val powerCost: Int = POWER_COST
     override val outputMaterial: Material = Material.COBBLESTONE
-
-    override fun getVisualStateBlockId(): String =
-        when {
-            currentPower >= POWER_COST -> BLOCK_ID_ACTIVE
-            else -> BLOCK_ID
-        }
 }
