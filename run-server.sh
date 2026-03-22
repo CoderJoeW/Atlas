@@ -20,9 +20,6 @@ fi
 # Copy the plugin to the server
 cp target/Atlas-*.jar "$SERVER_DIR/plugins/"
 
-# Copy the plugin to the server
-cp target/Atlas-Experimental-*.jar "$SERVER_DIR/plugins/"
-
 # Copy CraftEngine pack (configuration + textures)
 echo "Setting up CraftEngine pack..."
 rm -rf "$SERVER_DIR/plugins/CraftEngine/resources/atlas"
