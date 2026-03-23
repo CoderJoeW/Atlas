@@ -5,11 +5,11 @@ import com.coderjoe.atlas.core.PlacementType
 import org.bukkit.Location
 import org.bukkit.Material
 
-class ObsidianFactory(location: Location) : MaterialFactory(location, maxStorage = 100) {
+class ObsidianFactory(location: Location) : MaterialFactory(location, maxStorage = 50) {
     companion object {
         const val BLOCK_ID = "atlas:obsidian_factory"
         const val BLOCK_ID_ACTIVE = "atlas:obsidian_factory_active"
-        const val POWER_COST = 100
+        const val POWER_COST = 25
 
         val descriptor =
             BlockDescriptor(
