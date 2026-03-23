@@ -40,8 +40,9 @@ class PowerBlockInitializerTest {
         // Crusher: 1
         // PowerMerger: 1
         // SoftTouchDrill: 1
-        // Total: 19
-        assertEquals(19, ids.size)
+        // ExperienceExtractor: 2 (base + active)
+        // Total: 21
+        assertEquals(21, ids.size)
     }
 
     @Test

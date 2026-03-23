@@ -37,6 +37,7 @@ import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
+import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.SoftTouchDrill
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
@@ -214,6 +215,7 @@ class Atlas : JavaPlugin() {
             Crusher.descriptor,
             PowerMerger.descriptor,
             SoftTouchDrill.descriptor,
+            ExperienceExtractor.descriptor,
         ).associateBy { it.baseBlockId }
     }
 

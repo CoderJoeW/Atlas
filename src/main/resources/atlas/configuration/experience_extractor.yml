@@ -1,0 +1,213 @@
+items:
+  atlas:experience_extractor:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#39FF14:#7CFC00>Experience Extractor"
+    model: minecraft:block/custom/experience_extractor
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        states:
+          properties:
+            facing:
+              type: horizontal_direction
+              default: north
+            powered:
+              type: boolean
+              default: false
+          appearances:
+            north:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/experience_extractor
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/experience_extractor_front
+                    south: minecraft:block/custom/experience_extractor_back
+                    east: minecraft:block/custom/experience_extractor_side
+                    west: minecraft:block/custom/experience_extractor_side
+                    up: minecraft:block/custom/experience_extractor_top_north
+                    down: minecraft:block/custom/experience_extractor_housing
+            south:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/experience_extractor_south
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/experience_extractor_back
+                    south: minecraft:block/custom/experience_extractor_front
+                    east: minecraft:block/custom/experience_extractor_side
+                    west: minecraft:block/custom/experience_extractor_side
+                    up: minecraft:block/custom/experience_extractor_top_south
+                    down: minecraft:block/custom/experience_extractor_housing
+            east:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/experience_extractor_east
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/experience_extractor_side
+                    south: minecraft:block/custom/experience_extractor_side
+                    east: minecraft:block/custom/experience_extractor_front
+                    west: minecraft:block/custom/experience_extractor_back
+                    up: minecraft:block/custom/experience_extractor_top_east
+                    down: minecraft:block/custom/experience_extractor_housing
+            west:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/experience_extractor_west
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/experience_extractor_side
+                    south: minecraft:block/custom/experience_extractor_side
+                    east: minecraft:block/custom/experience_extractor_back
+                    west: minecraft:block/custom/experience_extractor_front
+                    up: minecraft:block/custom/experience_extractor_top_west
+                    down: minecraft:block/custom/experience_extractor_housing
+            north_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/experience_extractor_powered
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/experience_extractor_front_active
+                    south: minecraft:block/custom/experience_extractor_back
+                    east: minecraft:block/custom/experience_extractor_side
+                    west: minecraft:block/custom/experience_extractor_side
+                    up: minecraft:block/custom/experience_extractor_top_active
+                    down: minecraft:block/custom/experience_extractor_housing
+            south_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/experience_extractor_south_powered
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/experience_extractor_back
+                    south: minecraft:block/custom/experience_extractor_front_active
+                    east: minecraft:block/custom/experience_extractor_side
+                    west: minecraft:block/custom/experience_extractor_side
+                    up: minecraft:block/custom/experience_extractor_top_active
+                    down: minecraft:block/custom/experience_extractor_housing
+            east_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/experience_extractor_east_powered
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/experience_extractor_side
+                    south: minecraft:block/custom/experience_extractor_side
+                    east: minecraft:block/custom/experience_extractor_front_active
+                    west: minecraft:block/custom/experience_extractor_back
+                    up: minecraft:block/custom/experience_extractor_top_active
+                    down: minecraft:block/custom/experience_extractor_housing
+            west_powered:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/experience_extractor_west_powered
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/experience_extractor_side
+                    south: minecraft:block/custom/experience_extractor_side
+                    east: minecraft:block/custom/experience_extractor_back
+                    west: minecraft:block/custom/experience_extractor_front_active
+                    up: minecraft:block/custom/experience_extractor_top_active
+                    down: minecraft:block/custom/experience_extractor_housing
+          variants:
+            facing=north,powered=false:
+              appearance: north
+            facing=south,powered=false:
+              appearance: south
+            facing=east,powered=false:
+              appearance: east
+            facing=west,powered=false:
+              appearance: west
+            facing=north,powered=true:
+              appearance: north_powered
+            facing=south,powered=true:
+              appearance: south_powered
+            facing=east,powered=true:
+              appearance: east_powered
+            facing=west,powered=true:
+              appearance: west_powered
+
+  atlas:experience_extractor_active:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#39FF14:#7CFC00>Experience Extractor"
+    model: minecraft:block/custom/experience_extractor_powered
+    behavior:
+      type: block_item
+      block:
+        loot:
+          pools:
+            - rolls: 1
+              entries:
+                - type: item
+                  item: atlas:experience_extractor
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        state:
+          auto-state: solid
+          model:
+            path: minecraft:block/custom/experience_extractor_powered
+            generation:
+              parent: minecraft:block/cube
+              textures:
+                north: minecraft:block/custom/experience_extractor_front_active
+                south: minecraft:block/custom/experience_extractor_back
+                east: minecraft:block/custom/experience_extractor_side
+                west: minecraft:block/custom/experience_extractor_side
+                up: minecraft:block/custom/experience_extractor_top_active
+                down: minecraft:block/custom/experience_extractor_housing
+
+recipes:
+  atlas:experience_extractor:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:glass_bottle
+      - minecraft:glass_bottle
+      - minecraft:blaze_powder
+      - minecraft:blaze_powder
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:redstone
+      - minecraft:diamond
+    result:
+      id: atlas:experience_extractor
+      count: 1
