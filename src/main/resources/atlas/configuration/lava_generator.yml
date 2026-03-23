@@ -85,6 +85,7 @@ recipes:
       - minecraft:redstone
       - minecraft:redstone
       - minecraft:magma_block
+      - minecraft:blaze_rod
     result:
       id: atlas:lava_generator
       count: 1
