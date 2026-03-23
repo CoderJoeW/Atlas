@@ -29,7 +29,7 @@ items:
               default: north
             fluid:
               type: string
-              values: [none, water, lava]
+              values: [none, water, lava, experience]
               default: none
             fill_level:
               type: int
@@ -37,7 +37,7 @@ items:
               default: 0
           appearances:
             north:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container
                 generation:
@@ -50,22 +50,22 @@ items:
                     up: minecraft:block/custom/fluid_container_top
                     down: minecraft:block/custom/fluid_container_top
             south:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container
                 y: 180
             east:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container
                 y: 90
             west:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container
                 y: 270
             up:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_up
                 generation:
@@ -78,7 +78,7 @@ items:
                     up: minecraft:block/custom/fluid_container_front
                     down: minecraft:block/custom/fluid_container_back
             down:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_down
                 generation:
@@ -91,7 +91,7 @@ items:
                     up: minecraft:block/custom/fluid_container_back
                     down: minecraft:block/custom/fluid_container_front
             north_water_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_low
                 generation:
@@ -104,22 +104,22 @@ items:
                     up: minecraft:block/custom/fluid_container_top
                     down: minecraft:block/custom/fluid_container_top
             south_water_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_low
                 y: 180
             east_water_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_low
                 y: 90
             west_water_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_low
                 y: 270
             up_water_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_up_water_low
                 generation:
@@ -132,7 +132,7 @@ items:
                     up: minecraft:block/custom/fluid_container_front_water_low
                     down: minecraft:block/custom/fluid_container_back_water_low
             down_water_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_down_water_low
                 generation:
@@ -145,7 +145,7 @@ items:
                     up: minecraft:block/custom/fluid_container_back_water_low
                     down: minecraft:block/custom/fluid_container_front_water_low
             north_water_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_medium
                 generation:
@@ -158,22 +158,22 @@ items:
                     up: minecraft:block/custom/fluid_container_top
                     down: minecraft:block/custom/fluid_container_top
             south_water_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_medium
                 y: 180
             east_water_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_medium
                 y: 90
             west_water_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_medium
                 y: 270
             up_water_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_up_water_medium
                 generation:
@@ -186,7 +186,7 @@ items:
                     up: minecraft:block/custom/fluid_container_front_water_medium
                     down: minecraft:block/custom/fluid_container_back_water_medium
             down_water_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_down_water_medium
                 generation:
@@ -199,7 +199,7 @@ items:
                     up: minecraft:block/custom/fluid_container_back_water_medium
                     down: minecraft:block/custom/fluid_container_front_water_medium
             north_water_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_full
                 generation:
@@ -212,22 +212,22 @@ items:
                     up: minecraft:block/custom/fluid_container_top
                     down: minecraft:block/custom/fluid_container_top
             south_water_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_full
                 y: 180
             east_water_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_full
                 y: 90
             west_water_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_water_full
                 y: 270
             up_water_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_up_water_full
                 generation:
@@ -240,7 +240,7 @@ items:
                     up: minecraft:block/custom/fluid_container_front_water_full
                     down: minecraft:block/custom/fluid_container_back_water_full
             down_water_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_down_water_full
                 generation:
@@ -253,7 +253,7 @@ items:
                     up: minecraft:block/custom/fluid_container_back_water_full
                     down: minecraft:block/custom/fluid_container_front_water_full
             north_lava_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_low
                 generation:
@@ -266,22 +266,22 @@ items:
                     up: minecraft:block/custom/fluid_container_top
                     down: minecraft:block/custom/fluid_container_top
             south_lava_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_low
                 y: 180
             east_lava_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_low
                 y: 90
             west_lava_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_low
                 y: 270
             up_lava_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_up_lava_low
                 generation:
@@ -294,7 +294,7 @@ items:
                     up: minecraft:block/custom/fluid_container_front_lava_low
                     down: minecraft:block/custom/fluid_container_back_lava_low
             down_lava_low:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_down_lava_low
                 generation:
@@ -307,7 +307,7 @@ items:
                     up: minecraft:block/custom/fluid_container_back_lava_low
                     down: minecraft:block/custom/fluid_container_front_lava_low
             north_lava_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_medium
                 generation:
@@ -320,22 +320,22 @@ items:
                     up: minecraft:block/custom/fluid_container_top
                     down: minecraft:block/custom/fluid_container_top
             south_lava_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_medium
                 y: 180
             east_lava_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_medium
                 y: 90
             west_lava_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_medium
                 y: 270
             up_lava_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_up_lava_medium
                 generation:
@@ -348,7 +348,7 @@ items:
                     up: minecraft:block/custom/fluid_container_front_lava_medium
                     down: minecraft:block/custom/fluid_container_back_lava_medium
             down_lava_medium:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_down_lava_medium
                 generation:
@@ -361,7 +361,7 @@ items:
                     up: minecraft:block/custom/fluid_container_back_lava_medium
                     down: minecraft:block/custom/fluid_container_front_lava_medium
             north_lava_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_full
                 generation:
@@ -374,22 +374,22 @@ items:
                     up: minecraft:block/custom/fluid_container_top
                     down: minecraft:block/custom/fluid_container_top
             south_lava_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_full
                 y: 180
             east_lava_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_full
                 y: 90
             west_lava_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_lava_full
                 y: 270
             up_lava_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_up_lava_full
                 generation:
@@ -402,7 +402,7 @@ items:
                     up: minecraft:block/custom/fluid_container_front_lava_full
                     down: minecraft:block/custom/fluid_container_back_lava_full
             down_lava_full:
-              auto-state: non_tintable_leaves
+              auto-state: solid
               model:
                 path: minecraft:block/custom/fluid_container_down_lava_full
                 generation:
@@ -414,6 +414,168 @@ items:
                     west: minecraft:block/custom/fluid_container_side_lava_full
                     up: minecraft:block/custom/fluid_container_back_lava_full
                     down: minecraft:block/custom/fluid_container_front_lava_full
+            north_xp_low:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_low
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_front_xp_low
+                    south: minecraft:block/custom/fluid_container_back_xp_low
+                    east: minecraft:block/custom/fluid_container_side_xp_low
+                    west: minecraft:block/custom/fluid_container_side_xp_low
+                    up: minecraft:block/custom/fluid_container_top
+                    down: minecraft:block/custom/fluid_container_top
+            south_xp_low:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_low
+                y: 180
+            east_xp_low:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_low
+                y: 90
+            west_xp_low:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_low
+                y: 270
+            up_xp_low:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_up_xp_low
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_side_xp_low
+                    south: minecraft:block/custom/fluid_container_side_xp_low
+                    east: minecraft:block/custom/fluid_container_side_xp_low
+                    west: minecraft:block/custom/fluid_container_side_xp_low
+                    up: minecraft:block/custom/fluid_container_front_xp_low
+                    down: minecraft:block/custom/fluid_container_back_xp_low
+            down_xp_low:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_down_xp_low
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_side_xp_low
+                    south: minecraft:block/custom/fluid_container_side_xp_low
+                    east: minecraft:block/custom/fluid_container_side_xp_low
+                    west: minecraft:block/custom/fluid_container_side_xp_low
+                    up: minecraft:block/custom/fluid_container_back_xp_low
+                    down: minecraft:block/custom/fluid_container_front_xp_low
+            north_xp_medium:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_medium
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_front_xp_medium
+                    south: minecraft:block/custom/fluid_container_back_xp_medium
+                    east: minecraft:block/custom/fluid_container_side_xp_medium
+                    west: minecraft:block/custom/fluid_container_side_xp_medium
+                    up: minecraft:block/custom/fluid_container_top
+                    down: minecraft:block/custom/fluid_container_top
+            south_xp_medium:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_medium
+                y: 180
+            east_xp_medium:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_medium
+                y: 90
+            west_xp_medium:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_medium
+                y: 270
+            up_xp_medium:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_up_xp_medium
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_side_xp_medium
+                    south: minecraft:block/custom/fluid_container_side_xp_medium
+                    east: minecraft:block/custom/fluid_container_side_xp_medium
+                    west: minecraft:block/custom/fluid_container_side_xp_medium
+                    up: minecraft:block/custom/fluid_container_front_xp_medium
+                    down: minecraft:block/custom/fluid_container_back_xp_medium
+            down_xp_medium:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_down_xp_medium
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_side_xp_medium
+                    south: minecraft:block/custom/fluid_container_side_xp_medium
+                    east: minecraft:block/custom/fluid_container_side_xp_medium
+                    west: minecraft:block/custom/fluid_container_side_xp_medium
+                    up: minecraft:block/custom/fluid_container_back_xp_medium
+                    down: minecraft:block/custom/fluid_container_front_xp_medium
+            north_xp_full:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_full
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_front_xp_full
+                    south: minecraft:block/custom/fluid_container_back_xp_full
+                    east: minecraft:block/custom/fluid_container_side_xp_full
+                    west: minecraft:block/custom/fluid_container_side_xp_full
+                    up: minecraft:block/custom/fluid_container_top
+                    down: minecraft:block/custom/fluid_container_top
+            south_xp_full:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_full
+                y: 180
+            east_xp_full:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_full
+                y: 90
+            west_xp_full:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_xp_full
+                y: 270
+            up_xp_full:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_up_xp_full
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_side_xp_full
+                    south: minecraft:block/custom/fluid_container_side_xp_full
+                    east: minecraft:block/custom/fluid_container_side_xp_full
+                    west: minecraft:block/custom/fluid_container_side_xp_full
+                    up: minecraft:block/custom/fluid_container_front_xp_full
+                    down: minecraft:block/custom/fluid_container_back_xp_full
+            down_xp_full:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_container_down_xp_full
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_container_side_xp_full
+                    south: minecraft:block/custom/fluid_container_side_xp_full
+                    east: minecraft:block/custom/fluid_container_side_xp_full
+                    west: minecraft:block/custom/fluid_container_side_xp_full
+                    up: minecraft:block/custom/fluid_container_back_xp_full
+                    down: minecraft:block/custom/fluid_container_front_xp_full
           variants:
             facing=north,fluid=none,fill_level=0:
               appearance: north
@@ -559,6 +721,54 @@ items:
               appearance: up_lava_full
             facing=down,fluid=lava,fill_level=3:
               appearance: down_lava_full
+            facing=north,fluid=experience,fill_level=0:
+              appearance: north
+            facing=south,fluid=experience,fill_level=0:
+              appearance: south
+            facing=east,fluid=experience,fill_level=0:
+              appearance: east
+            facing=west,fluid=experience,fill_level=0:
+              appearance: west
+            facing=up,fluid=experience,fill_level=0:
+              appearance: up
+            facing=down,fluid=experience,fill_level=0:
+              appearance: down
+            facing=north,fluid=experience,fill_level=1:
+              appearance: north_xp_low
+            facing=south,fluid=experience,fill_level=1:
+              appearance: south_xp_low
+            facing=east,fluid=experience,fill_level=1:
+              appearance: east_xp_low
+            facing=west,fluid=experience,fill_level=1:
+              appearance: west_xp_low
+            facing=up,fluid=experience,fill_level=1:
+              appearance: up_xp_low
+            facing=down,fluid=experience,fill_level=1:
+              appearance: down_xp_low
+            facing=north,fluid=experience,fill_level=2:
+              appearance: north_xp_medium
+            facing=south,fluid=experience,fill_level=2:
+              appearance: south_xp_medium
+            facing=east,fluid=experience,fill_level=2:
+              appearance: east_xp_medium
+            facing=west,fluid=experience,fill_level=2:
+              appearance: west_xp_medium
+            facing=up,fluid=experience,fill_level=2:
+              appearance: up_xp_medium
+            facing=down,fluid=experience,fill_level=2:
+              appearance: down_xp_medium
+            facing=north,fluid=experience,fill_level=3:
+              appearance: north_xp_full
+            facing=south,fluid=experience,fill_level=3:
+              appearance: south_xp_full
+            facing=east,fluid=experience,fill_level=3:
+              appearance: east_xp_full
+            facing=west,fluid=experience,fill_level=3:
+              appearance: west_xp_full
+            facing=up,fluid=experience,fill_level=3:
+              appearance: up_xp_full
+            facing=down,fluid=experience,fill_level=3:
+              appearance: down_xp_full
 
 recipes:
   atlas:fluid_container:
