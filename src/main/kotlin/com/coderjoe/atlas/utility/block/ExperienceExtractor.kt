@@ -143,11 +143,12 @@ class ExperienceExtractor(
             if (storedXp >= MAX_XP_BUFFER) break
             if (currentPower < POWER_PER_EXTRACT) break
 
-            val adjacentBlock = world.getBlockAt(
-                location.blockX + face.modX,
-                location.blockY + face.modY,
-                location.blockZ + face.modZ,
-            )
+            val adjacentBlock =
+                world.getBlockAt(
+                    location.blockX + face.modX,
+                    location.blockY + face.modY,
+                    location.blockZ + face.modZ,
+                )
 
             val hopper = adjacentBlock.state as? Hopper ?: continue
             val inventory = hopper.inventory

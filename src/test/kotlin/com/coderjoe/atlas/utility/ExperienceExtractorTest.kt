@@ -12,7 +12,6 @@ import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace

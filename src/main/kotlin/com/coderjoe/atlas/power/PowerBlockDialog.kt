@@ -12,9 +12,9 @@ import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
+import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
-import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.SoftTouchDrill
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
