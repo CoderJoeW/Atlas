@@ -98,10 +98,10 @@ class AutoSmelterTest {
     }
 
     @Test
-    fun `max storage is 2`() {
+    fun `max storage is 4`() {
         val smelter =
             AutoSmelter(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(2, smelter.maxStorage)
+        assertEquals(4, smelter.maxStorage)
     }
 
     @Test
@@ -265,7 +265,7 @@ class AutoSmelterTest {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         val smelterLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val smelter = AutoSmelter(smelterLoc, BlockFace.NORTH)
-        smelter.currentPower = 2
+        smelter.currentPower = 4
         TestHelper.addToRegistry(
             registry,
             smelter,
@@ -293,7 +293,7 @@ class AutoSmelterTest {
 
         smelter.callPowerUpdate()
 
-        assertEquals(2, smelter.currentPower)
+        assertEquals(4, smelter.currentPower)
         assertEquals(5, battery.currentPower)
     }
 }

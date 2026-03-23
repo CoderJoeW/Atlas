@@ -27,9 +27,9 @@ class LavaGeneratorTest {
     }
 
     @Test
-    fun `lava generator maxStorage is 50`() {
+    fun `lava generator maxStorage is 20`() {
         val gen = LavaGenerator(TestHelper.createLocation())
-        assertEquals(50, gen.maxStorage)
+        assertEquals(20, gen.maxStorage)
     }
 
     @Test

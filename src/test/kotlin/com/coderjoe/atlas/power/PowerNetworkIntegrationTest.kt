@@ -45,12 +45,12 @@ class PowerNetworkIntegrationTest {
 
         // Solar generates
         solar.callPowerUpdate()
-        assertEquals(1, solar.currentPower)
+        assertEquals(2, solar.currentPower)
 
-        // Cable pulls from solar
+        // Cable pulls from solar (cable maxStorage=1, so pulls 1)
         cable.callPowerUpdate()
         assertEquals(1, cable.currentPower)
-        assertEquals(0, solar.currentPower)
+        assertEquals(1, solar.currentPower)
     }
 
     @Test
@@ -67,9 +67,9 @@ class PowerNetworkIntegrationTest {
 
         // Tick 1: solar generates
         solar.callPowerUpdate()
-        assertEquals(1, solar.currentPower)
+        assertEquals(2, solar.currentPower)
 
-        // Tick 1: cable1 pulls from solar
+        // Tick 1: cable1 pulls from solar (cable maxStorage=1)
         cable1.callPowerUpdate()
         assertEquals(1, cable1.currentPower)
 

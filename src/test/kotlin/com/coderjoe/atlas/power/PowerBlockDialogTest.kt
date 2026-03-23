@@ -62,7 +62,7 @@ class PowerBlockDialogTest {
     @Test
     fun `power bar color green when ratio above 0_7`() {
         val battery = SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        battery.currentPower = 8 // 80% = green
+        battery.currentPower = 40 // 80% = green
         val info = buildPowerInfo(battery)
         val text = flattenText(info)
         assertTrue(text.contains("80%"))
@@ -71,7 +71,7 @@ class PowerBlockDialogTest {
     @Test
     fun `power bar color yellow when ratio above 0_3`() {
         val battery = SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        battery.currentPower = 5 // 50% = yellow
+        battery.currentPower = 25 // 50% = yellow
         val info = buildPowerInfo(battery)
         val text = flattenText(info)
         assertTrue(text.contains("50%"))
@@ -80,7 +80,7 @@ class PowerBlockDialogTest {
     @Test
     fun `power bar color red when ratio below 0_3`() {
         val battery = SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        battery.currentPower = 1 // 10% = red
+        battery.currentPower = 5 // 10% = red
         val info = buildPowerInfo(battery)
         val text = flattenText(info)
         assertTrue(text.contains("10%"))

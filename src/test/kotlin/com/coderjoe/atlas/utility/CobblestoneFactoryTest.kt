@@ -27,9 +27,9 @@ class CobblestoneFactoryTest {
     }
 
     @Test
-    fun `cobblestone generator maxStorage is 2`() {
+    fun `cobblestone generator maxStorage is 4`() {
         val gen = CobblestoneFactory(TestHelper.createLocation())
-        assertEquals(2, gen.maxStorage)
+        assertEquals(4, gen.maxStorage)
     }
 
     @Test
