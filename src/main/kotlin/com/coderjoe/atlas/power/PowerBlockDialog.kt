@@ -11,8 +11,10 @@ import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
+import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
+import com.coderjoe.atlas.utility.block.SoftTouchDrill
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
 import io.papermc.paper.registry.data.dialog.DialogBase
@@ -74,7 +76,7 @@ object PowerBlockDialog {
         drill: SmallDrill,
         onClose: (Player) -> Unit,
     ) {
-        val title = Component.text("Small Drill")
+        val title = Component.text(getBlockDisplayName(drill))
         val bodyText = buildPowerInfo(drill)
         val body = DialogBody.plainMessage(bodyText)
 
@@ -124,6 +126,7 @@ object PowerBlockDialog {
         when (powerBlock) {
             is SmallSolarPanel -> "Small Solar Panel"
             is SmallBattery -> "Small Battery"
+            is SoftTouchDrill -> "Soft Touch Drill"
             is SmallDrill -> "Small Drill"
             is PowerCable -> "Power Cable (${powerBlock.facing.displayName()})"
             is LavaGenerator -> "Lava Generator"
@@ -131,6 +134,7 @@ object PowerBlockDialog {
             is PowerSplitter -> "Power Splitter (${powerBlock.facing.displayName()})"
             is CobblestoneFactory -> "Cobblestone Factory"
             is ObsidianFactory -> "Obsidian Factory"
+            is Crusher -> "Crusher (${powerBlock.facing.displayName()})"
             is PowerMerger -> "Power Merger (${powerBlock.facing.displayName()})"
             else -> "Power Block"
         }
@@ -175,6 +179,12 @@ object PowerBlockDialog {
                 is SmallBattery ->
                     Component.text("Storage - holds up to 10 power")
                         .color(NamedTextColor.GRAY)
+                is SoftTouchDrill -> {
+                    val directionName = powerBlock.miningDirection.displayName()
+                    val status = if (powerBlock.enabled) "ON" else "OFF"
+                    Component.text("Machine - mining $directionName, $status, consumes 50 power/s (silk touch)")
+                        .color(NamedTextColor.GRAY)
+                }
                 is SmallDrill -> {
                     val directionName = powerBlock.miningDirection.displayName()
                     val status = if (powerBlock.enabled) "ON" else "OFF"
@@ -198,6 +208,9 @@ object PowerBlockDialog {
                         .color(NamedTextColor.GRAY)
                 is ObsidianFactory ->
                     Component.text("Machine - consumes ${ObsidianFactory.POWER_COST} power + water + lava → obsidian")
+                        .color(NamedTextColor.GRAY)
+                is Crusher ->
+                    Component.text("Machine - crushes ore blocks into 2x ores, consumes ${Crusher.POWER_PER_CRUSH} power/item")
                         .color(NamedTextColor.GRAY)
                 is PowerMerger ->
                     Component.text("Cable - merges power from all sides, outputs in facing direction")

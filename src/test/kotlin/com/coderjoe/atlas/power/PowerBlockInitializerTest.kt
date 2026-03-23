@@ -37,9 +37,11 @@ class PowerBlockInitializerTest {
         // PowerSplitter: 1
         // CobblestoneFactory: 2 (base + active)
         // ObsidianFactory: 2 (base + active)
+        // Crusher: 1
         // PowerMerger: 1
-        // Total: 17
-        assertEquals(17, ids.size)
+        // SoftTouchDrill: 1
+        // Total: 19
+        assertEquals(19, ids.size)
     }
 
     @Test

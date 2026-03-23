@@ -34,8 +34,10 @@ import com.coderjoe.atlas.transport.TransportBlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
+import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
+import com.coderjoe.atlas.utility.block.SoftTouchDrill
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
@@ -209,7 +211,9 @@ class Atlas : JavaPlugin() {
             PowerSplitter.descriptor,
             CobblestoneFactory.descriptor,
             ObsidianFactory.descriptor,
+            Crusher.descriptor,
             PowerMerger.descriptor,
+            SoftTouchDrill.descriptor,
         ).associateBy { it.baseBlockId }
     }
 
