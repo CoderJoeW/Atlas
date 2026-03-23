@@ -24,24 +24,25 @@ class Crusher(location: Location, facing: BlockFace = BlockFace.NORTH) : PowerBl
         private const val MOVE_DISTANCE = 1.0
         private const val DROP_AMOUNT = 2
 
-        val ORE_TO_DROP: Map<Material, Material> = mapOf(
-            Material.IRON_ORE to Material.RAW_IRON,
-            Material.GOLD_ORE to Material.RAW_GOLD,
-            Material.COPPER_ORE to Material.RAW_COPPER,
-            Material.COAL_ORE to Material.COAL,
-            Material.DIAMOND_ORE to Material.DIAMOND,
-            Material.EMERALD_ORE to Material.EMERALD,
-            Material.LAPIS_ORE to Material.LAPIS_LAZULI,
-            Material.REDSTONE_ORE to Material.REDSTONE,
-            Material.DEEPSLATE_IRON_ORE to Material.RAW_IRON,
-            Material.DEEPSLATE_GOLD_ORE to Material.RAW_GOLD,
-            Material.DEEPSLATE_COPPER_ORE to Material.RAW_COPPER,
-            Material.DEEPSLATE_COAL_ORE to Material.COAL,
-            Material.DEEPSLATE_DIAMOND_ORE to Material.DIAMOND,
-            Material.DEEPSLATE_EMERALD_ORE to Material.EMERALD,
-            Material.DEEPSLATE_LAPIS_ORE to Material.LAPIS_LAZULI,
-            Material.DEEPSLATE_REDSTONE_ORE to Material.REDSTONE,
-        )
+        val ORE_TO_DROP: Map<Material, Material> =
+            mapOf(
+                Material.IRON_ORE to Material.RAW_IRON,
+                Material.GOLD_ORE to Material.RAW_GOLD,
+                Material.COPPER_ORE to Material.RAW_COPPER,
+                Material.COAL_ORE to Material.COAL,
+                Material.DIAMOND_ORE to Material.DIAMOND,
+                Material.EMERALD_ORE to Material.EMERALD,
+                Material.LAPIS_ORE to Material.LAPIS_LAZULI,
+                Material.REDSTONE_ORE to Material.REDSTONE,
+                Material.DEEPSLATE_IRON_ORE to Material.RAW_IRON,
+                Material.DEEPSLATE_GOLD_ORE to Material.RAW_GOLD,
+                Material.DEEPSLATE_COPPER_ORE to Material.RAW_COPPER,
+                Material.DEEPSLATE_COAL_ORE to Material.COAL,
+                Material.DEEPSLATE_DIAMOND_ORE to Material.DIAMOND,
+                Material.DEEPSLATE_EMERALD_ORE to Material.EMERALD,
+                Material.DEEPSLATE_LAPIS_ORE to Material.LAPIS_LAZULI,
+                Material.DEEPSLATE_REDSTONE_ORE to Material.REDSTONE,
+            )
 
         val descriptor =
             BlockDescriptor(
