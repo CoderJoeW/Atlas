@@ -85,6 +85,7 @@ recipes:
       - minecraft:redstone
       - minecraft:redstone
       - minecraft:obsidian
+      - minecraft:diamond
     result:
       id: atlas:obsidian_factory
       count: 1

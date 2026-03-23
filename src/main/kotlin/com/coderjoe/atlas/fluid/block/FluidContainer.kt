@@ -19,7 +19,7 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
 
     companion object {
         const val BLOCK_ID = "atlas:fluid_container"
-        const val MAX_CAPACITY = 10
+        const val MAX_CAPACITY = 20
 
         val descriptor =
             BlockDescriptor(
@@ -62,8 +62,8 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
     fun getFillLevel(): Int =
         when (storedAmount) {
             0 -> 0
-            in 1..3 -> 1
-            in 4..7 -> 2
+            in 1..6 -> 1
+            in 7..13 -> 2
             else -> 3
         }
 

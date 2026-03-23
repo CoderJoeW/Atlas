@@ -11,7 +11,7 @@ import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 50) {
+class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20) {
     override val canReceivePower: Boolean = false
     override val updateIntervalTicks: Long = 20L
 

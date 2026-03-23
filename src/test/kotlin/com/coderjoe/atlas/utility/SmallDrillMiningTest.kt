@@ -7,10 +7,12 @@ import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.utility.block.SmallDrill
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.inventory.ItemStack
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -38,19 +40,30 @@ class SmallDrillMiningTest {
     ): Block {
         val block = mockk<Block>(relaxed = true)
         every { block.type } returns material
-        every { block.getDrops() } returns emptyList()
+        every { block.getDrops(any<ItemStack>()) } returns emptyList()
         every { TestHelper.mockWorld.getBlockAt(x, y, z) } returns block
         return block
+    }
+
+    private fun createDrill(
+        x: Double,
+        y: Double,
+        z: Double,
+        facing: BlockFace,
+    ): SmallDrill {
+        val drill = spyk(SmallDrill(TestHelper.createLocation(x, y, z), facing))
+        every { drill.getBlockDrops(any()) } returns emptyList()
+        return drill
     }
 
     @Test
     fun `drill disabled does not mine or pull power`() {
         val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.DOWN)
         drill.enabled = false
-        drill.currentPower = 10
+        drill.currentPower = 8
 
         drill.callPowerUpdate()
-        assertEquals(10, drill.currentPower) // power unchanged
+        assertEquals(8, drill.currentPower) // power unchanged
     }
 
     @Test
@@ -58,7 +71,7 @@ class SmallDrillMiningTest {
         val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.DOWN)
         drill.currentPower = 5
 
-        // Set up a stone block below — should not be mined since power < 10
+        // Set up a stone block below — should not be mined since power < 8
         mockBlockAt(0, 63, 0, Material.STONE)
 
         drill.callPowerUpdate()
@@ -67,8 +80,8 @@ class SmallDrillMiningTest {
 
     @Test
     fun `drill with full power mines first non-air block below`() {
-        val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.DOWN)
-        drill.currentPower = 10
+        val drill = createDrill(0.0, 64.0, 0.0, BlockFace.DOWN)
+        drill.currentPower = 8
 
         // Air at y=63, stone at y=62
         mockBlockAt(0, 63, 0, Material.AIR)
@@ -81,8 +94,8 @@ class SmallDrillMiningTest {
 
     @Test
     fun `drill skips air variants when scanning downward`() {
-        val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.DOWN)
-        drill.currentPower = 10
+        val drill = createDrill(0.0, 64.0, 0.0, BlockFace.DOWN)
+        drill.currentPower = 8
 
         mockBlockAt(0, 63, 0, Material.AIR)
         mockBlockAt(0, 62, 0, Material.CAVE_AIR)
@@ -97,18 +110,18 @@ class SmallDrillMiningTest {
     @Test
     fun `drill stops at bedrock without mining`() {
         val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.DOWN)
-        drill.currentPower = 10
+        drill.currentPower = 8
 
         mockBlockAt(0, 63, 0, Material.BEDROCK)
 
         drill.callPowerUpdate()
-        assertEquals(10, drill.currentPower) // no power consumed
+        assertEquals(8, drill.currentPower) // no power consumed
     }
 
     @Test
     fun `drill mines horizontally facing NORTH`() {
-        val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
-        drill.currentPower = 10
+        val drill = createDrill(0.0, 64.0, 0.0, BlockFace.NORTH)
+        drill.currentPower = 8
 
         // NORTH = z-1
         mockBlockAt(0, 64, -1, Material.AIR)
@@ -122,7 +135,7 @@ class SmallDrillMiningTest {
     @Test
     fun `drill respects 64-block horizontal range limit`() {
         val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.EAST)
-        drill.currentPower = 10
+        drill.currentPower = 8
 
         // All blocks in range are AIR
         for (i in 1..64) {
@@ -131,7 +144,7 @@ class SmallDrillMiningTest {
 
         drill.callPowerUpdate()
         // No block to mine, power unchanged
-        assertEquals(10, drill.currentPower)
+        assertEquals(8, drill.currentPower)
     }
 
     @Test
@@ -161,8 +174,8 @@ class SmallDrillMiningTest {
 
     @Test
     fun `drill mines horizontally facing SOUTH`() {
-        val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
-        drill.currentPower = 10
+        val drill = createDrill(0.0, 64.0, 0.0, BlockFace.SOUTH)
+        drill.currentPower = 8
 
         // SOUTH = z+1
         mockBlockAt(0, 64, 1, Material.AIR)
@@ -175,8 +188,8 @@ class SmallDrillMiningTest {
 
     @Test
     fun `drill mines horizontally facing EAST`() {
-        val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.EAST)
-        drill.currentPower = 10
+        val drill = createDrill(0.0, 64.0, 0.0, BlockFace.EAST)
+        drill.currentPower = 8
 
         // EAST = x+1
         val stoneBlock = mockBlockAt(1, 64, 0, Material.STONE)
@@ -188,8 +201,8 @@ class SmallDrillMiningTest {
 
     @Test
     fun `drill mines horizontally facing WEST`() {
-        val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.WEST)
-        drill.currentPower = 10
+        val drill = createDrill(0.0, 64.0, 0.0, BlockFace.WEST)
+        drill.currentPower = 8
 
         // WEST = x-1
         val stoneBlock = mockBlockAt(-1, 64, 0, Material.STONE)
@@ -202,18 +215,18 @@ class SmallDrillMiningTest {
     @Test
     fun `drill stops at bedrock in horizontal mining`() {
         val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
-        drill.currentPower = 10
+        drill.currentPower = 8
 
         mockBlockAt(0, 64, -1, Material.BEDROCK)
 
         drill.callPowerUpdate()
-        assertEquals(10, drill.currentPower) // no power consumed
+        assertEquals(8, drill.currentPower) // no power consumed
     }
 
     @Test
     fun `drill all-air column to minHeight does not mine`() {
         val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.DOWN)
-        drill.currentPower = 10
+        drill.currentPower = 8
 
         // All air from y=63 down to minHeight=-64
         for (y in 63 downTo -64) {
@@ -221,14 +234,13 @@ class SmallDrillMiningTest {
         }
 
         drill.callPowerUpdate()
-        assertEquals(10, drill.currentPower)
+        assertEquals(8, drill.currentPower)
     }
 
     @Test
     fun `drill stops pulling power when full mid-loop`() {
-        val drillLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val drill = SmallDrill(drillLoc, BlockFace.DOWN)
-        drill.currentPower = 9 // needs 1 more to be full
+        val drill = createDrill(0.0, 64.0, 0.0, BlockFace.DOWN)
+        drill.currentPower = 15 // needs 1 more to be full
 
         val source1 = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
         source1.currentPower = 1
@@ -243,11 +255,22 @@ class SmallDrillMiningTest {
         val stoneBlock = mockBlockAt(0, 63, 0, Material.STONE)
 
         drill.callPowerUpdate()
-        // Drill pulls 1 power (to reach 10), then mines (uses 10, back to 0)
-        assertEquals(0, drill.currentPower)
+        // Drill pulls 1 power (to reach 16), then mines (uses 8, left with 8)
+        assertEquals(8, drill.currentPower)
         // One source should still have its power
         val totalRemaining = source1.currentPower + source2.currentPower
         assertEquals(1, totalRemaining)
+    }
+
+    @Test
+    fun `drill calls getBlockDrops when mining`() {
+        val drill = createDrill(0.0, 64.0, 0.0, BlockFace.DOWN)
+        drill.currentPower = 8
+
+        val stoneBlock = mockBlockAt(0, 63, 0, Material.STONE)
+
+        drill.callPowerUpdate()
+        verify { drill.getBlockDrops(stoneBlock) }
     }
 
     @Test
@@ -255,13 +278,13 @@ class SmallDrillMiningTest {
         // Document known bug: UP falls into horizontal branch where modX=0, modZ=0
         // This means it checks the same position (drill's own x,y,z) 64 times
         val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.UP)
-        drill.currentPower = 10
+        drill.currentPower = 8
 
         // Since modX and modZ are both 0 for UP, getBlockAt will get (0, 64, 0) repeatedly
         val selfBlock = mockBlockAt(0, 64, 0, Material.AIR)
 
         drill.callPowerUpdate()
-        // No mining happens, power stays at 10
-        assertEquals(10, drill.currentPower)
+        // No mining happens, power stays at 8
+        assertEquals(8, drill.currentPower)
     }
 }

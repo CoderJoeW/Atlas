@@ -153,10 +153,10 @@ class FluidContainerTest {
     }
 
     @Test
-    fun `fill level 1 at 1 to 3`() {
+    fun `fill level 1 at 1 to 6`() {
         val container =
             FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        for (i in 1..3) {
+        for (i in 1..6) {
             container.storeFluid(FluidType.WATER)
             assertEquals(
                 1,
@@ -167,22 +167,22 @@ class FluidContainerTest {
     }
 
     @Test
-    fun `fill level 2 at 4 to 7`() {
+    fun `fill level 2 at 7 to 13`() {
         val container =
             FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        repeat(4) { container.storeFluid(FluidType.WATER) }
+        repeat(7) { container.storeFluid(FluidType.WATER) }
         assertEquals(2, container.getFillLevel())
-        repeat(3) { container.storeFluid(FluidType.WATER) }
+        repeat(6) { container.storeFluid(FluidType.WATER) }
         assertEquals(2, container.getFillLevel())
     }
 
     @Test
-    fun `fill level 3 at 8 to 10`() {
+    fun `fill level 3 at 14 to 20`() {
         val container =
             FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        repeat(8) { container.storeFluid(FluidType.WATER) }
+        repeat(14) { container.storeFluid(FluidType.WATER) }
         assertEquals(3, container.getFillLevel())
-        repeat(2) { container.storeFluid(FluidType.WATER) }
+        repeat(6) { container.storeFluid(FluidType.WATER) }
         assertEquals(3, container.getFillLevel())
     }
 

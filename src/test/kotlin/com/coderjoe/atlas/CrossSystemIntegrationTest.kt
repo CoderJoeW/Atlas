@@ -133,7 +133,7 @@ class CrossSystemIntegrationTest {
 
         // Step 1: solar generates
         solar.callPowerUpdate()
-        assertEquals(1, solar.currentPower)
+        assertEquals(2, solar.currentPower)
 
         // Step 2: cable pulls from solar
         cable.callPowerUpdate()

@@ -6,13 +6,15 @@ import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
+import org.bukkit.inventory.ItemStack
 
-class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(location, maxStorage = 10) {
+open class SmallDrill(location: Location, facing: BlockFace? = null, maxStorage: Int = 16) : PowerBlock(location, maxStorage) {
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
 
     var miningDirection: BlockFace = if (facing == null || facing == BlockFace.SELF) BlockFace.DOWN else facing
     var enabled: Boolean = true
+    internal open val powerCost: Int = 8
 
     companion object {
         const val BLOCK_ID = "atlas:small_drill"
@@ -22,7 +24,7 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Small Drill",
-                description = "Machine - consumes 10 power/s",
+                description = "Machine - consumes 8 power/s",
                 placementType = PlacementType.DIRECTIONAL_OPPOSITE,
                 constructor = { loc, facing -> SmallDrill(loc, facing) },
             )
@@ -42,7 +44,7 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
 
         pullPowerFromNeighbors()
 
-        if (currentPower < 10) return
+        if (currentPower < powerCost) return
 
         val world = location.world ?: return
 
@@ -83,10 +85,15 @@ class SmallDrill(location: Location, facing: BlockFace? = null) : PowerBlock(loc
         }
     }
 
+    internal open fun getBlockDrops(block: org.bukkit.block.Block): Collection<ItemStack> {
+        val tool = ItemStack(Material.DIAMOND_PICKAXE)
+        return block.getDrops(tool)
+    }
+
     private fun mineBlock(block: org.bukkit.block.Block) {
         val world = location.world ?: return
-        removePower(10)
-        val drops = block.getDrops()
+        removePower(powerCost)
+        val drops = getBlockDrops(block)
         block.setType(Material.AIR, false)
 
         val dropLocation = location.clone().add(0.5, 1.0, 0.5)

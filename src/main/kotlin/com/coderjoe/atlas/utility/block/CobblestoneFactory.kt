@@ -5,7 +5,7 @@ import com.coderjoe.atlas.core.PlacementType
 import org.bukkit.Location
 import org.bukkit.Material
 
-class CobblestoneFactory(location: Location) : MaterialFactory(location, maxStorage = 2) {
+class CobblestoneFactory(location: Location) : MaterialFactory(location, maxStorage = 4) {
     companion object {
         const val BLOCK_ID = "atlas:cobblestone_factory"
         const val BLOCK_ID_ACTIVE = "atlas:cobblestone_factory_active"

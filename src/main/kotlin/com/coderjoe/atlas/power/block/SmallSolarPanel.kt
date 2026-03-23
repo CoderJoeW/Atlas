@@ -7,9 +7,9 @@ import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Location
 
-class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 1) {
+class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4) {
     override val canReceivePower: Boolean = false
-    override val updateIntervalTicks: Long = 1200L
+    override val updateIntervalTicks: Long = 200L
 
     companion object {
         const val BLOCK_ID = "atlas:small_solar_panel"
@@ -19,7 +19,7 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 1)
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Small Solar Panel",
-                description = "Generator - produces 1 power/min during daytime",
+                description = "Generator - produces 2 power/10s during daytime",
                 placementType = PlacementType.SIMPLE,
                 additionalBlockIds = listOf(BLOCK_ID_FULL),
                 constructor = { loc, _ -> SmallSolarPanel(loc) },
@@ -39,7 +39,7 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 1)
         val isDaytime = world.time in 0..12000
 
         if (isDaytime) {
-            val generated = addPower(1)
+            val generated = addPower(2)
             if (generated > 0) {
                 plugin.logger.atlasInfo(
                     "SmallSolarPanel at ${location.coordinates} " +

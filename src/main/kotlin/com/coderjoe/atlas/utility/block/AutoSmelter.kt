@@ -10,7 +10,7 @@ import org.bukkit.entity.Item
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.ItemStack
 
-class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : PowerBlock(location, maxStorage = 2) {
+class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : PowerBlock(location, maxStorage = 4) {
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
     override val baseBlockId: String = BLOCK_ID

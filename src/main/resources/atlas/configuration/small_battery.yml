@@ -163,6 +163,8 @@ recipes:
       - minecraft:redstone
       - minecraft:redstone
       - minecraft:copper_ingot
+      - minecraft:copper_ingot
+      - minecraft:copper_ingot
     result:
       id: atlas:small_battery
       count: 1

@@ -26,7 +26,7 @@ class PowerBlockLogicTest {
         TestHelper.teardown()
     }
 
-    // --- PowerBlock base class (via SmallBattery, maxStorage=10) ---
+    // --- PowerBlock base class (via SmallBattery, maxStorage=50) ---
 
     @Test
     fun `addPower on empty block returns amount added`() {
@@ -41,19 +41,19 @@ class PowerBlockLogicTest {
     fun `addPower caps at maxStorage`() {
         val block =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        val added = block.addPower(15)
-        assertEquals(10, added)
-        assertEquals(10, block.currentPower)
+        val added = block.addPower(55)
+        assertEquals(50, added)
+        assertEquals(50, block.currentPower)
     }
 
     @Test
     fun `addPower with partial space returns space available`() {
         val block =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        block.currentPower = 8
+        block.currentPower = 48
         val added = block.addPower(3)
         assertEquals(2, added)
-        assertEquals(10, block.currentPower)
+        assertEquals(50, block.currentPower)
     }
 
     @Test
@@ -111,7 +111,7 @@ class PowerBlockLogicTest {
     fun `canAcceptPower returns false when full`() {
         val block =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        block.currentPower = 10
+        block.currentPower = 50
         assertFalse(block.canAcceptPower())
     }
 
@@ -130,9 +130,9 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `solar panel maxStorage is 1`() {
+    fun `solar panel maxStorage is 4`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
-        assertEquals(1, panel.maxStorage)
+        assertEquals(4, panel.maxStorage)
     }
 
     @Test
@@ -159,7 +159,7 @@ class PowerBlockLogicTest {
         every { TestHelper.mockWorld.time } returns 6000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
         panel.callPowerUpdate()
-        assertEquals(1, panel.currentPower)
+        assertEquals(2, panel.currentPower)
     }
 
     @Test
@@ -174,18 +174,18 @@ class PowerBlockLogicTest {
     fun `solar panel does not overflow past maxStorage`() {
         every { TestHelper.mockWorld.time } returns 6000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
-        panel.currentPower = 1
+        panel.currentPower = 4
         panel.callPowerUpdate()
-        assertEquals(1, panel.currentPower)
+        assertEquals(4, panel.currentPower)
     }
 
     // --- SmallBattery specifics ---
 
     @Test
-    fun `battery maxStorage is 10`() {
+    fun `battery maxStorage is 50`() {
         val battery =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(10, battery.maxStorage)
+        assertEquals(50, battery.maxStorage)
     }
 
     @Test
@@ -206,10 +206,10 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `battery visual state low when power 1-3`() {
+    fun `battery visual state low when power 1-16`() {
         val battery =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        for (p in 1..3) {
+        for (p in 1..16) {
             battery.currentPower = p
             assertEquals(
                 "atlas:small_battery_low",
@@ -220,10 +220,10 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `battery visual state medium when power 4-7`() {
+    fun `battery visual state medium when power 17-33`() {
         val battery =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        for (p in 4..7) {
+        for (p in 17..33) {
             battery.currentPower = p
             assertEquals(
                 "atlas:small_battery_medium",
@@ -234,10 +234,10 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `battery visual state full when power 8-10`() {
+    fun `battery visual state full when power 34-50`() {
         val battery =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        for (p in 8..10) {
+        for (p in 34..50) {
             battery.currentPower = p
             assertEquals(
                 "atlas:small_battery_full",
@@ -363,9 +363,9 @@ class PowerBlockLogicTest {
     // --- SmallDrill specifics ---
 
     @Test
-    fun `drill maxStorage is 10`() {
+    fun `drill maxStorage is 16`() {
         val drill = SmallDrill(TestHelper.createLocation())
-        assertEquals(10, drill.maxStorage)
+        assertEquals(16, drill.maxStorage)
     }
 
     @Test
@@ -420,7 +420,7 @@ class PowerBlockLogicTest {
         every { TestHelper.mockWorld.time } returns 0L
         val panel = SmallSolarPanel(TestHelper.createLocation())
         panel.callPowerUpdate()
-        assertEquals(1, panel.currentPower)
+        assertEquals(2, panel.currentPower)
     }
 
     @Test
@@ -428,7 +428,7 @@ class PowerBlockLogicTest {
         every { TestHelper.mockWorld.time } returns 12000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
         panel.callPowerUpdate()
-        assertEquals(1, panel.currentPower)
+        assertEquals(2, panel.currentPower)
     }
 
     @Test

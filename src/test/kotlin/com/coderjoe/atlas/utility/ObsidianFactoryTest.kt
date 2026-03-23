@@ -27,9 +27,9 @@ class ObsidianFactoryTest {
     }
 
     @Test
-    fun `obsidian generator maxStorage is 100`() {
+    fun `obsidian generator maxStorage is 50`() {
         val gen = ObsidianFactory(TestHelper.createLocation())
-        assertEquals(100, gen.maxStorage)
+        assertEquals(50, gen.maxStorage)
     }
 
     @Test
@@ -41,7 +41,7 @@ class ObsidianFactoryTest {
     @Test
     fun `visual state idle when insufficient power`() {
         val gen = ObsidianFactory(TestHelper.createLocation())
-        gen.currentPower = 99
+        gen.currentPower = 24
         assertEquals(
             "atlas:obsidian_factory",
             gen.getVisualStateBlockId(),
@@ -51,7 +51,7 @@ class ObsidianFactoryTest {
     @Test
     fun `visual state active when power at cost`() {
         val gen = ObsidianFactory(TestHelper.createLocation())
-        gen.currentPower = 100
+        gen.currentPower = 25
         assertEquals(
             "atlas:obsidian_factory_active",
             gen.getVisualStateBlockId(),
@@ -65,7 +65,7 @@ class ObsidianFactoryTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
-        gen.currentPower = 100
+        gen.currentPower = 25
         TestHelper.addToRegistry(
             powerRegistry,
             gen,
@@ -83,7 +83,7 @@ class ObsidianFactoryTest {
 
         gen.callPowerUpdate()
 
-        assertEquals(100, gen.currentPower)
+        assertEquals(25, gen.currentPower)
         assertTrue(pipe.hasFluid())
     }
 
@@ -123,7 +123,7 @@ class ObsidianFactoryTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
-        gen.currentPower = 99
+        gen.currentPower = 24
         TestHelper.addToRegistry(
             powerRegistry,
             gen,
@@ -152,7 +152,7 @@ class ObsidianFactoryTest {
 
         gen.callPowerUpdate()
 
-        assertEquals(99, gen.currentPower)
+        assertEquals(24, gen.currentPower)
         assertTrue(waterPipe.hasFluid())
         assertTrue(lavaPipe.hasFluid())
     }
@@ -164,7 +164,7 @@ class ObsidianFactoryTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
-        gen.currentPower = 100
+        gen.currentPower = 25
         TestHelper.addToRegistry(
             powerRegistry,
             gen,
