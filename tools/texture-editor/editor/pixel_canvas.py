@@ -1,5 +1,5 @@
 from PIL import Image as PILImage
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QApplication, QWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPainter, QColor, QImage, QMouseEvent, QWheelEvent, QPen
 
@@ -20,6 +20,9 @@ class PixelCanvas(QWidget):
         self._ref_bytes = None
         self._panning = False
         self._last_pan_pos = None
+        self._ref_dragging = False
+        self._ref_drag_start = None
+        self._ref_drag_origin = None
         self._zoom = 0.0  # 0 = fit-to-widget, >0 = manual zoom level (pixels per cell)
         self._pan_x = 0.0  # pan offset in widget pixels
         self._pan_y = 0.0
@@ -111,14 +114,25 @@ class PixelCanvas(QWidget):
         painter.end()
         self._cached_image = qimg
 
-        # Reference image cache
+        # Reference image cache — preserve aspect ratio, apply scale
         if self.model.reference_image is not None:
             ref = self.model.reference_image
-            scaled_ref = ref.resize((canvas_w, canvas_h), PILImage.Resampling.BILINEAR)
+            scale = self.model.reference_scale
+            # Fit reference into canvas while preserving aspect ratio
+            aspect = ref.width / max(ref.height, 1)
+            if aspect >= 1.0:
+                # Wider than tall — fit width to canvas
+                ref_w = max(1, int(canvas_w * scale))
+                ref_h = max(1, int(ref_w / aspect))
+            else:
+                # Taller than wide — fit height to canvas
+                ref_h = max(1, int(canvas_h * scale))
+                ref_w = max(1, int(ref_h * aspect))
+            scaled_ref = ref.resize((ref_w, ref_h), PILImage.Resampling.BILINEAR)
             ref_raw = scaled_ref.tobytes("raw", "BGRA")
             self._ref_bytes = ref_raw
             self._cached_reference = QImage(
-                ref_raw, canvas_w, canvas_h, QImage.Format.Format_ARGB32,
+                ref_raw, ref_w, ref_h, QImage.Format.Format_ARGB32,
             )
         else:
             self._cached_reference = None
@@ -142,11 +156,25 @@ class PixelCanvas(QWidget):
         ox, oy = self._canvas_origin()
         painter.drawImage(int(ox), int(oy), self._cached_image)
 
-        # Reference image overlay
+        # Reference image overlay (with offset and scale)
         if self._cached_reference is not None:
+            cell = max(1, int(self._cell_size()))
+            ref_x = int(ox + self.model.reference_offset_x * cell)
+            ref_y = int(oy + self.model.reference_offset_y * cell)
             painter.setOpacity(self.model.reference_opacity)
-            painter.drawImage(int(ox), int(oy), self._cached_reference)
+            painter.drawImage(ref_x, ref_y, self._cached_reference)
             painter.setOpacity(1.0)
+            # Show border when Alt is held or while dragging reference
+            mods = QApplication.keyboardModifiers()
+            if self._ref_dragging or mods & Qt.KeyboardModifier.AltModifier:
+                pen = QPen(QColor(0, 200, 255, 160))
+                pen.setWidth(2)
+                pen.setStyle(Qt.PenStyle.DashLine)
+                painter.setPen(pen)
+                painter.setBrush(Qt.BrushStyle.NoBrush)
+                rw = self._cached_reference.width()
+                rh = self._cached_reference.height()
+                painter.drawRect(ref_x, ref_y, rw, rh)
 
         # UV region overlay — dim areas outside, cyan border around mapped region
         uv_rect = self.model.get_active_face_uv_pixels()
@@ -215,6 +243,20 @@ class PixelCanvas(QWidget):
                 self.model.color_changed.emit()
             return
 
+        # Alt+left-click: drag reference image (from any tool)
+        if (event.button() == Qt.MouseButton.LeftButton
+                and event.modifiers() & Qt.KeyboardModifier.AltModifier
+                and self.model.reference_image is not None):
+            self._ref_dragging = True
+            x, y = self._pixel_at(pos)
+            self._ref_drag_start = (x, y)
+            self._ref_drag_origin = (
+                self.model.reference_offset_x,
+                self.model.reference_offset_y,
+            )
+            self.setCursor(Qt.CursorShape.SizeAllCursor)
+            return
+
         # Left button: delegate to active tool
         x, y = self._pixel_at(pos)
         handled = self._active_tool.on_press(x, y, event.button(), event.modifiers())
@@ -233,6 +275,15 @@ class PixelCanvas(QWidget):
             self.update()
             return
 
+        if self._ref_dragging and self._ref_drag_start is not None:
+            x, y = self._pixel_at(event.position().toPoint())
+            sx, sy = self._ref_drag_start
+            ox, oy = self._ref_drag_origin
+            self.model.reference_offset_x = ox + (x - sx)
+            self.model.reference_offset_y = oy + (y - sy)
+            self.model.reference_changed.emit()
+            return
+
         x, y = self._pixel_at(event.position().toPoint())
         self._active_tool.on_move(x, y, event.buttons(), event.modifiers())
 
@@ -243,6 +294,13 @@ class PixelCanvas(QWidget):
         if event.button() == Qt.MouseButton.MiddleButton:
             self._panning = False
             self._last_pan_pos = None
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+            return
+
+        if event.button() == Qt.MouseButton.LeftButton and self._ref_dragging:
+            self._ref_dragging = False
+            self._ref_drag_start = None
+            self._ref_drag_origin = None
             self.setCursor(Qt.CursorShape.ArrowCursor)
             return
 
@@ -258,6 +316,13 @@ class PixelCanvas(QWidget):
     def wheelEvent(self, event: QWheelEvent):
         delta = event.angleDelta().y()
         if delta == 0:
+            return
+
+        # Alt+scroll: resize reference image (from any tool)
+        if (event.modifiers() & Qt.KeyboardModifier.AltModifier
+                and self.model.reference_image is not None):
+            factor = 1.1 if delta > 0 else 1.0 / 1.1
+            self.model.set_reference_scale(self.model.reference_scale * factor)
             return
 
         old_cell = self._cell_size()

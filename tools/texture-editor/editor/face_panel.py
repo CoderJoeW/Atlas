@@ -171,9 +171,36 @@ class FacePanel(QWidget):
         self._ref_opacity_row.setVisible(False)
         layout.addWidget(self._ref_opacity_row)
 
+        self._ref_scale_row = QWidget()
+        ref_scale_layout = QHBoxLayout(self._ref_scale_row)
+        ref_scale_layout.setContentsMargins(0, 0, 0, 0)
+        ref_scale_layout.addWidget(QLabel("Ref scale:"))
+        self.ref_scale_slider = QSlider(Qt.Orientation.Horizontal)
+        self.ref_scale_slider.setRange(10, 500)
+        self.ref_scale_slider.setValue(100)
+        self.ref_scale_slider.valueChanged.connect(self._on_ref_scale_changed)
+        ref_scale_layout.addWidget(self.ref_scale_slider)
+        self.ref_scale_label = QLabel("100%")
+        self.ref_scale_label.setFixedWidth(40)
+        ref_scale_layout.addWidget(self.ref_scale_label)
+        self._ref_scale_row.setVisible(False)
+        layout.addWidget(self._ref_scale_row)
+
+        self._ref_reset_btn = QPushButton("Reset Ref. Position")
+        self._ref_reset_btn.setToolTip("Reset reference image position and scale")
+        self._ref_reset_btn.clicked.connect(self._reset_reference_transform)
+        self._ref_reset_btn.setVisible(False)
+        layout.addWidget(self._ref_reset_btn)
+
+        self._ref_hint = QLabel("Alt+drag to move, Alt+scroll to resize")
+        self._ref_hint.setStyleSheet("color: #888; font-size: 11px;")
+        self._ref_hint.setVisible(False)
+        layout.addWidget(self._ref_hint)
+
         layout.addStretch()
 
         self.model.state_changed.connect(self._sync_state_combo)
+        self.model.reference_changed.connect(self._sync_ref_scale_slider)
 
     def _on_size_changed(self, index):
         new_size = self.size_combo.currentData()
@@ -347,19 +374,39 @@ class FacePanel(QWidget):
         if filepath:
             img = Image.open(filepath).convert("RGBA")
             self.model.set_reference(img)
-            self._ref_label.setVisible(True)
-            self._ref_clear_btn.setVisible(True)
-            self._ref_opacity_row.setVisible(True)
+            self._show_ref_controls(True)
+            self.ref_scale_slider.setValue(100)
 
     def _clear_reference(self):
         self.model.set_reference(None)
-        self._ref_label.setVisible(False)
-        self._ref_clear_btn.setVisible(False)
-        self._ref_opacity_row.setVisible(False)
+        self._show_ref_controls(False)
+
+    def _show_ref_controls(self, visible):
+        self._ref_label.setVisible(visible)
+        self._ref_clear_btn.setVisible(visible)
+        self._ref_opacity_row.setVisible(visible)
+        self._ref_scale_row.setVisible(visible)
+        self._ref_reset_btn.setVisible(visible)
+        self._ref_hint.setVisible(visible)
 
     def _on_ref_opacity_changed(self, value):
         self.model.set_reference_opacity(value / 100.0)
         self.ref_opacity_label.setText(f"{value}%")
+
+    def _on_ref_scale_changed(self, value):
+        self.model.set_reference_scale(value / 100.0)
+        self.ref_scale_label.setText(f"{value}%")
+
+    def _reset_reference_transform(self):
+        self.model.reset_reference_transform()
+        self.ref_scale_slider.setValue(100)
+
+    def _sync_ref_scale_slider(self):
+        value = int(self.model.reference_scale * 100)
+        self.ref_scale_slider.blockSignals(True)
+        self.ref_scale_slider.setValue(max(10, min(500, value)))
+        self.ref_scale_slider.blockSignals(False)
+        self.ref_scale_label.setText(f"{value}%")
 
     def select_face_by_number(self, num):
         """Select face by number 1-6."""

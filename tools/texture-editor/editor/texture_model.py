@@ -415,6 +415,9 @@ class TextureModel(QObject):
         self.selected_model_element = -1  # index of selected element in model panel
         self.reference_image = None      # PIL Image or None
         self.reference_opacity = 0.3
+        self.reference_offset_x = 0.0   # offset in pixel-space (0 = aligned to canvas origin)
+        self.reference_offset_y = 0.0
+        self.reference_scale = 1.0      # 1.0 = fit to canvas, >1 = larger
         self._undo_stack = []
         self._redo_stack = []
         self._stroke_snapshot = None
@@ -892,10 +895,28 @@ class TextureModel(QObject):
     def set_reference(self, image):
         """Set a reference image (PIL Image) or None to clear."""
         self.reference_image = image
+        self.reference_offset_x = 0.0
+        self.reference_offset_y = 0.0
+        self.reference_scale = 1.0
         self.reference_changed.emit()
 
     def set_reference_opacity(self, opacity):
         self.reference_opacity = max(0.0, min(1.0, opacity))
+        self.reference_changed.emit()
+
+    def set_reference_offset(self, x, y):
+        self.reference_offset_x = x
+        self.reference_offset_y = y
+        self.reference_changed.emit()
+
+    def set_reference_scale(self, scale):
+        self.reference_scale = max(0.1, min(10.0, scale))
+        self.reference_changed.emit()
+
+    def reset_reference_transform(self):
+        self.reference_offset_x = 0.0
+        self.reference_offset_y = 0.0
+        self.reference_scale = 1.0
         self.reference_changed.emit()
 
     # ------------------------------------------------------------------
