@@ -29,7 +29,7 @@ items:
               default: north
             fluid:
               type: string
-              values: [none, water, lava]
+              values: [none, water, lava, experience]
               default: none
           appearances:
             north:
@@ -194,6 +194,60 @@ items:
                     west: minecraft:block/custom/fluid_pipe_side_filled_lava_left
                     up: minecraft:block/custom/fluid_pipe_back_filled_lava
                     down: minecraft:block/custom/fluid_pipe_front_filled_lava
+            north_experience:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_xp
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_front_filled_xp
+                    south: minecraft:block/custom/fluid_pipe_back_filled_xp
+                    east: minecraft:block/custom/fluid_pipe_side_filled_xp_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_xp_left
+                    up: minecraft:block/custom/fluid_pipe_side_filled_xp_up
+                    down: minecraft:block/custom/fluid_pipe_side_filled_xp_down
+            south_experience:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_xp
+                y: 180
+            east_experience:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_xp
+                y: 90
+            west_experience:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_xp
+                y: 270
+            up_experience:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_up_xp
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_side_filled_xp_up
+                    south: minecraft:block/custom/fluid_pipe_side_filled_xp_down
+                    east: minecraft:block/custom/fluid_pipe_side_filled_xp_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_xp_left
+                    up: minecraft:block/custom/fluid_pipe_front_filled_xp
+                    down: minecraft:block/custom/fluid_pipe_back_filled_xp
+            down_experience:
+              auto-state: solid
+              model:
+                path: minecraft:block/custom/fluid_pipe_down_xp
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/fluid_pipe_side_filled_xp_down
+                    south: minecraft:block/custom/fluid_pipe_side_filled_xp_up
+                    east: minecraft:block/custom/fluid_pipe_side_filled_xp_right
+                    west: minecraft:block/custom/fluid_pipe_side_filled_xp_left
+                    up: minecraft:block/custom/fluid_pipe_back_filled_xp
+                    down: minecraft:block/custom/fluid_pipe_front_filled_xp
           variants:
             facing=north,fluid=none:
               appearance: north
@@ -231,6 +285,18 @@ items:
               appearance: up_lava
             facing=down,fluid=lava:
               appearance: down_lava
+            facing=north,fluid=experience:
+              appearance: north_experience
+            facing=south,fluid=experience:
+              appearance: south_experience
+            facing=east,fluid=experience:
+              appearance: east_experience
+            facing=west,fluid=experience:
+              appearance: west_experience
+            facing=up,fluid=experience:
+              appearance: up_experience
+            facing=down,fluid=experience:
+              appearance: down_experience
 
 recipes:
   atlas:fluid_pipe:

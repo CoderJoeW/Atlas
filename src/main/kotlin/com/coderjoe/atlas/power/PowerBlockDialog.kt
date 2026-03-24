@@ -12,6 +12,7 @@ import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
+import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.utility.block.SoftTouchDrill
@@ -136,6 +137,7 @@ object PowerBlockDialog {
             is ObsidianFactory -> "Obsidian Factory"
             is Crusher -> "Crusher (${powerBlock.facing.displayName()})"
             is PowerMerger -> "Power Merger (${powerBlock.facing.displayName()})"
+            is ExperienceExtractor -> "Experience Extractor (${powerBlock.facing.displayName()})"
             else -> "Power Block"
         }
 
@@ -214,6 +216,12 @@ object PowerBlockDialog {
                         .color(NamedTextColor.GRAY)
                 is PowerMerger ->
                     Component.text("Cable - merges power from all sides, outputs in facing direction")
+                        .color(NamedTextColor.GRAY)
+                is ExperienceExtractor ->
+                    Component.text(
+                        "Machine - extracts XP from items via hopper, outputs Liquid Experience, " +
+                            "consumes ${ExperienceExtractor.POWER_PER_EXTRACT} power/item",
+                    )
                         .color(NamedTextColor.GRAY)
                 else ->
                     Component.text("Power block")

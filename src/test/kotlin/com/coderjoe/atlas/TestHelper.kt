@@ -26,6 +26,7 @@ import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
+import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.utility.block.SoftTouchDrill
@@ -206,6 +207,7 @@ object TestHelper {
                 ObsidianFactory.descriptor, Crusher.descriptor,
                 PowerMerger.descriptor,
                 SoftTouchDrill.descriptor,
+                ExperienceExtractor.descriptor,
             ),
         )
     }

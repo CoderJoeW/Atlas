@@ -60,6 +60,7 @@ class FluidPump(location: Location) : FluidBlock(location) {
         when (storedFluid) {
             FluidType.WATER -> BLOCK_ID_ACTIVE
             FluidType.LAVA -> BLOCK_ID_ACTIVE_LAVA
+            FluidType.EXPERIENCE -> BLOCK_ID_ACTIVE
             FluidType.NONE -> BLOCK_ID
         }
 

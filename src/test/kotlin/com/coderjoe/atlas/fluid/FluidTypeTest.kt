@@ -8,9 +8,10 @@ class FluidTypeTest {
     @Test
     fun `all enum values exist`() {
         val values = FluidType.values()
-        assertEquals(3, values.size)
+        assertEquals(4, values.size)
         assertTrue(values.contains(FluidType.WATER))
         assertTrue(values.contains(FluidType.LAVA))
+        assertTrue(values.contains(FluidType.EXPERIENCE))
         assertTrue(values.contains(FluidType.NONE))
     }
 

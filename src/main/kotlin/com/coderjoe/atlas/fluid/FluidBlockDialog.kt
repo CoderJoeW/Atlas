@@ -60,12 +60,15 @@ object FluidBlockDialog {
                 when (fluidBlock.storedFluid) {
                     FluidType.WATER -> "Water (${fluidBlock.storedAmount}/${FluidContainer.MAX_CAPACITY})"
                     FluidType.LAVA -> "Lava (${fluidBlock.storedAmount}/${FluidContainer.MAX_CAPACITY})"
+                    FluidType.EXPERIENCE ->
+                        "Liquid Experience (${fluidBlock.storedAmount}/${FluidContainer.MAX_CAPACITY})"
                     FluidType.NONE -> "Empty"
                 }
             } else {
                 when (fluidBlock.storedFluid) {
                     FluidType.WATER -> "Water"
                     FluidType.LAVA -> "Lava"
+                    FluidType.EXPERIENCE -> "Liquid Experience"
                     FluidType.NONE -> "Empty"
                 }
             }
@@ -74,6 +77,7 @@ object FluidBlockDialog {
             when (fluidBlock.storedFluid) {
                 FluidType.WATER -> NamedTextColor.AQUA
                 FluidType.LAVA -> NamedTextColor.GOLD
+                FluidType.EXPERIENCE -> NamedTextColor.GREEN
                 FluidType.NONE -> NamedTextColor.GRAY
             }
 
