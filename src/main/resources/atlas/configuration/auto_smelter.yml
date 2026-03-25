@@ -12,8 +12,10 @@ items:
         settings:
           hardness: 4.0
           resistance: 4.0
-          is-suffocating: true
+          is-suffocating: false
+          is-view-blocking: false
           is-redstone-conductor: false
+          can-occlude: false
           push-reaction: push_only
           tags: ["minecraft:mineable/pickaxe"]
           sounds:
@@ -31,127 +33,49 @@ items:
               type: boolean
               default: false
           appearances:
-            north:
-              auto-state: solid
+            idle:
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/auto_smelter
                 generation:
                   parent: minecraft:block/cube
                   textures:
-                    north: minecraft:block/custom/auto_smelter_front
-                    south: minecraft:block/custom/auto_smelter_back
-                    east: minecraft:block/custom/auto_smelter_side
-                    west: minecraft:block/custom/auto_smelter_side
-                    up: minecraft:block/custom/auto_smelter_top_north
-                    down: minecraft:block/custom/auto_smelter_housing
-            south:
-              auto-state: solid
+                    north: minecraft:block/custom/auto_smelter_idle_north
+                    south: minecraft:block/custom/auto_smelter_idle_south
+                    east: minecraft:block/custom/auto_smelter_idle_east
+                    west: minecraft:block/custom/auto_smelter_idle_west
+                    up: minecraft:block/custom/auto_smelter_idle_up
+                    down: minecraft:block/custom/auto_smelter_idle_down
+            active:
+              auto-state: leaves
               model:
-                path: minecraft:block/custom/auto_smelter_south
+                path: minecraft:block/custom/auto_smelter_active
                 generation:
                   parent: minecraft:block/cube
                   textures:
-                    north: minecraft:block/custom/auto_smelter_back
-                    south: minecraft:block/custom/auto_smelter_front
-                    east: minecraft:block/custom/auto_smelter_side
-                    west: minecraft:block/custom/auto_smelter_side
-                    up: minecraft:block/custom/auto_smelter_top_south
-                    down: minecraft:block/custom/auto_smelter_housing
-            east:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/auto_smelter_east
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/auto_smelter_side
-                    south: minecraft:block/custom/auto_smelter_side
-                    east: minecraft:block/custom/auto_smelter_front
-                    west: minecraft:block/custom/auto_smelter_back
-                    up: minecraft:block/custom/auto_smelter_top_east
-                    down: minecraft:block/custom/auto_smelter_housing
-            west:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/auto_smelter_west
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/auto_smelter_side
-                    south: minecraft:block/custom/auto_smelter_side
-                    east: minecraft:block/custom/auto_smelter_back
-                    west: minecraft:block/custom/auto_smelter_front
-                    up: minecraft:block/custom/auto_smelter_top_west
-                    down: minecraft:block/custom/auto_smelter_housing
-            north_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/auto_smelter_powered
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/auto_smelter_front
-                    south: minecraft:block/custom/auto_smelter_back
-                    east: minecraft:block/custom/auto_smelter_side
-                    west: minecraft:block/custom/auto_smelter_side
-                    up: minecraft:block/custom/auto_smelter_fire
-                    down: minecraft:block/custom/auto_smelter_housing
-            south_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/auto_smelter_south_powered
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/auto_smelter_back
-                    south: minecraft:block/custom/auto_smelter_front
-                    east: minecraft:block/custom/auto_smelter_side
-                    west: minecraft:block/custom/auto_smelter_side
-                    up: minecraft:block/custom/auto_smelter_fire
-                    down: minecraft:block/custom/auto_smelter_housing
-            east_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/auto_smelter_east_powered
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/auto_smelter_side
-                    south: minecraft:block/custom/auto_smelter_side
-                    east: minecraft:block/custom/auto_smelter_front
-                    west: minecraft:block/custom/auto_smelter_back
-                    up: minecraft:block/custom/auto_smelter_fire
-                    down: minecraft:block/custom/auto_smelter_housing
-            west_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/auto_smelter_west_powered
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/auto_smelter_side
-                    south: minecraft:block/custom/auto_smelter_side
-                    east: minecraft:block/custom/auto_smelter_back
-                    west: minecraft:block/custom/auto_smelter_front
-                    up: minecraft:block/custom/auto_smelter_fire
-                    down: minecraft:block/custom/auto_smelter_housing
+                    north: minecraft:block/custom/auto_smelter_active_north
+                    south: minecraft:block/custom/auto_smelter_active_south
+                    east: minecraft:block/custom/auto_smelter_active_east
+                    west: minecraft:block/custom/auto_smelter_active_west
+                    up: minecraft:block/custom/auto_smelter_active_up
+                    down: minecraft:block/custom/auto_smelter_active_down
           variants:
             facing=north,powered=false:
-              appearance: north
+              appearance: idle
             facing=south,powered=false:
-              appearance: south
+              appearance: idle
             facing=east,powered=false:
-              appearance: east
+              appearance: idle
             facing=west,powered=false:
-              appearance: west
+              appearance: idle
             facing=north,powered=true:
-              appearance: north_powered
+              appearance: active
             facing=south,powered=true:
-              appearance: south_powered
+              appearance: active
             facing=east,powered=true:
-              appearance: east_powered
+              appearance: active
             facing=west,powered=true:
-              appearance: west_powered
+              appearance: active
 
 recipes:
   atlas:auto_smelter:
