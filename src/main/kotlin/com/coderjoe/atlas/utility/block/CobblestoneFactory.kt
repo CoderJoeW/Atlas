@@ -8,7 +8,6 @@ import org.bukkit.Material
 class CobblestoneFactory(location: Location) : MaterialFactory(location, maxStorage = 4) {
     companion object {
         const val BLOCK_ID = "atlas:cobblestone_factory"
-        const val BLOCK_ID_ACTIVE = "atlas:cobblestone_factory_active"
         const val POWER_COST = 2
 
         val descriptor =
@@ -17,13 +16,19 @@ class CobblestoneFactory(location: Location) : MaterialFactory(location, maxStor
                 displayName = "Cobblestone Factory",
                 description = "Machine - consumes $POWER_COST power + water + lava → cobblestone",
                 placementType = PlacementType.SIMPLE,
-                additionalBlockIds = listOf(BLOCK_ID_ACTIVE),
                 constructor = { loc, _ -> CobblestoneFactory(loc) },
             )
     }
 
     override val baseBlockId: String = BLOCK_ID
-    override val activeBlockId: String = BLOCK_ID_ACTIVE
+    override val activeBlockId: String = BLOCK_ID
     override val powerCost: Int = POWER_COST
     override val outputMaterial: Material = Material.COBBLESTONE
+
+    override fun getVisualStateBlockId(): String = BLOCK_ID
+
+    override fun powerUpdate() {
+        super.powerUpdate()
+        updatePoweredState()
+    }
 }

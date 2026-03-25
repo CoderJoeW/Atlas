@@ -39,20 +39,15 @@ class CobblestoneFactoryTest {
     }
 
     @Test
-    fun `visual state idle when insufficient power`() {
+    fun `visual state always returns base block id`() {
         val gen = CobblestoneFactory(TestHelper.createLocation())
         assertEquals(
             "atlas:cobblestone_factory",
             gen.getVisualStateBlockId(),
         )
-    }
-
-    @Test
-    fun `visual state active when power at cost`() {
-        val gen = CobblestoneFactory(TestHelper.createLocation())
         gen.currentPower = 2
         assertEquals(
-            "atlas:cobblestone_factory_active",
+            "atlas:cobblestone_factory",
             gen.getVisualStateBlockId(),
         )
     }
@@ -206,12 +201,7 @@ class CobblestoneFactoryTest {
         val desc = CobblestoneFactory.descriptor
         assertEquals("atlas:cobblestone_factory", desc.baseBlockId)
         assertEquals("Cobblestone Factory", desc.displayName)
-        assertEquals(1, desc.additionalBlockIds.size)
-        assertTrue(
-            desc.additionalBlockIds.contains(
-                "atlas:cobblestone_factory_active",
-            ),
-        )
+        assertTrue(desc.additionalBlockIds.isEmpty())
     }
 
     @Test

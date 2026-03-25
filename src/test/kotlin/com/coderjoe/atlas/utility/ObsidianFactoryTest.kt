@@ -39,21 +39,15 @@ class ObsidianFactoryTest {
     }
 
     @Test
-    fun `visual state idle when insufficient power`() {
+    fun `visual state always returns base block id`() {
         val gen = ObsidianFactory(TestHelper.createLocation())
-        gen.currentPower = 24
         assertEquals(
             "atlas:obsidian_factory",
             gen.getVisualStateBlockId(),
         )
-    }
-
-    @Test
-    fun `visual state active when power at cost`() {
-        val gen = ObsidianFactory(TestHelper.createLocation())
         gen.currentPower = 25
         assertEquals(
-            "atlas:obsidian_factory_active",
+            "atlas:obsidian_factory",
             gen.getVisualStateBlockId(),
         )
     }
@@ -207,12 +201,7 @@ class ObsidianFactoryTest {
         val desc = ObsidianFactory.descriptor
         assertEquals("atlas:obsidian_factory", desc.baseBlockId)
         assertEquals("Obsidian Factory", desc.displayName)
-        assertEquals(1, desc.additionalBlockIds.size)
-        assertTrue(
-            desc.additionalBlockIds.contains(
-                "atlas:obsidian_factory_active",
-            ),
-        )
+        assertTrue(desc.additionalBlockIds.isEmpty())
     }
 
     @Test

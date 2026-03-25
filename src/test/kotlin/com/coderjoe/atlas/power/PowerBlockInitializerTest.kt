@@ -35,14 +35,14 @@ class PowerBlockInitializerTest {
         // LavaGenerator: 2 (base + active)
         // AutoSmelter: 1
         // PowerSplitter: 1
-        // CobblestoneFactory: 2 (base + active)
-        // ObsidianFactory: 2 (base + active)
+        // CobblestoneFactory: 1
+        // ObsidianFactory: 1
         // Crusher: 1
         // PowerMerger: 1
         // SoftTouchDrill: 1
         // ExperienceExtractor: 2 (base + active)
-        // Total: 21
-        assertEquals(21, ids.size)
+        // Total: 19
+        assertEquals(19, ids.size)
     }
 
     @Test
