@@ -12,8 +12,10 @@ items:
         settings:
           hardness: 4.0
           resistance: 4.0
-          is-suffocating: true
+          is-suffocating: false
+          is-view-blocking: false
           is-redstone-conductor: false
+          can-occlude: false
           push-reaction: push_only
           tags: ["minecraft:mineable/pickaxe"]
           sounds:
@@ -22,55 +24,43 @@ items:
             place: minecraft:block.metal.place
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
-        state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/cobblestone_factory
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/cobblestone_factory_top
-                bottom: minecraft:block/custom/cobblestone_factory_bottom
-                side: minecraft:block/custom/cobblestone_factory_side
-
-items#1:
-  atlas:cobblestone_factory_active:
-    material: paper
-    data:
-      item-name: "<!i><gradient:#808080:#A9A9A9>Cobblestone Factory"
-    model: minecraft:block/custom/cobblestone_factory_active
-    behavior:
-      type: block_item
-      block:
-        loot:
-          pools:
-            - rolls: 1
-              entries:
-                - type: item
-                  item: atlas:cobblestone_factory
-        settings:
-          hardness: 4.0
-          resistance: 4.0
-          is-suffocating: true
-          is-redstone-conductor: false
-          push-reaction: push_only
-          tags: ["minecraft:mineable/pickaxe"]
-          sounds:
-            break: minecraft:block.metal.break
-            step: minecraft:block.metal.step
-            place: minecraft:block.metal.place
-            hit: minecraft:block.metal.hit
-            fall: minecraft:block.metal.fall
-        state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/cobblestone_factory_active
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/cobblestone_factory_top_active
-                bottom: minecraft:block/custom/cobblestone_factory_bottom
-                side: minecraft:block/custom/cobblestone_factory_side_active
+        states:
+          properties:
+            powered:
+              type: boolean
+              default: false
+          appearances:
+            idle:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/cobblestone_factory
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/cobblestone_factory_idle_north
+                    south: minecraft:block/custom/cobblestone_factory_idle_south
+                    east: minecraft:block/custom/cobblestone_factory_idle_east
+                    west: minecraft:block/custom/cobblestone_factory_idle_west
+                    up: minecraft:block/custom/cobblestone_factory_idle_up
+                    down: minecraft:block/custom/cobblestone_factory_idle_down
+            active:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/cobblestone_factory_active
+                generation:
+                  parent: minecraft:block/cube
+                  textures:
+                    north: minecraft:block/custom/cobblestone_factory_active_north
+                    south: minecraft:block/custom/cobblestone_factory_active_south
+                    east: minecraft:block/custom/cobblestone_factory_active_east
+                    west: minecraft:block/custom/cobblestone_factory_active_west
+                    up: minecraft:block/custom/cobblestone_factory_active_up
+                    down: minecraft:block/custom/cobblestone_factory_active_down
+          variants:
+            powered=false:
+              appearance: idle
+            powered=true:
+              appearance: active
 
 recipes:
   atlas:cobblestone_factory:
