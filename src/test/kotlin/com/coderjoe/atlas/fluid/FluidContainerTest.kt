@@ -478,5 +478,4 @@ class FluidContainerTest {
         container.restoreState(FluidType.WATER, 99)
         assertEquals(FluidContainer.MAX_CAPACITY, container.storedAmount)
     }
-
 }
