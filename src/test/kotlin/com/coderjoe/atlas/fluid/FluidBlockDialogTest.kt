@@ -2,6 +2,7 @@ package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
+import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import net.kyori.adventure.text.Component
@@ -19,7 +20,7 @@ class FluidBlockDialogTest {
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        FluidBlockDialog.init(TestHelper.mockPlugin)
+        AtlasBlockDialog.init(TestHelper.mockPlugin)
     }
 
     @AfterEach
@@ -152,6 +153,6 @@ class FluidBlockDialogTest {
 
     @Test
     fun `cleanup does not throw`() {
-        assertDoesNotThrow { FluidBlockDialog.cleanup() }
+        assertDoesNotThrow { AtlasBlockDialog.cleanup() }
     }
 }

@@ -1,5 +1,6 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.AtlasBlockListener
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockSystem
@@ -64,9 +65,7 @@ class Atlas : JavaPlugin() {
 
         server.pluginManager.registerEvents(PlayerJoinListener(), this)
 
-        PowerBlockDialog.init(this)
-        FluidBlockDialog.init(this)
-        TransportBlockDialog.init(this)
+        AtlasBlockDialog.init(this)
 
         initPowerSystem()
         initFluidSystem()
@@ -149,9 +148,7 @@ class Atlas : JavaPlugin() {
             transportBlockPersistence.save(transportBlockRegistry)
         }
 
-        PowerBlockDialog.cleanup()
-        FluidBlockDialog.cleanup()
-        TransportBlockDialog.cleanup()
+        AtlasBlockDialog.cleanup()
 
         if (::powerBlockRegistry.isInitialized) {
             powerBlockRegistry.stopAll()

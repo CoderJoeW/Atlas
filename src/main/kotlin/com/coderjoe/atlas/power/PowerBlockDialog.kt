@@ -28,48 +28,20 @@ import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
-import org.bukkit.plugin.java.JavaPlugin
 
 object PowerBlockDialog {
-    fun init(plugin: JavaPlugin) {
-        AtlasBlockDialog.init(plugin)
-    }
-
     fun showPowerDialog(
         player: Player,
         powerBlock: PowerBlock,
         registry: BlockRegistry<*>,
     ) {
-        AtlasBlockDialog.showDialog(player, powerBlock, registry) { p, block, onClose ->
-            sendDialog(p, block as PowerBlock, onClose)
-        }
-    }
-
-    fun cleanup() {
-        AtlasBlockDialog.cleanup()
-    }
-
-    private fun sendDialog(
-        player: Player,
-        powerBlock: PowerBlock,
-        onClose: (Player) -> Unit,
-    ) {
         if (powerBlock is SmallDrill) {
-            sendDrillDialog(player, powerBlock, onClose)
+            AtlasBlockDialog.showDialog(player, powerBlock, registry) { p, block, onClose ->
+                sendDrillDialog(p, block as SmallDrill, onClose)
+            }
         } else {
-            sendDefaultDialog(player, powerBlock, onClose)
+            AtlasBlockDialog.showBlockDialog(player, powerBlock, registry, ::getBlockDisplayName, ::buildPowerInfo)
         }
-    }
-
-    private fun sendDefaultDialog(
-        player: Player,
-        powerBlock: PowerBlock,
-        onClose: (Player) -> Unit,
-    ) {
-        val title = Component.text(getBlockDisplayName(powerBlock))
-        val bodyText = buildPowerInfo(powerBlock)
-        val dialog = AtlasBlockDialog.createNoticeDialog(title, bodyText, onClose)
-        player.showDialog(dialog)
     }
 
     private fun sendDrillDialog(

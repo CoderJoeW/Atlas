@@ -7,36 +7,14 @@ import com.coderjoe.atlas.transport.block.ConveyorBelt
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
-import org.bukkit.plugin.java.JavaPlugin
 
 object TransportBlockDialog {
-    fun init(plugin: JavaPlugin) {
-        AtlasBlockDialog.init(plugin)
-    }
-
     fun showTransportDialog(
         player: Player,
         block: TransportBlock,
         registry: BlockRegistry<*>,
     ) {
-        AtlasBlockDialog.showDialog(player, block, registry) { p, b, onClose ->
-            sendDialog(p, b as TransportBlock, onClose)
-        }
-    }
-
-    fun cleanup() {
-        AtlasBlockDialog.cleanup()
-    }
-
-    private fun sendDialog(
-        player: Player,
-        block: TransportBlock,
-        onClose: (Player) -> Unit,
-    ) {
-        val title = Component.text(getBlockDisplayName(block))
-        val bodyText = getBlockDescription(block)
-        val dialog = AtlasBlockDialog.createNoticeDialog(title, bodyText, onClose)
-        player.showDialog(dialog)
+        AtlasBlockDialog.showBlockDialog(player, block, registry, ::getBlockDisplayName, ::getBlockDescription)
     }
 
     private fun getBlockDisplayName(block: TransportBlock): String =

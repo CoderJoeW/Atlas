@@ -1,12 +1,10 @@
 package com.coderjoe.atlas
 
-import com.coderjoe.atlas.fluid.FluidBlockDialog
+import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
-import com.coderjoe.atlas.power.PowerBlockDialog
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
-import com.coderjoe.atlas.transport.TransportBlockDialog
 import com.coderjoe.atlas.transport.TransportBlockFactory
 import com.coderjoe.atlas.transport.TransportBlockRegistry
 import org.junit.jupiter.api.AfterEach
@@ -21,9 +19,7 @@ class AtlasPluginTest {
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        PowerBlockDialog.init(TestHelper.mockPlugin)
-        FluidBlockDialog.init(TestHelper.mockPlugin)
-        TransportBlockDialog.init(TestHelper.mockPlugin)
+        AtlasBlockDialog.init(TestHelper.mockPlugin)
     }
 
     @AfterEach
@@ -73,9 +69,7 @@ class AtlasPluginTest {
     @Test
     fun `dialog cleanup does not throw`() {
         assertDoesNotThrow {
-            PowerBlockDialog.cleanup()
-            FluidBlockDialog.cleanup()
-            TransportBlockDialog.cleanup()
+            AtlasBlockDialog.cleanup()
         }
     }
 

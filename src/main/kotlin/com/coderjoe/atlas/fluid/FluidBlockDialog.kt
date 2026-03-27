@@ -12,36 +12,14 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
-import org.bukkit.plugin.java.JavaPlugin
 
 object FluidBlockDialog {
-    fun init(plugin: JavaPlugin) {
-        AtlasBlockDialog.init(plugin)
-    }
-
     fun showFluidDialog(
         player: Player,
         fluidBlock: FluidBlock,
         registry: BlockRegistry<*>,
     ) {
-        AtlasBlockDialog.showDialog(player, fluidBlock, registry) { p, block, onClose ->
-            sendDialog(p, block as FluidBlock, onClose)
-        }
-    }
-
-    fun cleanup() {
-        AtlasBlockDialog.cleanup()
-    }
-
-    private fun sendDialog(
-        player: Player,
-        fluidBlock: FluidBlock,
-        onClose: (Player) -> Unit,
-    ) {
-        val title = Component.text(getBlockDisplayName(fluidBlock))
-        val bodyText = buildFluidInfo(fluidBlock)
-        val dialog = AtlasBlockDialog.createNoticeDialog(title, bodyText, onClose)
-        player.showDialog(dialog)
+        AtlasBlockDialog.showBlockDialog(player, fluidBlock, registry, ::getBlockDisplayName, ::buildFluidInfo)
     }
 
     private fun getBlockDisplayName(fluidBlock: FluidBlock): String =
