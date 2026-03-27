@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import org.bukkit.block.BlockFace
@@ -29,7 +30,7 @@ class FluidBlockRegistryTest {
     @Test
     fun `locationKey produces correct format`() {
         val loc = TestHelper.createLocation(5.0, 100.0, -3.0)
-        assertEquals("world:5,100,-3", FluidBlockRegistry.locationKey(loc))
+        assertEquals("world:5,100,-3", BlockRegistry.locationKey(loc))
     }
 
     @Test

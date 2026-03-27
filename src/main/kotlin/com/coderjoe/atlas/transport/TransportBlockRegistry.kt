@@ -9,8 +9,6 @@ class TransportBlockRegistry(plugin: JavaPlugin) : BlockRegistry<TransportBlock>
     companion object {
         var instance: TransportBlockRegistry? = null
             private set
-
-        fun locationKey(location: Location): String = BlockRegistry.locationKey(location)
     }
 
     init {

@@ -9,8 +9,6 @@ class PowerBlockRegistry(plugin: JavaPlugin) : BlockRegistry<PowerBlock>(plugin)
     companion object {
         var instance: PowerBlockRegistry? = null
             private set
-
-        fun locationKey(location: Location): String = BlockRegistry.locationKey(location)
     }
 
     init {

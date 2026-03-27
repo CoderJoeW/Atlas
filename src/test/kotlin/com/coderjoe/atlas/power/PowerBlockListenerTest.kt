@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.core.AtlasBlockListener
+import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.core.BlockSystem
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.mockk.every
@@ -46,7 +47,7 @@ class PowerBlockListenerTest {
     @Test
     fun `onBlockPlace skips when location in updatingLocations`() {
         val loc = TestHelper.createLocation()
-        val key = PowerBlockRegistry.locationKey(loc)
+        val key = BlockRegistry.locationKey(loc)
         registry.updatingLocations.add(key)
 
         val block = mockk<Block>(relaxed = true)
@@ -61,7 +62,7 @@ class PowerBlockListenerTest {
     @Test
     fun `onBlockBreak skips when in updatingLocations`() {
         val loc = TestHelper.createLocation()
-        val key = PowerBlockRegistry.locationKey(loc)
+        val key = BlockRegistry.locationKey(loc)
         registry.updatingLocations.add(key)
 
         val block = mockk<Block>(relaxed = true)
