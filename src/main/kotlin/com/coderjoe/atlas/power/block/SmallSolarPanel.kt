@@ -46,11 +46,6 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4)
                         "generated $generated power (now $currentPower/$maxStorage)",
                 )
             }
-        } else {
-            plugin.logger.atlasInfo(
-                "SmallSolarPanel at ${location.coordinates} " +
-                    "is not generating power because it is not daytime.",
-            )
         }
     }
 }

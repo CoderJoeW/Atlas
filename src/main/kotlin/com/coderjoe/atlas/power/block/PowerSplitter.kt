@@ -26,6 +26,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
     override val baseBlockId: String = BLOCK_ID
 
     override val updateIntervalTicks: Long = 20L
+    private var nextOutputIndex: Int = 0
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
@@ -48,20 +49,27 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
 
         if (hasPower()) {
             val outputFaces = ADJACENT_FACES.filter { it != facing.oppositeFace }
+            val faceCount = outputFaces.size
+            var lastPushOffset = -1
 
-            for (face in outputFaces) {
+            for (i in outputFaces.indices) {
                 if (!hasPower()) break
+                val face = outputFaces[(nextOutputIndex + i) % faceCount]
                 val target = registry.getAdjacentPowerBlock(location, face) ?: continue
                 if (target.canAcceptPower()) {
                     val pushed = removePower(1)
                     if (pushed > 0) {
                         target.addPower(pushed)
+                        lastPushOffset = i
                         plugin.logger.atlasInfo(
                             "PowerSplitter at ${location.coordinates} " +
                                 "pushed $pushed power to ${target::class.simpleName} at ${face.name}",
                         )
                     }
                 }
+            }
+            if (lastPushOffset >= 0) {
+                nextOutputIndex = (nextOutputIndex + lastPushOffset + 1) % faceCount
             }
         }
 

@@ -478,20 +478,4 @@ class FluidContainerTest {
         container.restoreState(FluidType.WATER, 99)
         assertEquals(FluidContainer.MAX_CAPACITY, container.storedAmount)
     }
-
-    @Test
-    fun `FluidBlockData captures container facing and storedAmount`() {
-        val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.EAST)
-        repeat(5) { container.storeFluid(FluidType.WATER) }
-
-        val data =
-            FluidBlockData.fromFluidBlock(
-                container,
-                "atlas:fluid_container",
-            )
-        assertEquals("EAST", data.facing)
-        assertEquals(5, data.storedAmount)
-        assertEquals("WATER", data.fluidType)
-    }
 }

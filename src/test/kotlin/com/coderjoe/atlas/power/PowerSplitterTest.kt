@@ -208,4 +208,49 @@ class PowerSplitterTest {
             splitter.callPowerUpdate()
         }
     }
+
+    @Test
+    fun `distributes power round-robin across multiple updates`() {
+        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+
+        // Splitter facing NORTH, input from SOUTH
+        val splitterLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
+        val splitter = PowerSplitter(splitterLoc, BlockFace.NORTH)
+        TestHelper.addToRegistry(registry, splitter, "atlas:power_splitter")
+
+        // Two output batteries: east and west (both can accept power)
+        val eastLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
+        val eastBattery = SmallBattery(eastLoc, BlockFace.WEST)
+        TestHelper.addToRegistry(registry, eastBattery, "atlas:small_battery")
+
+        val westLoc = TestHelper.createLocation(-1.0, 64.0, 0.0)
+        val westBattery = SmallBattery(westLoc, BlockFace.EAST)
+        TestHelper.addToRegistry(registry, westBattery, "atlas:small_battery")
+
+        // Give splitter exactly 1 power and update — only one battery should get it
+        splitter.currentPower = 1
+        splitter.callPowerUpdate()
+
+        val firstEast = eastBattery.currentPower
+        val firstWest = westBattery.currentPower
+        assertEquals(1, firstEast + firstWest, "exactly 1 power distributed")
+
+        // Reset and do it again — the OTHER battery should get power this time
+        splitter.currentPower = 1
+        eastBattery.currentPower = 0
+        westBattery.currentPower = 0
+        splitter.callPowerUpdate()
+
+        val secondEast = eastBattery.currentPower
+        val secondWest = westBattery.currentPower
+        assertEquals(1, secondEast + secondWest, "exactly 1 power distributed")
+
+        // The two rounds should have gone to different targets
+        val firstWentEast = firstEast == 1
+        val secondWentEast = secondEast == 1
+        assertTrue(
+            firstWentEast != secondWentEast,
+            "round-robin should alternate: first=$firstWentEast, second=$secondWentEast",
+        )
+    }
 }

@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import org.bukkit.block.BlockFace
@@ -29,7 +30,7 @@ class PowerBlockRegistryTest {
     @Test
     fun `locationKey produces correct format`() {
         val loc = TestHelper.createLocation(10.0, 64.0, -5.0)
-        val key = PowerBlockRegistry.locationKey(loc)
+        val key = BlockRegistry.locationKey(loc)
         assertEquals("world:10,64,-5", key)
     }
 

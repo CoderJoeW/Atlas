@@ -129,7 +129,7 @@ object TestHelper {
         @Suppress("UNCHECKED_CAST")
         val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
 
-        val key = PowerBlockRegistry.locationKey(block.location)
+        val key = BlockRegistry.locationKey(block.location)
         blocks[key] = block
         blockIds[key] = blockId
     }
@@ -149,7 +149,7 @@ object TestHelper {
         @Suppress("UNCHECKED_CAST")
         val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
 
-        val key = TransportBlockRegistry.locationKey(block.location)
+        val key = BlockRegistry.locationKey(block.location)
         blocks[key] = block
         blockIds[key] = blockId
     }
@@ -169,7 +169,7 @@ object TestHelper {
         @Suppress("UNCHECKED_CAST")
         val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
 
-        val key = FluidBlockRegistry.locationKey(block.location)
+        val key = BlockRegistry.locationKey(block.location)
         blocks[key] = block
         blockIds[key] = blockId
     }

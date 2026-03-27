@@ -9,8 +9,6 @@ class FluidBlockRegistry(plugin: JavaPlugin) : BlockRegistry<FluidBlock>(plugin)
     companion object {
         var instance: FluidBlockRegistry? = null
             private set
-
-        fun locationKey(location: Location): String = BlockRegistry.locationKey(location)
     }
 
     init {
