@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
@@ -19,7 +20,7 @@ class PowerBlockDialogTest {
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        PowerBlockDialog.init(TestHelper.mockPlugin)
+        AtlasBlockDialog.init(TestHelper.mockPlugin)
     }
 
     @AfterEach
@@ -108,7 +109,7 @@ class PowerBlockDialogTest {
     @Test
     fun `cleanup clears all active dialogs`() {
         // Just verify it doesn't throw
-        assertDoesNotThrow { PowerBlockDialog.cleanup() }
+        assertDoesNotThrow { AtlasBlockDialog.cleanup() }
     }
 
     private fun flattenText(component: Component): String {

@@ -63,6 +63,23 @@ object AtlasBlockDialog {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <T : AtlasBlock> showBlockDialog(
+        player: Player,
+        block: T,
+        registry: BlockRegistry<*>,
+        displayName: (T) -> String,
+        buildBody: (T) -> Component,
+    ) {
+        showDialog(player, block, registry) { p, b, onClose ->
+            val typed = b as T
+            val title = Component.text(displayName(typed))
+            val body = buildBody(typed)
+            val dialog = createNoticeDialog(title, body, onClose)
+            p.showDialog(dialog)
+        }
+    }
+
     fun showDialog(
         player: Player,
         block: AtlasBlock,
