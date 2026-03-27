@@ -26,6 +26,7 @@ class FluidSplitter(location: Location, override val facing: BlockFace) : FluidB
     }
 
     override val baseBlockId: String = BLOCK_ID
+    private var nextOutputIndex: Int = 0
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
@@ -47,13 +48,16 @@ class FluidSplitter(location: Location, override val facing: BlockFace) : FluidB
 
         if (hasFluid()) {
             val outputFaces = ADJACENT_FACES.filter { it != facing.oppositeFace }
+            val faceCount = outputFaces.size
 
-            for (face in outputFaces) {
+            for (i in outputFaces.indices) {
                 if (!hasFluid()) break
+                val face = outputFaces[(nextOutputIndex + i) % faceCount]
                 val target = registry.getAdjacentFluidBlock(location, face) ?: continue
                 if (!target.hasFluid()) {
                     val fluid = removeFluid()
                     if (target.storeFluid(fluid)) {
+                        nextOutputIndex = (nextOutputIndex + i + 1) % faceCount
                         plugin.logger.atlasInfo(
                             "FluidSplitter at ${location.coordinates} " +
                                 "pushed ${fluid.name} to ${target::class.simpleName} at ${face.name}",
