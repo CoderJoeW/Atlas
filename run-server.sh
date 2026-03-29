@@ -20,11 +20,6 @@ fi
 # Copy the plugin to the server
 cp target/Atlas-*.jar "$SERVER_DIR/plugins/"
 
-# Copy CraftEngine pack (configuration + textures)
-echo "Setting up CraftEngine pack..."
-rm -rf "$SERVER_DIR/plugins/CraftEngine/resources/atlas"
-cp -r src/main/resources/atlas "$SERVER_DIR/plugins/CraftEngine/resources/atlas"
-
 # Check for CraftEngine plugin
 CE_JAR=$(find "$SERVER_DIR/plugins" -maxdepth 1 \( -name "craft-engine*.jar" -o -name "CraftEngine*.jar" \) 2>/dev/null | head -1)
 
