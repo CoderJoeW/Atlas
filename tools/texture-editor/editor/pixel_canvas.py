@@ -1,6 +1,6 @@
 from PIL import Image as PILImage
 from PyQt6.QtWidgets import QApplication, QWidget
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QRectF
 from PyQt6.QtGui import QPainter, QColor, QImage, QMouseEvent, QWheelEvent, QPen
 
 from editor.tools import BrushTool
@@ -16,6 +16,7 @@ class PixelCanvas(QWidget):
         super().__init__(parent)
         self.model = model
         self._cached_image = None
+        self._composite_bytes = None
         self._cached_reference = None
         self._ref_bytes = None
         self._panning = False
@@ -51,11 +52,10 @@ class PixelCanvas(QWidget):
         self.update()
 
     def _on_reference_changed(self):
-        self._rebuild_cache()
+        self._rebuild_reference_cache()
         self.update()
 
     def _on_geometry_changed(self):
-        self._rebuild_cache()
         self.update()
 
     def _cell_size(self):
@@ -67,72 +67,25 @@ class PixelCanvas(QWidget):
         return max(1.0, fit)
 
     def _rebuild_cache(self):
+        """Cache the composite at native resolution — no upscaling."""
         composite = self.model.get_composite()
-        w, h = composite.width, composite.height
-        cell = self._cell_size()
-        cell_int = max(1, int(cell))
-        canvas_w = cell_int * w
-        canvas_h = cell_int * h
-
-        qimg = QImage(canvas_w, canvas_h, QImage.Format.Format_ARGB32)
-        painter = QPainter(qimg)
-
-        # Draw checkerboard as two solid passes for speed
-        painter.fillRect(0, 0, canvas_w, canvas_h, QColor(255, 255, 255))
-        check_color = QColor(200, 200, 200)
-        if cell_int >= 4:
-            check_size = max(1, cell_int // 2)
-            for cy in range(h):
-                for cx in range(w):
-                    rx = cx * cell_int
-                    ry = cy * cell_int
-                    painter.fillRect(rx, ry, check_size, check_size, check_color)
-                    painter.fillRect(
-                        rx + check_size, ry + check_size,
-                        check_size, check_size, check_color,
-                    )
-
-        # Scale up the composite with nearest-neighbor and draw it on top
-        scaled = composite.resize(
-            (canvas_w, canvas_h), resample=0,  # 0 = NEAREST
+        raw = composite.tobytes("raw", "BGRA")
+        self._composite_bytes = raw  # prevent GC — QImage doesn't own the buffer
+        self._cached_image = QImage(
+            raw, composite.width, composite.height, QImage.Format.Format_ARGB32,
         )
-        raw = scaled.tobytes("raw", "BGRA")
-        tex_qimg = QImage(raw, canvas_w, canvas_h, QImage.Format.Format_ARGB32)
-        # QImage doesn't own the buffer, so we must keep a reference
-        self._scaled_bytes = raw
-        painter.drawImage(0, 0, tex_qimg)
+        self._rebuild_reference_cache()
 
-        # Grid lines
-        if cell_int >= 4:
-            pen = QPen(QColor(180, 180, 180, 80))
-            painter.setPen(pen)
-            for cx in range(w + 1):
-                painter.drawLine(cx * cell_int, 0, cx * cell_int, canvas_h)
-            for cy in range(h + 1):
-                painter.drawLine(0, cy * cell_int, canvas_w, cy * cell_int)
-
-        painter.end()
-        self._cached_image = qimg
-
-        # Reference image cache — preserve aspect ratio, apply scale
+    def _rebuild_reference_cache(self):
+        """Cache the reference image as a native-resolution QImage."""
         if self.model.reference_image is not None:
             ref = self.model.reference_image
-            scale = self.model.reference_scale
-            # Fit reference into canvas while preserving aspect ratio
-            aspect = ref.width / max(ref.height, 1)
-            if aspect >= 1.0:
-                # Wider than tall — fit width to canvas
-                ref_w = max(1, int(canvas_w * scale))
-                ref_h = max(1, int(ref_w / aspect))
-            else:
-                # Taller than wide — fit height to canvas
-                ref_h = max(1, int(canvas_h * scale))
-                ref_w = max(1, int(ref_h * aspect))
-            scaled_ref = ref.resize((ref_w, ref_h), PILImage.Resampling.BILINEAR)
-            ref_raw = scaled_ref.tobytes("raw", "BGRA")
+            if ref.mode != "RGBA":
+                ref = ref.convert("RGBA")
+            ref_raw = ref.tobytes("raw", "BGRA")
             self._ref_bytes = ref_raw
             self._cached_reference = QImage(
-                ref_raw, ref_w, ref_h, QImage.Format.Format_ARGB32,
+                ref_raw, ref.width, ref.height, QImage.Format.Format_ARGB32,
             )
         else:
             self._cached_reference = None
@@ -151,18 +104,80 @@ class PixelCanvas(QWidget):
     def paintEvent(self, event):
         if self._cached_image is None:
             self._rebuild_cache()
+
         painter = QPainter(self)
         painter.fillRect(self.rect(), QColor(50, 50, 50))
+
+        cell = self._cell_size()
+        cell_int = max(1, int(cell))
+        size = self.model.size
         ox, oy = self._canvas_origin()
-        painter.drawImage(int(ox), int(oy), self._cached_image)
+        canvas_w = cell_int * size
+        canvas_h = cell_int * size
+
+        # Determine visible cell range (only draw what's on screen)
+        widget_rect = self.rect()
+        col_start = max(0, int((widget_rect.left() - ox) / cell_int))
+        col_end = min(size, int((widget_rect.right() - ox) / cell_int) + 1)
+        row_start = max(0, int((widget_rect.top() - oy) / cell_int))
+        row_end = min(size, int((widget_rect.bottom() - oy) / cell_int) + 1)
+
+        # Checkerboard background (visible cells only)
+        white = QColor(255, 255, 255)
+        if cell_int >= 4:
+            check_size = max(1, cell_int // 2)
+            check_color = QColor(200, 200, 200)
+            for cy in range(row_start, row_end):
+                for cx in range(col_start, col_end):
+                    rx = int(ox) + cx * cell_int
+                    ry = int(oy) + cy * cell_int
+                    painter.fillRect(rx, ry, cell_int, cell_int, white)
+                    painter.fillRect(rx, ry, check_size, check_size, check_color)
+                    painter.fillRect(
+                        rx + check_size, ry + check_size,
+                        check_size, check_size, check_color,
+                    )
+        else:
+            # At small zoom just fill canvas white (no checkerboard visible)
+            painter.fillRect(int(ox), int(oy), canvas_w, canvas_h, white)
+
+        # Draw texture scaled with nearest-neighbor via QPainter
+        painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform, False)
+        target = QRectF(ox, oy, canvas_w, canvas_h)
+        painter.drawImage(target, self._cached_image)
+
+        # Grid lines (visible range only)
+        if cell_int >= 4:
+            pen = QPen(QColor(180, 180, 180, 80))
+            painter.setPen(pen)
+            vis_top = max(int(oy), widget_rect.top())
+            vis_bottom = min(int(oy) + canvas_h, widget_rect.bottom())
+            vis_left = max(int(ox), widget_rect.left())
+            vis_right = min(int(ox) + canvas_w, widget_rect.right())
+            for cx in range(col_start, col_end + 1):
+                x = int(ox) + cx * cell_int
+                painter.drawLine(x, vis_top, x, vis_bottom)
+            for cy in range(row_start, row_end + 1):
+                y = int(oy) + cy * cell_int
+                painter.drawLine(vis_left, y, vis_right, y)
 
         # Reference image overlay (with offset and scale)
         if self._cached_reference is not None:
-            cell = max(1, int(self._cell_size()))
-            ref_x = int(ox + self.model.reference_offset_x * cell)
-            ref_y = int(oy + self.model.reference_offset_y * cell)
+            ref = self.model.reference_image
+            scale = self.model.reference_scale
+            aspect = ref.width / max(ref.height, 1)
+            if aspect >= 1.0:
+                ref_w = max(1, int(canvas_w * scale))
+                ref_h = max(1, int(ref_w / aspect))
+            else:
+                ref_h = max(1, int(canvas_h * scale))
+                ref_w = max(1, int(ref_h * aspect))
+            ref_x = int(ox + self.model.reference_offset_x * cell_int)
+            ref_y = int(oy + self.model.reference_offset_y * cell_int)
             painter.setOpacity(self.model.reference_opacity)
-            painter.drawImage(ref_x, ref_y, self._cached_reference)
+            painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform, True)
+            painter.drawImage(QRectF(ref_x, ref_y, ref_w, ref_h), self._cached_reference)
+            painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform, False)
             painter.setOpacity(1.0)
             # Show border when Alt is held or while dragging reference
             mods = QApplication.keyboardModifiers()
@@ -172,21 +187,15 @@ class PixelCanvas(QWidget):
                 pen.setStyle(Qt.PenStyle.DashLine)
                 painter.setPen(pen)
                 painter.setBrush(Qt.BrushStyle.NoBrush)
-                rw = self._cached_reference.width()
-                rh = self._cached_reference.height()
-                painter.drawRect(ref_x, ref_y, rw, rh)
+                painter.drawRect(ref_x, ref_y, ref_w, ref_h)
 
         # UV region overlay — dim areas outside, cyan border around mapped region
         uv_rect = self.model.get_active_face_uv_pixels()
         if uv_rect is not None:
-            cell = max(1, int(self._cell_size()))
-            size = self.model.size
-            canvas_w = cell * size
-            canvas_h = cell * size
-            ux1 = int(ox + uv_rect[0] * cell)
-            uy1 = int(oy + uv_rect[1] * cell)
-            ux2 = int(ox + uv_rect[2] * cell)
-            uy2 = int(oy + uv_rect[3] * cell)
+            ux1 = int(ox + uv_rect[0] * cell_int)
+            uy1 = int(oy + uv_rect[1] * cell_int)
+            ux2 = int(ox + uv_rect[2] * cell_int)
+            uy2 = int(oy + uv_rect[3] * cell_int)
             ix, iy = int(ox), int(oy)
             dim = QColor(0, 0, 0, 120)
             # Top
@@ -214,8 +223,8 @@ class PixelCanvas(QWidget):
         painter.end()
 
     def resizeEvent(self, event):
-        self._rebuild_cache()
         super().resizeEvent(event)
+        self.update()
 
     def _pixel_at(self, pos):
         ox, oy = self._canvas_origin()
@@ -353,5 +362,4 @@ class PixelCanvas(QWidget):
         self._pan_x = target_ox - new_center_ox
         self._pan_y = target_oy - new_center_oy
 
-        self._rebuild_cache()
         self.update()
