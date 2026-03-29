@@ -316,7 +316,27 @@ class PixelCanvas(QWidget):
         x, y = self._pixel_at(event.position().toPoint())
         self._active_tool.on_release(x, y, event.button(), event.modifiers())
 
+    _PAN_STEP = 32  # pixels to pan per arrow key press
+
     def keyPressEvent(self, event):
+        key = event.key()
+
+        # Arrow keys pan the canvas
+        if key in (Qt.Key.Key_Left, Qt.Key.Key_Right, Qt.Key.Key_Up, Qt.Key.Key_Down):
+            step = self._PAN_STEP
+            if event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
+                step *= 4
+            if key == Qt.Key.Key_Left:
+                self._pan_x += step
+            elif key == Qt.Key.Key_Right:
+                self._pan_x -= step
+            elif key == Qt.Key.Key_Up:
+                self._pan_y += step
+            elif key == Qt.Key.Key_Down:
+                self._pan_y -= step
+            self.update()
+            return
+
         if self._active_tool.on_key_press(event.key(), event.modifiers()):
             self.update()
             return
