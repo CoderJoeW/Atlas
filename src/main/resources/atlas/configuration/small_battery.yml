@@ -112,6 +112,45 @@ items#2:
                 side: minecraft:block/custom/small_battery_side
 
 items#3:
+  atlas:small_battery_high:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#FFD700:#FF6347>Small Battery"
+    model: minecraft:block/custom/small_battery_high
+    behavior:
+      type: block_item
+      block:
+        loot:
+          pools:
+            - rolls: 1
+              entries:
+                - type: item
+                  item: atlas:small_battery
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: true
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        state:
+          auto-state: solid
+          model:
+            path: minecraft:block/custom/small_battery_high
+            generation:
+              parent: minecraft:block/cube_bottom_top
+              textures:
+                top: minecraft:block/custom/small_battery_high
+                bottom: minecraft:block/custom/small_battery_bottom
+                side: minecraft:block/custom/small_battery_side
+
+items#4:
   atlas:small_battery_full:
     material: paper
     data:
