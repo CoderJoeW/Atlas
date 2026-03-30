@@ -206,10 +206,10 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `battery visual state low when power 1-16`() {
+    fun `battery visual state low when power 1-12`() {
         val battery =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        for (p in 1..16) {
+        for (p in 1..12) {
             battery.currentPower = p
             assertEquals(
                 "atlas:small_battery_low",
@@ -220,10 +220,10 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `battery visual state medium when power 17-33`() {
+    fun `battery visual state medium when power 13-25`() {
         val battery =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        for (p in 17..33) {
+        for (p in 13..25) {
             battery.currentPower = p
             assertEquals(
                 "atlas:small_battery_medium",
@@ -234,10 +234,24 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `battery visual state full when power 34-50`() {
+    fun `battery visual state high when power 26-37`() {
         val battery =
             SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        for (p in 34..50) {
+        for (p in 26..37) {
+            battery.currentPower = p
+            assertEquals(
+                "atlas:small_battery_high",
+                battery.getVisualStateBlockId(),
+                "Failed for power=$p",
+            )
+        }
+    }
+
+    @Test
+    fun `battery visual state full when power 38-50`() {
+        val battery =
+            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+        for (p in 38..50) {
             battery.currentPower = p
             assertEquals(
                 "atlas:small_battery_full",

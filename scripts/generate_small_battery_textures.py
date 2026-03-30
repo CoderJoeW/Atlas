@@ -198,123 +198,81 @@ def make_side():
 # ---------------------------------------------------------------------------
 
 def make_top(fill_fraction=0.0, energy_color=None, glow_color=None):
-    """Create top face with hex armor and a circular gauge in the center."""
-    img = new_img(S, ARMOR_DARK)
+    """Create top face with hex armor and a segmented charge bar."""
+    img = make_hex_armor_face()
     draw = ImageDraw.Draw(img)
-
-    # Outer border
-    add_border(draw, S, EDGE_DARK, width=6)
-    add_bevel_border(draw, 6, 6, S - 7, S - 7, ARMOR_LIGHT, EDGE_DARK,
-                     width=3)
-
-    # Background hex pattern
-    for cx, cy in HEX_CENTERS:
-        verts = _hex_vertices(cx, cy, HEX_RADIUS - 1)
-        draw.polygon(verts, fill=ARMOR_DARK, outline=HEX_LINE)
-
     cx, cy = S // 2, S // 2
 
-    # --- Gauge housing: recessed circular plate ---
-    gauge_outer_r = 360
-    gauge_inner_r = 280
-    gauge_face_r = 260
+    # --- Charge bar: recessed rectangular panel ---
+    num_segments = 10
+    bar_margin = 120        # inset from image edges
+    bar_height = 360        # total height of the bar area
+    bar_y = cy - bar_height // 2
+    bar_x1 = bar_margin
+    bar_x2 = S - bar_margin
+    bar_w = bar_x2 - bar_x1
+    seg_gap = 12            # gap between segments
+    seg_w = (bar_w - (num_segments + 1) * seg_gap) // num_segments
+    seg_inset = 20          # vertical inset within the panel
 
-    # Dark recessed ring
-    draw_filled_circle(draw, cx, cy, gauge_outer_r + 6,
-                       EDGE_DARK)
-    # Metallic gauge frame
-    for r in range(gauge_inner_r, gauge_outer_r + 1):
-        t = (r - gauge_inner_r) / (gauge_outer_r - gauge_inner_r)
-        if t < 0.15:
-            color = FRAME_DARK
-        elif t < 0.35:
-            color = FRAME_MID
-        elif t < 0.65:
-            color = FRAME_LIGHT
-        elif t < 0.85:
-            color = FRAME_MID
+    # Recessed panel background
+    panel_pad = 24
+    draw.rectangle([bar_x1 - panel_pad, bar_y - panel_pad,
+                   bar_x2 + panel_pad, bar_y + bar_height + panel_pad],
+                  fill=ARMOR_MID)
+    add_bevel_border(draw,
+                     bar_x1 - panel_pad, bar_y - panel_pad,
+                     bar_x2 + panel_pad, bar_y + bar_height + panel_pad,
+                     EDGE_DARK, ARMOR_LIGHT, width=4)
+
+    # Inner dark recess for the bar
+    draw.rectangle([bar_x1, bar_y, bar_x2, bar_y + bar_height],
+                  fill=(15, 17, 22, 255))
+    add_bevel_border(draw, bar_x1, bar_y, bar_x2, bar_y + bar_height,
+                     EDGE_DARK, FRAME_DARK, width=3)
+
+    # Segment slots
+    lit_count = int(fill_fraction * num_segments + 0.5)
+    for i in range(num_segments):
+        sx = bar_x1 + seg_gap + i * (seg_w + seg_gap)
+        sy = bar_y + seg_inset
+        sw = seg_w
+        sh = bar_height - 2 * seg_inset
+
+        if i < lit_count and energy_color:
+            # Lit segment
+            draw.rectangle([sx, sy, sx + sw, sy + sh],
+                          fill=energy_color)
+            # Brighter center stripe
+            stripe_inset = sw // 4
+            bright = lerp_color(energy_color, glow_color, 0.4)
+            draw.rectangle([sx + stripe_inset, sy + 6,
+                           sx + sw - stripe_inset, sy + sh - 6],
+                          fill=bright)
+            # Glow bleed from lit segment
+            add_radial_glow(img, sx + sw // 2, cy,
+                            sw, glow_color, intensity=0.15)
         else:
-            color = FRAME_DARK
-        draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=color)
+            # Dark empty slot
+            draw.rectangle([sx, sy, sx + sw, sy + sh],
+                          fill=(20, 22, 28, 255))
+            # Subtle inner border
+            draw.rectangle([sx + 2, sy + 2, sx + sw - 2, sy + sh - 2],
+                          outline=(28, 30, 38, 255))
 
-    # Gauge face (dark background)
-    draw_filled_circle(draw, cx, cy, gauge_face_r, (15, 17, 22, 255))
-
-    # Tick marks around the gauge face
-    num_ticks = 24
-    for i in range(num_ticks):
-        angle = math.radians(i * (360 / num_ticks) - 90)
-        # Start at inner edge of face
-        tick_inner = gauge_face_r - 30
-        tick_outer = gauge_face_r - 8
-        x1 = cx + int(tick_inner * math.cos(angle))
-        y1 = cy + int(tick_inner * math.sin(angle))
-        x2 = cx + int(tick_outer * math.cos(angle))
-        y2 = cy + int(tick_outer * math.sin(angle))
-        tick_color = ARMOR_LIGHT if i % 4 == 0 else FRAME_DARK
-        draw.line([(x1, y1), (x2, y2)], fill=tick_color, width=3)
-
-    # --- Fill arc: sweeps clockwise from bottom (6 o'clock) ---
-    if fill_fraction > 0 and energy_color:
-        arc_r_outer = gauge_face_r - 40
-        arc_r_inner = gauge_face_r - 120
-        # Draw arc as filled wedge segments
-        # Start angle: 90 degrees (6 o'clock / bottom)
-        # Sweep clockwise by fill_fraction * 360
-        sweep_degrees = fill_fraction * 360
-        start_deg = 90  # bottom
-
-        # Draw filled arc segments
-        num_segments = max(4, int(sweep_degrees / 2))
-        for seg in range(num_segments):
-            t = seg / num_segments
-            angle_deg = start_deg + t * sweep_degrees
-            angle_next = start_deg + (seg + 1) / num_segments * sweep_degrees
-            a1 = math.radians(angle_deg)
-            a2 = math.radians(angle_next)
-
-            # Quad: outer1, outer2, inner2, inner1
-            quad = [
-                (cx + arc_r_outer * math.cos(a1),
-                 cy + arc_r_outer * math.sin(a1)),
-                (cx + arc_r_outer * math.cos(a2),
-                 cy + arc_r_outer * math.sin(a2)),
-                (cx + arc_r_inner * math.cos(a2),
-                 cy + arc_r_inner * math.sin(a2)),
-                (cx + arc_r_inner * math.cos(a1),
-                 cy + arc_r_inner * math.sin(a1)),
-            ]
-            draw.polygon(quad, fill=energy_color)
-
-        # Bright leading edge of the arc
-        end_angle = math.radians(start_deg + sweep_degrees)
-        ex = cx + int((arc_r_outer + arc_r_inner) / 2 * math.cos(end_angle))
-        ey = cy + int((arc_r_outer + arc_r_inner) / 2 * math.sin(end_angle))
-        add_radial_glow(img, ex, ey, 40, glow_color, intensity=0.5)
-
-        # Inner glow ring
-        draw_thick_circle(draw, cx, cy, arc_r_inner - 4,
-                          (*energy_color[:3], 100), 2)
-
-        # Center readout glow
-        add_radial_glow(img, cx, cy, arc_r_inner - 20,
-                        glow_color, intensity=0.15)
-
-    # Center hub bolt
-    draw_filled_circle(draw, cx, cy, 24, FRAME_MID, outline=EDGE_DARK)
-    draw_filled_circle(draw, cx, cy, 12, RIVET_COLOR)
-
-    # Bolts around gauge frame (8 evenly spaced)
-    bolt_ring_r = gauge_outer_r - 14
-    for i in range(8):
-        angle = math.radians(45 * i)
-        bx = int(cx + bolt_ring_r * math.cos(angle))
-        by = int(cy + bolt_ring_r * math.sin(angle))
-        draw_filled_circle(draw, bx, by, 8, ARMOR_LIGHT,
+    # Bolts at panel corners
+    bolt_positions = [
+        (bar_x1 - panel_pad + 12, bar_y - panel_pad + 12),
+        (bar_x2 + panel_pad - 12, bar_y - panel_pad + 12),
+        (bar_x1 - panel_pad + 12, bar_y + bar_height + panel_pad - 12),
+        (bar_x2 + panel_pad - 12, bar_y + bar_height + panel_pad - 12),
+    ]
+    for bx, by in bolt_positions:
+        draw_filled_circle(draw, bx, by, 10, ARMOR_LIGHT,
                            outline=EDGE_DARK)
-        draw_filled_circle(draw, bx, by, 4, RIVET_COLOR)
+        draw_filled_circle(draw, bx, by, 5, RIVET_COLOR)
 
-    # Corner bolts
+    # Corner bolts on the face
     bolt_inset = 40
     for bx, by in [(bolt_inset, bolt_inset),
                    (S - bolt_inset, bolt_inset),
