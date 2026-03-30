@@ -19,6 +19,7 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
         const val BLOCK_ID = "atlas:small_battery"
         const val BLOCK_ID_LOW = "atlas:small_battery_low"
         const val BLOCK_ID_MEDIUM = "atlas:small_battery_medium"
+        const val BLOCK_ID_HIGH = "atlas:small_battery_high"
         const val BLOCK_ID_FULL = "atlas:small_battery_full"
 
         val descriptor =
@@ -27,7 +28,7 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
                 displayName = "Small Battery",
                 description = "Storage - holds up to 50 power",
                 placementType = PlacementType.SIMPLE,
-                additionalBlockIds = listOf(BLOCK_ID_LOW, BLOCK_ID_MEDIUM, BLOCK_ID_FULL),
+                additionalBlockIds = listOf(BLOCK_ID_LOW, BLOCK_ID_MEDIUM, BLOCK_ID_HIGH, BLOCK_ID_FULL),
                 constructor = { loc, facing -> SmallBattery(loc, facing) },
             )
     }
@@ -37,9 +38,10 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
     private fun chargeLevel(): Int =
         when (currentPower) {
             0 -> 0
-            in 1..16 -> 1
-            in 17..33 -> 2
-            else -> 3
+            in 1..12 -> 1
+            in 13..25 -> 2
+            in 26..37 -> 3
+            else -> 4
         }
 
     override fun getVisualStateBlockId(): String =
@@ -47,6 +49,7 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
             0 -> BLOCK_ID
             1 -> BLOCK_ID_LOW
             2 -> BLOCK_ID_MEDIUM
+            3 -> BLOCK_ID_HIGH
             else -> BLOCK_ID_FULL
         }
 

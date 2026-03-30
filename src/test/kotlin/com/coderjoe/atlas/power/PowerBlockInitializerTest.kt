@@ -30,7 +30,7 @@ class PowerBlockInitializerTest {
 
         // SmallSolarPanel: 2 (base + full)
         // SmallDrill: 1
-        // SmallBattery: 4 (base + low + medium + full)
+        // SmallBattery: 5 (base + low + medium + high + full)
         // PowerCable: 1
         // LavaGenerator: 2 (base + active)
         // AutoSmelter: 1
@@ -42,7 +42,7 @@ class PowerBlockInitializerTest {
         // SoftTouchDrill: 1
         // ExperienceExtractor: 2 (base + active)
         // Total: 19
-        assertEquals(19, ids.size)
+        assertEquals(20, ids.size)
     }
 
     @Test
