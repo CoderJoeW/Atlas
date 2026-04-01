@@ -237,6 +237,11 @@ def make_top(direction="north"):
     perpendicular to the travel direction. Clean polygon chevrons point
     in the travel direction.
 
+    TILING: The texture tiles seamlessly along the travel axis. Rails run
+    edge-to-edge with no border on the travel-axis edges. Chevron spacing
+    (128) and tread ridge spacing (32) both divide evenly into 1024, and
+    chevrons start at offset 0 so the pattern wraps cleanly.
+
     Args:
         direction: "north", "south", "east", "west"
     """
@@ -245,89 +250,90 @@ def make_top(direction="north"):
 
     horizontal = direction in ("east", "west")
 
-    # Outer border
-    add_border(draw, S, EDGE_DARK, width=6)
-    add_bevel_border(draw, 6, 6, S - 7, S - 7, ARMOR_LIGHT, EDGE_DARK,
-                     width=3)
+    # Tileable spacings — must divide evenly into 1024
+    chevron_spacing = 128  # 1024 / 128 = 8 chevrons per block
+    ridge_spacing = 32     # 1024 / 32 = 32 ridges per block
+    bolt_spacing = 256     # 1024 / 256 = 4 bolts per rail per block
+    chevron_thickness = 22
 
     rail_w = 80
 
     if horizontal:
-        # Rails on top and bottom edges
-        draw.rectangle([10, 10, S - 10, rail_w], fill=ARMOR_MID)
-        add_bevel_border(draw, 10, 10, S - 10, rail_w,
-                         ARMOR_LIGHT, EDGE_DARK, width=3)
-        draw.rectangle([10, S - rail_w, S - 10, S - 10], fill=ARMOR_MID)
-        add_bevel_border(draw, 10, S - rail_w, S - 10, S - 10,
-                         ARMOR_LIGHT, EDGE_DARK, width=3)
+        # Rails on top and bottom edges — run full width, no border on
+        # left/right edges so adjacent belts connect seamlessly.
+        draw.rectangle([0, 0, S, rail_w], fill=ARMOR_MID)
+        draw.line([(0, rail_w), (S, rail_w)], fill=EDGE_DARK, width=3)
+        draw.rectangle([0, S - rail_w, S, S], fill=ARMOR_MID)
+        draw.line([(0, S - rail_w), (S, S - rail_w)],
+                  fill=EDGE_DARK, width=3)
 
-        for rx in range(80, S - 40, 180):
+        # Rail bolts — tileable spacing
+        for rx in range(bolt_spacing // 2, S, bolt_spacing):
             for ry in [rail_w // 2, S - rail_w // 2]:
                 draw_filled_circle(draw, rx, ry, 8, ARMOR_LIGHT,
                                    outline=EDGE_DARK)
                 draw_filled_circle(draw, rx, ry, 4, RIVET_COLOR)
 
-        # Belt surface between rails
-        belt_y1 = rail_w + 4
-        belt_y2 = S - rail_w - 4
-        draw.rectangle([14, belt_y1, S - 14, belt_y2], fill=BELT_DARK)
+        # Belt surface between rails — extends to full width for tiling
+        belt_y1 = rail_w + 2
+        belt_y2 = S - rail_w - 2
+        draw.rectangle([0, belt_y1, S, belt_y2], fill=BELT_DARK)
 
-        # Belt tread ridges — vertical lines
-        for rx in range(14, S - 14, 30):
+        # Belt tread ridges — vertical lines, tileable spacing
+        for rx in range(0, S, ridge_spacing):
             draw.line([(rx, belt_y1 + 2), (rx, belt_y2 - 2)],
                       fill=BELT_MID, width=2)
 
-        # Chevrons
+        # Chevrons — tileable spacing, start at half-spacing offset
         belt_cy = (belt_y1 + belt_y2) // 2
         half_span = (belt_y2 - belt_y1) // 2 - 30
-        chevron_thickness = 22
-        chevron_spacing = 150
 
         if direction == "east":
-            for cx in range(150, S - 40, chevron_spacing):
+            for cx in range(chevron_spacing // 2, S, chevron_spacing):
                 draw_chevron_east(draw, cx, belt_cy,
                                   chevron_thickness, half_span)
         else:
-            for cx in range(S - 150, 40, -chevron_spacing):
+            for cx in range(S - chevron_spacing // 2, -1,
+                            -chevron_spacing):
                 draw_chevron_west(draw, cx, belt_cy,
                                   chevron_thickness, half_span)
     else:
-        # Rails on left and right edges
-        draw.rectangle([10, 10, rail_w, S - 10], fill=ARMOR_MID)
-        add_bevel_border(draw, 10, 10, rail_w, S - 10,
-                         ARMOR_LIGHT, EDGE_DARK, width=3)
-        draw.rectangle([S - rail_w, 10, S - 10, S - 10], fill=ARMOR_MID)
-        add_bevel_border(draw, S - rail_w, 10, S - 10, S - 10,
-                         ARMOR_LIGHT, EDGE_DARK, width=3)
+        # Rails on left and right edges — run full height, no border on
+        # top/bottom edges so adjacent belts connect seamlessly.
+        draw.rectangle([0, 0, rail_w, S], fill=ARMOR_MID)
+        draw.line([(rail_w, 0), (rail_w, S)], fill=EDGE_DARK, width=3)
+        draw.rectangle([S - rail_w, 0, S, S], fill=ARMOR_MID)
+        draw.line([(S - rail_w, 0), (S - rail_w, S)],
+                  fill=EDGE_DARK, width=3)
 
-        for ry in range(80, S - 40, 180):
+        # Rail bolts — tileable spacing
+        for ry in range(bolt_spacing // 2, S, bolt_spacing):
             for rx in [rail_w // 2, S - rail_w // 2]:
                 draw_filled_circle(draw, rx, ry, 8, ARMOR_LIGHT,
                                    outline=EDGE_DARK)
                 draw_filled_circle(draw, rx, ry, 4, RIVET_COLOR)
 
-        # Belt surface between rails
-        belt_x1 = rail_w + 4
-        belt_x2 = S - rail_w - 4
-        draw.rectangle([belt_x1, 14, belt_x2, S - 14], fill=BELT_DARK)
+        # Belt surface between rails — extends to full height for tiling
+        belt_x1 = rail_w + 2
+        belt_x2 = S - rail_w - 2
+        draw.rectangle([belt_x1, 0, belt_x2, S], fill=BELT_DARK)
 
-        # Belt tread ridges — horizontal lines
-        for ry in range(14, S - 14, 30):
+        # Belt tread ridges — horizontal lines, tileable spacing
+        for ry in range(0, S, ridge_spacing):
             draw.line([(belt_x1 + 2, ry), (belt_x2 - 2, ry)],
                       fill=BELT_MID, width=2)
 
-        # Chevrons
+        # Chevrons — tileable spacing, start at half-spacing offset
         belt_cx = (belt_x1 + belt_x2) // 2
         half_span = (belt_x2 - belt_x1) // 2 - 30
-        chevron_thickness = 22
-        chevron_spacing = 150
 
         if direction == "north":
-            for cy in range(S - 150, 40, -chevron_spacing):
+            for cy in range(S - chevron_spacing // 2, -1,
+                            -chevron_spacing):
                 draw_chevron_north(draw, belt_cx, cy, 0,
                                    chevron_thickness, half_span)
         else:
-            for cy in range(150, S - 40, chevron_spacing):
+            for cy in range(chevron_spacing // 2, S, chevron_spacing):
                 draw_chevron_south(draw, belt_cx, cy,
                                    chevron_thickness, half_span)
 
