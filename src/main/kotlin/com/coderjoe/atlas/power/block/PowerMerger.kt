@@ -23,6 +23,7 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
                 displayName = "Power Merger",
                 description = "Cable - merges power from all sides, outputs in facing direction",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, facing -> PowerMerger(loc, facing) },
             )
     }

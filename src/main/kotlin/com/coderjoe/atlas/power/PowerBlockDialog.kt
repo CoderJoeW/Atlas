@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
+import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.core.displayName
 import com.coderjoe.atlas.power.block.LavaGenerator
@@ -34,22 +35,30 @@ object PowerBlockDialog {
         player: Player,
         powerBlock: PowerBlock,
         registry: BlockRegistry<*>,
+        descriptors: Map<String, BlockDescriptor>,
     ) {
         if (powerBlock is SmallDrill) {
             AtlasBlockDialog.showDialog(player, powerBlock, registry) { p, block, onClose ->
-                sendDrillDialog(p, block as SmallDrill, onClose)
+                sendDrillDialog(p, block as SmallDrill, descriptors, onClose)
             }
         } else {
-            AtlasBlockDialog.showBlockDialog(player, powerBlock, registry, ::getBlockDisplayName, ::buildPowerInfo)
+            AtlasBlockDialog.showBlockDialog(
+                player,
+                powerBlock,
+                registry,
+                { block -> getBlockDisplayName(block, descriptors) },
+                ::buildPowerInfo,
+            )
         }
     }
 
     private fun sendDrillDialog(
         player: Player,
         drill: SmallDrill,
+        descriptors: Map<String, BlockDescriptor>,
         onClose: (Player) -> Unit,
     ) {
-        val title = Component.text(getBlockDisplayName(drill))
+        val title = Component.text(getBlockDisplayName(drill, descriptors))
         val bodyText = buildPowerInfo(drill)
         val body = DialogBody.plainMessage(bodyText)
 
@@ -95,23 +104,15 @@ object PowerBlockDialog {
         player.showDialog(dialog)
     }
 
-    private fun getBlockDisplayName(powerBlock: PowerBlock): String =
-        when (powerBlock) {
-            is SmallSolarPanel -> "Small Solar Panel"
-            is SmallBattery -> "Small Battery"
-            is SoftTouchDrill -> "Soft Touch Drill"
-            is SmallDrill -> "Small Drill"
-            is PowerCable -> "Power Cable (${powerBlock.facing.displayName()})"
-            is LavaGenerator -> "Lava Generator"
-            is AutoSmelter -> "Auto Smelter (${powerBlock.facing.displayName()})"
-            is PowerSplitter -> "Power Splitter (${powerBlock.facing.displayName()})"
-            is CobblestoneFactory -> "Cobblestone Factory"
-            is ObsidianFactory -> "Obsidian Factory"
-            is Crusher -> "Crusher (${powerBlock.facing.displayName()})"
-            is PowerMerger -> "Power Merger (${powerBlock.facing.displayName()})"
-            is ExperienceExtractor -> "Experience Extractor (${powerBlock.facing.displayName()})"
-            else -> "Power Block"
-        }
+    private fun getBlockDisplayName(
+        powerBlock: PowerBlock,
+        descriptors: Map<String, BlockDescriptor>,
+    ): String =
+        AtlasBlockDialog.defaultDisplayName(
+            descriptors[powerBlock.baseBlockId],
+            powerBlock.facing,
+            fallback = "Power Block",
+        )
 
     private fun buildPowerInfo(powerBlock: PowerBlock): Component {
         val ratio =

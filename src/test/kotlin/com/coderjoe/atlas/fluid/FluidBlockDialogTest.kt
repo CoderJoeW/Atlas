@@ -3,8 +3,12 @@ package com.coderjoe.atlas.fluid
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.core.AtlasBlockDialog
+import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.fluid.block.FluidContainer
+import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.fluid.block.FluidSplitter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.block.BlockFace
@@ -28,10 +32,24 @@ class FluidBlockDialogTest {
         TestHelper.teardown()
     }
 
+    private val descriptors: Map<String, BlockDescriptor> =
+        listOf(
+            FluidPump.descriptor,
+            FluidPipe.descriptor,
+            FluidContainer.descriptor,
+            FluidMerger.descriptor,
+            FluidSplitter.descriptor,
+        ).associateBy { it.baseBlockId }
+
     private fun getDisplayName(block: FluidBlock): String {
-        val method = FluidBlockDialog::class.java.getDeclaredMethod("getBlockDisplayName", FluidBlock::class.java)
+        val method =
+            FluidBlockDialog::class.java.getDeclaredMethod(
+                "getBlockDisplayName",
+                FluidBlock::class.java,
+                Map::class.java,
+            )
         method.isAccessible = true
-        return method.invoke(FluidBlockDialog, block) as String
+        return method.invoke(FluidBlockDialog, block, descriptors) as String
     }
 
     private fun buildFluidInfo(block: FluidBlock): Component {

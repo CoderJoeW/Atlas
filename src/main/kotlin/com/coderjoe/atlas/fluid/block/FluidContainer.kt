@@ -27,6 +27,7 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
                 displayName = "Fluid Container",
                 description = "Container - stores up to $MAX_CAPACITY units of fluid",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, facing -> FluidContainer(loc, facing) },
             )
     }

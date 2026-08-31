@@ -2,10 +2,20 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.core.AtlasBlockDialog
+import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.PowerMerger
+import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.utility.block.AutoSmelter
+import com.coderjoe.atlas.utility.block.CobblestoneFactory
+import com.coderjoe.atlas.utility.block.Crusher
+import com.coderjoe.atlas.utility.block.ExperienceExtractor
+import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
+import com.coderjoe.atlas.utility.block.SoftTouchDrill
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.block.BlockFace
@@ -28,10 +38,32 @@ class PowerBlockDialogTest {
         TestHelper.teardown()
     }
 
+    private val descriptors: Map<String, BlockDescriptor> =
+        listOf(
+            SmallSolarPanel.descriptor,
+            SmallDrill.descriptor,
+            SmallBattery.descriptor,
+            PowerCable.descriptor,
+            LavaGenerator.descriptor,
+            AutoSmelter.descriptor,
+            PowerSplitter.descriptor,
+            CobblestoneFactory.descriptor,
+            ObsidianFactory.descriptor,
+            Crusher.descriptor,
+            PowerMerger.descriptor,
+            SoftTouchDrill.descriptor,
+            ExperienceExtractor.descriptor,
+        ).associateBy { it.baseBlockId }
+
     private fun getDisplayName(block: PowerBlock): String {
-        val method = PowerBlockDialog::class.java.getDeclaredMethod("getBlockDisplayName", PowerBlock::class.java)
+        val method =
+            PowerBlockDialog::class.java.getDeclaredMethod(
+                "getBlockDisplayName",
+                PowerBlock::class.java,
+                Map::class.java,
+            )
         method.isAccessible = true
-        return method.invoke(PowerBlockDialog, block) as String
+        return method.invoke(PowerBlockDialog, block, descriptors) as String
     }
 
     private fun buildPowerInfo(block: PowerBlock): Component {

@@ -19,6 +19,7 @@ class PowerCable(location: Location, override val facing: BlockFace) : PowerBloc
                 displayName = "Power Cable",
                 description = "Cable - transfers power in facing direction",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, facing -> PowerCable(loc, facing) },
             )
     }

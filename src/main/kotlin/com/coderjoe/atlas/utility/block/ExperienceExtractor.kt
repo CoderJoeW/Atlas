@@ -99,6 +99,7 @@ class ExperienceExtractor(
                 description = "Extracts XP from items via hopper, outputs Liquid Experience fluid",
                 placementType = PlacementType.DIRECTIONAL,
                 additionalBlockIds = listOf(BLOCK_ID_ACTIVE),
+                showFacingInDisplayName = true,
                 constructor = { loc, face -> ExperienceExtractor(loc, face) },
             )
     }

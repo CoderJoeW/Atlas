@@ -23,6 +23,7 @@ class FluidSplitter(location: Location, override val facing: BlockFace) : FluidB
                 displayName = "Fluid Splitter",
                 description = "Splitter - distributes fluid to all adjacent faces",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, facing -> FluidSplitter(loc, facing) },
             )
     }

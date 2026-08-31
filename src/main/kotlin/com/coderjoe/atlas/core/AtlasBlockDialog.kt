@@ -19,6 +19,15 @@ import java.util.concurrent.ConcurrentHashMap
 fun BlockFace.displayName(): String = name.lowercase().replaceFirstChar { it.uppercase() }
 
 object AtlasBlockDialog {
+    fun defaultDisplayName(
+        descriptor: BlockDescriptor?,
+        facing: BlockFace,
+        fallback: String,
+    ): String {
+        val baseName = descriptor?.displayName ?: fallback
+        return if (descriptor?.showFacingInDisplayName == true) "$baseName (${facing.displayName()})" else baseName
+    }
+
     private lateinit var plugin: JavaPlugin
     private val activeDialogs = ConcurrentHashMap<UUID, BukkitTask>()
 

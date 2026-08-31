@@ -18,6 +18,7 @@ class ConveyorBelt(location: Location, override val facing: BlockFace) : Transpo
                 displayName = "Conveyor Belt",
                 description = "Moves items forward in the facing direction",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, face -> ConveyorBelt(loc, face) },
             )
     }

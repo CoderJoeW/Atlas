@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
+import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.core.displayName
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
@@ -18,19 +18,26 @@ object FluidBlockDialog {
         player: Player,
         fluidBlock: FluidBlock,
         registry: BlockRegistry<*>,
+        descriptors: Map<String, BlockDescriptor>,
     ) {
-        AtlasBlockDialog.showBlockDialog(player, fluidBlock, registry, ::getBlockDisplayName, ::buildFluidInfo)
+        AtlasBlockDialog.showBlockDialog(
+            player,
+            fluidBlock,
+            registry,
+            { block -> getBlockDisplayName(block, descriptors) },
+            ::buildFluidInfo,
+        )
     }
 
-    private fun getBlockDisplayName(fluidBlock: FluidBlock): String =
-        when (fluidBlock) {
-            is FluidPump -> "Fluid Pump"
-            is FluidPipe -> "Fluid Pipe (${fluidBlock.facing.displayName()})"
-            is FluidContainer -> "Fluid Container (${fluidBlock.facing.displayName()})"
-            is FluidMerger -> "Fluid Merger (${fluidBlock.facing.displayName()})"
-            is FluidSplitter -> "Fluid Splitter (${fluidBlock.facing.displayName()})"
-            else -> "Fluid Block"
-        }
+    private fun getBlockDisplayName(
+        fluidBlock: FluidBlock,
+        descriptors: Map<String, BlockDescriptor>,
+    ): String =
+        AtlasBlockDialog.defaultDisplayName(
+            descriptors[fluidBlock.baseBlockId],
+            fluidBlock.facing,
+            fallback = "Fluid Block",
+        )
 
     private fun buildFluidInfo(fluidBlock: FluidBlock): Component {
         val fluidName =

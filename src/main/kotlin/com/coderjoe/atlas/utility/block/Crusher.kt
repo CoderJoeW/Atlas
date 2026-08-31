@@ -50,6 +50,7 @@ class Crusher(location: Location, facing: BlockFace = BlockFace.NORTH) : PowerBl
                 displayName = "Crusher",
                 description = "Crushes ore blocks into double the ores, consumes $POWER_PER_CRUSH power per item",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, face -> Crusher(loc, face) },
             )
     }

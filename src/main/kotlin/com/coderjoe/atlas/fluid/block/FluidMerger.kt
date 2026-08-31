@@ -22,6 +22,7 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
                 displayName = "Fluid Merger",
                 description = "Merger - merges fluid from all sides, outputs in facing direction",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, facing -> FluidMerger(loc, facing) },
             )
     }

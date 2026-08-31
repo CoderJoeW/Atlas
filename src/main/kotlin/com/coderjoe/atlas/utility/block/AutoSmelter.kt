@@ -30,6 +30,7 @@ class AutoSmelter(location: Location, facing: BlockFace = BlockFace.NORTH) : Pow
                 displayName = "Auto Smelter",
                 description = "Smelts items passing through, consumes 2 power per item",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, face -> AutoSmelter(loc, face) },
             )
 

@@ -21,6 +21,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
                 displayName = "Power Splitter",
                 description = "Cable - distributes power to all adjacent faces",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, facing -> PowerSplitter(loc, facing) },
             )
     }

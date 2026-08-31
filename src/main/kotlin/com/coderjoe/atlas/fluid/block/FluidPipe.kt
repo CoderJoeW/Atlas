@@ -21,6 +21,7 @@ class FluidPipe(location: Location, override val facing: BlockFace) : FluidBlock
                 displayName = "Fluid Pipe",
                 description = "Pipe - transports fluid in facing direction",
                 placementType = PlacementType.DIRECTIONAL,
+                showFacingInDisplayName = true,
                 constructor = { loc, facing -> FluidPipe(loc, facing) },
             )
     }

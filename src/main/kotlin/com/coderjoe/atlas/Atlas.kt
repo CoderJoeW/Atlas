@@ -72,39 +72,43 @@ class Atlas : JavaPlugin() {
         initTransportSystem()
 
         // Register unified listener
+        val powerDescriptors = powerDescriptors()
         val powerSystem =
             BlockSystem<PowerBlock>(
                 name = "power",
                 registry = powerBlockRegistry,
                 factory = PowerBlockFactory,
-                descriptors = powerDescriptors(),
+                descriptors = powerDescriptors,
                 showDialog = { player, block ->
-                    PowerBlockDialog.showPowerDialog(player, block as PowerBlock, powerBlockRegistry)
+                    PowerBlockDialog.showPowerDialog(player, block as PowerBlock, powerBlockRegistry, powerDescriptors)
                 },
             )
 
+        val fluidDescriptors = fluidDescriptors()
         val fluidSystem =
             BlockSystem<FluidBlock>(
                 name = "fluid",
                 registry = fluidBlockRegistry,
                 factory = FluidBlockFactory,
-                descriptors = fluidDescriptors(),
+                descriptors = fluidDescriptors,
                 showDialog = { player, block ->
-                    FluidBlockDialog.showFluidDialog(player, block as FluidBlock, fluidBlockRegistry)
+                    FluidBlockDialog.showFluidDialog(player, block as FluidBlock, fluidBlockRegistry, fluidDescriptors)
                 },
             )
 
+        val transportDescriptors = transportDescriptors()
         val transportSystem =
             BlockSystem<TransportBlock>(
                 name = "transport",
                 registry = transportBlockRegistry,
                 factory = TransportBlockFactory,
-                descriptors = transportDescriptors(),
+                descriptors = transportDescriptors,
                 showDialog = { player, block ->
                     TransportBlockDialog.showTransportDialog(
                         player,
                         block as TransportBlock,
                         transportBlockRegistry,
+                        transportDescriptors,
                     )
                 },
             )
