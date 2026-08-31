@@ -37,14 +37,14 @@ class FluidBlockFactoryTest {
     @Test
     fun `createFluidBlock returns correct instance`() {
         FluidBlockFactory.register("atlas:fluid_pump") { loc, _ -> FluidPump(loc) }
-        val block = FluidBlockFactory.createFluidBlock("atlas:fluid_pump", TestHelper.createLocation())
+        val block = FluidBlockFactory.create("atlas:fluid_pump", TestHelper.createLocation())
         assertNotNull(block)
         assertTrue(block is FluidPump)
     }
 
     @Test
     fun `createFluidBlock returns null for unknown`() {
-        assertNull(FluidBlockFactory.createFluidBlock("unknown", TestHelper.createLocation()))
+        assertNull(FluidBlockFactory.create("unknown", TestHelper.createLocation()))
     }
 
     @Test

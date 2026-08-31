@@ -40,7 +40,7 @@ class PowerBlockRegistryTest {
         val block = SmallSolarPanel(loc)
         TestHelper.addToRegistry(registry, block, "atlas:small_solar_panel")
 
-        val retrieved = registry.getPowerBlock(loc)
+        val retrieved = registry.getBlock(loc)
         assertSame(block, retrieved)
     }
 
@@ -50,14 +50,14 @@ class PowerBlockRegistryTest {
         val block = SmallSolarPanel(loc)
         TestHelper.addToRegistry(registry, block, "atlas:small_solar_panel")
 
-        val removed = registry.unregisterPowerBlock(loc)
+        val removed = registry.unregister(loc)
         assertSame(block, removed)
-        assertNull(registry.getPowerBlock(loc))
+        assertNull(registry.getBlock(loc))
     }
 
     @Test
     fun `unregister non-existent location returns null`() {
-        val result = registry.unregisterPowerBlock(TestHelper.createLocation(99.0, 99.0, 99.0))
+        val result = registry.unregister(TestHelper.createLocation(99.0, 99.0, 99.0))
         assertNull(result)
     }
 
@@ -68,7 +68,7 @@ class PowerBlockRegistryTest {
         val northBlock = SmallSolarPanel(northLoc)
         TestHelper.addToRegistry(registry, northBlock, "atlas:small_solar_panel")
 
-        val adjacent = registry.getAdjacentPowerBlock(loc, BlockFace.NORTH)
+        val adjacent = registry.getAdjacentBlock(loc, BlockFace.NORTH)
         assertSame(northBlock, adjacent)
     }
 
@@ -98,7 +98,7 @@ class PowerBlockRegistryTest {
             TestHelper.addToRegistry(registry, SmallSolarPanel(neighborLoc), "atlas:small_solar_panel")
         }
 
-        val adjacent = registry.getAdjacentPowerBlocks(loc)
+        val adjacent = registry.getAdjacentBlocks(loc)
         assertEquals(6, adjacent.size)
     }
 
@@ -112,7 +112,7 @@ class PowerBlockRegistryTest {
         TestHelper.addToRegistry(registry, block1, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, block2, "atlas:small_battery")
 
-        val pairs = registry.getAllPowerBlocksWithIds()
+        val pairs = registry.getAllBlocksWithIds()
         assertEquals(2, pairs.size)
         assertTrue(pairs.any { it.first === block1 && it.second == "atlas:small_solar_panel" })
         assertTrue(pairs.any { it.first === block2 && it.second == "atlas:small_battery" })
@@ -122,14 +122,14 @@ class PowerBlockRegistryTest {
     fun `getAllPowerBlocks returns all registered blocks`() {
         TestHelper.addToRegistry(registry, SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0)), "sp")
         TestHelper.addToRegistry(registry, SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0)), "sp")
-        assertEquals(2, registry.getAllPowerBlocks().size)
+        assertEquals(2, registry.getAllBlocks().size)
     }
 
     @Test
     fun `stopAll clears all blocks`() {
         TestHelper.addToRegistry(registry, SmallSolarPanel(TestHelper.createLocation()), "sp")
         registry.stopAll()
-        assertEquals(0, registry.getAllPowerBlocks().size)
+        assertEquals(0, registry.getAllBlocks().size)
     }
 
     @Test
@@ -140,13 +140,13 @@ class PowerBlockRegistryTest {
     @Test
     fun `getAdjacentPowerBlock returns null when no block in direction`() {
         val loc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        assertNull(registry.getAdjacentPowerBlock(loc, BlockFace.NORTH))
+        assertNull(registry.getAdjacentBlock(loc, BlockFace.NORTH))
     }
 
     @Test
     fun `getAdjacentPowerBlocks returns empty when no neighbors`() {
         val loc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val adjacent = registry.getAdjacentPowerBlocks(loc)
+        val adjacent = registry.getAdjacentBlocks(loc)
         assertEquals(0, adjacent.size)
     }
 
@@ -158,6 +158,6 @@ class PowerBlockRegistryTest {
         TestHelper.addToRegistry(registry, block1, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, block2, "atlas:small_solar_panel")
 
-        assertSame(block2, registry.getPowerBlock(loc))
+        assertSame(block2, registry.getBlock(loc))
     }
 }

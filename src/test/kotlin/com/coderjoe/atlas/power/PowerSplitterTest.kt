@@ -81,7 +81,7 @@ class PowerSplitterTest {
     fun `factory creates PowerSplitter from base ID`() {
         TestHelper.initPowerFactory()
         val block =
-            PowerBlockFactory.createPowerBlock(
+            PowerBlockFactory.create(
                 "atlas:power_splitter",
                 TestHelper.createLocation(),
                 BlockFace.NORTH,

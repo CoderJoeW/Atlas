@@ -78,7 +78,7 @@ class AtlasPluginTest {
         TestHelper.initPowerFactory()
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         registry.stopAll()
-        assertEquals(0, registry.getAllPowerBlocks().size)
+        assertEquals(0, registry.getAllBlocks().size)
     }
 
     @Test
@@ -86,7 +86,7 @@ class AtlasPluginTest {
         TestHelper.initFluidFactory()
         val registry = FluidBlockRegistry(TestHelper.mockPlugin)
         registry.stopAll()
-        assertEquals(0, registry.getAllFluidBlocksWithIds().size)
+        assertEquals(0, registry.getAllBlocksWithIds().size)
     }
 
     @Test

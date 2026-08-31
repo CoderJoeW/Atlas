@@ -56,7 +56,7 @@ class FluidBlockListenerTest {
         every { event.block } returns block
 
         listener.onBlockPlace(event)
-        assertNull(registry.getFluidBlock(loc))
+        assertNull(registry.getBlock(loc))
     }
 
     @Test
@@ -91,7 +91,7 @@ class FluidBlockListenerTest {
         } catch (_: ExceptionInInitializerError) {
         }
 
-        assertNull(registry.getFluidBlock(loc))
+        assertNull(registry.getBlock(loc))
     }
 
     @Test

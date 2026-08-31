@@ -56,7 +56,7 @@ class PowerBlockListenerTest {
         every { event.block } returns block
 
         listener.onBlockPlace(event)
-        assertNull(registry.getPowerBlock(loc))
+        assertNull(registry.getBlock(loc))
     }
 
     @Test
@@ -95,7 +95,7 @@ class PowerBlockListenerTest {
         } catch (_: ExceptionInInitializerError) {
         }
 
-        assertNull(registry.getPowerBlock(loc))
+        assertNull(registry.getBlock(loc))
     }
 
     @Test

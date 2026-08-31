@@ -39,7 +39,7 @@ class FluidBlockPersistenceTest {
         val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        val loaded = loadRegistry.getAllFluidBlocksWithIds()
+        val loaded = loadRegistry.getAllBlocksWithIds()
         assertEquals(1, loaded.size)
         assertEquals("atlas:fluid_pump", loaded[0].second)
         assertEquals(FluidType.WATER, loaded[0].first.storedFluid)
@@ -49,7 +49,7 @@ class FluidBlockPersistenceTest {
     fun `load from missing file does not error`() {
         val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         assertDoesNotThrow { persistence.load(loadRegistry) }
-        assertEquals(0, loadRegistry.getAllFluidBlocksWithIds().size)
+        assertEquals(0, loadRegistry.getAllBlocksWithIds().size)
     }
 
     @Test
@@ -63,7 +63,7 @@ class FluidBlockPersistenceTest {
         val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        assertEquals(FluidType.LAVA, loadRegistry.getAllFluidBlocksWithIds().first().first.storedFluid)
+        assertEquals(FluidType.LAVA, loadRegistry.getAllBlocksWithIds().first().first.storedFluid)
     }
 
     @Test
@@ -77,7 +77,7 @@ class FluidBlockPersistenceTest {
         val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        assertEquals(FluidType.NONE, loadRegistry.getAllFluidBlocksWithIds().first().first.storedFluid)
+        assertEquals(FluidType.NONE, loadRegistry.getAllBlocksWithIds().first().first.storedFluid)
     }
 
     @Test
@@ -90,7 +90,7 @@ class FluidBlockPersistenceTest {
         val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        val loaded = loadRegistry.getAllFluidBlocksWithIds().first().first
+        val loaded = loadRegistry.getAllBlocksWithIds().first().first
         assertTrue(loaded is FluidPipe)
     }
 
@@ -109,7 +109,7 @@ class FluidBlockPersistenceTest {
         val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        val loaded = loadRegistry.getAllFluidBlocksWithIds()
+        val loaded = loadRegistry.getAllBlocksWithIds()
         assertEquals(2, loaded.size)
     }
 }

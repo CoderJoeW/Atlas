@@ -53,7 +53,7 @@ class PowerBlockPersistenceTest {
         val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        val loaded = loadRegistry.getAllPowerBlocksWithIds()
+        val loaded = loadRegistry.getAllBlocksWithIds()
         assertEquals(1, loaded.size)
         assertEquals("atlas:small_solar_panel", loaded[0].second)
         assertEquals(1, loaded[0].first.currentPower)
@@ -63,7 +63,7 @@ class PowerBlockPersistenceTest {
     fun `load from missing file does not error`() {
         val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         assertDoesNotThrow { persistence.load(loadRegistry) }
-        assertEquals(0, loadRegistry.getAllPowerBlocks().size)
+        assertEquals(0, loadRegistry.getAllBlocks().size)
     }
 
     @Test
@@ -78,7 +78,7 @@ class PowerBlockPersistenceTest {
         val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        val loaded = loadRegistry.getAllPowerBlocks().first()
+        val loaded = loadRegistry.getAllBlocks().first()
         assertTrue(loaded is SmallDrill)
         assertTrue((loaded as SmallDrill).enabled)
         assertEquals(5, loaded.currentPower)
@@ -95,7 +95,7 @@ class PowerBlockPersistenceTest {
         val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        val loaded = loadRegistry.getAllPowerBlocks().first() as SmallDrill
+        val loaded = loadRegistry.getAllBlocks().first() as SmallDrill
         assertFalse(loaded.enabled)
     }
 
@@ -109,7 +109,7 @@ class PowerBlockPersistenceTest {
         val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        val loaded = loadRegistry.getAllPowerBlocks().first()
+        val loaded = loadRegistry.getAllBlocks().first()
         assertTrue(loaded is PowerCable)
     }
 
@@ -124,7 +124,7 @@ class PowerBlockPersistenceTest {
         val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        assertEquals(7, loadRegistry.getAllPowerBlocks().first().currentPower)
+        assertEquals(7, loadRegistry.getAllBlocks().first().currentPower)
     }
 
     @Test
@@ -138,7 +138,7 @@ class PowerBlockPersistenceTest {
         val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        val loaded = loadRegistry.getAllPowerBlocks().first()
+        val loaded = loadRegistry.getAllBlocks().first()
         assertTrue(loaded is SmallBattery)
         assertEquals(BlockFace.EAST, (loaded as SmallBattery).facing)
         assertEquals(7, loaded.currentPower)
@@ -162,6 +162,6 @@ class PowerBlockPersistenceTest {
         val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        assertEquals(3, loadRegistry.getAllPowerBlocks().size)
+        assertEquals(3, loadRegistry.getAllBlocks().size)
     }
 }

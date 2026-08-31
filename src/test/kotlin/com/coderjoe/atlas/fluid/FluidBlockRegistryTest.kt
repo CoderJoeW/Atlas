@@ -39,7 +39,7 @@ class FluidBlockRegistryTest {
         val pump = FluidPump(loc)
         TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
-        assertSame(pump, registry.getFluidBlock(loc))
+        assertSame(pump, registry.getBlock(loc))
     }
 
     @Test
@@ -48,14 +48,14 @@ class FluidBlockRegistryTest {
         val pump = FluidPump(loc)
         TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
-        val removed = registry.unregisterFluidBlock(loc)
+        val removed = registry.unregister(loc)
         assertSame(pump, removed)
-        assertNull(registry.getFluidBlock(loc))
+        assertNull(registry.getBlock(loc))
     }
 
     @Test
     fun `unregister non-existent returns null`() {
-        assertNull(registry.unregisterFluidBlock(TestHelper.createLocation(99.0, 99.0, 99.0)))
+        assertNull(registry.unregister(TestHelper.createLocation(99.0, 99.0, 99.0)))
     }
 
     @Test
@@ -64,7 +64,7 @@ class FluidBlockRegistryTest {
         val pump = FluidPump(neighborLoc)
         TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
-        val adjacent = registry.getAdjacentFluidBlock(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        val adjacent = registry.getAdjacentBlock(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
         assertSame(pump, adjacent)
     }
 
@@ -76,7 +76,7 @@ class FluidBlockRegistryTest {
         TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
         TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
 
-        val pairs = registry.getAllFluidBlocksWithIds()
+        val pairs = registry.getAllBlocksWithIds()
         assertEquals(2, pairs.size)
         assertTrue(pairs.any { it.first === pump && it.second == "atlas:fluid_pump" })
         assertTrue(pairs.any { it.first === pipe && it.second == "atlas:fluid_pipe" })
@@ -86,7 +86,7 @@ class FluidBlockRegistryTest {
     fun `stopAll clears registry`() {
         TestHelper.addToRegistry(registry, FluidPump(TestHelper.createLocation()), "atlas:fluid_pump")
         registry.stopAll()
-        assertEquals(0, registry.getAllFluidBlocksWithIds().size)
+        assertEquals(0, registry.getAllBlocksWithIds().size)
     }
 
     @Test
@@ -97,7 +97,7 @@ class FluidBlockRegistryTest {
     @Test
     fun `getAdjacentFluidBlock returns null when no block in direction`() {
         val loc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        assertNull(registry.getAdjacentFluidBlock(loc, BlockFace.NORTH))
+        assertNull(registry.getAdjacentBlock(loc, BlockFace.NORTH))
     }
 
     @Test
@@ -108,6 +108,6 @@ class FluidBlockRegistryTest {
         TestHelper.addToRegistry(registry, pump1, "atlas:fluid_pump")
         TestHelper.addToRegistry(registry, pump2, "atlas:fluid_pump")
 
-        assertSame(pump2, registry.getFluidBlock(loc))
+        assertSame(pump2, registry.getBlock(loc))
     }
 }

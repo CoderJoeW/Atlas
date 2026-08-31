@@ -66,7 +66,7 @@ class FluidPump(location: Location) : FluidBlock(location) {
 
     override fun fluidUpdate() {
         val powerRegistry = PowerBlockRegistry.instance ?: return
-        val powerNeighbors = powerRegistry.getAdjacentPowerBlocks(location)
+        val powerNeighbors = powerRegistry.getAdjacentBlocks(location)
         isPowered = powerNeighbors.any { it.hasPower() }
 
         if (hasFluid()) {

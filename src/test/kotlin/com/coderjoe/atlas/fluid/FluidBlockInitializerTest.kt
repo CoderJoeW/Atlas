@@ -53,7 +53,7 @@ class FluidBlockInitializerTest {
     fun `pump ID creates FluidPump`() {
         TestHelper.initFluidFactory()
         val block =
-            FluidBlockFactory.createFluidBlock(
+            FluidBlockFactory.create(
                 "atlas:fluid_pump",
                 TestHelper.createLocation(),
             )
@@ -64,7 +64,7 @@ class FluidBlockInitializerTest {
     fun `pipe ID creates FluidPipe`() {
         TestHelper.initFluidFactory()
         val block =
-            FluidBlockFactory.createFluidBlock(
+            FluidBlockFactory.create(
                 "atlas:fluid_pipe",
                 TestHelper.createLocation(),
                 BlockFace.NORTH,

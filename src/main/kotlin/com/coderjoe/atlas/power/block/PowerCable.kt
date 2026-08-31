@@ -32,7 +32,7 @@ class PowerCable(location: Location, override val facing: BlockFace) : PowerBloc
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 
-        val source = registry.getAdjacentPowerBlock(location, facing.oppositeFace)
+        val source = registry.getAdjacentBlock(location, facing.oppositeFace)
 
         if (source != null && canAcceptPower() && source.hasPower()) {
             val pulled = source.removePower(1)

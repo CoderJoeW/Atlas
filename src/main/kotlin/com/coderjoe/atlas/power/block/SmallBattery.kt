@@ -57,7 +57,7 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
         if (!canAcceptPower()) return
         val registry = PowerBlockRegistry.instance ?: return
 
-        val source = registry.getAdjacentPowerBlock(location, facing.oppositeFace)
+        val source = registry.getAdjacentBlock(location, facing.oppositeFace)
 
         if (source != null && canAcceptPower() && source.hasPower()) {
             val pulled = source.removePower(1)

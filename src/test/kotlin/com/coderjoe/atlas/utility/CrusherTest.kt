@@ -84,7 +84,7 @@ class CrusherTest {
     fun `factory creates Crusher from base ID`() {
         TestHelper.initPowerFactory()
         val block =
-            PowerBlockFactory.createPowerBlock(
+            PowerBlockFactory.create(
                 "atlas:crusher",
                 TestHelper.createLocation(),
                 BlockFace.NORTH,

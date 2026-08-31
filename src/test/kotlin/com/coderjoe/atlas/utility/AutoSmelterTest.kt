@@ -88,7 +88,7 @@ class AutoSmelterTest {
     fun `factory creates AutoSmelter from base ID`() {
         TestHelper.initPowerFactory()
         val block =
-            PowerBlockFactory.createPowerBlock(
+            PowerBlockFactory.create(
                 "atlas:auto_smelter",
                 TestHelper.createLocation(),
                 BlockFace.NORTH,

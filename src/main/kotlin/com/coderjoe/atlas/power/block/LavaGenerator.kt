@@ -48,7 +48,7 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20) 
             val spaceAvailable = maxStorage - currentPower
             if (spaceAvailable < POWER_PER_LAVA) break
 
-            val source = fluidRegistry.getAdjacentFluidBlock(location, face) ?: continue
+            val source = fluidRegistry.getAdjacentBlock(location, face) ?: continue
 
             val lava = tryPullLava(source, face)
             if (lava) {

@@ -122,7 +122,7 @@ class ExperienceExtractor(
         if (storedXp < 1.0) return
 
         val fluidRegistry = FluidBlockRegistry.instance ?: return
-        val target = fluidRegistry.getAdjacentFluidBlock(location, facing) ?: return
+        val target = fluidRegistry.getAdjacentBlock(location, facing) ?: return
 
         if (target.storeFluid(FluidType.EXPERIENCE)) {
             storedXp -= 1.0

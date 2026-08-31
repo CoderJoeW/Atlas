@@ -39,7 +39,7 @@ abstract class MaterialFactory(
         var lavaSource: Pair<FluidBlock, BlockFace>? = null
 
         for (face in ADJACENT_FACES) {
-            val source = fluidRegistry.getAdjacentFluidBlock(location, face) ?: continue
+            val source = fluidRegistry.getAdjacentBlock(location, face) ?: continue
             if (waterSource == null && hasFluidAvailable(source, face, FluidType.WATER)) {
                 waterSource = Pair(source, face)
             } else if (lavaSource == null && hasFluidAvailable(source, face, FluidType.LAVA)) {

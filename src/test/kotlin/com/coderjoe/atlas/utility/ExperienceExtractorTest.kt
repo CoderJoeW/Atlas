@@ -167,7 +167,7 @@ class ExperienceExtractorTest {
     fun `factory creates ExperienceExtractor from base ID`() {
         TestHelper.initPowerFactory()
         val block =
-            PowerBlockFactory.createPowerBlock(
+            PowerBlockFactory.create(
                 "atlas:experience_extractor",
                 TestHelper.createLocation(),
                 BlockFace.SOUTH,

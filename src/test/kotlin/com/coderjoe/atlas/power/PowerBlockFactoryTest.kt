@@ -38,14 +38,14 @@ class PowerBlockFactoryTest {
     @Test
     fun `createPowerBlock returns correct instance`() {
         PowerBlockFactory.register("small_solar_panel") { loc, _ -> SmallSolarPanel(loc) }
-        val block = PowerBlockFactory.createPowerBlock("small_solar_panel", TestHelper.createLocation())
+        val block = PowerBlockFactory.create("small_solar_panel", TestHelper.createLocation())
         assertNotNull(block)
         assertTrue(block is SmallSolarPanel)
     }
 
     @Test
     fun `createPowerBlock returns null for unregistered ID`() {
-        val block = PowerBlockFactory.createPowerBlock("unknown", TestHelper.createLocation())
+        val block = PowerBlockFactory.create("unknown", TestHelper.createLocation())
         assertNull(block)
     }
 
@@ -61,7 +61,7 @@ class PowerBlockFactoryTest {
     fun `later registration overwrites earlier one`() {
         PowerBlockFactory.register("test_block") { loc, _ -> SmallSolarPanel(loc) }
         PowerBlockFactory.register("test_block") { loc, facing -> SmallBattery(loc, facing) }
-        val block = PowerBlockFactory.createPowerBlock("test_block", TestHelper.createLocation(), BlockFace.NORTH)
+        val block = PowerBlockFactory.create("test_block", TestHelper.createLocation(), BlockFace.NORTH)
         assertTrue(block is SmallBattery)
     }
 }

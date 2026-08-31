@@ -37,7 +37,7 @@ class FluidPipe(location: Location, override val facing: BlockFace) : FluidBlock
 
         val registry = FluidBlockRegistry.instance ?: return
         val behind = facing.oppositeFace
-        val source = registry.getAdjacentFluidBlock(location, behind) ?: return
+        val source = registry.getAdjacentBlock(location, behind) ?: return
 
         if (source.canProvideFluid(facing)) {
             val fluid = source.removeFluid()

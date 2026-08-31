@@ -92,7 +92,7 @@ class PowerBlockInitializerTest {
     fun `solar panel ID creates SmallSolarPanel`() {
         TestHelper.initPowerFactory()
         val block =
-            PowerBlockFactory.createPowerBlock(
+            PowerBlockFactory.create(
                 "atlas:small_solar_panel",
                 TestHelper.createLocation(),
             )
@@ -103,7 +103,7 @@ class PowerBlockInitializerTest {
     fun `drill ID creates SmallDrill`() {
         TestHelper.initPowerFactory()
         val block =
-            PowerBlockFactory.createPowerBlock(
+            PowerBlockFactory.create(
                 "atlas:small_drill",
                 TestHelper.createLocation(),
                 BlockFace.NORTH,
@@ -115,7 +115,7 @@ class PowerBlockInitializerTest {
     fun `battery ID creates SmallBattery`() {
         TestHelper.initPowerFactory()
         val block =
-            PowerBlockFactory.createPowerBlock(
+            PowerBlockFactory.create(
                 "atlas:small_battery",
                 TestHelper.createLocation(),
                 BlockFace.DOWN,
@@ -127,7 +127,7 @@ class PowerBlockInitializerTest {
     fun `cable ID creates PowerCable`() {
         TestHelper.initPowerFactory()
         val block =
-            PowerBlockFactory.createPowerBlock(
+            PowerBlockFactory.create(
                 "atlas:power_cable",
                 TestHelper.createLocation(),
                 BlockFace.NORTH,

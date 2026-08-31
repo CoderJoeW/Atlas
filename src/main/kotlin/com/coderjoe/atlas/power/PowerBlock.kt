@@ -32,7 +32,7 @@ abstract class PowerBlock(
     protected fun pullPowerFromNeighbors() {
         if (!canAcceptPower()) return
         val registry = PowerBlockRegistry.instance ?: return
-        val neighbors = registry.getAdjacentPowerBlocks(location)
+        val neighbors = registry.getAdjacentBlocks(location)
         for (neighbor in neighbors) {
             if (!canAcceptPower()) break
             if (neighbor.hasPower()) {
