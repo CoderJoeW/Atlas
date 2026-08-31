@@ -2,7 +2,7 @@
 
 # Configuration
 SERVER_DIR="run"
-MINECRAFT_VERSION="1.21.11"
+MINECRAFT_VERSION="26.2"
 
 # Create server directory if it doesn't exist
 mkdir -p "$SERVER_DIR/plugins"
@@ -83,21 +83,26 @@ echo "Atlas config created (resource pack disabled - CraftEngine handles it)"
 # Download Paper if not present or update to latest build
 cd "$SERVER_DIR"
 
-echo "Fetching latest Paper build info..."
-BUILD_INFO=$(curl -s "https://api.papermc.io/v2/projects/paper/versions/$MINECRAFT_VERSION/builds" | grep -o '"build":[0-9]*' | tail -1 | grep -o '[0-9]*')
+PAPER_UA="Atlas-run-server/1.0.0 (j.williamson@gambler-labs.com)"
 
-if [ -z "$BUILD_INFO" ]; then
+echo "Fetching latest Paper build info..."
+BUILD_JSON=$(curl -s -H "User-Agent: $PAPER_UA" \
+    "https://fill.papermc.io/v3/projects/paper/versions/$MINECRAFT_VERSION/builds" \
+    | jq -c '[.[] | select(.channel == "STABLE")] | last')
+
+if [ -z "$BUILD_JSON" ] || [ "$BUILD_JSON" = "null" ]; then
     echo "Failed to fetch build info!"
     exit 1
 fi
 
-PAPER_JAR="paper-$MINECRAFT_VERSION-$BUILD_INFO.jar"
+PAPER_JAR=$(echo "$BUILD_JSON" | jq -r '.downloads["server:default"].name')
+PAPER_URL=$(echo "$BUILD_JSON" | jq -r '.downloads["server:default"].url')
 
 if [ ! -f "$PAPER_JAR" ]; then
-    echo "Downloading Paper build $BUILD_INFO..."
+    echo "Downloading $PAPER_JAR..."
     # Remove old Paper jars
     rm -f paper-*.jar
-    curl -o "$PAPER_JAR" "https://api.papermc.io/v2/projects/paper/versions/$MINECRAFT_VERSION/builds/$BUILD_INFO/downloads/$PAPER_JAR"
+    curl -H "User-Agent: $PAPER_UA" -o "$PAPER_JAR" "$PAPER_URL"
 fi
 
 # Accept EULA
