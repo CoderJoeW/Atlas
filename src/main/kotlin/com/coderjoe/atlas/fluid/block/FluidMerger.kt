@@ -4,6 +4,7 @@ import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.core.pullFromAll
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import org.bukkit.Location
@@ -37,22 +38,22 @@ class FluidMerger(location: Location, override val facing: BlockFace) : FluidBlo
 
         val registry = FluidBlockRegistry.instance ?: return
 
-        val inputFaces = ADJACENT_FACES.filter { it != facing }
-
-        for (face in inputFaces) {
-            val source = registry.getAdjacentFluidBlock(location, face) ?: continue
-
-            if (source.canProvideFluid(face.oppositeFace)) {
+        pullFromAll(
+            excludeFace = facing,
+            getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
+            isDone = { hasFluid() },
+            isCandidate = { source, face -> source.canProvideFluid(face.oppositeFace) },
+            tryPull = { source, face ->
                 val fluid = source.removeFluid()
                 storeFluid(fluid)
                 plugin.logger.atlasInfo(
                     "FluidMerger at ${location.coordinates} " +
                         "pulled ${fluid.name} from ${source::class.simpleName} at ${face.name}",
                 )
-                updateFluidState()
-                return
-            }
-        }
+                true
+            },
+            stopAfterFirstCandidate = true,
+        )
 
         updateFluidState()
     }

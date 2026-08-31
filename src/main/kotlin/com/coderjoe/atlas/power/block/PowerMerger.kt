@@ -4,6 +4,7 @@ import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.core.pullFromAll
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
@@ -33,12 +34,12 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 
-        val inputFaces = ADJACENT_FACES.filter { it != facing }
-
-        for (face in inputFaces) {
-            if (currentPower >= maxStorage) break
-            val source = registry.getAdjacentPowerBlock(location, face) ?: continue
-            if (source.hasPower()) {
+        pullFromAll(
+            excludeFace = facing,
+            getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
+            isDone = { currentPower >= maxStorage },
+            isCandidate = { source, _ -> source.hasPower() },
+            tryPull = { source, face ->
                 val pulled = source.removePower(1)
                 if (pulled > 0) {
                     addPower(pulled)
@@ -48,8 +49,9 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
                             "(now $currentPower/$maxStorage)",
                     )
                 }
-            }
-        }
+                pulled > 0
+            },
+        )
 
         updatePoweredState()
     }

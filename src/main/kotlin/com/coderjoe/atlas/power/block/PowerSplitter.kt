@@ -4,6 +4,8 @@ import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.core.pullFromOpposite
+import com.coderjoe.atlas.core.pushRoundRobin
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
@@ -33,44 +35,44 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 
-        val source = registry.getAdjacentPowerBlock(location, facing.oppositeFace)
-
-        if (source != null && canAcceptPower() && source.hasPower()) {
-            val remaining = maxStorage - currentPower
-            val pulled = source.removePower(minOf(remaining, source.currentPower))
-            if (pulled > 0) {
-                addPower(pulled)
-                plugin.logger.atlasInfo(
-                    "PowerSplitter at ${location.coordinates} " +
-                        "pulled $pulled power (now $currentPower/$maxStorage)",
-                )
-            }
-        }
+        pullFromOpposite(
+            facing = facing,
+            getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
+            canPullSelf = { canAcceptPower() },
+            canProvide = { source -> source.hasPower() },
+            transfer = { source ->
+                val remaining = maxStorage - currentPower
+                val pulled = source.removePower(minOf(remaining, source.currentPower))
+                if (pulled > 0) {
+                    addPower(pulled)
+                    plugin.logger.atlasInfo(
+                        "PowerSplitter at ${location.coordinates} " +
+                            "pulled $pulled power (now $currentPower/$maxStorage)",
+                    )
+                }
+            },
+        )
 
         if (hasPower()) {
-            val outputFaces = ADJACENT_FACES.filter { it != facing.oppositeFace }
-            val faceCount = outputFaces.size
-            var lastPushOffset = -1
-
-            for (i in outputFaces.indices) {
-                if (!hasPower()) break
-                val face = outputFaces[(nextOutputIndex + i) % faceCount]
-                val target = registry.getAdjacentPowerBlock(location, face) ?: continue
-                if (target.canAcceptPower()) {
-                    val pushed = removePower(1)
-                    if (pushed > 0) {
-                        target.addPower(pushed)
-                        lastPushOffset = i
-                        plugin.logger.atlasInfo(
-                            "PowerSplitter at ${location.coordinates} " +
-                                "pushed $pushed power to ${target::class.simpleName} at ${face.name}",
-                        )
-                    }
-                }
-            }
-            if (lastPushOffset >= 0) {
-                nextOutputIndex = (nextOutputIndex + lastPushOffset + 1) % faceCount
-            }
+            nextOutputIndex =
+                pushRoundRobin(
+                    excludeFace = facing.oppositeFace,
+                    startIndex = nextOutputIndex,
+                    getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
+                    hasResource = { hasPower() },
+                    isCandidate = { target -> target.canAcceptPower() },
+                    tryPush = { target, face ->
+                        val pushed = removePower(1)
+                        if (pushed > 0) {
+                            target.addPower(pushed)
+                            plugin.logger.atlasInfo(
+                                "PowerSplitter at ${location.coordinates} " +
+                                    "pushed $pushed power to ${target::class.simpleName} at ${face.name}",
+                            )
+                        }
+                        pushed > 0
+                    },
+                )
         }
 
         updatePoweredState()

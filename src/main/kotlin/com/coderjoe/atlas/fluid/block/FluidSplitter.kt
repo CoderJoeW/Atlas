@@ -4,6 +4,8 @@ import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.core.pullFromOpposite
+import com.coderjoe.atlas.core.pushRoundRobin
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import org.bukkit.Location
@@ -33,41 +35,44 @@ class FluidSplitter(location: Location, override val facing: BlockFace) : FluidB
     override fun fluidUpdate() {
         val registry = FluidBlockRegistry.instance ?: return
 
-        if (!hasFluid()) {
-            val source = registry.getAdjacentFluidBlock(location, facing.oppositeFace)
-
-            if (source != null && source.canProvideFluid(facing)) {
+        pullFromOpposite(
+            facing = facing,
+            getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
+            canPullSelf = { !hasFluid() },
+            canProvide = { source -> source.canProvideFluid(facing) },
+            transfer = { source ->
                 val fluid = source.removeFluid()
                 storeFluid(fluid)
                 plugin.logger.atlasInfo(
                     "FluidSplitter at ${location.coordinates} " +
                         "pulled ${fluid.name} from ${source::class.simpleName}",
                 )
-            }
-        }
+            },
+        )
 
         if (hasFluid()) {
-            val outputFaces = ADJACENT_FACES.filter { it != facing.oppositeFace }
-            val faceCount = outputFaces.size
-
-            for (i in outputFaces.indices) {
-                if (!hasFluid()) break
-                val face = outputFaces[(nextOutputIndex + i) % faceCount]
-                val target = registry.getAdjacentFluidBlock(location, face) ?: continue
-                if (!target.hasFluid()) {
-                    val fluid = removeFluid()
-                    if (target.storeFluid(fluid)) {
-                        nextOutputIndex = (nextOutputIndex + i + 1) % faceCount
-                        plugin.logger.atlasInfo(
-                            "FluidSplitter at ${location.coordinates} " +
-                                "pushed ${fluid.name} to ${target::class.simpleName} at ${face.name}",
-                        )
-                    } else {
-                        storeFluid(fluid)
-                    }
-                    break
-                }
-            }
+            nextOutputIndex =
+                pushRoundRobin(
+                    excludeFace = facing.oppositeFace,
+                    startIndex = nextOutputIndex,
+                    getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
+                    hasResource = { hasFluid() },
+                    isCandidate = { target -> !target.hasFluid() },
+                    tryPush = { target, face ->
+                        val fluid = removeFluid()
+                        if (target.storeFluid(fluid)) {
+                            plugin.logger.atlasInfo(
+                                "FluidSplitter at ${location.coordinates} " +
+                                    "pushed ${fluid.name} to ${target::class.simpleName} at ${face.name}",
+                            )
+                            true
+                        } else {
+                            storeFluid(fluid)
+                            false
+                        }
+                    },
+                    stopAfterFirstCandidate = true,
+                )
         }
 
         updateFluidState()
