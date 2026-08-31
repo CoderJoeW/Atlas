@@ -1,15 +1,13 @@
 package com.coderjoe.atlas.transport
 
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.core.InstanceHolder
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.plugin.java.JavaPlugin
 
 class TransportBlockRegistry(plugin: JavaPlugin) : BlockRegistry<TransportBlock>(plugin) {
-    companion object {
-        var instance: TransportBlockRegistry? = null
-            private set
-    }
+    companion object : InstanceHolder<TransportBlockRegistry>()
 
     init {
         instance = this
