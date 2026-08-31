@@ -2,6 +2,7 @@ package com.coderjoe.atlas
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.AtlasBlockListener
+import com.coderjoe.atlas.core.AtlasSubsystem
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockSystem
 import com.coderjoe.atlas.fluid.FluidBlock
@@ -45,13 +46,13 @@ import org.bukkit.scheduler.BukkitTask
 
 class Atlas : JavaPlugin() {
     private lateinit var craftEngineIntegration: CraftEngineIntegration
-    private lateinit var powerBlockRegistry: PowerBlockRegistry
-    private lateinit var powerBlockPersistence: PowerBlockPersistence
-    private lateinit var fluidBlockRegistry: FluidBlockRegistry
-    private lateinit var fluidBlockPersistence: FluidBlockPersistence
-    private lateinit var transportBlockRegistry: TransportBlockRegistry
-    private lateinit var transportBlockPersistence: TransportBlockPersistence
+    private lateinit var powerSubsystem: AtlasSubsystem<PowerBlock>
+    private lateinit var fluidSubsystem: AtlasSubsystem<FluidBlock>
+    private lateinit var transportSubsystem: AtlasSubsystem<TransportBlock>
     private var autoSaveTask: BukkitTask? = null
+
+    private val subsystems: List<AtlasSubsystem<*>>
+        get() = listOf(powerSubsystem, fluidSubsystem, transportSubsystem)
 
     override fun onEnable() {
         if (!dataFolder.exists()) {
@@ -67,48 +68,80 @@ class Atlas : JavaPlugin() {
 
         AtlasBlockDialog.init(this)
 
-        initPowerSystem()
-        initFluidSystem()
-        initTransportSystem()
+        powerSubsystem =
+            AtlasSubsystem(
+                name = "power",
+                registry = PowerBlockRegistry(this),
+                factory = PowerBlockFactory,
+                descriptors = powerDescriptors(),
+                persistence = PowerBlockPersistence(this),
+                plugin = this,
+            )
+        fluidSubsystem =
+            AtlasSubsystem(
+                name = "fluid",
+                registry = FluidBlockRegistry(this),
+                factory = FluidBlockFactory,
+                descriptors = fluidDescriptors(),
+                persistence = FluidBlockPersistence(this),
+                plugin = this,
+            )
+        transportSubsystem =
+            AtlasSubsystem(
+                name = "transport",
+                registry = TransportBlockRegistry(this),
+                factory = TransportBlockFactory,
+                descriptors = transportDescriptors(),
+                persistence = TransportBlockPersistence(this),
+                plugin = this,
+            )
+        subsystems.forEach { it.init() }
 
         // Register unified listener
-        val powerDescriptors = powerDescriptors()
         val powerSystem =
             BlockSystem<PowerBlock>(
                 name = "power",
-                registry = powerBlockRegistry,
+                registry = powerSubsystem.registry,
                 factory = PowerBlockFactory,
-                descriptors = powerDescriptors,
+                descriptors = powerSubsystem.descriptors,
                 showDialog = { player, block ->
-                    PowerBlockDialog.showPowerDialog(player, block as PowerBlock, powerBlockRegistry, powerDescriptors)
+                    PowerBlockDialog.showPowerDialog(
+                        player,
+                        block as PowerBlock,
+                        powerSubsystem.registry,
+                        powerSubsystem.descriptors,
+                    )
                 },
             )
 
-        val fluidDescriptors = fluidDescriptors()
         val fluidSystem =
             BlockSystem<FluidBlock>(
                 name = "fluid",
-                registry = fluidBlockRegistry,
+                registry = fluidSubsystem.registry,
                 factory = FluidBlockFactory,
-                descriptors = fluidDescriptors,
+                descriptors = fluidSubsystem.descriptors,
                 showDialog = { player, block ->
-                    FluidBlockDialog.showFluidDialog(player, block as FluidBlock, fluidBlockRegistry, fluidDescriptors)
+                    FluidBlockDialog.showFluidDialog(
+                        player,
+                        block as FluidBlock,
+                        fluidSubsystem.registry,
+                        fluidSubsystem.descriptors,
+                    )
                 },
             )
 
-        val transportDescriptors = transportDescriptors()
         val transportSystem =
             BlockSystem<TransportBlock>(
                 name = "transport",
-                registry = transportBlockRegistry,
+                registry = transportSubsystem.registry,
                 factory = TransportBlockFactory,
-                descriptors = transportDescriptors,
+                descriptors = transportSubsystem.descriptors,
                 showDialog = { player, block ->
                     TransportBlockDialog.showTransportDialog(
                         player,
                         block as TransportBlock,
-                        transportBlockRegistry,
-                        transportDescriptors,
+                        transportSubsystem.registry,
+                        transportSubsystem.descriptors,
                     )
                 },
             )
@@ -126,11 +159,7 @@ class Atlas : JavaPlugin() {
         autoSaveTask =
             server.scheduler.runTaskTimer(
                 this,
-                Runnable {
-                    powerBlockPersistence.save(powerBlockRegistry)
-                    fluidBlockPersistence.save(fluidBlockRegistry)
-                    transportBlockPersistence.save(transportBlockRegistry)
-                },
+                Runnable { subsystems.forEach { it.save() } },
                 6000L, 6000L,
             )
 
@@ -140,60 +169,21 @@ class Atlas : JavaPlugin() {
     override fun onDisable() {
         autoSaveTask?.cancel()
 
-        if (::powerBlockPersistence.isInitialized && ::powerBlockRegistry.isInitialized) {
-            powerBlockPersistence.save(powerBlockRegistry)
-        }
-
-        if (::fluidBlockPersistence.isInitialized && ::fluidBlockRegistry.isInitialized) {
-            fluidBlockPersistence.save(fluidBlockRegistry)
-        }
-
-        if (::transportBlockPersistence.isInitialized && ::transportBlockRegistry.isInitialized) {
-            transportBlockPersistence.save(transportBlockRegistry)
-        }
+        initializedSubsystems().forEach { it.save() }
 
         AtlasBlockDialog.cleanup()
 
-        if (::powerBlockRegistry.isInitialized) {
-            powerBlockRegistry.stopAll()
-        }
-
-        if (::fluidBlockRegistry.isInitialized) {
-            fluidBlockRegistry.stopAll()
-        }
-
-        if (::transportBlockRegistry.isInitialized) {
-            transportBlockRegistry.stopAll()
-        }
+        initializedSubsystems().forEach { it.stop() }
 
         logger.atlasInfo("Atlas plugin has been disabled!")
     }
 
-    fun initPowerSystem() {
-        PowerBlockFactory.registerFromDescriptors(powerDescriptors().values)
-        powerBlockRegistry = PowerBlockRegistry(this)
-        powerBlockPersistence = PowerBlockPersistence(this)
-        powerBlockPersistence.load(powerBlockRegistry)
-
-        logger.atlasInfo("Power system initialized with ${PowerBlockFactory.getRegisteredBlockIds().size} block types")
-    }
-
-    fun initFluidSystem() {
-        FluidBlockFactory.registerFromDescriptors(fluidDescriptors().values)
-        fluidBlockRegistry = FluidBlockRegistry(this)
-        fluidBlockPersistence = FluidBlockPersistence(this)
-        fluidBlockPersistence.load(fluidBlockRegistry)
-
-        logger.atlasInfo("Fluid system initialized with ${FluidBlockFactory.getRegisteredBlockIds().size} block types")
-    }
-
-    fun initTransportSystem() {
-        TransportBlockFactory.registerFromDescriptors(transportDescriptors().values)
-        transportBlockRegistry = TransportBlockRegistry(this)
-        transportBlockPersistence = TransportBlockPersistence(this)
-        transportBlockPersistence.load(transportBlockRegistry)
-
-        logger.atlasInfo("Transport system initialized with ${TransportBlockFactory.getRegisteredBlockIds().size} block types")
+    private fun initializedSubsystems(): List<AtlasSubsystem<*>> {
+        val result = mutableListOf<AtlasSubsystem<*>>()
+        if (::powerSubsystem.isInitialized) result.add(powerSubsystem)
+        if (::fluidSubsystem.isInitialized) result.add(fluidSubsystem)
+        if (::transportSubsystem.isInitialized) result.add(transportSubsystem)
+        return result
     }
 
     private fun transportDescriptors(): Map<String, BlockDescriptor> {

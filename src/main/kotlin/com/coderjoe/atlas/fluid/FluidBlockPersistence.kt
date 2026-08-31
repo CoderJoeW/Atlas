@@ -1,10 +1,12 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.core.BlockPersistence
+import com.coderjoe.atlas.core.BlockPersister
+import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import org.bukkit.plugin.java.JavaPlugin
 
-class FluidBlockPersistence(plugin: JavaPlugin) {
+class FluidBlockPersistence(plugin: JavaPlugin) : BlockPersister<FluidBlock> {
     private val persistence =
         BlockPersistence<FluidBlock>(
             plugin = plugin,
@@ -42,7 +44,7 @@ class FluidBlockPersistence(plugin: JavaPlugin) {
             },
         )
 
-    fun save(registry: FluidBlockRegistry) = persistence.save(registry)
+    override fun save(registry: BlockRegistry<FluidBlock>) = persistence.save(registry)
 
-    fun load(registry: FluidBlockRegistry) = persistence.load(registry)
+    override fun load(registry: BlockRegistry<FluidBlock>) = persistence.load(registry)
 }

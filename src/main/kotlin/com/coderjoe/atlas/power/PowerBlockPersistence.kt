@@ -1,11 +1,13 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.BlockPersistence
+import com.coderjoe.atlas.core.BlockPersister
+import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.SmallDrill
 import org.bukkit.plugin.java.JavaPlugin
 
-class PowerBlockPersistence(plugin: JavaPlugin) {
+class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {
     private val persistence =
         BlockPersistence<PowerBlock>(
             plugin = plugin,
@@ -39,7 +41,7 @@ class PowerBlockPersistence(plugin: JavaPlugin) {
             },
         )
 
-    fun save(registry: PowerBlockRegistry) = persistence.save(registry)
+    override fun save(registry: BlockRegistry<PowerBlock>) = persistence.save(registry)
 
-    fun load(registry: PowerBlockRegistry) = persistence.load(registry)
+    override fun load(registry: BlockRegistry<PowerBlock>) = persistence.load(registry)
 }
