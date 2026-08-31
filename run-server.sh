@@ -6,7 +6,6 @@ MINECRAFT_VERSION="26.2"
 
 # Create server directory if it doesn't exist
 mkdir -p "$SERVER_DIR/plugins"
-mkdir -p "$SERVER_DIR/plugins/CraftEngine/resources"
 
 # Build the plugin
 echo "Building plugin..."
@@ -62,6 +61,25 @@ if [ -z "$CE_JAR" ]; then
 fi
 
 echo "Found CraftEngine: $CE_JAR"
+
+# CraftEngine only extracts a shipped resource pack when it is not already on disk, so
+# upgrading the jar leaves the previously extracted packs untouched and never writes packs
+# the new jar added. A missing 'internal' pack empties the visual block state pool
+# (mappings.yml), and every custom block then fails to allocate a state at load time.
+# Delete the shipped packs whenever the jar changes so CraftEngine re-extracts them.
+# The 'atlas' pack is left alone - the Atlas plugin rewrites it from its own jar on startup.
+CE_RESOURCES="$SERVER_DIR/plugins/CraftEngine/resources"
+CE_MARKER="$SERVER_DIR/plugins/CraftEngine/.ce-version"
+CE_HASH=$(shasum -a 256 "$CE_JAR" | cut -d ' ' -f 1)
+
+if [ ! -f "$CE_MARKER" ] || [ "$(cat "$CE_MARKER")" != "$CE_HASH" ]; then
+    if [ -d "$CE_RESOURCES" ]; then
+        echo "CraftEngine jar changed - removing its shipped resource packs for re-extraction..."
+        rm -rf "$CE_RESOURCES/internal" "$CE_RESOURCES"/default_*
+    fi
+    mkdir -p "$(dirname "$CE_MARKER")"
+    echo "$CE_HASH" > "$CE_MARKER"
+fi
 
 # Create/update the Atlas plugin config (resource pack disabled - CraftEngine handles it)
 cat > "$SERVER_DIR/plugins/Atlas/config.yml" << EOF

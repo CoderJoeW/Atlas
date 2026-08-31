@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.core
 
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks
-import net.momirealms.craftengine.core.block.properties.Property
+import net.momirealms.craftengine.core.block.property.Property
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
