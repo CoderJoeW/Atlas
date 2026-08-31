@@ -12,7 +12,7 @@ items:
         settings:
           hardness: 4.0
           resistance: 4.0
-          is-suffocating: true
+          is-suffocating: false
           is-redstone-conductor: false
           push-reaction: push_only
           tags: ["minecraft:mineable/pickaxe"]
@@ -27,7 +27,7 @@ items:
           model:
             path: minecraft:block/custom/small_solar_panel
             generation:
-              parent: minecraft:block/cube_bottom_top
+              parent: minecraft:block/custom/small_solar_panel_base
               textures:
                 top: minecraft:block/custom/small_solar_panel
                 bottom: minecraft:block/custom/small_solar_panel_bottom
@@ -51,7 +51,7 @@ items#1:
         settings:
           hardness: 4.0
           resistance: 4.0
-          is-suffocating: true
+          is-suffocating: false
           is-redstone-conductor: false
           push-reaction: push_only
           tags: ["minecraft:mineable/pickaxe"]
@@ -66,7 +66,7 @@ items#1:
           model:
             path: minecraft:block/custom/small_solar_panel_full
             generation:
-              parent: minecraft:block/cube_bottom_top
+              parent: minecraft:block/custom/small_solar_panel_base
               textures:
                 top: minecraft:block/custom/small_solar_panel_full
                 bottom: minecraft:block/custom/small_solar_panel_bottom
