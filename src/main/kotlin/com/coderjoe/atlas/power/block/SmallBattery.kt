@@ -60,7 +60,7 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
         val source = registry.getAdjacentBlock(location, facing.oppositeFace)
 
         if (source != null && canAcceptPower() && source.hasPower()) {
-            val pulled = source.removePower(1)
+            val pulled = source.removePowerToward(facing, 1)
             if (pulled > 0) {
                 addPower(pulled)
                 plugin.logger.atlasInfo(

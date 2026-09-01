@@ -43,7 +43,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
             canProvide = { source -> source.hasPower() },
             transfer = { source ->
                 val remaining = maxStorage - currentPower
-                val pulled = source.removePower(minOf(remaining, source.currentPower))
+                val pulled = source.removePowerToward(facing, minOf(remaining, source.currentPower))
                 if (pulled > 0) {
                     addPower(pulled)
                     plugin.logger.atlasInfo(

@@ -41,7 +41,7 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
             isDone = { currentPower >= maxStorage },
             isCandidate = { source, _ -> source.hasPower() },
             tryPull = { source, face ->
-                val pulled = source.removePower(1)
+                val pulled = source.removePowerToward(face.oppositeFace, 1)
                 if (pulled > 0) {
                     addPower(pulled)
                     plugin.logger.atlasInfo(
