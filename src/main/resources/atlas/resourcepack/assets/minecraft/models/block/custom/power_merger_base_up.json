@@ -29,7 +29,7 @@
           "texture": "#casing"
         },
         "up": {
-          "texture": "#in",
+          "texture": "#out",
           "uv": [
             0,
             0,
@@ -38,7 +38,13 @@
           ]
         },
         "down": {
-          "texture": "#casing",
+          "texture": "#in",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
           "cullface": "down"
         }
       }
@@ -57,7 +63,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#out",
+          "texture": "#in",
           "uv": [
             0,
             0,
@@ -99,7 +105,7 @@
           "texture": "#casing"
         },
         "south": {
-          "texture": "#out",
+          "texture": "#in",
           "uv": [
             0,
             0,

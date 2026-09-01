@@ -29,13 +29,7 @@
           "texture": "#casing"
         },
         "up": {
-          "texture": "#out",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
+          "texture": "#casing"
         },
         "down": {
           "texture": "#in",
@@ -118,84 +112,6 @@
         },
         "west": {
           "texture": "#casing"
-        },
-        "up": {
-          "texture": "#casing"
-        },
-        "down": {
-          "texture": "#casing"
-        }
-      }
-    },
-    {
-      "name": "arm_east",
-      "from": [
-        10,
-        0,
-        6
-      ],
-      "to": [
-        16,
-        4,
-        10
-      ],
-      "faces": {
-        "north": {
-          "texture": "#casing"
-        },
-        "south": {
-          "texture": "#casing"
-        },
-        "east": {
-          "texture": "#out",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
-          "texture": "#casing"
-        },
-        "up": {
-          "texture": "#casing"
-        },
-        "down": {
-          "texture": "#casing"
-        }
-      }
-    },
-    {
-      "name": "arm_west",
-      "from": [
-        0,
-        0,
-        6
-      ],
-      "to": [
-        6,
-        4,
-        10
-      ],
-      "faces": {
-        "north": {
-          "texture": "#casing"
-        },
-        "south": {
-          "texture": "#casing"
-        },
-        "east": {
-          "texture": "#casing"
-        },
-        "west": {
-          "texture": "#out",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         },
         "up": {
           "texture": "#casing"
