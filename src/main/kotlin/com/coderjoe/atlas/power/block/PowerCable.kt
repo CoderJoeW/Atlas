@@ -30,6 +30,9 @@ class PowerCable(location: Location, override val facing: BlockFace) : PowerBloc
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
+    /** A cable only hands power on through its facing, as its descriptor advertises. */
+    override fun canOutputToward(face: BlockFace): Boolean = face == facing
+
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 

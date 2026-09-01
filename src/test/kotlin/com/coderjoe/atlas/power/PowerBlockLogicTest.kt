@@ -349,6 +349,27 @@ class PowerBlockLogicTest {
     }
 
     @Test
+    fun `cable outputs only through its facing`() {
+        val cable = PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
+
+        assertTrue(cable.canOutputToward(BlockFace.NORTH))
+        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+            assertFalse(cable.canOutputToward(face), "cable should not output toward $face")
+        }
+    }
+
+    @Test
+    fun `cable refuses extraction from a sealed face`() {
+        val cable = PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
+        cable.currentPower = 1
+
+        assertEquals(0, cable.removePowerToward(BlockFace.SOUTH, 1))
+        assertEquals(1, cable.currentPower)
+        assertEquals(1, cable.removePowerToward(BlockFace.NORTH, 1))
+        assertEquals(0, cable.currentPower)
+    }
+
+    @Test
     fun `cable does not pull from blocks in other directions`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         val cableLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
