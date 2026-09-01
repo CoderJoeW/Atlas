@@ -33,6 +33,9 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
+    /** Power arrives on the input face behind the splitter; every other face is an output. */
+    override fun canOutputToward(face: BlockFace): Boolean = face != facing.oppositeFace
+
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 

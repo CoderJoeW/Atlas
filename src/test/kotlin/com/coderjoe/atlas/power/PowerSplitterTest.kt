@@ -8,6 +8,7 @@ import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -252,5 +253,27 @@ class PowerSplitterTest {
             firstWentEast != secondWentEast,
             "round-robin should alternate: first=$firstWentEast, second=$secondWentEast",
         )
+    }
+
+    @Test
+    fun `splitter outputs through every face except its input`() {
+        val splitter = PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
+
+        // facing NORTH means power arrives from SOUTH, so SOUTH is the only sealed face
+        assertFalse(splitter.canOutputToward(BlockFace.SOUTH))
+        for (face in listOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+            assertTrue(splitter.canOutputToward(face), "splitter should output toward $face")
+        }
+    }
+
+    @Test
+    fun `splitter refuses extraction from its input face`() {
+        val splitter = PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
+        splitter.currentPower = 4
+
+        assertEquals(0, splitter.removePowerToward(BlockFace.SOUTH, 1))
+        assertEquals(4, splitter.currentPower)
+        assertEquals(1, splitter.removePowerToward(BlockFace.NORTH, 1))
+        assertEquals(3, splitter.currentPower)
     }
 }
