@@ -4,43 +4,16 @@
   },
   "elements": [
     {
-      "name": "base_pad",
-      "from": [2, 0, 2],
-      "to": [14, 2, 14],
+      "name": "panel_slab",
+      "from": [1, 0, 1],
+      "to": [15, 2, 15],
       "faces": {
-        "north": {"texture": "#side", "uv": [0, 14, 16, 16]},
-        "south": {"texture": "#side", "uv": [0, 14, 16, 16]},
-        "east": {"texture": "#side", "uv": [0, 14, 16, 16]},
-        "west": {"texture": "#side", "uv": [0, 14, 16, 16]},
-        "up": {"texture": "#side", "uv": [0, 14, 16, 16]},
-        "down": {"texture": "#bottom", "cullface": "down"}
-      }
-    },
-    {
-      "name": "pylon",
-      "from": [6, 2, 6],
-      "to": [10, 6, 10],
-      "faces": {
-        "north": {"texture": "#side", "uv": [4, 12, 12, 16]},
-        "south": {"texture": "#side", "uv": [4, 12, 12, 16]},
-        "east": {"texture": "#side", "uv": [4, 12, 12, 16]},
-        "west": {"texture": "#side", "uv": [4, 12, 12, 16]},
-        "up": {"texture": "#side", "uv": [4, 12, 12, 16]},
-        "down": {"texture": "#side", "uv": [4, 12, 12, 16]}
-      }
-    },
-    {
-      "name": "panel",
-      "from": [1, 6, 1],
-      "to": [15, 7, 15],
-      "rotation": {"angle": 22.5, "axis": "x", "origin": [8, 6.5, 8], "rescale": false},
-      "faces": {
-        "north": {"texture": "#side", "uv": [0, 15, 16, 16]},
-        "south": {"texture": "#side", "uv": [0, 15, 16, 16]},
-        "east": {"texture": "#side", "uv": [0, 15, 16, 16]},
-        "west": {"texture": "#side", "uv": [0, 15, 16, 16]},
-        "up": {"texture": "#top"},
-        "down": {"texture": "#side", "uv": [0, 15, 16, 16]}
+        "north": {"texture": "#side", "uv": [1, 14, 15, 16]},
+        "south": {"texture": "#side", "uv": [1, 14, 15, 16]},
+        "east": {"texture": "#side", "uv": [1, 14, 15, 16]},
+        "west": {"texture": "#side", "uv": [1, 14, 15, 16]},
+        "up": {"texture": "#top", "uv": [0, 0, 16, 16]},
+        "down": {"texture": "#bottom", "uv": [1, 1, 15, 15], "cullface": "down"}
       }
     }
   ]
