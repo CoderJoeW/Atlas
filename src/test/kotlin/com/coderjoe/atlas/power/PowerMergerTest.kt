@@ -4,6 +4,7 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerMerger
+import com.coderjoe.atlas.power.block.SmallSolarPanel
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -176,5 +177,41 @@ class PowerMergerTest {
         val pulled = merger.removePower(1)
         assertEquals(1, pulled)
         assertEquals(1, merger.currentPower)
+    }
+
+    @Test
+    fun `merger outputs only through its facing`() {
+        val merger = PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
+
+        assertTrue(merger.canOutputToward(BlockFace.NORTH))
+        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+            assertFalse(merger.canOutputToward(face), "merger should not output toward $face")
+        }
+    }
+
+    @Test
+    fun `merger refuses extraction from a collecting face`() {
+        val merger = PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
+        merger.currentPower = 2
+
+        assertEquals(0, merger.removePowerToward(BlockFace.SOUTH, 1))
+        assertEquals(2, merger.currentPower)
+        assertEquals(1, merger.removePowerToward(BlockFace.NORTH, 1))
+        assertEquals(1, merger.currentPower)
+    }
+
+    @Test
+    fun `merger collects from three faces only`() {
+        val merger = PowerMerger(TestHelper.createLocation(), BlockFace.NORTH)
+        val source = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        source.currentPower = 2
+        TestHelper.addToRegistry(registry, merger, "atlas:power_merger")
+        TestHelper.addToRegistry(registry, source, "atlas:small_solar_panel")
+
+        // a north-facing merger collects from south, east and west - never from above
+        merger.callPowerUpdate()
+
+        assertEquals(0, merger.currentPower)
+        assertEquals(2, source.currentPower)
     }
 }

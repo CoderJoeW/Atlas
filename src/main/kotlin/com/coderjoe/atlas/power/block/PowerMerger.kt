@@ -4,9 +4,10 @@ import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
-import com.coderjoe.atlas.core.pullFromAll
+import com.coderjoe.atlas.core.pullFromFaces
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.branchFaces
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
@@ -21,7 +22,7 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Power Merger",
-                description = "Cable - merges power from all sides, outputs in facing direction",
+                description = "Cable - merges power from three sides, outputs in facing direction",
                 placementType = PlacementType.DIRECTIONAL,
                 showFacingInDisplayName = true,
                 constructor = { loc, facing -> PowerMerger(loc, facing) },
@@ -32,11 +33,14 @@ class PowerMerger(location: Location, override val facing: BlockFace) : PowerBlo
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
+    /** The merger collects from every other side and hands power on through its facing only. */
+    override fun canOutputToward(face: BlockFace): Boolean = face == facing
+
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 
-        pullFromAll(
-            excludeFace = facing,
+        pullFromFaces(
+            inputFaces = listOf(facing.oppositeFace) + branchFaces(facing),
             getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
             isDone = { currentPower >= maxStorage },
             isCandidate = { source, _ -> source.hasPower() },
