@@ -33,6 +33,9 @@ class PowerCable(location: Location, override val facing: BlockFace) : PowerBloc
     /** A cable only hands power on through its facing, as its descriptor advertises. */
     override fun canOutputToward(face: BlockFace): Boolean = face == facing
 
+    /** Power may only enter a cable from behind, the same face it pulls from. */
+    override fun canAcceptFrom(face: BlockFace): Boolean = face == facing.oppositeFace
+
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 

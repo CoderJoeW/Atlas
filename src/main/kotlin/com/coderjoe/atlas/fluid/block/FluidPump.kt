@@ -70,7 +70,10 @@ class FluidPump(location: Location) : FluidBlock(location) {
             ADJACENT_FACES.mapNotNull { face ->
                 powerRegistry.getAdjacentBlock(location, face)?.let { face to it }
             }
-        isPowered = powerNeighbors.any { (_, neighbor) -> neighbor.hasPower() }
+        isPowered =
+            powerNeighbors.any { (face, neighbor) ->
+                neighbor.hasPower() && neighbor.canOutputToward(face.oppositeFace)
+            }
 
         if (hasFluid()) {
             pumpStatus = PumpStatus.IDLE

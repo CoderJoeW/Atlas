@@ -49,6 +49,25 @@ abstract class PowerBlock(
         return removePower(amount)
     }
 
+    /**
+     * Whether this block accepts power pushed in through [face], where [face] points from this
+     * block toward the pusher. Blocks with a designated input face override this; by default a
+     * block takes power from any side.
+     */
+    open fun canAcceptFrom(face: BlockFace): Boolean = true
+
+    /**
+     * Face-aware counterpart to [addPower]. [face] points from this block toward the pusher, and
+     * nothing is accepted when [canAcceptFrom] rejects that face.
+     */
+    fun addPowerFrom(
+        face: BlockFace,
+        amount: Int,
+    ): Int {
+        if (!canAcceptFrom(face)) return 0
+        return addPower(amount)
+    }
+
     protected fun pullPowerFromNeighbors() {
         if (!canAcceptPower()) return
         val registry = PowerBlockRegistry.instance ?: return

@@ -76,9 +76,11 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4)
         val target = registry.getAdjacentBlock(location, OUTPUT_FACE) ?: return
         if (!target.canAcceptPower()) return
 
-        val accepted = target.addPower(currentPower)
+        // debit first so a refused push can never leave the power in both blocks
+        val offered = removePowerToward(OUTPUT_FACE, currentPower)
+        val accepted = target.addPowerFrom(OUTPUT_FACE.oppositeFace, offered)
+        if (accepted < offered) addPower(offered - accepted)
         if (accepted > 0) {
-            removePowerToward(OUTPUT_FACE, accepted)
             plugin.logger.atlasInfo(
                 "SmallSolarPanel at ${location.coordinates} " +
                     "pushed $accepted power to ${target::class.simpleName} " +

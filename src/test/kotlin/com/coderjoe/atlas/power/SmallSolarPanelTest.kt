@@ -184,4 +184,42 @@ class SmallSolarPanelTest {
             descriptor.additionalBlockIds,
         )
     }
+
+    @Test
+    fun `small solar panel does not push into a cable facing the wrong way`() {
+        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        every { TestHelper.mockWorld.time } returns 6000L
+
+        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
+        // a cable directly below, but pulling from the east rather than from above
+        val cable = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.WEST)
+
+        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+
+        panel.callPowerUpdate()
+
+        // the cable's only input is its east face, so it must not be filled from above,
+        // which would otherwise strand power it can never discharge
+        assertEquals(0, cable.currentPower)
+        assertEquals(2, panel.currentPower)
+    }
+
+    @Test
+    fun `small solar panel keeps its power when the push is refused`() {
+        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        every { TestHelper.mockWorld.time } returns 6000L
+
+        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
+        panel.currentPower = 3
+        val cable = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.EAST)
+        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+
+        panel.callPowerUpdate()
+
+        // refused push must be refunded, never lost or duplicated
+        assertEquals(0, cable.currentPower)
+        assertEquals(4, panel.currentPower)
+    }
 }

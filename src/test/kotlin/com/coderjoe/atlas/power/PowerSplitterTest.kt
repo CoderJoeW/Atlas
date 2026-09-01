@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import org.bukkit.block.BlockFace
@@ -291,5 +292,23 @@ class PowerSplitterTest {
         assertEquals(4, splitter.currentPower)
         assertEquals(1, splitter.removePowerToward(BlockFace.EAST, 1))
         assertEquals(3, splitter.currentPower)
+    }
+
+    @Test
+    fun `splitter does not push into a cable facing the wrong way`() {
+        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val splitter = PowerSplitter(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        splitter.currentPower = 4
+
+        // sits on a branch face, but pulls from the north rather than from the splitter
+        val cable = PowerCable(TestHelper.createLocation(1.0, 64.0, 0.0), BlockFace.SOUTH)
+
+        TestHelper.addToRegistry(registry, splitter, "atlas:power_splitter")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+
+        splitter.callPowerUpdate()
+
+        assertEquals(0, cable.currentPower)
+        assertEquals(4, splitter.currentPower)
     }
 }

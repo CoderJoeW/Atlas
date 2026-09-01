@@ -37,6 +37,9 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
     /** One input behind, two outputs branching off either side. */
     override fun canOutputToward(face: BlockFace): Boolean = face in branchFaces(facing)
 
+    /** Power may only enter the splitter through the input face behind it. */
+    override fun canAcceptFrom(face: BlockFace): Boolean = face == facing.oppositeFace
+
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 
@@ -68,14 +71,15 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
                     isCandidate = { target -> target.canAcceptPower() },
                     tryPush = { target, face ->
                         val pushed = removePower(1)
-                        if (pushed > 0) {
-                            target.addPower(pushed)
+                        val accepted = target.addPowerFrom(face.oppositeFace, pushed)
+                        if (accepted < pushed) addPower(pushed - accepted)
+                        if (accepted > 0) {
                             plugin.logger.atlasInfo(
                                 "PowerSplitter at ${location.coordinates} " +
-                                    "pushed $pushed power to ${target::class.simpleName} at ${face.name}",
+                                    "pushed $accepted power to ${target::class.simpleName} at ${face.name}",
                             )
                         }
-                        pushed > 0
+                        accepted > 0
                     },
                 )
         }
