@@ -3,7 +3,7 @@ package com.coderjoe.atlas.utility
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.power.PowerBlockRegistry
-import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.utility.block.SmallDrill
 import io.mockk.every
 import io.mockk.mockk
@@ -154,14 +154,14 @@ class SmallDrillMiningTest {
         drill.currentPower = 0
 
         // Place powered solar panels around the drill
-        val source1 = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val source1 = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         source1.currentPower = 1
-        val source2 = SmallSolarPanel(TestHelper.createLocation(-1.0, 64.0, 0.0))
+        val source2 = LavaGenerator(TestHelper.createLocation(-1.0, 64.0, 0.0))
         source2.currentPower = 1
 
         TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
-        TestHelper.addToRegistry(registry, source1, "atlas:small_solar_panel")
-        TestHelper.addToRegistry(registry, source2, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, source1, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, source2, "atlas:lava_generator")
 
         // Mock blocks below so drill doesn't crash during mining scan
         for (y in 63 downTo -64) {
@@ -242,14 +242,14 @@ class SmallDrillMiningTest {
         val drill = createDrill(0.0, 64.0, 0.0, BlockFace.DOWN)
         drill.currentPower = 15 // needs 1 more to be full
 
-        val source1 = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val source1 = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         source1.currentPower = 1
-        val source2 = SmallSolarPanel(TestHelper.createLocation(-1.0, 64.0, 0.0))
+        val source2 = LavaGenerator(TestHelper.createLocation(-1.0, 64.0, 0.0))
         source2.currentPower = 1
 
         TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
-        TestHelper.addToRegistry(registry, source1, "atlas:small_solar_panel")
-        TestHelper.addToRegistry(registry, source2, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, source1, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, source2, "atlas:lava_generator")
 
         // Mock blocks below - stone at 63 so it mines
         val stoneBlock = mockBlockAt(0, 63, 0, Material.STONE)

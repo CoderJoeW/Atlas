@@ -2,8 +2,8 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerMerger
-import com.coderjoe.atlas.power.block.SmallSolarPanel
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -66,21 +66,21 @@ class PowerMergerTest {
         )
 
         val source1 =
-            SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
+            LavaGenerator(TestHelper.createLocation(0.0, 64.0, 1.0))
         source1.currentPower = 1
         TestHelper.addToRegistry(
             registry,
             source1,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         val source2 =
-            SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+            LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         source2.currentPower = 1
         TestHelper.addToRegistry(
             registry,
             source2,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         merger.callPowerUpdate()
@@ -101,14 +101,14 @@ class PowerMergerTest {
         )
 
         val source =
-            SmallSolarPanel(
+            LavaGenerator(
                 TestHelper.createLocation(0.0, 64.0, -1.0),
             )
         source.currentPower = 1
         TestHelper.addToRegistry(
             registry,
             source,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         merger.callPowerUpdate()
@@ -129,12 +129,12 @@ class PowerMergerTest {
         )
 
         val source =
-            SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
+            LavaGenerator(TestHelper.createLocation(0.0, 64.0, 1.0))
         source.currentPower = 1
         TestHelper.addToRegistry(
             registry,
             source,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         merger.callPowerUpdate()

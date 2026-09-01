@@ -2,23 +2,21 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
-import com.coderjoe.atlas.TestHelper.callSpawnEffects
+import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.mockk.every
-import io.mockk.verify
-import org.bukkit.Particle
+import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class SmallSolarPanelTest {
     private companion object {
         const val NIGHT_TIME = 18000L
-        const val PANEL_X = 0.5
-        const val PANEL_Z = 0.5
-        val PANEL_Y = 64.0 + 0.7
     }
 
     @BeforeEach
@@ -50,10 +48,22 @@ class SmallSolarPanelTest {
     }
 
     @Test
-    fun `small solar panel visual state full when charged`() {
+    fun `small solar panel visual state steps through every charge level`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
-        panel.currentPower = 2
-        assertEquals("atlas:small_solar_panel_full", panel.getVisualStateBlockId())
+
+        val expected =
+            listOf(
+                0 to "atlas:small_solar_panel",
+                1 to "atlas:small_solar_panel_low",
+                2 to "atlas:small_solar_panel_medium",
+                3 to "atlas:small_solar_panel_high",
+                4 to "atlas:small_solar_panel_full",
+            )
+
+        for ((power, blockId) in expected) {
+            panel.currentPower = power
+            assertEquals(blockId, panel.getVisualStateBlockId(), "wrong visual state at $power power")
+        }
     }
 
     @Test
@@ -81,42 +91,97 @@ class SmallSolarPanelTest {
     }
 
     @Test
-    fun `small solar panel emits particles above the panel during daytime`() {
+    fun `small solar panel outputs through its base pad only`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
 
-        panel.callSpawnEffects()
-
-        verify(exactly = 1) {
-            TestHelper.mockWorld.spawnParticle(
-                Particle.ELECTRIC_SPARK,
-                PANEL_X, PANEL_Y, PANEL_Z,
-                2, 0.3, 0.05, 0.3, 0.0,
-            )
+        assertTrue(panel.canOutputToward(BlockFace.DOWN))
+        for (face in listOf(BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST)) {
+            assertFalse(panel.canOutputToward(face), "panel should not output toward $face")
         }
     }
 
     @Test
-    fun `small solar panel does not emit particles at night`() {
-        every { TestHelper.mockWorld.time } returns NIGHT_TIME
-
+    fun `small solar panel refuses extraction from a sealed face`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
-        panel.callSpawnEffects()
+        panel.currentPower = 4
 
-        verify(exactly = 0) {
-            TestHelper.mockWorld.spawnParticle(
-                Particle.ELECTRIC_SPARK,
-                PANEL_X, PANEL_Y, PANEL_Z,
-                2, 0.3, 0.05, 0.3, 0.0,
-            )
-        }
+        assertEquals(0, panel.removePowerToward(BlockFace.NORTH, 1))
+        assertEquals(4, panel.currentPower)
     }
 
     @Test
-    fun `small solar panel descriptor registers the full variant`() {
+    fun `small solar panel allows extraction through its output face`() {
+        val panel = SmallSolarPanel(TestHelper.createLocation())
+        panel.currentPower = 4
+
+        assertEquals(1, panel.removePowerToward(BlockFace.DOWN, 1))
+        assertEquals(3, panel.currentPower)
+    }
+
+    @Test
+    fun `small solar panel pushes stored power into the block below`() {
+        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        every { TestHelper.mockWorld.time } returns 6000L
+
+        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
+        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.DOWN)
+
+        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+
+        panel.callPowerUpdate()
+
+        assertEquals(2, battery.currentPower)
+        assertEquals(0, panel.currentPower)
+    }
+
+    @Test
+    fun `small solar panel does not push into a cable beside it`() {
+        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        every { TestHelper.mockWorld.time } returns 6000L
+
+        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
+        // Cable to the SOUTH facing SOUTH, so it would pull from the panel behind it
+        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
+
+        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+
+        panel.callPowerUpdate()
+        cable.callPowerUpdate()
+
+        assertEquals(0, cable.currentPower)
+        assertEquals(2, panel.currentPower)
+    }
+
+    @Test
+    fun `small solar panel holds power when nothing sits below it`() {
+        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        every { TestHelper.mockWorld.time } returns 6000L
+
+        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
+        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+
+        panel.callPowerUpdate()
+        panel.callPowerUpdate()
+
+        assertEquals(4, panel.currentPower)
+    }
+
+    @Test
+    fun `small solar panel descriptor registers every charge variant`() {
         val descriptor = SmallSolarPanel.descriptor
 
         assertEquals("atlas:small_solar_panel", descriptor.baseBlockId)
         assertEquals("Small Solar Panel", descriptor.displayName)
-        assertEquals(listOf("atlas:small_solar_panel_full"), descriptor.additionalBlockIds)
+        assertEquals(
+            listOf(
+                "atlas:small_solar_panel_low",
+                "atlas:small_solar_panel_medium",
+                "atlas:small_solar_panel_high",
+                "atlas:small_solar_panel_full",
+            ),
+            descriptor.additionalBlockIds,
+        )
     }
 }
