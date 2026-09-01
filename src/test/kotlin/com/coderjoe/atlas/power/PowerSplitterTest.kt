@@ -154,6 +154,8 @@ class PowerSplitterTest {
             "atlas:small_battery",
         )
 
+        // a north-facing splitter branches east and west only, so a battery straight
+        // ahead must be left untouched
         val northBatteryLoc =
             TestHelper.createLocation(0.0, 64.0, -1.0)
         val northBattery =
@@ -168,8 +170,7 @@ class PowerSplitterTest {
 
         assertTrue(eastBattery.currentPower > 0)
         assertTrue(westBattery.currentPower > 0)
-        assertTrue(northBattery.currentPower > 0)
-        assertEquals(2, splitter.currentPower)
+        assertEquals(0, northBattery.currentPower)
     }
 
     @Test
@@ -256,24 +257,39 @@ class PowerSplitterTest {
     }
 
     @Test
-    fun `splitter outputs through every face except its input`() {
+    fun `splitter outputs through its two side branches only`() {
         val splitter = PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
 
-        // facing NORTH means power arrives from SOUTH, so SOUTH is the only sealed face
-        assertFalse(splitter.canOutputToward(BlockFace.SOUTH))
-        for (face in listOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
-            assertTrue(splitter.canOutputToward(face), "splitter should output toward $face")
+        // facing NORTH takes power in from SOUTH and branches it EAST and WEST
+        for (face in listOf(BlockFace.EAST, BlockFace.WEST)) {
+            assertTrue(splitter.canOutputToward(face), "splitter should branch toward $face")
+        }
+        for (face in listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN)) {
+            assertFalse(splitter.canOutputToward(face), "splitter should not output toward $face")
         }
     }
 
     @Test
-    fun `splitter refuses extraction from its input face`() {
+    fun `splitter branches sideways for a vertical facing`() {
+        val splitter = PowerSplitter(TestHelper.createLocation(), BlockFace.UP)
+
+        for (face in listOf(BlockFace.NORTH, BlockFace.SOUTH)) {
+            assertTrue(splitter.canOutputToward(face), "splitter should branch toward $face")
+        }
+        for (face in listOf(BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST)) {
+            assertFalse(splitter.canOutputToward(face), "splitter should not output toward $face")
+        }
+    }
+
+    @Test
+    fun `splitter refuses extraction from any face but its branches`() {
         val splitter = PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
         splitter.currentPower = 4
 
         assertEquals(0, splitter.removePowerToward(BlockFace.SOUTH, 1))
+        assertEquals(0, splitter.removePowerToward(BlockFace.NORTH, 1))
         assertEquals(4, splitter.currentPower)
-        assertEquals(1, splitter.removePowerToward(BlockFace.NORTH, 1))
+        assertEquals(1, splitter.removePowerToward(BlockFace.EAST, 1))
         assertEquals(3, splitter.currentPower)
     }
 }

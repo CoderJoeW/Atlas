@@ -5,9 +5,10 @@ import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.core.pullFromOpposite
-import com.coderjoe.atlas.core.pushRoundRobin
+import com.coderjoe.atlas.core.pushRoundRobinTo
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.branchFaces
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
@@ -19,7 +20,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Power Splitter",
-                description = "Cable - distributes power to all adjacent faces",
+                description = "Cable - splits power to two side branches",
                 placementType = PlacementType.DIRECTIONAL,
                 showFacingInDisplayName = true,
                 constructor = { loc, facing -> PowerSplitter(loc, facing) },
@@ -33,8 +34,8 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
-    /** Power arrives on the input face behind the splitter; every other face is an output. */
-    override fun canOutputToward(face: BlockFace): Boolean = face != facing.oppositeFace
+    /** One input behind, two outputs branching off either side. */
+    override fun canOutputToward(face: BlockFace): Boolean = face in branchFaces(facing)
 
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
@@ -59,8 +60,8 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
 
         if (hasPower()) {
             nextOutputIndex =
-                pushRoundRobin(
-                    excludeFace = facing.oppositeFace,
+                pushRoundRobinTo(
+                    outputFaces = branchFaces(facing),
                     startIndex = nextOutputIndex,
                     getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
                     hasResource = { hasPower() },
