@@ -2,6 +2,7 @@ package com.coderjoe.atlas
 
 import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.core.InstanceHolder
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
@@ -181,26 +182,28 @@ object TestHelper {
     }
 
     private fun clearRegistries() {
-        try {
-            val instanceField = PowerBlockRegistry.Companion::class.java.getDeclaredField("instance")
-            instanceField.isAccessible = true
-            instanceField.set(PowerBlockRegistry.Companion, null)
-        } catch (_: Exception) {
-        }
+        clearInstance(PowerBlockRegistry.Companion)
+        clearInstance(FluidBlockRegistry.Companion)
+        clearInstance(TransportBlockRegistry.Companion)
+    }
 
-        try {
-            val instanceField = FluidBlockRegistry.Companion::class.java.getDeclaredField("instance")
-            instanceField.isAccessible = true
-            instanceField.set(FluidBlockRegistry.Companion, null)
-        } catch (_: Exception) {
+    /**
+     * Nulls an [InstanceHolder] singleton. The `instance` field is declared on [InstanceHolder]
+     * itself rather than on the companion subclass, so the lookup has to walk up the hierarchy.
+     */
+    private fun clearInstance(holder: InstanceHolder<*>) {
+        var cls: Class<*>? = holder::class.java
+        while (cls != null) {
+            try {
+                val field = cls.getDeclaredField("instance")
+                field.isAccessible = true
+                field.set(holder, null)
+                return
+            } catch (_: NoSuchFieldException) {
+                cls = cls.superclass
+            }
         }
-
-        try {
-            val instanceField = TransportBlockRegistry.Companion::class.java.getDeclaredField("instance")
-            instanceField.isAccessible = true
-            instanceField.set(TransportBlockRegistry.Companion, null)
-        } catch (_: Exception) {
-        }
+        error("InstanceHolder.instance field not found on ${holder::class.java.name}")
     }
 
     fun initPowerFactory() {
