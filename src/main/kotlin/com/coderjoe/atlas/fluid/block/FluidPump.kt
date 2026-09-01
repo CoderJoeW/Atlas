@@ -66,8 +66,14 @@ class FluidPump(location: Location) : FluidBlock(location) {
 
     override fun fluidUpdate() {
         val powerRegistry = PowerBlockRegistry.instance ?: return
-        val powerNeighbors = powerRegistry.getAdjacentBlocks(location)
-        isPowered = powerNeighbors.any { it.hasPower() }
+        val powerNeighbors =
+            ADJACENT_FACES.mapNotNull { face ->
+                powerRegistry.getAdjacentBlock(location, face)?.let { face to it }
+            }
+        isPowered =
+            powerNeighbors.any { (face, neighbor) ->
+                neighbor.hasPower() && neighbor.canOutputToward(face.oppositeFace)
+            }
 
         if (hasFluid()) {
             pumpStatus = PumpStatus.IDLE
@@ -114,9 +120,9 @@ class FluidPump(location: Location) : FluidBlock(location) {
         }
 
         var poweredThisTick = false
-        for (neighbor in powerNeighbors) {
+        for ((face, neighbor) in powerNeighbors) {
             if (neighbor.hasPower()) {
-                val pulled = neighbor.removePower(1)
+                val pulled = neighbor.removePowerToward(face.oppositeFace, 1)
                 if (pulled > 0) {
                     poweredThisTick = true
                     break

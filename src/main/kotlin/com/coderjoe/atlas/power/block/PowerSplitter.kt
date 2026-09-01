@@ -5,9 +5,10 @@ import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.core.pullFromOpposite
-import com.coderjoe.atlas.core.pushRoundRobin
+import com.coderjoe.atlas.core.pushRoundRobinTo
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.branchFaces
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
@@ -19,7 +20,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Power Splitter",
-                description = "Cable - distributes power to all adjacent faces",
+                description = "Cable - splits power to two side branches",
                 placementType = PlacementType.DIRECTIONAL,
                 showFacingInDisplayName = true,
                 constructor = { loc, facing -> PowerSplitter(loc, facing) },
@@ -33,6 +34,12 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
+    /** One input behind, two outputs branching off either side. */
+    override fun canOutputToward(face: BlockFace): Boolean = face in branchFaces(facing)
+
+    /** Power may only enter the splitter through the input face behind it. */
+    override fun canAcceptFrom(face: BlockFace): Boolean = face == facing.oppositeFace
+
     override fun powerUpdate() {
         val registry = PowerBlockRegistry.instance ?: return
 
@@ -43,7 +50,7 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
             canProvide = { source -> source.hasPower() },
             transfer = { source ->
                 val remaining = maxStorage - currentPower
-                val pulled = source.removePower(minOf(remaining, source.currentPower))
+                val pulled = source.removePowerToward(facing, minOf(remaining, source.currentPower))
                 if (pulled > 0) {
                     addPower(pulled)
                     plugin.logger.atlasInfo(
@@ -56,22 +63,23 @@ class PowerSplitter(location: Location, override val facing: BlockFace) : PowerB
 
         if (hasPower()) {
             nextOutputIndex =
-                pushRoundRobin(
-                    excludeFace = facing.oppositeFace,
+                pushRoundRobinTo(
+                    outputFaces = branchFaces(facing),
                     startIndex = nextOutputIndex,
                     getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
                     hasResource = { hasPower() },
                     isCandidate = { target -> target.canAcceptPower() },
                     tryPush = { target, face ->
                         val pushed = removePower(1)
-                        if (pushed > 0) {
-                            target.addPower(pushed)
+                        val accepted = target.addPowerFrom(face.oppositeFace, pushed)
+                        if (accepted < pushed) addPower(pushed - accepted)
+                        if (accepted > 0) {
                             plugin.logger.atlasInfo(
                                 "PowerSplitter at ${location.coordinates} " +
-                                    "pushed $pushed power to ${target::class.simpleName} at ${face.name}",
+                                    "pushed $accepted power to ${target::class.simpleName} at ${face.name}",
                             )
                         }
-                        pushed > 0
+                        accepted > 0
                     },
                 )
         }

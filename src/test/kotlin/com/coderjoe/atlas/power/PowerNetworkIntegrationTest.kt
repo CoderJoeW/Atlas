@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
@@ -32,23 +33,19 @@ class PowerNetworkIntegrationTest {
     }
 
     @Test
-    fun `solar generates power and cable pulls it`() {
+    fun `solar generates power and pushes it into the cable below`() {
         every { TestHelper.mockWorld.time } returns 6000L
 
-        // Solar at (0,64,0)
+        // Solar at (0,64,0), outputting through its base pad (DOWN)
         val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
-        // Cable at (0,64,1) facing SOUTH (pulls from NORTH = behind = z-1 = solar)
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
+        // Cable at (0,63,0) facing DOWN (pulls from UP = behind = y+1 = solar)
+        val cable = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.DOWN)
 
         TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
-        // Solar generates
+        // Solar generates 2, then pushes into the cable (cable maxStorage=1)
         solar.callPowerUpdate()
-        assertEquals(2, solar.currentPower)
-
-        // Cable pulls from solar (cable maxStorage=1, so pulls 1)
-        cable.callPowerUpdate()
         assertEquals(1, cable.currentPower)
         assertEquals(1, solar.currentPower)
     }
@@ -57,20 +54,18 @@ class PowerNetworkIntegrationTest {
     fun `chain propagation - solar to cable to cable`() {
         every { TestHelper.mockWorld.time } returns 6000L
 
+        // Chain runs downward out of the panel's base pad
         val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
-        val cable1 = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
-        val cable2 = PowerCable(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
+        val cable1 = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.DOWN)
+        val cable2 = PowerCable(TestHelper.createLocation(0.0, 62.0, 0.0), BlockFace.DOWN)
 
         TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable1, "atlas:power_cable")
         TestHelper.addToRegistry(registry, cable2, "atlas:power_cable")
 
-        // Tick 1: solar generates
+        // Tick 1: solar generates 2 and pushes 1 into cable1 (cable maxStorage=1)
         solar.callPowerUpdate()
-        assertEquals(2, solar.currentPower)
-
-        // Tick 1: cable1 pulls from solar (cable maxStorage=1)
-        cable1.callPowerUpdate()
+        assertEquals(1, solar.currentPower)
         assertEquals(1, cable1.currentPower)
 
         // Tick 1: cable2 pulls from cable1
@@ -84,21 +79,21 @@ class PowerNetworkIntegrationTest {
         every { TestHelper.mockWorld.time } returns 6000L
 
         val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
-        // Battery facing SOUTH, pulls from behind (NORTH = z-1 = solar)
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
+        // Battery sits under the panel's base pad and takes its output
+        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.DOWN)
 
         TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
-        // Tick 1: solar generates, battery pulls
-        solar.callPowerUpdate()
-        battery.callPowerUpdate()
-        assertEquals(1, battery.currentPower)
-
-        // Tick 2: solar generates again, battery pulls again
+        // Tick 1: solar generates 2 and pushes all of it into the battery
         solar.callPowerUpdate()
         battery.callPowerUpdate()
         assertEquals(2, battery.currentPower)
+
+        // Tick 2: solar generates again and pushes again
+        solar.callPowerUpdate()
+        battery.callPowerUpdate()
+        assertEquals(4, battery.currentPower)
     }
 
     @Test
@@ -106,11 +101,11 @@ class PowerNetworkIntegrationTest {
         val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         // Source to the EAST (side, not behind)
-        val source = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val source = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         source.currentPower = 1
 
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
-        TestHelper.addToRegistry(registry, source, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, source, "atlas:lava_generator")
 
         cable.callPowerUpdate()
         assertEquals(0, cable.currentPower) // did not pull
@@ -123,17 +118,17 @@ class PowerNetworkIntegrationTest {
         drill.currentPower = 0
 
         // Place powered sources in multiple directions
-        val source1 = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val source1 = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         source1.currentPower = 1
-        val source2 = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val source2 = LavaGenerator(TestHelper.createLocation(0.0, 65.0, 0.0))
         source2.currentPower = 1
-        val source3 = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 1.0))
+        val source3 = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 1.0))
         source3.currentPower = 1
 
         TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
-        TestHelper.addToRegistry(registry, source1, "atlas:small_solar_panel")
-        TestHelper.addToRegistry(registry, source2, "atlas:small_solar_panel")
-        TestHelper.addToRegistry(registry, source3, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, source1, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, source2, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, source3, "atlas:lava_generator")
 
         // Mock blocks below so mining scan doesn't error
         for (y in 63 downTo -64) {
@@ -151,9 +146,9 @@ class PowerNetworkIntegrationTest {
         every { TestHelper.mockWorld.time } returns 6000L
 
         val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
-        val cable1 = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
-        val cable2 = PowerCable(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 64.0, 3.0), BlockFace.SOUTH)
+        val cable1 = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.DOWN)
+        val cable2 = PowerCable(TestHelper.createLocation(0.0, 62.0, 0.0), BlockFace.DOWN)
+        val battery = SmallBattery(TestHelper.createLocation(0.0, 61.0, 0.0), BlockFace.DOWN)
 
         TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable1, "atlas:power_cable")

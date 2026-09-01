@@ -192,18 +192,25 @@ For **transport blocks**, edit `src/main/kotlin/com/coderjoe/atlas/transport/Tra
    - Descriptor properties (baseBlockId, displayName)
    - Edge cases (full storage, no adjacent blocks, wrong fluid type, etc.)
 
-### Step 8: Generate Placeholder Textures
+### Step 8: Generate Textures
 
-Create 128x128 PNG placeholder textures at `src/main/resources/atlas/resourcepack/assets/minecraft/textures/block/custom/`.
+Generate every texture the block's YAML references with the **Artlist MCP** (`generate_image`).
+All texture work in this project goes through Artlist - do not write Python/Pillow scripts for textures.
 
-Use Python with Pillow to generate dark industrial-style textures matching the project's art style:
-- Base color: dark gray/charcoal (~38,38,44 RGB)
-- Borders: darker frame (~24,24,28) with light bevel (~52,52,58)
-- Details: rivets, panels, vents, indicator lights
-- Active states: use orange/lava glow (~255,160,20) or blue/cyan (~30,144,255) depending on the block's theme
-- Add subtle noise for texture (random +/-3 per channel)
+Write textures to `src/main/resources/atlas/resourcepack/assets/minecraft/textures/block/custom/`
+at 1024x1024, square (`aspect_ratio: "1:1"`), naming them `{block_id}_{face}.png` and
+`{block_id}_{face}_{state}.png`.
 
-Name textures following the convention: `{block_id}_{face}.png`, `{block_id}_{face}_{state}.png`
+Prompt for the established art direction so new blocks match the existing set:
+- Dark matte armored housing (~38,40,48 RGB) with a subtle hexagonal honeycomb grid
+- Thick dark outer frame with an inner bevel: light top-left, dark bottom-right
+- Bolts/rivets at corners and along panel seams; vents, data plates, status LEDs
+- Active states glow orange/amber (~255,160,20) or blue/cyan (~30,144,255) by theme
+- Flat, head-on, orthographic - no perspective, no drop shadow, edge-to-edge with no margin
+
+Generate one face, then use image-to-image (`input: { generationId }`) to derive the other faces and
+state variants from it, so the whole set stays visually consistent. Read every PNG back to inspect it
+before moving on.
 
 ### Checklist
 
@@ -219,4 +226,4 @@ Before finishing, verify:
 - [ ] TestHelper updated with new descriptor
 - [ ] Block count assertions updated (both test files)
 - [ ] Block-specific test file created
-- [ ] Placeholder textures generated for all referenced texture names
+- [ ] Textures generated with the Artlist MCP for all referenced texture names

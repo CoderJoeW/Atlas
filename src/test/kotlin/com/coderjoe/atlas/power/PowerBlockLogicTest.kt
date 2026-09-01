@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
@@ -145,13 +146,12 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `solar panel visual state full when has power`() {
+    fun `solar panel visual state steps up with charge`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
         panel.currentPower = 1
-        assertEquals(
-            "atlas:small_solar_panel_full",
-            panel.getVisualStateBlockId(),
-        )
+        assertEquals("atlas:small_solar_panel_low", panel.getVisualStateBlockId())
+        panel.currentPower = 4
+        assertEquals("atlas:small_solar_panel_full", panel.getVisualStateBlockId())
     }
 
     @Test
@@ -268,7 +268,7 @@ class PowerBlockLogicTest {
         val battery = SmallBattery(batteryLoc, BlockFace.NORTH)
 
         val sourceLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val source = SmallSolarPanel(sourceLoc)
+        val source = LavaGenerator(sourceLoc)
         source.currentPower = 1
 
         TestHelper.addToRegistry(
@@ -279,7 +279,7 @@ class PowerBlockLogicTest {
         TestHelper.addToRegistry(
             registry,
             source,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         battery.callPowerUpdate()
@@ -329,7 +329,7 @@ class PowerBlockLogicTest {
         val cable = PowerCable(cableLoc, BlockFace.NORTH)
 
         val sourceLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val source = SmallSolarPanel(sourceLoc)
+        val source = LavaGenerator(sourceLoc)
         source.currentPower = 1
 
         TestHelper.addToRegistry(
@@ -340,12 +340,33 @@ class PowerBlockLogicTest {
         TestHelper.addToRegistry(
             registry,
             source,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         cable.callPowerUpdate()
         assertEquals(1, cable.currentPower)
         assertEquals(0, source.currentPower)
+    }
+
+    @Test
+    fun `cable outputs only through its facing`() {
+        val cable = PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
+
+        assertTrue(cable.canOutputToward(BlockFace.NORTH))
+        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+            assertFalse(cable.canOutputToward(face), "cable should not output toward $face")
+        }
+    }
+
+    @Test
+    fun `cable refuses extraction from a sealed face`() {
+        val cable = PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
+        cable.currentPower = 1
+
+        assertEquals(0, cable.removePowerToward(BlockFace.SOUTH, 1))
+        assertEquals(1, cable.currentPower)
+        assertEquals(1, cable.removePowerToward(BlockFace.NORTH, 1))
+        assertEquals(0, cable.currentPower)
     }
 
     @Test
@@ -355,7 +376,7 @@ class PowerBlockLogicTest {
         val cable = PowerCable(cableLoc, BlockFace.NORTH)
 
         val sourceLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
-        val source = SmallSolarPanel(sourceLoc)
+        val source = LavaGenerator(sourceLoc)
         source.currentPower = 1
 
         TestHelper.addToRegistry(
@@ -366,7 +387,7 @@ class PowerBlockLogicTest {
         TestHelper.addToRegistry(
             registry,
             source,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         cable.callPowerUpdate()
@@ -485,7 +506,7 @@ class PowerBlockLogicTest {
         val battery = SmallBattery(batteryLoc, BlockFace.NORTH)
 
         val sourceLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val source = SmallSolarPanel(sourceLoc)
+        val source = LavaGenerator(sourceLoc)
         source.currentPower = 0
 
         TestHelper.addToRegistry(
@@ -496,7 +517,7 @@ class PowerBlockLogicTest {
         TestHelper.addToRegistry(
             registry,
             source,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         battery.callPowerUpdate()

@@ -4,6 +4,7 @@ import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.core.CraftEngineHelper
 import org.bukkit.Location
+import org.bukkit.block.BlockFace
 
 abstract class PowerBlock(
     location: Location,
@@ -29,14 +30,52 @@ abstract class PowerBlock(
         return toRemove
     }
 
+    /**
+     * Whether this block hands power out through [face], where [face] points from this block
+     * toward the consumer. Sources with a dedicated output port override this; by default a
+     * block can be drained from any side.
+     */
+    open fun canOutputToward(face: BlockFace): Boolean = true
+
+    /**
+     * Face-aware counterpart to [removePower]. [face] points from this block toward the
+     * consumer, and extraction yields nothing when [canOutputToward] rejects that face.
+     */
+    fun removePowerToward(
+        face: BlockFace,
+        amount: Int,
+    ): Int {
+        if (!canOutputToward(face)) return 0
+        return removePower(amount)
+    }
+
+    /**
+     * Whether this block accepts power pushed in through [face], where [face] points from this
+     * block toward the pusher. Blocks with a designated input face override this; by default a
+     * block takes power from any side.
+     */
+    open fun canAcceptFrom(face: BlockFace): Boolean = true
+
+    /**
+     * Face-aware counterpart to [addPower]. [face] points from this block toward the pusher, and
+     * nothing is accepted when [canAcceptFrom] rejects that face.
+     */
+    fun addPowerFrom(
+        face: BlockFace,
+        amount: Int,
+    ): Int {
+        if (!canAcceptFrom(face)) return 0
+        return addPower(amount)
+    }
+
     protected fun pullPowerFromNeighbors() {
         if (!canAcceptPower()) return
         val registry = PowerBlockRegistry.instance ?: return
-        val neighbors = registry.getAdjacentBlocks(location)
-        for (neighbor in neighbors) {
+        for (face in ADJACENT_FACES) {
             if (!canAcceptPower()) break
+            val neighbor = registry.getAdjacentBlock(location, face) ?: continue
             if (neighbor.hasPower()) {
-                val pulled = neighbor.removePower(1)
+                val pulled = neighbor.removePowerToward(face.oppositeFace, 1)
                 if (pulled > 0) {
                     addPower(pulled)
                 }

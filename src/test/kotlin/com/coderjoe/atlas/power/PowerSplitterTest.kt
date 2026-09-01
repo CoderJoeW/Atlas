@@ -2,12 +2,14 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -153,6 +155,8 @@ class PowerSplitterTest {
             "atlas:small_battery",
         )
 
+        // a north-facing splitter branches east and west only, so a battery straight
+        // ahead must be left untouched
         val northBatteryLoc =
             TestHelper.createLocation(0.0, 64.0, -1.0)
         val northBattery =
@@ -167,8 +171,7 @@ class PowerSplitterTest {
 
         assertTrue(eastBattery.currentPower > 0)
         assertTrue(westBattery.currentPower > 0)
-        assertTrue(northBattery.currentPower > 0)
-        assertEquals(2, splitter.currentPower)
+        assertEquals(0, northBattery.currentPower)
     }
 
     @Test
@@ -252,5 +255,60 @@ class PowerSplitterTest {
             firstWentEast != secondWentEast,
             "round-robin should alternate: first=$firstWentEast, second=$secondWentEast",
         )
+    }
+
+    @Test
+    fun `splitter outputs through its two side branches only`() {
+        val splitter = PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
+
+        // facing NORTH takes power in from SOUTH and branches it EAST and WEST
+        for (face in listOf(BlockFace.EAST, BlockFace.WEST)) {
+            assertTrue(splitter.canOutputToward(face), "splitter should branch toward $face")
+        }
+        for (face in listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN)) {
+            assertFalse(splitter.canOutputToward(face), "splitter should not output toward $face")
+        }
+    }
+
+    @Test
+    fun `splitter branches sideways for a vertical facing`() {
+        val splitter = PowerSplitter(TestHelper.createLocation(), BlockFace.UP)
+
+        for (face in listOf(BlockFace.NORTH, BlockFace.SOUTH)) {
+            assertTrue(splitter.canOutputToward(face), "splitter should branch toward $face")
+        }
+        for (face in listOf(BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST)) {
+            assertFalse(splitter.canOutputToward(face), "splitter should not output toward $face")
+        }
+    }
+
+    @Test
+    fun `splitter refuses extraction from any face but its branches`() {
+        val splitter = PowerSplitter(TestHelper.createLocation(), BlockFace.NORTH)
+        splitter.currentPower = 4
+
+        assertEquals(0, splitter.removePowerToward(BlockFace.SOUTH, 1))
+        assertEquals(0, splitter.removePowerToward(BlockFace.NORTH, 1))
+        assertEquals(4, splitter.currentPower)
+        assertEquals(1, splitter.removePowerToward(BlockFace.EAST, 1))
+        assertEquals(3, splitter.currentPower)
+    }
+
+    @Test
+    fun `splitter does not push into a cable facing the wrong way`() {
+        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val splitter = PowerSplitter(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        splitter.currentPower = 4
+
+        // sits on a branch face, but pulls from the north rather than from the splitter
+        val cable = PowerCable(TestHelper.createLocation(1.0, 64.0, 0.0), BlockFace.SOUTH)
+
+        TestHelper.addToRegistry(registry, splitter, "atlas:power_splitter")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+
+        splitter.callPowerUpdate()
+
+        assertEquals(0, cable.currentPower)
+        assertEquals(4, splitter.currentPower)
     }
 }

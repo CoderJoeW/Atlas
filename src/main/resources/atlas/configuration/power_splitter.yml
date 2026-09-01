@@ -2,7 +2,7 @@ items:
   atlas:power_splitter:
     material: paper
     data:
-      item-name: "<!i><gradient:#FFD700:#FF4500>Power Splitter"
+      item-name: <!i><gradient:#FFD700:#FF4500>Power Splitter
     model: minecraft:block/custom/power_splitter
     behavior:
       type: block_item
@@ -12,16 +12,20 @@ items:
         settings:
           hardness: 2.0
           resistance: 2.0
-          is-suffocating: true
+          is-suffocating: false
           is-redstone-conductor: false
           push-reaction: push_only
-          tags: ["minecraft:mineable/pickaxe"]
+          tags:
+          - minecraft:mineable/pickaxe
           sounds:
             break: minecraft:block.metal.break
             step: minecraft:block.metal.step
             place: minecraft:block.metal.place
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
+          can-occlude: false
+          is-view-blocking: false
+          propagate-skylight: true
         states:
           properties:
             facing:
@@ -36,14 +40,11 @@ items:
               model:
                 path: minecraft:block/custom/power_splitter
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/power_splitter_base
                   textures:
-                    north: minecraft:block/custom/power_splitter_front
-                    south: minecraft:block/custom/power_splitter_back
-                    east: minecraft:block/custom/power_splitter_side
-                    west: minecraft:block/custom/power_splitter_side
-                    up: minecraft:block/custom/power_splitter_cap
-                    down: minecraft:block/custom/power_splitter_cap
+                    casing: minecraft:block/custom/power_splitter_casing
+                    in: minecraft:block/custom/power_splitter_in
+                    out: minecraft:block/custom/power_splitter_out
             south:
               auto-state: solid
               model:
@@ -64,40 +65,31 @@ items:
               model:
                 path: minecraft:block/custom/power_splitter_up
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/power_splitter_base_up
                   textures:
-                    north: minecraft:block/custom/power_splitter_side
-                    south: minecraft:block/custom/power_splitter_side
-                    east: minecraft:block/custom/power_splitter_side
-                    west: minecraft:block/custom/power_splitter_side
-                    up: minecraft:block/custom/power_splitter_front
-                    down: minecraft:block/custom/power_splitter_back
+                    casing: minecraft:block/custom/power_splitter_casing
+                    in: minecraft:block/custom/power_splitter_in
+                    out: minecraft:block/custom/power_splitter_out
             down:
               auto-state: solid
               model:
                 path: minecraft:block/custom/power_splitter_down
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/power_splitter_base_down
                   textures:
-                    north: minecraft:block/custom/power_splitter_side
-                    south: minecraft:block/custom/power_splitter_side
-                    east: minecraft:block/custom/power_splitter_side
-                    west: minecraft:block/custom/power_splitter_side
-                    up: minecraft:block/custom/power_splitter_back
-                    down: minecraft:block/custom/power_splitter_front
+                    casing: minecraft:block/custom/power_splitter_casing
+                    in: minecraft:block/custom/power_splitter_in
+                    out: minecraft:block/custom/power_splitter_out
             north_powered:
               auto-state: solid
               model:
                 path: minecraft:block/custom/power_splitter_powered
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/power_splitter_base
                   textures:
-                    north: minecraft:block/custom/power_splitter_front_powered
-                    south: minecraft:block/custom/power_splitter_back_powered
-                    east: minecraft:block/custom/power_splitter_side_powered
-                    west: minecraft:block/custom/power_splitter_side_powered
-                    up: minecraft:block/custom/power_splitter_cap_powered
-                    down: minecraft:block/custom/power_splitter_cap_powered
+                    casing: minecraft:block/custom/power_splitter_casing_powered
+                    in: minecraft:block/custom/power_splitter_in_powered
+                    out: minecraft:block/custom/power_splitter_out_powered
             south_powered:
               auto-state: solid
               model:
@@ -118,63 +110,56 @@ items:
               model:
                 path: minecraft:block/custom/power_splitter_up_powered
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/power_splitter_base_up
                   textures:
-                    north: minecraft:block/custom/power_splitter_side_powered
-                    south: minecraft:block/custom/power_splitter_side_powered
-                    east: minecraft:block/custom/power_splitter_side_powered
-                    west: minecraft:block/custom/power_splitter_side_powered
-                    up: minecraft:block/custom/power_splitter_front_powered
-                    down: minecraft:block/custom/power_splitter_back_powered
+                    casing: minecraft:block/custom/power_splitter_casing_powered
+                    in: minecraft:block/custom/power_splitter_in_powered
+                    out: minecraft:block/custom/power_splitter_out_powered
             down_powered:
               auto-state: solid
               model:
                 path: minecraft:block/custom/power_splitter_down_powered
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/power_splitter_base_down
                   textures:
-                    north: minecraft:block/custom/power_splitter_side_powered
-                    south: minecraft:block/custom/power_splitter_side_powered
-                    east: minecraft:block/custom/power_splitter_side_powered
-                    west: minecraft:block/custom/power_splitter_side_powered
-                    up: minecraft:block/custom/power_splitter_back_powered
-                    down: minecraft:block/custom/power_splitter_front_powered
+                    casing: minecraft:block/custom/power_splitter_casing_powered
+                    in: minecraft:block/custom/power_splitter_in_powered
+                    out: minecraft:block/custom/power_splitter_out_powered
           variants:
             facing=north,powered=false:
               appearance: north
-            facing=south,powered=false:
-              appearance: south
-            facing=east,powered=false:
-              appearance: east
-            facing=west,powered=false:
-              appearance: west
-            facing=up,powered=false:
-              appearance: up
-            facing=down,powered=false:
-              appearance: down
             facing=north,powered=true:
               appearance: north_powered
+            facing=south,powered=false:
+              appearance: south
             facing=south,powered=true:
               appearance: south_powered
+            facing=east,powered=false:
+              appearance: east
             facing=east,powered=true:
               appearance: east_powered
+            facing=west,powered=false:
+              appearance: west
             facing=west,powered=true:
               appearance: west_powered
+            facing=up,powered=false:
+              appearance: up
             facing=up,powered=true:
               appearance: up_powered
+            facing=down,powered=false:
+              appearance: down
             facing=down,powered=true:
               appearance: down_powered
-
 recipes:
   atlas:power_splitter:
     type: shapeless
     category: misc
     unlock-on-ingredient-obtained: true
     ingredients:
-      - minecraft:copper_ingot
-      - minecraft:copper_ingot
-      - minecraft:copper_ingot
-      - minecraft:copper_ingot
+    - minecraft:copper_ingot
+    - minecraft:copper_ingot
+    - minecraft:copper_ingot
+    - minecraft:copper_ingot
     result:
       id: atlas:power_splitter
       count: 1

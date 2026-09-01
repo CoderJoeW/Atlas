@@ -5,7 +5,7 @@ import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlockRegistry
-import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.power.block.LavaGenerator
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.Material
@@ -220,12 +220,12 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
         TestHelper.addToRegistry(
             powerRegistry,
             solar,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         pump.callFluidUpdate()
@@ -262,12 +262,12 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
         TestHelper.addToRegistry(
             powerRegistry,
             solar,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         pump.callFluidUpdate()
@@ -316,12 +316,12 @@ class FluidBlockLogicTest {
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
         pump.storeFluid(FluidType.WATER)
 
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
         TestHelper.addToRegistry(
             powerRegistry,
             solar,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         pump.callFluidUpdate()
@@ -369,12 +369,12 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
         TestHelper.addToRegistry(
             powerRegistry,
             solar,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         pump.callFluidUpdate()
@@ -415,12 +415,12 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
         TestHelper.addToRegistry(
             powerRegistry,
             solar,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         pump.callFluidUpdate()
@@ -456,12 +456,12 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
         TestHelper.addToRegistry(
             powerRegistry,
             solar,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         pump.callFluidUpdate()
@@ -502,12 +502,12 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
         TestHelper.addToRegistry(
             powerRegistry,
             solar,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         pump.callFluidUpdate()
@@ -547,12 +547,12 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
         TestHelper.addToRegistry(
             powerRegistry,
             solar,
-            "atlas:small_solar_panel",
+            "atlas:lava_generator",
         )
 
         pump.callFluidUpdate()

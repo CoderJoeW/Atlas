@@ -7,6 +7,7 @@ import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.mockk.every
@@ -42,9 +43,9 @@ class CrossSystemIntegrationTest {
         every { TestHelper.mockWorld.time } returns 6000L
 
         // Solar panel at (1,64,0)
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(powerRegistry, solar, "atlas:lava_generator")
 
         // Pump at (0,64,0)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
@@ -96,47 +97,41 @@ class CrossSystemIntegrationTest {
     fun `full end-to-end - solar to cable near pump, pump extracts, pipe transports`() {
         every { TestHelper.mockWorld.time } returns 6000L
 
-        // Solar at (0,64,0) - generates power
-        val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
+        // Solar at (0,65,1) - generates power, outputs through its base pad (DOWN)
+        val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 1.0))
         TestHelper.addToRegistry(powerRegistry, solar, "atlas:small_solar_panel")
 
-        // Cable at (0,64,1) facing SOUTH - pulls from solar behind
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
+        // Cable at (0,64,1) facing DOWN - sits under the panel and pulls from it
+        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.DOWN)
         TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
 
-        // Pump at (0,64,2) - adjacent to cable
-        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 2.0))
+        // Pump at (0,63,1) - directly below the cable, in its output direction
+        val pump = FluidPump(TestHelper.createLocation(0.0, 63.0, 1.0))
         TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
 
-        // Water cauldron at (0,64,3) = SOUTH of pump
+        // Water cauldron at (0,63,2) = SOUTH of pump
         val levelled = mockk<Levelled>(relaxed = true)
         every { levelled.level } returns 3
         val cauldronBlock = mockk<Block>(relaxed = true)
         every { cauldronBlock.type } returns Material.WATER_CAULDRON
         every { cauldronBlock.blockData } returns levelled
-        every { TestHelper.mockWorld.getBlockAt(0, 64, 3) } returns cauldronBlock
+        every { TestHelper.mockWorld.getBlockAt(0, 63, 2) } returns cauldronBlock
 
-        // Other blocks around pump are air (except NORTH which has the cable)
+        // Other blocks around the pump are air (UP holds the cable, SOUTH the cauldron)
         for (face in listOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
             val offset = face.direction
             val block = mockk<Block>(relaxed = true)
             every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(0 + offset.blockX, 64 + offset.blockY, 2 + offset.blockZ) } returns block
+            every { TestHelper.mockWorld.getBlockAt(0 + offset.blockX, 63 + offset.blockY, 1 + offset.blockZ) } returns block
         }
 
-        // Pipe at (0,64,3) actually let's put it at (-1,64,2) facing EAST (pulls from WEST which doesn't exist)
-        // Better: pipe at (0,65,2) facing DOWN (pulls from UP = pump? No, pump is below)
-        // Actually let's just test the power flow + extraction parts
-        // Pipe at (-1,64,2) facing EAST, pulls from pump behind it (WEST = x+1 = pump at 0,64,2)
-        val pipe = FluidPipe(TestHelper.createLocation(-1.0, 64.0, 2.0), BlockFace.WEST)
+        // Pipe at (-1,63,1) facing WEST, pulling from the pump behind it (EAST = x+1)
+        val pipe = FluidPipe(TestHelper.createLocation(-1.0, 63.0, 1.0), BlockFace.WEST)
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        // Step 1: solar generates
+        // Step 1: solar generates 2 and pushes 1 down into the cable (cable maxStorage=1)
         solar.callPowerUpdate()
-        assertEquals(2, solar.currentPower)
-
-        // Step 2: cable pulls from solar
-        cable.callPowerUpdate()
+        assertEquals(1, solar.currentPower)
         assertEquals(1, cable.currentPower)
 
         // Step 3: pump extracts from cauldron using cable's power
@@ -159,9 +154,9 @@ class CrossSystemIntegrationTest {
 
     @Test
     fun `pump extracts lava from lava cauldron with power`() {
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(powerRegistry, solar, "atlas:lava_generator")
 
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
         TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
@@ -187,9 +182,9 @@ class CrossSystemIntegrationTest {
         every { TestHelper.mockWorld.time } returns 6000L
 
         // Solar at (1,64,0)
-        val solar = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(powerRegistry, solar, "atlas:lava_generator")
 
         // Pump at (0,64,0)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
