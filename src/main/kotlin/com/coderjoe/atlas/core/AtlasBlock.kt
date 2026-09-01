@@ -14,8 +14,12 @@ abstract class AtlasBlock(
     val location: Location,
 ) {
     private var updateTask: BukkitTask? = null
+    private var effectTask: BukkitTask? = null
     protected val plugin: JavaPlugin get() = testPlugin ?: JavaPlugin.getPlugin(Atlas::class.java)
     protected open val updateIntervalTicks: Long = 20L
+
+    /** Tick interval for [spawnEffects]. Zero disables the ambient effect task entirely. */
+    protected open val effectIntervalTicks: Long = 0L
     private var currentVisualState: String? = null
 
     companion object {
@@ -34,6 +38,9 @@ abstract class AtlasBlock(
     }
 
     protected abstract fun blockUpdate()
+
+    /** Ambient visuals, run on its own timer at [effectIntervalTicks]. Purely cosmetic. */
+    protected open fun spawnEffects() {}
 
     abstract fun getVisualStateBlockId(): String
 
@@ -97,12 +104,33 @@ abstract class AtlasBlock(
                 updateIntervalTicks, updateIntervalTicks,
             )
 
+        if (effectIntervalTicks > 0) {
+            effectTask =
+                plugin.server.scheduler.runTaskTimer(
+                    plugin,
+                    Runnable {
+                        try {
+                            spawnEffects()
+                        } catch (e: Exception) {
+                            plugin.logger.warning(
+                                """
+                                Error in block effects at ${location.coordinates}: ${e.message}
+                                """.trimIndent(),
+                            )
+                        }
+                    },
+                    effectIntervalTicks, effectIntervalTicks,
+                )
+        }
+
         plugin.logger.atlasInfo("${this::class.simpleName} at ${location.coordinates} started")
     }
 
     fun stop() {
         updateTask?.cancel()
         updateTask = null
+        effectTask?.cancel()
+        effectTask = null
         plugin.logger.atlasInfo("${this::class.simpleName} at ${location.coordinates} stopped")
     }
 }

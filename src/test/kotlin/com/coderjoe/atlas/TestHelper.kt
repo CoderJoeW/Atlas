@@ -114,6 +114,12 @@ object TestHelper {
         method.invoke(this)
     }
 
+    fun AtlasBlock.callSpawnEffects() {
+        val method = AtlasBlock::class.java.getDeclaredMethod("spawnEffects")
+        method.isAccessible = true
+        method.invoke(this)
+    }
+
     fun addToRegistry(
         registry: PowerBlockRegistry,
         block: PowerBlock,
