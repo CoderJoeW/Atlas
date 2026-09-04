@@ -3,7 +3,33 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#808080:#C0C0C0>Conveyor Belt"
-    model: minecraft:block/custom/conveyor_belt
+    # The inventory shows a painted icon so the item is recognisable at a glance; every other
+    # display context keeps the 3D block model so it still looks like a belt in hand.
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+        - when:
+            - gui
+          model:
+            type: minecraft:model
+            path: minecraft:item/custom/conveyor_belt
+            generation:
+              parent: minecraft:item/generated
+              textures:
+                layer0: minecraft:item/custom/conveyor_belt
+      fallback:
+        type: minecraft:model
+        path: minecraft:block/custom/conveyor_belt
+        generation:
+          parent: minecraft:block/custom/conveyor_belt_base
+          textures:
+            north: minecraft:block/custom/conveyor_belt_front
+            south: minecraft:block/custom/conveyor_belt_back
+            east: minecraft:block/custom/conveyor_belt_side
+            west: minecraft:block/custom/conveyor_belt_side
+            up: minecraft:block/custom/conveyor_belt_top
+            down: minecraft:block/custom/conveyor_belt_bottom
     behavior:
       type: block_item
       block:
@@ -27,59 +53,30 @@ items:
             facing:
               type: horizontal_direction
               default: north
+          # Rendered as display entities rather than vanilla block states: all four directions
+          # share one forced state and one model, spun with `yaw`. That costs nothing from the
+          # auto-state pool, and it means a single north-facing top texture serves every rotation
+          # instead of four pre-rotated copies.
           appearances:
             north:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/conveyor_belt
-                generation:
-                  parent: minecraft:block/custom/conveyor_belt_base
-                  textures:
-                    north: minecraft:block/custom/conveyor_belt_front
-                    south: minecraft:block/custom/conveyor_belt_back
-                    east: minecraft:block/custom/conveyor_belt_side
-                    west: minecraft:block/custom/conveyor_belt_side
-                    up: minecraft:block/custom/conveyor_belt_top_north
-                    down: minecraft:block/custom/conveyor_belt_bottom
+              state: barrier
+              entity_renderer:
+                item: atlas:conveyor_belt
             south:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/conveyor_belt_south
-                generation:
-                  parent: minecraft:block/custom/conveyor_belt_base
-                  textures:
-                    north: minecraft:block/custom/conveyor_belt_back
-                    south: minecraft:block/custom/conveyor_belt_front
-                    east: minecraft:block/custom/conveyor_belt_side
-                    west: minecraft:block/custom/conveyor_belt_side
-                    up: minecraft:block/custom/conveyor_belt_top_south
-                    down: minecraft:block/custom/conveyor_belt_bottom
+              state: barrier
+              entity_renderer:
+                item: atlas:conveyor_belt
+                yaw: 180
             east:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/conveyor_belt_east
-                generation:
-                  parent: minecraft:block/custom/conveyor_belt_base
-                  textures:
-                    north: minecraft:block/custom/conveyor_belt_side
-                    south: minecraft:block/custom/conveyor_belt_side
-                    east: minecraft:block/custom/conveyor_belt_front
-                    west: minecraft:block/custom/conveyor_belt_back
-                    up: minecraft:block/custom/conveyor_belt_top_east
-                    down: minecraft:block/custom/conveyor_belt_bottom
+              state: barrier
+              entity_renderer:
+                item: atlas:conveyor_belt
+                yaw: 90
             west:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/conveyor_belt_west
-                generation:
-                  parent: minecraft:block/custom/conveyor_belt_base
-                  textures:
-                    north: minecraft:block/custom/conveyor_belt_side
-                    south: minecraft:block/custom/conveyor_belt_side
-                    east: minecraft:block/custom/conveyor_belt_back
-                    west: minecraft:block/custom/conveyor_belt_front
-                    up: minecraft:block/custom/conveyor_belt_top_west
-                    down: minecraft:block/custom/conveyor_belt_bottom
+              state: barrier
+              entity_renderer:
+                item: atlas:conveyor_belt
+                yaw: -90
           variants:
             facing=north:
               appearance: north
