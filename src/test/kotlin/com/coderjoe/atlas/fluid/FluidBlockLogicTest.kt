@@ -616,6 +616,80 @@ class FluidBlockLogicTest {
     }
 
     @Test
+    fun `a lava run and a water run that meet stay separate networks`() {
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+
+        // lava pump - pipe - pipe | pipe - pipe - water pump, laid out along the Z axis
+        val lavaPump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
+        lavaPump.storeFluid(FluidType.LAVA)
+        val waterPump = FluidPump(TestHelper.createLocation(0.0, 64.0, 4.0))
+        waterPump.storeFluid(FluidType.WATER)
+
+        val pipes = (0..3).map { FluidPipe(TestHelper.createLocation(0.0, 64.0, it.toDouble())) }
+        TestHelper.addToRegistry(fluidRegistry, lavaPump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(fluidRegistry, waterPump, "atlas:fluid_pump")
+        for (pipe in pipes) TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+
+        val lavaRun = FluidNetworks.networkFor(pipes[0]).pipes
+        val waterRun = FluidNetworks.networkFor(pipes[3]).pipes
+
+        assertEquals(2, lavaRun.size, "the two pipes nearest the lava pump are the lava run")
+        assertEquals(2, waterRun.size, "the two pipes nearest the water pump are the water run")
+        assertTrue(lavaRun.none { it in waterRun }, "no pipe belongs to both runs")
+
+        assertEquals(FluidType.LAVA, FluidNetworks.networkFor(pipes[0]).availableFluid())
+        assertEquals(FluidType.WATER, FluidNetworks.networkFor(pipes[3]).availableFluid())
+    }
+
+    @Test
+    fun `pipe arms stop where a lava run meets a water run`() {
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+
+        val lavaPump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
+        lavaPump.storeFluid(FluidType.LAVA)
+        val waterPump = FluidPump(TestHelper.createLocation(0.0, 64.0, 4.0))
+        waterPump.storeFluid(FluidType.WATER)
+
+        val pipes = (0..3).map { FluidPipe(TestHelper.createLocation(0.0, 64.0, it.toDouble())) }
+        TestHelper.addToRegistry(fluidRegistry, lavaPump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(fluidRegistry, waterPump, "atlas:fluid_pump")
+        for (pipe in pipes) TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+
+        // SOUTH is +Z, so this is the arm pointing across the seam at the water side
+        assertFalse(BlockFace.SOUTH in pipes[1].connections(), "the lava pipe should not reach across")
+        assertFalse(BlockFace.NORTH in pipes[2].connections(), "nor the water pipe back")
+        assertTrue(BlockFace.NORTH in pipes[1].connections(), "but it still joins its own run")
+    }
+
+    @Test
+    fun `an unfed run is still one network`() {
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+
+        val pipes = (0..3).map { FluidPipe(TestHelper.createLocation(0.0, 64.0, it.toDouble())) }
+        for (pipe in pipes) TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+
+        // nothing labels these pipes, so they must not fragment into one network each
+        assertEquals(4, FluidNetworks.networkFor(pipes[0]).pipes.size)
+    }
+
+    @Test
+    fun `two runs on the same fluid still join`() {
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+
+        val left = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
+        left.storeFluid(FluidType.WATER)
+        val right = FluidPump(TestHelper.createLocation(0.0, 64.0, 4.0))
+        right.storeFluid(FluidType.WATER)
+
+        val pipes = (0..3).map { FluidPipe(TestHelper.createLocation(0.0, 64.0, it.toDouble())) }
+        TestHelper.addToRegistry(fluidRegistry, left, "atlas:fluid_pump")
+        TestHelper.addToRegistry(fluidRegistry, right, "atlas:fluid_pump")
+        for (pipe in pipes) TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+
+        assertEquals(4, FluidNetworks.networkFor(pipes[0]).pipes.size, "same fluid, so one run")
+    }
+
+    @Test
     fun `pipe does nothing when source has no fluid`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 

@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.fluid.block
 
 import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
@@ -63,13 +64,19 @@ class FluidPipe(location: Location) : FluidBlock(location) {
      * A neighbour is asked about the face pointing back at this pipe, so a block with a
      * dedicated port - a container filling through its back only - is joined from that side
      * alone and left alone everywhere else.
+     *
+     * A neighbouring pipe only counts when it is on this pipe's own run. Where a lava line meets
+     * a water line the two stay separate networks, and the arms stop at the boundary so the seam
+     * is visible rather than looking like one continuous pipe that quietly carries both.
      */
     fun connections(): Set<BlockFace> {
         val registry = FluidBlockRegistry.instance ?: return emptySet()
+        val run = FluidNetworks.networkFor(this).pipes.mapTo(HashSet()) { BlockRegistry.locationKey(it.location) }
         return ADJACENT_FACES.filter { face ->
             val neighbor = registry.getAdjacentBlock(location, face) ?: return@filter false
             val back = face.oppositeFace
-            neighbor is FluidPipe || neighbor.canProvideFluid(back) || neighbor.canAcceptFluid(back)
+            if (neighbor is FluidPipe) return@filter BlockRegistry.locationKey(neighbor.location) in run
+            neighbor.canProvideFluid(back) || neighbor.canAcceptFluid(back)
         }.toSet()
     }
 
