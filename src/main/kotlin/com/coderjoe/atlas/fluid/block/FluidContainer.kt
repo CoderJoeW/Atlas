@@ -60,6 +60,16 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
 
     override fun canProvideFluid(requestDirection: BlockFace): Boolean = canRemoveFluidFrom(requestDirection)
 
+    /** Fills through the inlet at its back, while there is room and the fluid matches what is already in. */
+    override fun canAcceptFluid(
+        face: BlockFace,
+        type: FluidType,
+    ): Boolean {
+        if (face != facing.oppositeFace) return false
+        if (storedAmount >= MAX_CAPACITY) return false
+        return type == FluidType.NONE || storedFluid == FluidType.NONE || storedFluid == type
+    }
+
     fun getFillLevel(): Int =
         when (storedAmount) {
             0 -> 0

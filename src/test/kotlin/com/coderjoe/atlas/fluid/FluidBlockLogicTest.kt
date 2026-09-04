@@ -85,36 +85,6 @@ class FluidBlockLogicTest {
     // --- FluidPump specifics ---
 
     @Test
-    fun `pump visual state NONE`() {
-        val pump = FluidPump(TestHelper.createLocation())
-        assertEquals("atlas:fluid_pump", pump.getVisualStateBlockId())
-    }
-
-    @Test
-    fun `pump visual state WATER`() {
-        val pump = FluidPump(TestHelper.createLocation())
-        pump.storeFluid(FluidType.WATER)
-        assertEquals("atlas:fluid_pump_active", pump.getVisualStateBlockId())
-    }
-
-    @Test
-    fun `pump visual state LAVA`() {
-        val pump = FluidPump(TestHelper.createLocation())
-        pump.storeFluid(FluidType.LAVA)
-        assertEquals(
-            "atlas:fluid_pump_active_lava",
-            pump.getVisualStateBlockId(),
-        )
-    }
-
-    @Test
-    fun `pump canRemoveFluidFrom returns false when no cauldron face`() {
-        val pump = FluidPump(TestHelper.createLocation())
-        pump.storeFluid(FluidType.WATER)
-        assertFalse(pump.canRemoveFluidFrom(BlockFace.NORTH))
-    }
-
-    @Test
     fun `pump status starts as NO_SOURCE`() {
         val pump = FluidPump(TestHelper.createLocation())
         assertEquals(FluidPump.PumpStatus.NO_SOURCE, pump.pumpStatus)
@@ -276,38 +246,17 @@ class FluidBlockLogicTest {
     }
 
     @Test
-    fun `pump canRemoveFluidFrom returns true when direction matches`() {
+    fun `pump gives fluid out regardless of where its source was`() {
         val pump = FluidPump(TestHelper.createLocation())
         pump.storeFluid(FluidType.WATER)
-        val field =
-            FluidPump::class.java.getDeclaredField("cauldronFace")
+        val field = FluidPump::class.java.getDeclaredField("cauldronFace")
         field.isAccessible = true
         field.set(pump, BlockFace.NORTH)
 
-        assertTrue(pump.canRemoveFluidFrom(BlockFace.SOUTH))
-    }
-
-    @Test
-    fun `pump canRemoveFluidFrom returns false for wrong direction`() {
-        val pump = FluidPump(TestHelper.createLocation())
-        pump.storeFluid(FluidType.WATER)
-        val field =
-            FluidPump::class.java.getDeclaredField("cauldronFace")
-        field.isAccessible = true
-        field.set(pump, BlockFace.NORTH)
-
-        assertFalse(pump.canRemoveFluidFrom(BlockFace.EAST))
-    }
-
-    @Test
-    fun `pump canRemoveFluidFrom returns false when no fluid`() {
-        val pump = FluidPump(TestHelper.createLocation())
-        val field =
-            FluidPump::class.java.getDeclaredField("cauldronFace")
-        field.isAccessible = true
-        field.set(pump, BlockFace.NORTH)
-
-        assertFalse(pump.canRemoveFluidFrom(BlockFace.SOUTH))
+        // the source side used to dictate a single output face; it no longer does
+        assertTrue(pump.canProvideFluid(BlockFace.SOUTH))
+        assertTrue(pump.canProvideFluid(BlockFace.EAST))
+        assertTrue(pump.canProvideFluid(BlockFace.NORTH))
     }
 
     @Test
@@ -607,90 +556,63 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pipe visual state returns BLOCK_ID`() {
-        val pipe = FluidPipe(TestHelper.createLocation(), BlockFace.NORTH)
+        val pipe = FluidPipe(TestHelper.createLocation())
         assertEquals("atlas:fluid_pipe", pipe.getVisualStateBlockId())
     }
 
     @Test
-    fun `pipe visual state returns BLOCK_ID regardless of fluid`() {
-        val pipe = FluidPipe(TestHelper.createLocation(), BlockFace.EAST)
-        pipe.storeFluid(FluidType.WATER)
+    fun `pipe visual state returns BLOCK_ID regardless of what the run carries`() {
+        val pipe = FluidPipe(TestHelper.createLocation())
+        pipe.carrying = FluidType.WATER
         assertEquals("atlas:fluid_pipe", pipe.getVisualStateBlockId())
     }
 
     @Test
-    fun `pipe fluidUpdate does nothing when already holding fluid`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val pipe = FluidPipe(TestHelper.createLocation(), BlockFace.NORTH)
-        pipe.storeFluid(FluidType.WATER)
+    fun `pipe never stores fluid of its own`() {
+        FluidBlockRegistry(TestHelper.mockPlugin)
+        val pipe = FluidPipe(TestHelper.createLocation())
 
-        pipe.callFluidUpdate()
-        assertEquals(FluidType.WATER, pipe.storedFluid) // unchanged
+        // storeFluid on a pipe is a request to hand the unit to the run, and an isolated run has
+        // nowhere to put it, so it is refused rather than swallowed
+        assertFalse(pipe.storeFluid(FluidType.WATER))
+        assertEquals(FluidType.NONE, pipe.storedFluid)
     }
 
     @Test
-    fun `pipe pulls from FluidPump behind it`() {
+    fun `pipe offers what the pump on its run is holding`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val pipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
         pump.storeFluid(FluidType.WATER)
 
-        val cauldronFaceField =
-            FluidPump::class.java.getDeclaredField("cauldronFace")
+        val cauldronFaceField = FluidPump::class.java.getDeclaredField("cauldronFace")
         cauldronFaceField.isAccessible = true
         cauldronFaceField.set(pump, BlockFace.NORTH)
 
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_pipe",
-        )
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pump,
-            "atlas:fluid_pump",
-        )
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
 
-        pipe.callFluidUpdate()
-        assertEquals(FluidType.WATER, pipe.storedFluid)
+        assertTrue(pipe.hasFluid(), "the run has a loaded pump on it")
+        assertEquals(FluidType.WATER, pipe.removeFluid(), "drawing from the pipe draws from the pump")
         assertEquals(FluidType.NONE, pump.storedFluid)
     }
 
     @Test
-    fun `pipe pulls from FluidPipe behind it`() {
+    fun `two joined pipes are one run and neither holds anything`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val pipe1 =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
-        val pipe2 =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, -1.0),
-                BlockFace.SOUTH,
-            )
-        pipe2.storeFluid(FluidType.LAVA)
+        val pipe1 = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
+        val pipe2 = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
 
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe1,
-            "atlas:fluid_pipe",
-        )
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe2,
-            "atlas:fluid_pipe",
-        )
+        TestHelper.addToRegistry(fluidRegistry, pipe1, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(fluidRegistry, pipe2, "atlas:fluid_pipe")
 
         pipe1.callFluidUpdate()
-        assertEquals(FluidType.LAVA, pipe1.storedFluid)
+
+        assertEquals(FluidType.NONE, pipe1.storedFluid)
         assertEquals(FluidType.NONE, pipe2.storedFluid)
+        assertTrue(BlockFace.NORTH in pipe1.connections(), "the pipes should join each other")
     }
 
     @Test
@@ -698,15 +620,9 @@ class FluidBlockLogicTest {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
         val pipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
+            FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
         val sourcePipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, -1.0),
-                BlockFace.SOUTH,
-            )
+            FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
 
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -728,10 +644,7 @@ class FluidBlockLogicTest {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
         val pipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
+            FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe,
