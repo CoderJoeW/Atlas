@@ -52,7 +52,7 @@ class PowerBlockFactoryTest {
     @Test
     fun `getRegisteredBlockIds returns all registered IDs`() {
         PowerBlockFactory.register("block_a") { loc, _ -> SmallSolarPanel(loc) }
-        PowerBlockFactory.register("block_b") { loc, facing -> SmallBattery(loc, facing) }
+        PowerBlockFactory.register("block_b") { loc, _ -> SmallBattery(loc) }
         val ids = PowerBlockFactory.getRegisteredBlockIds()
         assertEquals(setOf("block_a", "block_b"), ids)
     }
@@ -60,7 +60,7 @@ class PowerBlockFactoryTest {
     @Test
     fun `later registration overwrites earlier one`() {
         PowerBlockFactory.register("test_block") { loc, _ -> SmallSolarPanel(loc) }
-        PowerBlockFactory.register("test_block") { loc, facing -> SmallBattery(loc, facing) }
+        PowerBlockFactory.register("test_block") { loc, _ -> SmallBattery(loc) }
         val block = PowerBlockFactory.create("test_block", TestHelper.createLocation(), BlockFace.NORTH)
         assertTrue(block is SmallBattery)
     }

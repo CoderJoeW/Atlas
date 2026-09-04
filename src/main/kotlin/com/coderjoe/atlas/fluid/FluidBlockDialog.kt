@@ -4,10 +4,8 @@ import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
-import com.coderjoe.atlas.fluid.block.FluidSplitter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -45,15 +43,12 @@ object FluidBlockDialog {
                 when (fluidBlock.storedFluid) {
                     FluidType.WATER -> "Water (${fluidBlock.storedAmount}/${FluidContainer.MAX_CAPACITY})"
                     FluidType.LAVA -> "Lava (${fluidBlock.storedAmount}/${FluidContainer.MAX_CAPACITY})"
-                    FluidType.EXPERIENCE ->
-                        "Liquid Experience (${fluidBlock.storedAmount}/${FluidContainer.MAX_CAPACITY})"
                     FluidType.NONE -> "Empty"
                 }
             } else {
                 when (fluidBlock.storedFluid) {
                     FluidType.WATER -> "Water"
                     FluidType.LAVA -> "Lava"
-                    FluidType.EXPERIENCE -> "Liquid Experience"
                     FluidType.NONE -> "Empty"
                 }
             }
@@ -62,7 +57,6 @@ object FluidBlockDialog {
             when (fluidBlock.storedFluid) {
                 FluidType.WATER -> NamedTextColor.AQUA
                 FluidType.LAVA -> NamedTextColor.GOLD
-                FluidType.EXPERIENCE -> NamedTextColor.GREEN
                 FluidType.NONE -> NamedTextColor.GRAY
             }
 
@@ -78,16 +72,10 @@ object FluidBlockDialog {
                     Component.text("Pump - extracts fluid from adjacent cauldrons (1 power/s)")
                         .color(NamedTextColor.GRAY)
                 is FluidPipe ->
-                    Component.text("Pipe - transports fluid in facing direction")
+                    Component.text("Pipe - joins to its neighbours and carries fluid across the whole run")
                         .color(NamedTextColor.GRAY)
                 is FluidContainer ->
                     Component.text("Container - stores up to ${FluidContainer.MAX_CAPACITY} units of fluid")
-                        .color(NamedTextColor.GRAY)
-                is FluidMerger ->
-                    Component.text("Merger - merges fluid from all sides, outputs in facing direction")
-                        .color(NamedTextColor.GRAY)
-                is FluidSplitter ->
-                    Component.text("Splitter - distributes fluid to all adjacent faces")
                         .color(NamedTextColor.GRAY)
                 else ->
                     Component.text("Fluid block")

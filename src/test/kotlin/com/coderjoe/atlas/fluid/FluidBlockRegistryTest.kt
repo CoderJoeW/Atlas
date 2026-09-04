@@ -71,7 +71,7 @@ class FluidBlockRegistryTest {
     @Test
     fun `getAllFluidBlocksWithIds returns correct pairs`() {
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
-        val pipe = FluidPipe(TestHelper.createLocation(1.0, 64.0, 0.0), BlockFace.NORTH)
+        val pipe = FluidPipe(TestHelper.createLocation(1.0, 64.0, 0.0))
 
         TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
         TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")

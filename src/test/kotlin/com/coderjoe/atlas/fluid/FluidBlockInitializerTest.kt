@@ -26,21 +26,17 @@ class FluidBlockInitializerTest {
         TestHelper.initFluidFactory()
         val ids = FluidBlockFactory.getRegisteredBlockIds()
 
-        // FluidPump: 3 (base + active + active_lava)
+        // FluidPump: 1 (base only - connections and status are block state properties)
         // FluidPipe: 1 (base only)
         // FluidContainer: 1 (base only)
-        // FluidMerger: 1 (base only)
-        // FluidSplitter: 1 (base only)
-        // Total: 7
-        assertEquals(7, ids.size)
+        // Total: 3
+        assertEquals(3, ids.size)
     }
 
     @Test
-    fun `pump IDs are registered`() {
+    fun `pump ID is registered`() {
         TestHelper.initFluidFactory()
         assertTrue(FluidBlockFactory.isRegistered(FluidPump.BLOCK_ID))
-        assertTrue(FluidBlockFactory.isRegistered(FluidPump.BLOCK_ID_ACTIVE))
-        assertTrue(FluidBlockFactory.isRegistered(FluidPump.BLOCK_ID_ACTIVE_LAVA))
     }
 
     @Test

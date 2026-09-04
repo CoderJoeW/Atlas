@@ -3,7 +3,6 @@ package com.coderjoe.atlas.power
 import com.coderjoe.atlas.core.BlockPersistence
 import com.coderjoe.atlas.core.BlockPersister
 import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.SmallDrill
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -22,9 +21,6 @@ class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {
                 if (block is SmallDrill) {
                     map["enabled"] = block.enabled
                 }
-                if (block is ExperienceExtractor) {
-                    map["storedXp"] = block.storedXp
-                }
                 map
             },
             restore = { block, data ->
@@ -34,9 +30,6 @@ class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {
                     if (enabled != null) {
                         block.enabled = enabled
                     }
-                }
-                if (block is ExperienceExtractor) {
-                    block.storedXp = (data["storedXp"] as? Number)?.toDouble() ?: 0.0
                 }
             },
         )
