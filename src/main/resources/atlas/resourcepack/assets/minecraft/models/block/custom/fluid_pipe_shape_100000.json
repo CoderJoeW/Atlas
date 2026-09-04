@@ -16,9 +16,6 @@
         12
       ],
       "faces": {
-        "north": {
-          "texture": "#glass"
-        },
         "south": {
           "texture": "#glass"
         },
@@ -49,9 +46,6 @@
         10
       ],
       "faces": {
-        "north": {
-          "texture": "#core"
-        },
         "south": {
           "texture": "#core"
         },
@@ -82,12 +76,6 @@
         4
       ],
       "faces": {
-        "north": {
-          "texture": "#glass"
-        },
-        "south": {
-          "texture": "#glass"
-        },
         "east": {
           "texture": "#glass"
         },
@@ -112,15 +100,9 @@
       "to": [
         10,
         10,
-        10
+        6
       ],
       "faces": {
-        "north": {
-          "texture": "#core"
-        },
-        "south": {
-          "texture": "#core"
-        },
         "east": {
           "texture": "#core",
           "rotation": 90

@@ -25,9 +25,6 @@
         "east": {
           "texture": "#glass"
         },
-        "west": {
-          "texture": "#glass"
-        },
         "up": {
           "texture": "#glass"
         },
@@ -58,9 +55,6 @@
         "east": {
           "texture": "#core"
         },
-        "west": {
-          "texture": "#core"
-        },
         "up": {
           "texture": "#core"
         },
@@ -88,12 +82,6 @@
         "south": {
           "texture": "#glass"
         },
-        "east": {
-          "texture": "#glass"
-        },
-        "west": {
-          "texture": "#glass"
-        },
         "up": {
           "texture": "#glass"
         },
@@ -110,7 +98,7 @@
         6
       ],
       "to": [
-        10,
+        6,
         10,
         10
       ],
@@ -122,12 +110,6 @@
         "south": {
           "texture": "#core",
           "rotation": 90
-        },
-        "east": {
-          "texture": "#core"
-        },
-        "west": {
-          "texture": "#core"
         },
         "up": {
           "texture": "#core",
