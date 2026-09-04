@@ -3,7 +3,6 @@ package com.coderjoe.atlas.fluid
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
-import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -82,7 +81,7 @@ class FluidBlockPersistenceTest {
 
     @Test
     fun `facing direction persists for pipes`() {
-        val pipe = FluidPipe(TestHelper.createLocation(), BlockFace.EAST)
+        val pipe = FluidPipe(TestHelper.createLocation())
         TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
 
         persistence.save(registry)
@@ -98,7 +97,7 @@ class FluidBlockPersistenceTest {
     fun `multiple fluid blocks save and load correctly`() {
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
         pump.storeFluid(FluidType.WATER)
-        val pipe = FluidPipe(TestHelper.createLocation(1.0, 64.0, 0.0), BlockFace.NORTH)
+        val pipe = FluidPipe(TestHelper.createLocation(1.0, 64.0, 0.0))
         pipe.storeFluid(FluidType.LAVA)
 
         TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")

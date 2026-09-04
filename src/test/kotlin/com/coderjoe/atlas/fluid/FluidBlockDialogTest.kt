@@ -5,13 +5,10 @@ import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
-import com.coderjoe.atlas.fluid.block.FluidSplitter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
-import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -37,8 +34,6 @@ class FluidBlockDialogTest {
             FluidPump.descriptor,
             FluidPipe.descriptor,
             FluidContainer.descriptor,
-            FluidMerger.descriptor,
-            FluidSplitter.descriptor,
         ).associateBy { it.baseBlockId }
 
     private fun getDisplayName(block: FluidBlock): String {
@@ -75,8 +70,8 @@ class FluidBlockDialogTest {
     }
 
     @Test
-    fun `display name for FluidPipe EAST`() {
-        assertEquals("Fluid Pipe (East)", getDisplayName(FluidPipe(TestHelper.createLocation(), BlockFace.EAST)))
+    fun `display name for FluidPipe carries no direction`() {
+        assertEquals("Fluid Pipe", getDisplayName(FluidPipe(TestHelper.createLocation())))
     }
 
     @Test
@@ -162,11 +157,6 @@ class FluidBlockDialogTest {
         val text = flattenText(buildFluidInfo(pump))
         assertTrue(text.contains("Powered"))
         assertFalse(text.contains("No Power"))
-    }
-
-    @Test
-    fun `display name for FluidPipe NORTH`() {
-        assertEquals("Fluid Pipe (North)", getDisplayName(FluidPipe(TestHelper.createLocation(), BlockFace.NORTH)))
     }
 
     @Test

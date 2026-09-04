@@ -18,6 +18,19 @@ abstract class FluidBlock(
 
     open fun canProvideFluid(requestDirection: BlockFace): Boolean = hasFluid()
 
+    /**
+     * Whether this block would take a unit of [type] pushed in through [face], where [face]
+     * points from this block toward the pusher.
+     *
+     * [FluidType.NONE] means "any fluid at all" and is what a pipe run asks when it is only
+     * looking for somewhere to send things. Blocks with a designated inlet override this; by
+     * default a block takes fluid from any side as long as it has room.
+     */
+    open fun canAcceptFluid(
+        face: BlockFace,
+        type: FluidType = FluidType.NONE,
+    ): Boolean = !hasFluid()
+
     open fun storeFluid(type: FluidType): Boolean {
         if (storedFluid != FluidType.NONE) return false
         storedFluid = type
