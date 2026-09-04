@@ -32,10 +32,9 @@ Kept so they are not revisited. In order:
    *"I hate all the options proposed i want more realistic."*
 3. **Realistic but game-ready** — real panel anatomy with heightened contrast and crisp edges.
    Superseded when the reference chart above was supplied.
-4. **Gold-and-cyan hex circuit** — built from
-   [`references/earlier-hex-circuit-block.jpg`](references/earlier-hex-circuit-block.jpg). Good in
-   isolation, but its chunky gold corner brackets suit a solid cube, not a flat panel, and the
-   palette diverged from the rest of the power system.
+4. **Gold-and-cyan hex circuit** — built from a reference block the user supplied and has since
+   removed. Good in isolation, but its chunky gold corner brackets suit a solid cube, not a flat
+   panel, and the palette diverged from the rest of the power system.
 
 ## Model
 
