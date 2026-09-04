@@ -228,7 +228,7 @@ class CrossSystemIntegrationTest {
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
         TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
 
         // Step 2: the pump hands its unit to the pipe, and the run carries it to the tank

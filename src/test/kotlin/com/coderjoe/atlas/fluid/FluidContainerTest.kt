@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
@@ -29,7 +30,7 @@ class FluidContainerTest {
     @Test
     fun `store fluid increments amount`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         assertTrue(container.storeFluid(FluidType.WATER))
         assertEquals(1, container.storedAmount)
         assertEquals(FluidType.WATER, container.storedFluid)
@@ -38,7 +39,7 @@ class FluidContainerTest {
     @Test
     fun `store multiple units of same fluid`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         for (i in 1..5) {
             assertTrue(container.storeFluid(FluidType.WATER))
         }
@@ -48,7 +49,7 @@ class FluidContainerTest {
     @Test
     fun `store up to max capacity`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         for (i in 1..FluidContainer.MAX_CAPACITY) {
             assertTrue(container.storeFluid(FluidType.WATER))
         }
@@ -58,7 +59,7 @@ class FluidContainerTest {
     @Test
     fun `store rejects when full`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         for (i in 1..FluidContainer.MAX_CAPACITY) {
             container.storeFluid(FluidType.WATER)
         }
@@ -69,7 +70,7 @@ class FluidContainerTest {
     @Test
     fun `store rejects different fluid type`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         container.storeFluid(FluidType.WATER)
         assertFalse(container.storeFluid(FluidType.LAVA))
         assertEquals(1, container.storedAmount)
@@ -79,7 +80,7 @@ class FluidContainerTest {
     @Test
     fun `remove fluid decrements amount`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         container.storeFluid(FluidType.WATER)
         container.storeFluid(FluidType.WATER)
         container.storeFluid(FluidType.WATER)
@@ -92,7 +93,7 @@ class FluidContainerTest {
     @Test
     fun `remove fluid clears type at zero`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         container.storeFluid(FluidType.WATER)
 
         val removed = container.removeFluid()
@@ -104,86 +105,95 @@ class FluidContainerTest {
     @Test
     fun `remove from empty returns NONE`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         assertEquals(FluidType.NONE, container.removeFluid())
     }
 
     @Test
     fun `hasFluid returns true when amount greater than zero`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         assertFalse(container.hasFluid())
         container.storeFluid(FluidType.WATER)
         assertTrue(container.hasFluid())
     }
 
-    // --- canRemoveFluidFrom ---
+    // --- a tank has no facing: it gives out and takes in through every side ---
 
     @Test
-    fun `canRemoveFluidFrom returns true for front face`() {
-        val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+    fun `a loaded tank gives out through any side`() {
+        val container = FluidContainer(TestHelper.createLocation())
         container.storeFluid(FluidType.WATER)
-        assertTrue(container.canRemoveFluidFrom(BlockFace.NORTH))
-    }
 
-    @Test
-    fun `canRemoveFluidFrom returns false for non-front face`() {
-        val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        container.storeFluid(FluidType.WATER)
-        assertFalse(container.canRemoveFluidFrom(BlockFace.SOUTH))
-        assertFalse(container.canRemoveFluidFrom(BlockFace.EAST))
-    }
-
-    @Test
-    fun `canRemoveFluidFrom returns false when empty`() {
-        val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        assertFalse(container.canRemoveFluidFrom(BlockFace.NORTH))
-    }
-
-    // --- Fill level (now returns Int: 0, 1, 2, 3) ---
-
-    @Test
-    fun `fill level 0 at empty`() {
-        val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(0, container.getFillLevel())
-    }
-
-    @Test
-    fun `fill level 1 at 1 to 6`() {
-        val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        for (i in 1..6) {
-            container.storeFluid(FluidType.WATER)
-            assertEquals(
-                1,
-                container.getFillLevel(),
-                "Expected 1 at amount $i",
-            )
+        for (face in AtlasBlock.ADJACENT_FACES) {
+            assertTrue(container.canProvideFluid(face), "should give out toward $face")
         }
     }
 
     @Test
-    fun `fill level 2 at 7 to 13`() {
-        val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        repeat(7) { container.storeFluid(FluidType.WATER) }
-        assertEquals(2, container.getFillLevel())
-        repeat(6) { container.storeFluid(FluidType.WATER) }
-        assertEquals(2, container.getFillLevel())
+    fun `an empty tank gives out nothing`() {
+        val container = FluidContainer(TestHelper.createLocation())
+
+        for (face in AtlasBlock.ADJACENT_FACES) {
+            assertFalse(container.canProvideFluid(face), "nothing to give toward $face")
+        }
     }
 
     @Test
-    fun `fill level 3 at 14 to 20`() {
+    fun `a tank takes fluid in through any side`() {
+        val container = FluidContainer(TestHelper.createLocation())
+
+        for (face in AtlasBlock.ADJACENT_FACES) {
+            assertTrue(container.canAcceptFluid(face, FluidType.WATER), "should fill from $face")
+        }
+    }
+
+    @Test
+    fun `a tank refuses a fluid that does not match what it already holds`() {
+        val container = FluidContainer(TestHelper.createLocation())
+        container.storeFluid(FluidType.WATER)
+
+        assertFalse(container.canAcceptFluid(BlockFace.NORTH, FluidType.LAVA))
+        assertTrue(container.canAcceptFluid(BlockFace.NORTH, FluidType.WATER))
+    }
+
+    @Test
+    fun `a full tank takes nothing more`() {
+        val container = FluidContainer(TestHelper.createLocation())
+        repeat(FluidContainer.MAX_CAPACITY) { container.storeFluid(FluidType.WATER) }
+
+        for (face in AtlasBlock.ADJACENT_FACES) {
+            assertFalse(container.canAcceptFluid(face, FluidType.WATER), "full, so nothing from $face")
+        }
+    }
+
+    // --- Fill level: five bars over a capacity of twenty ---
+
+    @Test
+    fun `fill level 0 at empty`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
-        repeat(14) { container.storeFluid(FluidType.WATER) }
-        assertEquals(3, container.getFillLevel())
-        repeat(6) { container.storeFluid(FluidType.WATER) }
-        assertEquals(3, container.getFillLevel())
+            FluidContainer(TestHelper.createLocation())
+        assertEquals(0, container.getFillLevel())
+    }
+
+    @Test
+    fun `each bar on the gauge is worth four units`() {
+        val container = FluidContainer(TestHelper.createLocation())
+
+        // five bars over a capacity of twenty, so a bar lights every fourth unit and a tank
+        // holding anything at all shows at least one
+        val expected = listOf(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5)
+        for ((index, bars) in expected.withIndex()) {
+            container.storeFluid(FluidType.WATER)
+            assertEquals(bars, container.getFillLevel(), "at ${index + 1} units")
+        }
+    }
+
+    @Test
+    fun `a full tank shows every bar`() {
+        val container = FluidContainer(TestHelper.createLocation())
+        repeat(FluidContainer.MAX_CAPACITY) { container.storeFluid(FluidType.WATER) }
+        assertEquals(FluidContainer.FILL_LEVELS, container.getFillLevel())
     }
 
     // --- Visual state (now always returns BLOCK_ID) ---
@@ -191,7 +201,7 @@ class FluidContainerTest {
     @Test
     fun `visual state always returns BLOCK_ID`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         assertEquals(
             "atlas:fluid_container",
             container.getVisualStateBlockId(),
@@ -201,7 +211,7 @@ class FluidContainerTest {
     @Test
     fun `visual state returns BLOCK_ID with water`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         container.storeFluid(FluidType.WATER)
         assertEquals(
             "atlas:fluid_container",
@@ -212,7 +222,7 @@ class FluidContainerTest {
     @Test
     fun `visual state returns BLOCK_ID after draining`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.UP)
+            FluidContainer(TestHelper.createLocation())
         container.storeFluid(FluidType.WATER)
         container.removeFluid()
         assertEquals(
@@ -221,13 +231,13 @@ class FluidContainerTest {
         )
     }
 
-    // --- Directional pull ---
+    // --- a tank is filled by others; it never reaches out for anything itself ---
 
     @Test
-    fun `container fills from a pump across a pipe run`() {
+    fun `a pipe run delivers into the tank when the pump pushes`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -2.0))
         pump.storeFluid(FluidType.WATER)
@@ -239,7 +249,8 @@ class FluidContainerTest {
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
         TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
 
-        container.callFluidUpdate()
+        // the pump hands its unit to the run, and the run finds the tank on the other end
+        pump.callFluidUpdate()
 
         assertEquals(FluidType.WATER, container.storedFluid)
         assertEquals(1, container.storedAmount)
@@ -247,77 +258,46 @@ class FluidContainerTest {
     }
 
     @Test
-    fun `container pulls from pump behind it`() {
+    fun `a pump beside the tank fills it directly`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container =
-            FluidContainer(
-                TestHelper.createLocation(0.0, 64.0, 1.0),
-                BlockFace.SOUTH,
-            )
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 1.0))
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
         pump.storeFluid(FluidType.WATER)
 
-        val cauldronField =
-            FluidPump::class.java.getDeclaredField("cauldronFace")
-        cauldronField.isAccessible = true
-        cauldronField.set(pump, BlockFace.NORTH)
+        TestHelper.addToRegistry(fluidRegistry, container, "atlas:fluid_container")
+        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
 
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container,
-            "atlas:fluid_container",
-        )
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pump,
-            "atlas:fluid_pump",
-        )
+        pump.callFluidUpdate()
 
-        container.callFluidUpdate()
         assertEquals(FluidType.WATER, container.storedFluid)
         assertEquals(1, container.storedAmount)
+        assertEquals(FluidType.NONE, pump.storedFluid)
     }
 
     @Test
-    fun `container pulls from another container behind it`() {
+    fun `a tank never drains the tank next to it`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container1 =
-            FluidContainer(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
-        container1.storeFluid(FluidType.LAVA)
+        val full = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
+        full.storeFluid(FluidType.LAVA)
+        val empty = FluidContainer(TestHelper.createLocation(0.0, 64.0, 1.0))
 
-        val container2 =
-            FluidContainer(
-                TestHelper.createLocation(0.0, 64.0, 1.0),
-                BlockFace.SOUTH,
-            )
+        TestHelper.addToRegistry(fluidRegistry, full, "atlas:fluid_container")
+        TestHelper.addToRegistry(fluidRegistry, empty, "atlas:fluid_container")
 
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container1,
-            "atlas:fluid_container",
-        )
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container2,
-            "atlas:fluid_container",
-        )
+        empty.callFluidUpdate()
+        full.callFluidUpdate()
 
-        container2.callFluidUpdate()
-        assertEquals(FluidType.LAVA, container2.storedFluid)
-        assertEquals(1, container2.storedAmount)
-        assertEquals(0, container1.storedAmount)
+        assertEquals(FluidType.LAVA, full.storedFluid, "the loaded tank keeps what it holds")
+        assertEquals(FluidType.NONE, empty.storedFluid, "and the empty one stays empty")
     }
 
     @Test
     fun `container does not fill when full`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         container.restoreState(FluidType.WATER, FluidContainer.MAX_CAPACITY)
 
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
@@ -339,7 +319,7 @@ class FluidContainerTest {
     fun `container rejects a fluid that does not match what it holds`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         container.restoreState(FluidType.WATER, 1)
 
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
@@ -364,7 +344,7 @@ class FluidContainerTest {
     fun `a run offers what a container is giving through its front`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         container.restoreState(FluidType.WATER, 1)
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
 
@@ -381,10 +361,7 @@ class FluidContainerTest {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
         val container =
-            FluidContainer(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.NORTH,
-            )
+            FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         container.storeFluid(FluidType.WATER)
 
         val pipe =
@@ -411,7 +388,7 @@ class FluidContainerTest {
     @Test
     fun `restoreState sets type and amount`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         container.restoreState(FluidType.LAVA, 7)
         assertEquals(FluidType.LAVA, container.storedFluid)
         assertEquals(7, container.storedAmount)
@@ -420,7 +397,7 @@ class FluidContainerTest {
     @Test
     fun `restoreState clamps to max capacity`() {
         val container =
-            FluidContainer(TestHelper.createLocation(), BlockFace.NORTH)
+            FluidContainer(TestHelper.createLocation())
         container.restoreState(FluidType.WATER, 99)
         assertEquals(FluidContainer.MAX_CAPACITY, container.storedAmount)
     }

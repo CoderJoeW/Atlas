@@ -3,7 +3,24 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
-    model: minecraft:block/custom/fluid_container
+    # The inventory shows a painted icon so the item is recognisable at a glance; every other
+    # display context keeps the 3D block model so it still looks like a tank in hand.
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+        - when:
+            - gui
+          model:
+            type: minecraft:model
+            path: minecraft:item/custom/fluid_container
+            generation:
+              parent: minecraft:item/generated
+              textures:
+                layer0: minecraft:item/custom/fluid_container
+      fallback:
+        type: minecraft:model
+        path: minecraft:block/custom/fluid_container
     behavior:
       type: block_item
       block:
@@ -26,254 +43,162 @@ items:
             fall: minecraft:block.metal.fall
         states:
           properties:
-            facing:
-              type: direction
-              default: north
             fluid:
               type: string
               values: [none, water, lava]
               default: none
             fill_level:
               type: int
-              range: 0~3
+              range: 0~5
               default: 0
           appearances:
             empty:
-              auto-state: leaves
+              auto-state: cactus
               model:
-                path: minecraft:block/custom/fluid_container
+                path: minecraft:block/custom/fluid_container_empty
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_container_shape_0
                   textures:
-                    north: minecraft:block/custom/fluid_container_north
-                    south: minecraft:block/custom/fluid_container_south
-                    east: minecraft:block/custom/fluid_container_east
-                    west: minecraft:block/custom/fluid_container_west
-                    up: minecraft:block/custom/fluid_container_up
-                    down: minecraft:block/custom/fluid_container_down
-            water_low:
-              auto-state: leaves
+                    side: minecraft:block/custom/fluid_container_side_0
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_none
+            water_1:
+              auto-state: cactus
               model:
-                path: minecraft:block/custom/fluid_container_water_low
+                path: minecraft:block/custom/fluid_container_water_1
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_container_shape_1
                   textures:
-                    north: minecraft:block/custom/fluid_container_north_water_low
-                    south: minecraft:block/custom/fluid_container_south_water_low
-                    east: minecraft:block/custom/fluid_container_east_water_low
-                    west: minecraft:block/custom/fluid_container_west_water_low
-                    up: minecraft:block/custom/fluid_container_up_water_low
-                    down: minecraft:block/custom/fluid_container_down_water_low
-            water_medium:
-              auto-state: leaves
+                    side: minecraft:block/custom/fluid_container_side_1
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_water
+            water_2:
+              auto-state: cactus
               model:
-                path: minecraft:block/custom/fluid_container_water_medium
+                path: minecraft:block/custom/fluid_container_water_2
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_container_shape_2
                   textures:
-                    north: minecraft:block/custom/fluid_container_north_water_medium
-                    south: minecraft:block/custom/fluid_container_south_water_medium
-                    east: minecraft:block/custom/fluid_container_east_water_medium
-                    west: minecraft:block/custom/fluid_container_west_water_medium
-                    up: minecraft:block/custom/fluid_container_up_water_medium
-                    down: minecraft:block/custom/fluid_container_down_water_medium
-            water_full:
-              auto-state: leaves
+                    side: minecraft:block/custom/fluid_container_side_2
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_water
+            water_3:
+              auto-state: cactus
               model:
-                path: minecraft:block/custom/fluid_container_water_full
+                path: minecraft:block/custom/fluid_container_water_3
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_container_shape_3
                   textures:
-                    north: minecraft:block/custom/fluid_container_north_water_full
-                    south: minecraft:block/custom/fluid_container_south_water_full
-                    east: minecraft:block/custom/fluid_container_east_water_full
-                    west: minecraft:block/custom/fluid_container_west_water_full
-                    up: minecraft:block/custom/fluid_container_up_water_full
-                    down: minecraft:block/custom/fluid_container_down_water_full
-            lava_low:
-              auto-state: leaves
+                    side: minecraft:block/custom/fluid_container_side_3
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_water
+            water_4:
+              auto-state: cactus
               model:
-                path: minecraft:block/custom/fluid_container_lava_low
+                path: minecraft:block/custom/fluid_container_water_4
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_container_shape_4
                   textures:
-                    north: minecraft:block/custom/fluid_container_north_lava_low
-                    south: minecraft:block/custom/fluid_container_south_lava_low
-                    east: minecraft:block/custom/fluid_container_east_lava_low
-                    west: minecraft:block/custom/fluid_container_west_lava_low
-                    up: minecraft:block/custom/fluid_container_up_lava_low
-                    down: minecraft:block/custom/fluid_container_down_lava_low
-            lava_medium:
-              auto-state: leaves
+                    side: minecraft:block/custom/fluid_container_side_4
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_water
+            water_5:
+              auto-state: cactus
               model:
-                path: minecraft:block/custom/fluid_container_lava_medium
+                path: minecraft:block/custom/fluid_container_water_5
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_container_shape_5
                   textures:
-                    north: minecraft:block/custom/fluid_container_north_lava_medium
-                    south: minecraft:block/custom/fluid_container_south_lava_medium
-                    east: minecraft:block/custom/fluid_container_east_lava_medium
-                    west: minecraft:block/custom/fluid_container_west_lava_medium
-                    up: minecraft:block/custom/fluid_container_up_lava_medium
-                    down: minecraft:block/custom/fluid_container_down_lava_medium
-            lava_full:
-              auto-state: leaves
+                    side: minecraft:block/custom/fluid_container_side_5
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_water
+            lava_1:
+              auto-state: cactus
               model:
-                path: minecraft:block/custom/fluid_container_lava_full
+                path: minecraft:block/custom/fluid_container_lava_1
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_container_shape_1
                   textures:
-                    north: minecraft:block/custom/fluid_container_north_lava_full
-                    south: minecraft:block/custom/fluid_container_south_lava_full
-                    east: minecraft:block/custom/fluid_container_east_lava_full
-                    west: minecraft:block/custom/fluid_container_west_lava_full
-                    up: minecraft:block/custom/fluid_container_up_lava_full
-                    down: minecraft:block/custom/fluid_container_down_lava_full
+                    side: minecraft:block/custom/fluid_container_side_1
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_lava
+            lava_2:
+              auto-state: cactus
+              model:
+                path: minecraft:block/custom/fluid_container_lava_2
+                generation:
+                  parent: minecraft:block/custom/fluid_container_shape_2
+                  textures:
+                    side: minecraft:block/custom/fluid_container_side_2
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_lava
+            lava_3:
+              auto-state: cactus
+              model:
+                path: minecraft:block/custom/fluid_container_lava_3
+                generation:
+                  parent: minecraft:block/custom/fluid_container_shape_3
+                  textures:
+                    side: minecraft:block/custom/fluid_container_side_3
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_lava
+            lava_4:
+              auto-state: cactus
+              model:
+                path: minecraft:block/custom/fluid_container_lava_4
+                generation:
+                  parent: minecraft:block/custom/fluid_container_shape_4
+                  textures:
+                    side: minecraft:block/custom/fluid_container_side_4
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_lava
+            lava_5:
+              auto-state: cactus
+              model:
+                path: minecraft:block/custom/fluid_container_lava_5
+                generation:
+                  parent: minecraft:block/custom/fluid_container_shape_5
+                  textures:
+                    side: minecraft:block/custom/fluid_container_side_5
+                    top: minecraft:block/custom/fluid_container_top
+                    core: minecraft:block/custom/fluid_core_lava
           variants:
-            facing=north,fluid=none,fill_level=0:
+            fluid=none,fill_level=0:
               appearance: empty
-            facing=south,fluid=none,fill_level=0:
+            fluid=none,fill_level=1:
               appearance: empty
-            facing=east,fluid=none,fill_level=0:
+            fluid=none,fill_level=2:
               appearance: empty
-            facing=west,fluid=none,fill_level=0:
+            fluid=none,fill_level=3:
               appearance: empty
-            facing=up,fluid=none,fill_level=0:
+            fluid=none,fill_level=4:
               appearance: empty
-            facing=down,fluid=none,fill_level=0:
+            fluid=none,fill_level=5:
               appearance: empty
-            facing=north,fluid=water,fill_level=0:
+            fluid=water,fill_level=0:
               appearance: empty
-            facing=south,fluid=water,fill_level=0:
+            fluid=water,fill_level=1:
+              appearance: water_1
+            fluid=water,fill_level=2:
+              appearance: water_2
+            fluid=water,fill_level=3:
+              appearance: water_3
+            fluid=water,fill_level=4:
+              appearance: water_4
+            fluid=water,fill_level=5:
+              appearance: water_5
+            fluid=lava,fill_level=0:
               appearance: empty
-            facing=east,fluid=water,fill_level=0:
-              appearance: empty
-            facing=west,fluid=water,fill_level=0:
-              appearance: empty
-            facing=up,fluid=water,fill_level=0:
-              appearance: empty
-            facing=down,fluid=water,fill_level=0:
-              appearance: empty
-            facing=north,fluid=lava,fill_level=0:
-              appearance: empty
-            facing=south,fluid=lava,fill_level=0:
-              appearance: empty
-            facing=east,fluid=lava,fill_level=0:
-              appearance: empty
-            facing=west,fluid=lava,fill_level=0:
-              appearance: empty
-            facing=up,fluid=lava,fill_level=0:
-              appearance: empty
-            facing=down,fluid=lava,fill_level=0:
-              appearance: empty
-            facing=north,fluid=none,fill_level=1:
-              appearance: empty
-            facing=south,fluid=none,fill_level=1:
-              appearance: empty
-            facing=east,fluid=none,fill_level=1:
-              appearance: empty
-            facing=west,fluid=none,fill_level=1:
-              appearance: empty
-            facing=up,fluid=none,fill_level=1:
-              appearance: empty
-            facing=down,fluid=none,fill_level=1:
-              appearance: empty
-            facing=north,fluid=none,fill_level=2:
-              appearance: empty
-            facing=south,fluid=none,fill_level=2:
-              appearance: empty
-            facing=east,fluid=none,fill_level=2:
-              appearance: empty
-            facing=west,fluid=none,fill_level=2:
-              appearance: empty
-            facing=up,fluid=none,fill_level=2:
-              appearance: empty
-            facing=down,fluid=none,fill_level=2:
-              appearance: empty
-            facing=north,fluid=none,fill_level=3:
-              appearance: empty
-            facing=south,fluid=none,fill_level=3:
-              appearance: empty
-            facing=east,fluid=none,fill_level=3:
-              appearance: empty
-            facing=west,fluid=none,fill_level=3:
-              appearance: empty
-            facing=up,fluid=none,fill_level=3:
-              appearance: empty
-            facing=down,fluid=none,fill_level=3:
-              appearance: empty
-            facing=north,fluid=water,fill_level=1:
-              appearance: water_low
-            facing=south,fluid=water,fill_level=1:
-              appearance: water_low
-            facing=east,fluid=water,fill_level=1:
-              appearance: water_low
-            facing=west,fluid=water,fill_level=1:
-              appearance: water_low
-            facing=up,fluid=water,fill_level=1:
-              appearance: water_low
-            facing=down,fluid=water,fill_level=1:
-              appearance: water_low
-            facing=north,fluid=water,fill_level=2:
-              appearance: water_medium
-            facing=south,fluid=water,fill_level=2:
-              appearance: water_medium
-            facing=east,fluid=water,fill_level=2:
-              appearance: water_medium
-            facing=west,fluid=water,fill_level=2:
-              appearance: water_medium
-            facing=up,fluid=water,fill_level=2:
-              appearance: water_medium
-            facing=down,fluid=water,fill_level=2:
-              appearance: water_medium
-            facing=north,fluid=water,fill_level=3:
-              appearance: water_full
-            facing=south,fluid=water,fill_level=3:
-              appearance: water_full
-            facing=east,fluid=water,fill_level=3:
-              appearance: water_full
-            facing=west,fluid=water,fill_level=3:
-              appearance: water_full
-            facing=up,fluid=water,fill_level=3:
-              appearance: water_full
-            facing=down,fluid=water,fill_level=3:
-              appearance: water_full
-            facing=north,fluid=lava,fill_level=1:
-              appearance: lava_low
-            facing=south,fluid=lava,fill_level=1:
-              appearance: lava_low
-            facing=east,fluid=lava,fill_level=1:
-              appearance: lava_low
-            facing=west,fluid=lava,fill_level=1:
-              appearance: lava_low
-            facing=up,fluid=lava,fill_level=1:
-              appearance: lava_low
-            facing=down,fluid=lava,fill_level=1:
-              appearance: lava_low
-            facing=north,fluid=lava,fill_level=2:
-              appearance: lava_medium
-            facing=south,fluid=lava,fill_level=2:
-              appearance: lava_medium
-            facing=east,fluid=lava,fill_level=2:
-              appearance: lava_medium
-            facing=west,fluid=lava,fill_level=2:
-              appearance: lava_medium
-            facing=up,fluid=lava,fill_level=2:
-              appearance: lava_medium
-            facing=down,fluid=lava,fill_level=2:
-              appearance: lava_medium
-            facing=north,fluid=lava,fill_level=3:
-              appearance: lava_full
-            facing=south,fluid=lava,fill_level=3:
-              appearance: lava_full
-            facing=east,fluid=lava,fill_level=3:
-              appearance: lava_full
-            facing=west,fluid=lava,fill_level=3:
-              appearance: lava_full
-            facing=up,fluid=lava,fill_level=3:
-              appearance: lava_full
-            facing=down,fluid=lava,fill_level=3:
-              appearance: lava_full
+            fluid=lava,fill_level=1:
+              appearance: lava_1
+            fluid=lava,fill_level=2:
+              appearance: lava_2
+            fluid=lava,fill_level=3:
+              appearance: lava_3
+            fluid=lava,fill_level=4:
+              appearance: lava_4
+            fluid=lava,fill_level=5:
+              appearance: lava_5
 
 recipes:
   atlas:fluid_container:

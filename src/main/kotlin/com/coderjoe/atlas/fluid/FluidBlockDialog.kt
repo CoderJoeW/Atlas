@@ -75,7 +75,7 @@ object FluidBlockDialog {
                     Component.text("Pipe - joins to its neighbours and carries fluid across the whole run")
                         .color(NamedTextColor.GRAY)
                 is FluidContainer ->
-                    Component.text("Container - stores up to ${FluidContainer.MAX_CAPACITY} units of fluid")
+                    Component.text("Tank - holds up to ${FluidContainer.MAX_CAPACITY} units of fluid, filled from any side")
                         .color(NamedTextColor.GRAY)
                 else ->
                     Component.text("Fluid block")

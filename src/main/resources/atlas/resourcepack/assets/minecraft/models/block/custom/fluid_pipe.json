@@ -2,7 +2,7 @@
   "parent": "minecraft:block/custom/fluid_pipe_shape_110000",
   "textures": {
     "frame": "minecraft:block/custom/fluid_pipe_frame",
-    "core": "minecraft:block/custom/fluid_pipe_core_water",
+    "core": "minecraft:block/custom/fluid_core_water",
     "particle": "minecraft:block/custom/fluid_pipe_frame"
   }
 }

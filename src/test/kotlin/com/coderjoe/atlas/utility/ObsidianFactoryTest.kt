@@ -67,7 +67,7 @@ class ObsidianFactoryTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -96,7 +96,7 @@ class ObsidianFactoryTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -126,7 +126,7 @@ class ObsidianFactoryTest {
 
         val waterPipeLoc =
             TestHelper.createLocation(0.0, 64.0, -1.0)
-        val waterPipe = FluidContainer(waterPipeLoc, BlockFace.SOUTH)
+        val waterPipe = FluidContainer(waterPipeLoc)
         waterPipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -136,7 +136,7 @@ class ObsidianFactoryTest {
 
         val lavaPipeLoc =
             TestHelper.createLocation(0.0, 64.0, 1.0)
-        val lavaPipe = FluidContainer(lavaPipeLoc, BlockFace.NORTH)
+        val lavaPipe = FluidContainer(lavaPipeLoc)
         lavaPipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -167,7 +167,7 @@ class ObsidianFactoryTest {
 
         val waterPipeLoc =
             TestHelper.createLocation(0.0, 64.0, -1.0)
-        val waterPipe = FluidContainer(waterPipeLoc, BlockFace.SOUTH)
+        val waterPipe = FluidContainer(waterPipeLoc)
         waterPipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -177,7 +177,7 @@ class ObsidianFactoryTest {
 
         val lavaPipeLoc =
             TestHelper.createLocation(0.0, 64.0, 1.0)
-        val lavaPipe = FluidContainer(lavaPipeLoc, BlockFace.NORTH)
+        val lavaPipe = FluidContainer(lavaPipeLoc)
         lavaPipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,

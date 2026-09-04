@@ -53,7 +53,7 @@ class LavaGeneratorTest {
 
         val gen = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 0.0))
 
-        val pipe = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH)
+        val pipe = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0))
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_container")
 
@@ -68,7 +68,7 @@ class LavaGeneratorTest {
 
         val gen = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 0.0))
 
-        val pipe = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH)
+        val pipe = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0))
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_container")
 
@@ -103,7 +103,7 @@ class LavaGeneratorTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -131,7 +131,7 @@ class LavaGeneratorTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -159,7 +159,7 @@ class LavaGeneratorTest {
         )
 
         val containerLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val container = FluidContainer(containerLoc, BlockFace.NORTH)
+        val container = FluidContainer(containerLoc)
         container.restoreState(FluidType.LAVA, 3)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -174,31 +174,21 @@ class LavaGeneratorTest {
     }
 
     @Test
-    fun `lava generator does not consume from container facing away`() {
+    fun `lava generator takes nothing from an empty tank`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
-        val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(
-            powerRegistry,
-            gen,
-            "atlas:lava_generator",
-        )
+        val gen = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 0.0))
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:lava_generator")
 
-        val containerLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val container = FluidContainer(containerLoc, BlockFace.SOUTH)
-        container.restoreState(FluidType.LAVA, 3)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container,
-            "atlas:fluid_container",
-        )
+        // a tank has no facing to point away any more, so the case that gives nothing is an
+        // empty one
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 1.0))
+        TestHelper.addToRegistry(fluidRegistry, container, "atlas:fluid_container")
 
         gen.callPowerUpdate()
 
         assertEquals(0, gen.currentPower)
-        assertEquals(3, container.storedAmount)
     }
 
     @Test
@@ -216,7 +206,7 @@ class LavaGeneratorTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -244,7 +234,7 @@ class LavaGeneratorTest {
         )
 
         val pipe1Loc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe1 = FluidContainer(pipe1Loc, BlockFace.SOUTH)
+        val pipe1 = FluidContainer(pipe1Loc)
         pipe1.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -253,7 +243,7 @@ class LavaGeneratorTest {
         )
 
         val pipe2Loc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val pipe2 = FluidContainer(pipe2Loc, BlockFace.NORTH)
+        val pipe2 = FluidContainer(pipe2Loc)
         pipe2.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
@@ -295,7 +285,7 @@ class LavaGeneratorTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,

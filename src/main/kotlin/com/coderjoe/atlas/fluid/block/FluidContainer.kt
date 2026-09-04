@@ -1,17 +1,26 @@
 package com.coderjoe.atlas.fluid.block
 
-import com.coderjoe.atlas.atlasInfo
-import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
-import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-class FluidContainer(location: Location, override val facing: BlockFace) : FluidBlock(location) {
+/**
+ * A tank. It holds fluid and does nothing else.
+ *
+ * It used to have a facing that fixed both ends of it - an inlet at the back, an outlet at the
+ * front - and it reached into whatever sat behind it and drained it. Nothing else in the fluid
+ * system works that way any more: a pump hands its own unit on, and a pipe run delivers to
+ * whatever will take it. A tank that also pulled meant a unit could move twice in a tick, and a
+ * tank placed the wrong way round quietly refused to fill.
+ *
+ * So it is passive and has no facing, the same shape the Small Battery settled into. It takes
+ * fluid in through any side, gives it out through any side, and never moves anything itself.
+ */
+class FluidContainer(location: Location) : FluidBlock(location) {
     var storedAmount: Int = 0
         private set
 
@@ -21,14 +30,16 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
         const val BLOCK_ID = "atlas:fluid_container"
         const val MAX_CAPACITY = 20
 
+        /** Bars on the level gauge. Divides [MAX_CAPACITY] exactly, so each bar is worth four. */
+        const val FILL_LEVELS = 5
+
         val descriptor =
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Fluid Container",
-                description = "Container - stores up to $MAX_CAPACITY units of fluid",
-                placementType = PlacementType.DIRECTIONAL,
-                showFacingInDisplayName = true,
-                constructor = { loc, facing -> FluidContainer(loc, facing) },
+                description = "Tank - holds up to $MAX_CAPACITY units of fluid, filled from any side",
+                placementType = PlacementType.SIMPLE,
+                constructor = { loc, _ -> FluidContainer(loc) },
             )
     }
 
@@ -54,64 +65,31 @@ class FluidContainer(location: Location, override val facing: BlockFace) : Fluid
         return fluid
     }
 
-    fun canRemoveFluidFrom(direction: BlockFace): Boolean {
-        return direction == facing && hasFluid()
-    }
+    /** Gives out through any side, so a machine draws from a tank whichever way it is built. */
+    override fun canProvideFluid(requestDirection: BlockFace): Boolean = hasFluid()
 
-    override fun canProvideFluid(requestDirection: BlockFace): Boolean = canRemoveFluidFrom(requestDirection)
-
-    /** Fills through the inlet at its back, while there is room and the fluid matches what is already in. */
+    /** Takes in through any side, while there is room and the fluid matches what is already in. */
     override fun canAcceptFluid(
         face: BlockFace,
         type: FluidType,
     ): Boolean {
-        if (face != facing.oppositeFace) return false
         if (storedAmount >= MAX_CAPACITY) return false
         return type == FluidType.NONE || storedFluid == FluidType.NONE || storedFluid == type
     }
 
-    fun getFillLevel(): Int =
-        when (storedAmount) {
-            0 -> 0
-            in 1..6 -> 1
-            in 7..13 -> 2
-            else -> 3
-        }
+    /** Which bar the gauge reads up to. Anything above empty shows at least one. */
+    fun getFillLevel(): Int {
+        if (storedAmount <= 0) return 0
+        val perLevel = MAX_CAPACITY / FILL_LEVELS
+        return ((storedAmount + perLevel - 1) / perLevel).coerceAtMost(FILL_LEVELS)
+    }
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
-    private fun updateProperties() {
+    /** A tank moves nothing of its own; all it does on a tick is show what it is holding. */
+    override fun fluidUpdate() {
         updateFluidState()
         CraftEngineHelper.setIntProperty(location, "fill_level", getFillLevel())
-    }
-
-    override fun fluidUpdate() {
-        if (storedAmount >= MAX_CAPACITY) {
-            updateProperties()
-            return
-        }
-
-        val registry = FluidBlockRegistry.instance ?: return
-        val behind = facing.oppositeFace
-        val source =
-            registry.getAdjacentBlock(location, behind) ?: run {
-                updateProperties()
-                return
-            }
-
-        if (source.canProvideFluid(facing)) {
-            val fluid = source.removeFluid()
-            if (storeFluid(fluid)) {
-                plugin.logger.atlasInfo(
-                    "FluidContainer at ${location.coordinates} " +
-                        "pulled ${fluid.name} from ${source::class.simpleName}",
-                )
-            } else {
-                source.storeFluid(fluid)
-            }
-        }
-
-        updateProperties()
     }
 
     fun restoreState(

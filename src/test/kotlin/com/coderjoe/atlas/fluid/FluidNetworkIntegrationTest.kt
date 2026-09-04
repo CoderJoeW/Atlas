@@ -64,9 +64,8 @@ class FluidNetworkIntegrationTest {
         x: Double,
         y: Double,
         z: Double,
-        facing: BlockFace,
     ): FluidContainer =
-        FluidContainer(TestHelper.createLocation(x, y, z), facing).also {
+        FluidContainer(TestHelper.createLocation(x, y, z)).also {
             TestHelper.addToRegistry(registry, it, "atlas:fluid_container")
         }
 
@@ -74,8 +73,7 @@ class FluidNetworkIntegrationTest {
     fun `a run carries fluid from a pump to a container in one tick`() {
         val pump = pump(0.0, 64.0, 0.0, FluidType.WATER, BlockFace.SOUTH)
         val run = pipe(0.0, 64.0, 1.0)
-        // container at z=2 filling through its back, which faces the pipe at z=1
-        val tank = container(0.0, 64.0, 2.0, BlockFace.SOUTH)
+        val tank = container(0.0, 64.0, 2.0)
 
         pump.callFluidUpdate()
 
@@ -91,7 +89,7 @@ class FluidNetworkIntegrationTest {
         pipe(0.0, 64.0, 2.0)
         pipe(0.0, 64.0, 3.0)
         pipe(0.0, 64.0, 4.0)
-        val tank = container(0.0, 64.0, 5.0, BlockFace.SOUTH)
+        val tank = container(0.0, 64.0, 5.0)
 
         pump.callFluidUpdate()
 
@@ -131,7 +129,7 @@ class FluidNetworkIntegrationTest {
         val pump = pump(0.0, 64.0, 0.0, FluidType.WATER, BlockFace.SOUTH)
         val corner = pipe(0.0, 64.0, 1.0)
         pipe(1.0, 64.0, 1.0)
-        val tank = container(2.0, 64.0, 1.0, BlockFace.EAST)
+        val tank = container(2.0, 64.0, 1.0)
 
         pump.callFluidUpdate()
 

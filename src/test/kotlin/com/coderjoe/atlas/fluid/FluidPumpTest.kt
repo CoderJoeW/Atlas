@@ -82,15 +82,16 @@ class FluidPumpTest {
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
         TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
 
-        // a container takes fluid in on the face behind it, so one facing south presents its back
-        // to open air, not to the pump - that face stays plain casing
-        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH)
+        // a tank takes fluid in on every side now, so the face that stays plain casing is one
+        // against a tank with no room left in it
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0))
+        repeat(FluidContainer.MAX_CAPACITY) { tank.storeFluid(FluidType.WATER) }
         TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
 
         val ports = pump.connections()
 
         assertTrue(BlockFace.SOUTH in ports, "the pipe should show a port")
-        assertFalse(BlockFace.NORTH in ports, "a container facing away should not")
+        assertFalse(BlockFace.NORTH in ports, "a tank with no room should not")
     }
 
     private fun statusProperty(pump: FluidPump): String {
@@ -191,7 +192,7 @@ class FluidPumpTest {
 
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
         TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
-        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
         TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
 
         pump.callFluidUpdate()
@@ -206,7 +207,7 @@ class FluidPumpTest {
 
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
         TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
-        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
         TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
 
         // ticking the run must not move anything: the pump pushes, it is not pulled from
