@@ -56,35 +56,20 @@ Because the block is **not a full cube**, all variants set `can-occlude: false`,
 `is-view-blocking: false` and `propagate-skylight: true`. Without these the client treats it as a
 solid cube, culls the neighbouring blocks' faces against it, and you can see through the world.
 
-## Charge states
+## Visual states
 
-Five visual states, one per unit of charge (`maxStorage` is 4), mirroring `SmallBattery`.
+Two states. The panel answers "is this thing working?", not how many units happen to be buffered
+at that instant, so the readout follows daylight rather than stored charge.
 
-| Power | Block ID | Face |
+| Condition | Block ID | Face |
 |---|---|---|
-| 0 | `atlas:small_solar_panel` | dark, inert |
-| 1 | `atlas:small_solar_panel_low` | seams faintly amber |
-| 2 | `atlas:small_solar_panel_medium` | cells filled, soft amber |
-| 3 | `atlas:small_solar_panel_high` | strong orange-amber, glow reaching the bezel |
-| 4 | `atlas:small_solar_panel_full` | full blaze, bezel flooded |
+| collecting sunlight | `atlas:small_solar_panel_active` | full blaze, bezel flooded |
+| not collecting | `atlas:small_solar_panel` | dark, inert |
 
-![Charge ramp](renders/charge-ramp.png)
-
-### The ramp must be verified numerically
-
-Generating N glow levels from prompts produces a **non-monotonic ramp nearly every time**. Observed
-failures, all caught by measurement and none obvious by eye:
-
-- a `full` measurably *darker* than `high` (saturated orange reads bright but has lower luminance)
-- a `medium` brighter than `high`
-- a `low` *darker than idle*, because the edit dimmed the whole face instead of only adding the ember
-- a `high` within 0.2 of `medium` — indistinguishable in game
-
-After regenerating any state, measure the mean brightness of each texture and confirm it strictly
-increases. Word state edits as **purely additive** — "do not darken anything, only add …" — which is
-what fixes the dimming failure.
-
-Current measured ramp: **43 → 53 → 89 → 123 → 134**.
+The four-step charge ramp this block used to carry (`_low` / `_medium` / `_high` / `_full`) was
+retired: a panel caps at 4 power and drains into whatever sits below it, so the intermediate steps
+flickered almost continuously and told the player nothing useful. `_full` became `_active`; the
+other three textures were deleted.
 
 ## Behaviour
 
