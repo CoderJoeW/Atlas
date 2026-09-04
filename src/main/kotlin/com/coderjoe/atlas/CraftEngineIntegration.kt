@@ -6,15 +6,71 @@ import java.net.URI
 import java.util.jar.JarFile
 
 class CraftEngineIntegration(private val plugin: JavaPlugin) {
+    companion object {
+        /** Records what Atlas deployed, so a later run can tell its own files from everyone else's. */
+        const val MANIFEST_NAME = ".atlas-deployed"
+        const val TEXTURES_PATH = "resourcepack/assets/minecraft/textures/block/custom"
+        const val MODELS_PATH = "resourcepack/assets/minecraft/models/block/custom"
+        const val ITEM_TEXTURES_PATH = "resourcepack/assets/minecraft/textures/item/custom"
+        const val ITEM_MODELS_PATH = "resourcepack/assets/minecraft/models/item/custom"
+    }
+
     private val craftEngineFolder: File
         get() = File(plugin.dataFolder.parentFile, "CraftEngine/resources/atlas")
+
+    /**
+     * Relative paths written on this run, used to prune what a previous build left behind.
+     */
+    private val deployed = mutableSetOf<String>()
 
     fun initialize() {
         copyPackYml()
         copyConfigurations()
-        copyTextures()
-        copyModels()
+        copyAssets(TEXTURES_PATH, ".png")
+        copyAssets(MODELS_PATH, ".json")
+        copyAssets(ITEM_TEXTURES_PATH, ".png")
+        copyAssets(ITEM_MODELS_PATH, ".json")
+        pruneStaleFiles()
+        writeManifest()
         plugin.logger.atlasInfo("Atlas CraftEngine integration initialized")
+    }
+
+    /**
+     * Deletes files a previous build deployed that this one no longer ships.
+     *
+     * Without this, a retired block's configuration lives on in CraftEngine's resources folder
+     * forever, and keeps claiming the vanilla block states its appearances were allocated - which
+     * is enough to push a later block over a state group's capacity and refuse to load.
+     *
+     * Only paths recorded in the manifest are considered. Anything else in the folder was put
+     * there by someone else and is left strictly alone.
+     */
+    private fun pruneStaleFiles() {
+        val manifest = File(craftEngineFolder, MANIFEST_NAME)
+        if (!manifest.exists()) return
+
+        val previous =
+            try {
+                manifest.readLines().map { it.trim() }.filter { it.isNotEmpty() }
+            } catch (e: Throwable) {
+                plugin.logger.warning("Could not read Atlas deployment manifest: ${e.message}")
+                return
+            }
+
+        for (path in previous.subtract(deployed)) {
+            val stale = File(craftEngineFolder, path)
+            if (stale.exists() && stale.delete()) {
+                plugin.logger.atlasInfo("Removed retired resource $path from CraftEngine")
+            }
+        }
+    }
+
+    private fun writeManifest() {
+        try {
+            File(craftEngineFolder, MANIFEST_NAME).writeText(deployed.sorted().joinToString("\n"))
+        } catch (e: Throwable) {
+            plugin.logger.warning("Could not write Atlas deployment manifest: ${e.message}")
+        }
     }
 
     private fun copyPackYml() {
@@ -47,51 +103,37 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
             if (sourceFile.exists()) {
                 sourceFile.copyTo(targetFile, overwrite = true)
                 sourceFile.delete()
-                plugin.logger.atlasInfo("Copied ${fileName.removeSuffix(".yml")} configuration to CraftEngine")
+                deployed.add("configuration/$fileName")
             }
         }
     }
 
-    private fun copyTextures() {
-        val texturesFolder = File(craftEngineFolder, "resourcepack/assets/minecraft/textures/block/custom")
-        if (!texturesFolder.exists()) {
-            texturesFolder.mkdirs()
+    /**
+     * Copies every [suffix] file the jar ships under [assetPath] into CraftEngine's resources.
+     *
+     * [assetPath] is relative to both the plugin's `atlas/` resource root and the CraftEngine
+     * folder, so the same value names the source and the destination.
+     */
+    private fun copyAssets(
+        assetPath: String,
+        suffix: String,
+    ) {
+        val targetFolder = File(craftEngineFolder, assetPath)
+        if (!targetFolder.exists()) {
+            targetFolder.mkdirs()
         }
 
-        val prefix = "atlas/resourcepack/assets/minecraft/textures/block/custom/"
-        val texturePaths = discoverResources(prefix, ".png")
+        val prefix = "atlas/$assetPath/"
 
-        for (resourcePath in texturePaths) {
+        for (resourcePath in discoverResources(prefix, suffix)) {
             val fileName = resourcePath.substringAfterLast("/")
-            val targetFile = File(texturesFolder, fileName)
+            val targetFile = File(targetFolder, fileName)
             plugin.saveResource(resourcePath, true)
             val sourceFile = File(plugin.dataFolder, resourcePath)
             if (sourceFile.exists()) {
                 sourceFile.copyTo(targetFile, overwrite = true)
                 sourceFile.delete()
-                plugin.logger.atlasInfo("Copied ${fileName.removeSuffix(".png")} texture to CraftEngine")
-            }
-        }
-    }
-
-    private fun copyModels() {
-        val modelsFolder = File(craftEngineFolder, "resourcepack/assets/minecraft/models/block/custom")
-        if (!modelsFolder.exists()) {
-            modelsFolder.mkdirs()
-        }
-
-        val prefix = "atlas/resourcepack/assets/minecraft/models/block/custom/"
-        val modelPaths = discoverResources(prefix, ".json")
-
-        for (resourcePath in modelPaths) {
-            val fileName = resourcePath.substringAfterLast("/")
-            val targetFile = File(modelsFolder, fileName)
-            plugin.saveResource(resourcePath, true)
-            val sourceFile = File(plugin.dataFolder, resourcePath)
-            if (sourceFile.exists()) {
-                sourceFile.copyTo(targetFile, overwrite = true)
-                sourceFile.delete()
-                plugin.logger.atlasInfo("Copied ${fileName.removeSuffix(".json")} model to CraftEngine")
+                deployed.add("$assetPath/$fileName")
             }
         }
     }
