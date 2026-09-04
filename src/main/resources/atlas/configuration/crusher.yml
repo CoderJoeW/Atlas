@@ -3,7 +3,18 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#8B4513:#CD853F>Crusher"
-    model: minecraft:block/custom/crusher
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/crusher
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/crusher_front
+          south: minecraft:block/custom/crusher_back
+          east: minecraft:block/custom/crusher_side
+          west: minecraft:block/custom/crusher_side
+          up: minecraft:block/custom/crusher_top_north
+          down: minecraft:block/custom/crusher_housing
     behavior:
       type: block_item
       block:
@@ -30,111 +41,43 @@ items:
             powered:
               type: boolean
               default: false
+          # Rendered as display entities rather than vanilla block states: every
+          # appearance shares one forced barrier state, so none of them claims a slot
+          # from the auto-state pools. Only the fluid pipe and power cable, which need
+          # a state per connection shape, still spend from those.
           appearances:
             north:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/crusher
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/crusher_front
-                    south: minecraft:block/custom/crusher_back
-                    east: minecraft:block/custom/crusher_side
-                    west: minecraft:block/custom/crusher_side
-                    up: minecraft:block/custom/crusher_top_north
-                    down: minecraft:block/custom/crusher_housing
+              state: barrier
+              entity_renderer:
+                item: atlas:crusher
             south:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/crusher_south
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/crusher_back
-                    south: minecraft:block/custom/crusher_front
-                    east: minecraft:block/custom/crusher_side
-                    west: minecraft:block/custom/crusher_side
-                    up: minecraft:block/custom/crusher_top_south
-                    down: minecraft:block/custom/crusher_housing
+              state: barrier
+              entity_renderer:
+                item: atlas:crusher_south
             east:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/crusher_east
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/crusher_side
-                    south: minecraft:block/custom/crusher_side
-                    east: minecraft:block/custom/crusher_front
-                    west: minecraft:block/custom/crusher_back
-                    up: minecraft:block/custom/crusher_top_east
-                    down: minecraft:block/custom/crusher_housing
+              state: barrier
+              entity_renderer:
+                item: atlas:crusher_east
             west:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/crusher_west
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/crusher_side
-                    south: minecraft:block/custom/crusher_side
-                    east: minecraft:block/custom/crusher_back
-                    west: minecraft:block/custom/crusher_front
-                    up: minecraft:block/custom/crusher_top_west
-                    down: minecraft:block/custom/crusher_housing
+              state: barrier
+              entity_renderer:
+                item: atlas:crusher_west
             north_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/crusher_powered
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/crusher_front
-                    south: minecraft:block/custom/crusher_back
-                    east: minecraft:block/custom/crusher_side
-                    west: minecraft:block/custom/crusher_side
-                    up: minecraft:block/custom/crusher_top_active
-                    down: minecraft:block/custom/crusher_housing
+              state: barrier
+              entity_renderer:
+                item: atlas:crusher_north_powered
             south_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/crusher_south_powered
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/crusher_back
-                    south: minecraft:block/custom/crusher_front
-                    east: minecraft:block/custom/crusher_side
-                    west: minecraft:block/custom/crusher_side
-                    up: minecraft:block/custom/crusher_top_active
-                    down: minecraft:block/custom/crusher_housing
+              state: barrier
+              entity_renderer:
+                item: atlas:crusher_south_powered
             east_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/crusher_east_powered
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/crusher_side
-                    south: minecraft:block/custom/crusher_side
-                    east: minecraft:block/custom/crusher_front
-                    west: minecraft:block/custom/crusher_back
-                    up: minecraft:block/custom/crusher_top_active
-                    down: minecraft:block/custom/crusher_housing
+              state: barrier
+              entity_renderer:
+                item: atlas:crusher_east_powered
             west_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/crusher_west_powered
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/crusher_side
-                    south: minecraft:block/custom/crusher_side
-                    east: minecraft:block/custom/crusher_back
-                    west: minecraft:block/custom/crusher_front
-                    up: minecraft:block/custom/crusher_top_active
-                    down: minecraft:block/custom/crusher_housing
+              state: barrier
+              entity_renderer:
+                item: atlas:crusher_west_powered
           variants:
             facing=north,powered=false:
               appearance: north
@@ -152,6 +95,133 @@ items:
               appearance: east_powered
             facing=west,powered=true:
               appearance: west_powered
+
+
+items#1:
+  atlas:crusher_south:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#8B4513:#CD853F>Crusher"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/crusher_south
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/crusher_back
+          south: minecraft:block/custom/crusher_front
+          east: minecraft:block/custom/crusher_side
+          west: minecraft:block/custom/crusher_side
+          up: minecraft:block/custom/crusher_top_south
+          down: minecraft:block/custom/crusher_housing
+
+items#2:
+  atlas:crusher_east:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#8B4513:#CD853F>Crusher"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/crusher_east
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/crusher_side
+          south: minecraft:block/custom/crusher_side
+          east: minecraft:block/custom/crusher_front
+          west: minecraft:block/custom/crusher_back
+          up: minecraft:block/custom/crusher_top_east
+          down: minecraft:block/custom/crusher_housing
+
+items#3:
+  atlas:crusher_west:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#8B4513:#CD853F>Crusher"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/crusher_west
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/crusher_side
+          south: minecraft:block/custom/crusher_side
+          east: minecraft:block/custom/crusher_back
+          west: minecraft:block/custom/crusher_front
+          up: minecraft:block/custom/crusher_top_west
+          down: minecraft:block/custom/crusher_housing
+
+items#4:
+  atlas:crusher_north_powered:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#8B4513:#CD853F>Crusher"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/crusher_powered
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/crusher_front
+          south: minecraft:block/custom/crusher_back
+          east: minecraft:block/custom/crusher_side
+          west: minecraft:block/custom/crusher_side
+          up: minecraft:block/custom/crusher_top_active
+          down: minecraft:block/custom/crusher_housing
+
+items#5:
+  atlas:crusher_south_powered:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#8B4513:#CD853F>Crusher"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/crusher_south_powered
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/crusher_back
+          south: minecraft:block/custom/crusher_front
+          east: minecraft:block/custom/crusher_side
+          west: minecraft:block/custom/crusher_side
+          up: minecraft:block/custom/crusher_top_active
+          down: minecraft:block/custom/crusher_housing
+
+items#6:
+  atlas:crusher_east_powered:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#8B4513:#CD853F>Crusher"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/crusher_east_powered
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/crusher_side
+          south: minecraft:block/custom/crusher_side
+          east: minecraft:block/custom/crusher_front
+          west: minecraft:block/custom/crusher_back
+          up: minecraft:block/custom/crusher_top_active
+          down: minecraft:block/custom/crusher_housing
+
+items#7:
+  atlas:crusher_west_powered:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#8B4513:#CD853F>Crusher"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/crusher_west_powered
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/crusher_side
+          south: minecraft:block/custom/crusher_side
+          east: minecraft:block/custom/crusher_back
+          west: minecraft:block/custom/crusher_front
+          up: minecraft:block/custom/crusher_top_active
+          down: minecraft:block/custom/crusher_housing
 
 recipes:
   atlas:crusher:

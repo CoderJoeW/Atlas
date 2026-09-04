@@ -3,7 +3,18 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#FF4500:#FFD700>Auto Smelter"
-    model: minecraft:block/custom/auto_smelter
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/auto_smelter
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/auto_smelter_idle_north
+          south: minecraft:block/custom/auto_smelter_idle_south
+          east: minecraft:block/custom/auto_smelter_idle_east
+          west: minecraft:block/custom/auto_smelter_idle_west
+          up: minecraft:block/custom/auto_smelter_idle_up
+          down: minecraft:block/custom/auto_smelter_idle_down
     behavior:
       type: block_item
       block:
@@ -32,33 +43,19 @@ items:
             powered:
               type: boolean
               default: false
+          # Rendered as display entities rather than vanilla block states: every
+          # appearance shares one forced barrier state, so none of them claims a slot
+          # from the auto-state pools. Only the fluid pipe and power cable, which need
+          # a state per connection shape, still spend from those.
           appearances:
             idle:
-              auto-state: leaves
-              model:
-                path: minecraft:block/custom/auto_smelter
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/auto_smelter_idle_north
-                    south: minecraft:block/custom/auto_smelter_idle_south
-                    east: minecraft:block/custom/auto_smelter_idle_east
-                    west: minecraft:block/custom/auto_smelter_idle_west
-                    up: minecraft:block/custom/auto_smelter_idle_up
-                    down: minecraft:block/custom/auto_smelter_idle_down
+              state: barrier
+              entity_renderer:
+                item: atlas:auto_smelter
             active:
-              auto-state: leaves
-              model:
-                path: minecraft:block/custom/auto_smelter_active
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/auto_smelter_active_north
-                    south: minecraft:block/custom/auto_smelter_active_south
-                    east: minecraft:block/custom/auto_smelter_active_east
-                    west: minecraft:block/custom/auto_smelter_active_west
-                    up: minecraft:block/custom/auto_smelter_active_up
-                    down: minecraft:block/custom/auto_smelter_active_down
+              state: barrier
+              entity_renderer:
+                item: atlas:auto_smelter_active
           variants:
             facing=north,powered=false:
               appearance: idle
@@ -76,6 +73,25 @@ items:
               appearance: active
             facing=west,powered=true:
               appearance: active
+
+
+items#1:
+  atlas:auto_smelter_active:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#FF4500:#FFD700>Auto Smelter"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/auto_smelter_active
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/auto_smelter_active_north
+          south: minecraft:block/custom/auto_smelter_active_south
+          east: minecraft:block/custom/auto_smelter_active_east
+          west: minecraft:block/custom/auto_smelter_active_west
+          up: minecraft:block/custom/auto_smelter_active_up
+          down: minecraft:block/custom/auto_smelter_active_down
 
 recipes:
   atlas:auto_smelter:

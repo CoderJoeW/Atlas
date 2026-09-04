@@ -53,115 +53,49 @@ items:
               default: 0
           appearances:
             empty:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_empty
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_0
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_0
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_none
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_empty
             water_1:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_water_1
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_1
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_1
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_water
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_water_1
             water_2:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_water_2
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_2
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_2
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_water
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_water_2
             water_3:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_water_3
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_3
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_3
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_water
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_water_3
             water_4:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_water_4
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_4
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_4
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_water
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_water_4
             water_5:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_water_5
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_5
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_5
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_water
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_water_5
             lava_1:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_lava_1
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_1
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_1
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_lava
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_lava_1
             lava_2:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_lava_2
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_2
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_2
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_lava
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_lava_2
             lava_3:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_lava_3
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_3
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_3
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_lava
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_lava_3
             lava_4:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_lava_4
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_4
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_4
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_lava
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_lava_4
             lava_5:
-              auto-state: cactus
-              model:
-                path: minecraft:block/custom/fluid_container_lava_5
-                generation:
-                  parent: minecraft:block/custom/fluid_container_shape_5
-                  textures:
-                    side: minecraft:block/custom/fluid_container_side_5
-                    top: minecraft:block/custom/fluid_container_top
-                    core: minecraft:block/custom/fluid_core_lava
+              state: barrier
+              entity_renderer:
+                item: atlas:fluid_container_lava_5
           variants:
             fluid=none,fill_level=0:
               appearance: empty
@@ -199,6 +133,171 @@ items:
               appearance: lava_4
             fluid=lava,fill_level=5:
               appearance: lava_5
+
+items#1:
+  atlas:fluid_container_empty:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_empty
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_0
+        textures:
+          side: minecraft:block/custom/fluid_container_side_0
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_none
+
+items#2:
+  atlas:fluid_container_water_1:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_water_1
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_1
+        textures:
+          side: minecraft:block/custom/fluid_container_side_1
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_water
+
+items#3:
+  atlas:fluid_container_water_2:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_water_2
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_2
+        textures:
+          side: minecraft:block/custom/fluid_container_side_2
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_water
+
+items#4:
+  atlas:fluid_container_water_3:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_water_3
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_3
+        textures:
+          side: minecraft:block/custom/fluid_container_side_3
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_water
+
+items#5:
+  atlas:fluid_container_water_4:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_water_4
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_4
+        textures:
+          side: minecraft:block/custom/fluid_container_side_4
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_water
+
+items#6:
+  atlas:fluid_container_water_5:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_water_5
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_5
+        textures:
+          side: minecraft:block/custom/fluid_container_side_5
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_water
+
+items#7:
+  atlas:fluid_container_lava_1:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_lava_1
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_1
+        textures:
+          side: minecraft:block/custom/fluid_container_side_1
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_lava
+
+items#8:
+  atlas:fluid_container_lava_2:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_lava_2
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_2
+        textures:
+          side: minecraft:block/custom/fluid_container_side_2
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_lava
+
+items#9:
+  atlas:fluid_container_lava_3:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_lava_3
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_3
+        textures:
+          side: minecraft:block/custom/fluid_container_side_3
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_lava
+
+items#10:
+  atlas:fluid_container_lava_4:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_lava_4
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_4
+        textures:
+          side: minecraft:block/custom/fluid_container_side_4
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_lava
+
+items#11:
+  atlas:fluid_container_lava_5:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Container"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/fluid_container_lava_5
+      generation:
+        parent: minecraft:block/custom/fluid_container_shape_5
+        textures:
+          side: minecraft:block/custom/fluid_container_side_5
+          top: minecraft:block/custom/fluid_container_top
+          core: minecraft:block/custom/fluid_core_lava
 
 recipes:
   atlas:fluid_container:

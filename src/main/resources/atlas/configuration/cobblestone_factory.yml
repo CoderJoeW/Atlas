@@ -3,7 +3,18 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#808080:#A9A9A9>Cobblestone Factory"
-    model: minecraft:block/custom/cobblestone_factory
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/cobblestone_factory
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/cobblestone_factory_idle_north
+          south: minecraft:block/custom/cobblestone_factory_idle_south
+          east: minecraft:block/custom/cobblestone_factory_idle_east
+          west: minecraft:block/custom/cobblestone_factory_idle_west
+          up: minecraft:block/custom/cobblestone_factory_idle_up
+          down: minecraft:block/custom/cobblestone_factory_idle_down
     behavior:
       type: block_item
       block:
@@ -29,38 +40,43 @@ items:
             powered:
               type: boolean
               default: false
+          # Rendered as display entities rather than vanilla block states: every
+          # appearance shares one forced barrier state, so none of them claims a slot
+          # from the auto-state pools. Only the fluid pipe and power cable, which need
+          # a state per connection shape, still spend from those.
           appearances:
             idle:
-              auto-state: leaves
-              model:
-                path: minecraft:block/custom/cobblestone_factory
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/cobblestone_factory_idle_north
-                    south: minecraft:block/custom/cobblestone_factory_idle_south
-                    east: minecraft:block/custom/cobblestone_factory_idle_east
-                    west: minecraft:block/custom/cobblestone_factory_idle_west
-                    up: minecraft:block/custom/cobblestone_factory_idle_up
-                    down: minecraft:block/custom/cobblestone_factory_idle_down
+              state: barrier
+              entity_renderer:
+                item: atlas:cobblestone_factory
             active:
-              auto-state: leaves
-              model:
-                path: minecraft:block/custom/cobblestone_factory_active
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/cobblestone_factory_active_north
-                    south: minecraft:block/custom/cobblestone_factory_active_south
-                    east: minecraft:block/custom/cobblestone_factory_active_east
-                    west: minecraft:block/custom/cobblestone_factory_active_west
-                    up: minecraft:block/custom/cobblestone_factory_active_up
-                    down: minecraft:block/custom/cobblestone_factory_active_down
+              state: barrier
+              entity_renderer:
+                item: atlas:cobblestone_factory_active
           variants:
             powered=false:
               appearance: idle
             powered=true:
               appearance: active
+
+
+items#1:
+  atlas:cobblestone_factory_active:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#808080:#A9A9A9>Cobblestone Factory"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/cobblestone_factory_active
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/cobblestone_factory_active_north
+          south: minecraft:block/custom/cobblestone_factory_active_south
+          east: minecraft:block/custom/cobblestone_factory_active_east
+          west: minecraft:block/custom/cobblestone_factory_active_west
+          up: minecraft:block/custom/cobblestone_factory_active_up
+          down: minecraft:block/custom/cobblestone_factory_active_down
 
 recipes:
   atlas:cobblestone_factory:

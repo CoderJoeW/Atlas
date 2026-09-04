@@ -3,7 +3,18 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#808080:#FFD700>Small Drill"
-    model: minecraft:block/custom/small_drill
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/small_drill
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/small_drill_front
+          south: minecraft:block/custom/small_drill
+          east: minecraft:block/custom/small_drill_arrow_right
+          west: minecraft:block/custom/small_drill_arrow_left
+          up: minecraft:block/custom/small_drill_arrow_up
+          down: minecraft:block/custom/small_drill_arrow_down
     behavior:
       type: block_item
       block:
@@ -27,61 +38,41 @@ items:
             facing:
               type: direction
               default: down
+          # Rendered as display entities rather than vanilla block states: every
+          # appearance shares one forced barrier state, so none of them claims a slot
+          # from the auto-state pools. Only the fluid pipe and power cable, which need
+          # a state per connection shape, still spend from those.
+          #
+          # The four horizontal facings are one model turned with `yaw`, the same way
+          # the conveyor does it, rather than four pre-rotated copies.
           appearances:
             north:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/small_drill
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/small_drill_front
-                    south: minecraft:block/custom/small_drill
-                    east: minecraft:block/custom/small_drill_arrow_right
-                    west: minecraft:block/custom/small_drill_arrow_left
-                    up: minecraft:block/custom/small_drill_arrow_up
-                    down: minecraft:block/custom/small_drill_arrow_down
+              state: barrier
+              entity_renderer:
+                item: atlas:small_drill
             south:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/small_drill
-                y: 180
+              state: barrier
+              entity_renderer:
+                item: atlas:small_drill
+                yaw: 180
             east:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/small_drill
-                y: 90
+              state: barrier
+              entity_renderer:
+                item: atlas:small_drill
+                yaw: 90
             west:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/small_drill
-                y: 270
+              state: barrier
+              entity_renderer:
+                item: atlas:small_drill
+                yaw: -90
             up:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/small_drill_up
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/small_drill_arrow_up
-                    south: minecraft:block/custom/small_drill_arrow_down
-                    east: minecraft:block/custom/small_drill_arrow_right
-                    west: minecraft:block/custom/small_drill_arrow_left
-                    up: minecraft:block/custom/small_drill_front
-                    down: minecraft:block/custom/small_drill
+              state: barrier
+              entity_renderer:
+                item: atlas:small_drill_up
             down:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/small_drill_down
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/small_drill_arrow_down
-                    south: minecraft:block/custom/small_drill_arrow_up
-                    east: minecraft:block/custom/small_drill_arrow_right
-                    west: minecraft:block/custom/small_drill_arrow_left
-                    up: minecraft:block/custom/small_drill
-                    down: minecraft:block/custom/small_drill_front
+              state: barrier
+              entity_renderer:
+                item: atlas:small_drill_down
           variants:
             facing=north:
               appearance: north
@@ -95,6 +86,43 @@ items:
               appearance: up
             facing=down:
               appearance: down
+
+
+items#1:
+  atlas:small_drill_up:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#808080:#FFD700>Small Drill"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/small_drill_up
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/small_drill_arrow_up
+          south: minecraft:block/custom/small_drill_arrow_down
+          east: minecraft:block/custom/small_drill_arrow_right
+          west: minecraft:block/custom/small_drill_arrow_left
+          up: minecraft:block/custom/small_drill_front
+          down: minecraft:block/custom/small_drill
+
+items#2:
+  atlas:small_drill_down:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#808080:#FFD700>Small Drill"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/small_drill_down
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/small_drill_arrow_down
+          south: minecraft:block/custom/small_drill_arrow_up
+          east: minecraft:block/custom/small_drill_arrow_right
+          west: minecraft:block/custom/small_drill_arrow_left
+          up: minecraft:block/custom/small_drill
+          down: minecraft:block/custom/small_drill_front
 
 recipes:
   atlas:small_drill:

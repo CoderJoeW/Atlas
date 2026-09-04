@@ -21,6 +21,12 @@ items:
       fallback:
         type: minecraft:model
         path: minecraft:block/custom/small_battery
+        generation:
+          parent: minecraft:block/cube_bottom_top
+          textures:
+            top: minecraft:block/custom/small_battery
+            bottom: minecraft:block/custom/small_battery_bottom
+            side: minecraft:block/custom/small_battery_side
     behavior:
       type: block_item
       block:
@@ -40,22 +46,24 @@ items:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_battery
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/small_battery
-                bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_side
+          state: barrier
+          entity_renderer:
+            item: atlas:small_battery
 
 items#1:
   atlas:small_battery_low:
     material: paper
     data:
       item-name: "<!i><gradient:#FFD700:#FF6347>Small Battery"
-    model: minecraft:block/custom/small_battery_low
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/small_battery_low
+      generation:
+        parent: minecraft:block/cube_bottom_top
+        textures:
+          top: minecraft:block/custom/small_battery_low
+          bottom: minecraft:block/custom/small_battery_bottom
+          side: minecraft:block/custom/small_battery_low_side
     behavior:
       type: block_item
       block:
@@ -79,22 +87,24 @@ items#1:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_battery_low
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/small_battery_low
-                bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_low_side
+          state: barrier
+          entity_renderer:
+            item: atlas:small_battery_low
 
 items#2:
   atlas:small_battery_medium:
     material: paper
     data:
       item-name: "<!i><gradient:#FFD700:#FF6347>Small Battery"
-    model: minecraft:block/custom/small_battery_medium
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/small_battery_medium
+      generation:
+        parent: minecraft:block/cube_bottom_top
+        textures:
+          top: minecraft:block/custom/small_battery_medium
+          bottom: minecraft:block/custom/small_battery_bottom
+          side: minecraft:block/custom/small_battery_medium_side
     behavior:
       type: block_item
       block:
@@ -118,22 +128,24 @@ items#2:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_battery_medium
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/small_battery_medium
-                bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_medium_side
+          state: barrier
+          entity_renderer:
+            item: atlas:small_battery_medium
 
 items#3:
   atlas:small_battery_high:
     material: paper
     data:
       item-name: "<!i><gradient:#FFD700:#FF6347>Small Battery"
-    model: minecraft:block/custom/small_battery_high
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/small_battery_high
+      generation:
+        parent: minecraft:block/cube_bottom_top
+        textures:
+          top: minecraft:block/custom/small_battery_high
+          bottom: minecraft:block/custom/small_battery_bottom
+          side: minecraft:block/custom/small_battery_high_side
     behavior:
       type: block_item
       block:
@@ -157,22 +169,24 @@ items#3:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_battery_high
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/small_battery_high
-                bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_high_side
+          state: barrier
+          entity_renderer:
+            item: atlas:small_battery_high
 
 items#4:
   atlas:small_battery_full:
     material: paper
     data:
       item-name: "<!i><gradient:#FFD700:#FF6347>Small Battery"
-    model: minecraft:block/custom/small_battery_full
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/small_battery_full
+      generation:
+        parent: minecraft:block/cube_bottom_top
+        textures:
+          top: minecraft:block/custom/small_battery_full
+          bottom: minecraft:block/custom/small_battery_bottom
+          side: minecraft:block/custom/small_battery_full_side
     behavior:
       type: block_item
       block:
@@ -196,15 +210,9 @@ items#4:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_battery_full
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/small_battery_full
-                bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_full_side
+          state: barrier
+          entity_renderer:
+            item: atlas:small_battery_full
 
 recipes:
   atlas:small_battery:
