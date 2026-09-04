@@ -5,14 +5,11 @@ import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
-import com.coderjoe.atlas.power.block.PowerMerger
-import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
-import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.utility.block.SoftTouchDrill
@@ -46,13 +43,10 @@ class PowerBlockDialogTest {
             PowerCable.descriptor,
             LavaGenerator.descriptor,
             AutoSmelter.descriptor,
-            PowerSplitter.descriptor,
             CobblestoneFactory.descriptor,
             ObsidianFactory.descriptor,
             Crusher.descriptor,
-            PowerMerger.descriptor,
             SoftTouchDrill.descriptor,
-            ExperienceExtractor.descriptor,
         ).associateBy { it.baseBlockId }
 
     private fun getDisplayName(block: PowerBlock): String {
@@ -79,7 +73,7 @@ class PowerBlockDialogTest {
 
     @Test
     fun `display name for SmallBattery`() {
-        assertEquals("Small Battery", getDisplayName(SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)))
+        assertEquals("Small Battery", getDisplayName(SmallBattery(TestHelper.createLocation())))
     }
 
     @Test
@@ -88,13 +82,13 @@ class PowerBlockDialogTest {
     }
 
     @Test
-    fun `display name for PowerCable NORTH`() {
-        assertEquals("Power Cable (North)", getDisplayName(PowerCable(TestHelper.createLocation(), BlockFace.NORTH)))
+    fun `display name for PowerCable has no facing`() {
+        assertEquals("Power Cable", getDisplayName(PowerCable(TestHelper.createLocation())))
     }
 
     @Test
     fun `power bar color green when ratio above 0_7`() {
-        val battery = SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+        val battery = SmallBattery(TestHelper.createLocation())
         battery.currentPower = 40 // 80% = green
         val info = buildPowerInfo(battery)
         val text = flattenText(info)
@@ -103,7 +97,7 @@ class PowerBlockDialogTest {
 
     @Test
     fun `power bar color yellow when ratio above 0_3`() {
-        val battery = SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+        val battery = SmallBattery(TestHelper.createLocation())
         battery.currentPower = 25 // 50% = yellow
         val info = buildPowerInfo(battery)
         val text = flattenText(info)
@@ -112,7 +106,7 @@ class PowerBlockDialogTest {
 
     @Test
     fun `power bar color red when ratio below 0_3`() {
-        val battery = SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+        val battery = SmallBattery(TestHelper.createLocation())
         battery.currentPower = 5 // 10% = red
         val info = buildPowerInfo(battery)
         val text = flattenText(info)

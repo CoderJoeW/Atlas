@@ -101,7 +101,7 @@ class PowerBlockPersistenceTest {
 
     @Test
     fun `facing direction persists for cables`() {
-        val cable = PowerCable(TestHelper.createLocation(), BlockFace.EAST)
+        val cable = PowerCable(TestHelper.createLocation())
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
         persistence.save(registry)
@@ -128,8 +128,8 @@ class PowerBlockPersistenceTest {
     }
 
     @Test
-    fun `battery round-trip preserves facing and power`() {
-        val battery = SmallBattery(TestHelper.createLocation(5.0, 64.0, 3.0), BlockFace.EAST)
+    fun `battery round-trip preserves power and stores no facing`() {
+        val battery = SmallBattery(TestHelper.createLocation(5.0, 64.0, 3.0))
         battery.currentPower = 7
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
@@ -140,7 +140,8 @@ class PowerBlockPersistenceTest {
 
         val loaded = loadRegistry.getAllBlocks().first()
         assertTrue(loaded is SmallBattery)
-        assertEquals(BlockFace.EAST, (loaded as SmallBattery).facing)
+        // Storage is omnidirectional, so there is no facing to persist and nothing to restore.
+        assertEquals(BlockFace.SELF, (loaded as SmallBattery).facing)
         assertEquals(7, loaded.currentPower)
     }
 
@@ -148,7 +149,7 @@ class PowerBlockPersistenceTest {
     fun `multiple blocks save and load correctly`() {
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
         panel.currentPower = 1
-        val cable = PowerCable(TestHelper.createLocation(1.0, 64.0, 0.0), BlockFace.NORTH)
+        val cable = PowerCable(TestHelper.createLocation(1.0, 64.0, 0.0))
         cable.currentPower = 1
         val drill = SmallDrill(TestHelper.createLocation(2.0, 64.0, 0.0), BlockFace.DOWN)
         drill.currentPower = 5

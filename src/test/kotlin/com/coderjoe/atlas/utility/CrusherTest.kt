@@ -273,7 +273,7 @@ class CrusherTest {
         TestHelper.addToRegistry(registry, crusher, "atlas:crusher")
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
-        val battery = com.coderjoe.atlas.power.block.SmallBattery(batteryLoc, BlockFace.WEST)
+        val battery = com.coderjoe.atlas.power.block.SmallBattery(batteryLoc)
         battery.currentPower = 5
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
@@ -298,7 +298,7 @@ class CrusherTest {
         TestHelper.addToRegistry(registry, crusher, "atlas:crusher")
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
-        val battery = com.coderjoe.atlas.power.block.SmallBattery(batteryLoc, BlockFace.WEST)
+        val battery = com.coderjoe.atlas.power.block.SmallBattery(batteryLoc)
         battery.currentPower = 5
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 

@@ -3,7 +3,24 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#FFD700:#FF6347>Small Battery"
-    model: minecraft:block/custom/small_battery
+    # The inventory shows a painted icon so the item is recognisable at a glance; every other
+    # display context keeps the 3D block model so it still looks like a battery in hand.
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+        - when:
+            - gui
+          model:
+            type: minecraft:model
+            path: minecraft:item/custom/small_battery
+            generation:
+              parent: minecraft:item/generated
+              textures:
+                layer0: minecraft:item/custom/small_battery
+      fallback:
+        type: minecraft:model
+        path: minecraft:block/custom/small_battery
     behavior:
       type: block_item
       block:
@@ -70,7 +87,7 @@ items#1:
               textures:
                 top: minecraft:block/custom/small_battery_low
                 bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_side
+                side: minecraft:block/custom/small_battery_low_side
 
 items#2:
   atlas:small_battery_medium:
@@ -109,7 +126,7 @@ items#2:
               textures:
                 top: minecraft:block/custom/small_battery_medium
                 bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_side
+                side: minecraft:block/custom/small_battery_medium_side
 
 items#3:
   atlas:small_battery_high:
@@ -148,7 +165,7 @@ items#3:
               textures:
                 top: minecraft:block/custom/small_battery_high
                 bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_side
+                side: minecraft:block/custom/small_battery_high_side
 
 items#4:
   atlas:small_battery_full:
@@ -187,7 +204,7 @@ items#4:
               textures:
                 top: minecraft:block/custom/small_battery_full
                 bottom: minecraft:block/custom/small_battery_bottom
-                side: minecraft:block/custom/small_battery_side
+                side: minecraft:block/custom/small_battery_full_side
 
 recipes:
   atlas:small_battery:
