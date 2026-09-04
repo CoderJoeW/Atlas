@@ -4,7 +4,7 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
-import com.coderjoe.atlas.fluid.block.FluidPipe
+import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import org.bukkit.block.BlockFace
@@ -67,12 +67,12 @@ class CobblestoneFactoryTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         gen.callPowerUpdate()
@@ -96,12 +96,12 @@ class CobblestoneFactoryTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         gen.callPowerUpdate()
@@ -126,22 +126,22 @@ class CobblestoneFactoryTest {
 
         val waterPipeLoc =
             TestHelper.createLocation(0.0, 64.0, -1.0)
-        val waterPipe = FluidPipe(waterPipeLoc, BlockFace.SOUTH)
+        val waterPipe = FluidContainer(waterPipeLoc, BlockFace.SOUTH)
         waterPipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
             fluidRegistry,
             waterPipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         val lavaPipeLoc =
             TestHelper.createLocation(0.0, 64.0, 1.0)
-        val lavaPipe = FluidPipe(lavaPipeLoc, BlockFace.NORTH)
+        val lavaPipe = FluidContainer(lavaPipeLoc, BlockFace.NORTH)
         lavaPipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
             lavaPipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         gen.callPowerUpdate()
@@ -167,22 +167,22 @@ class CobblestoneFactoryTest {
 
         val waterPipeLoc =
             TestHelper.createLocation(0.0, 64.0, -1.0)
-        val waterPipe = FluidPipe(waterPipeLoc, BlockFace.SOUTH)
+        val waterPipe = FluidContainer(waterPipeLoc, BlockFace.SOUTH)
         waterPipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
             fluidRegistry,
             waterPipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         val lavaPipeLoc =
             TestHelper.createLocation(0.0, 64.0, 1.0)
-        val lavaPipe = FluidPipe(lavaPipeLoc, BlockFace.NORTH)
+        val lavaPipe = FluidContainer(lavaPipeLoc, BlockFace.NORTH)
         lavaPipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
             lavaPipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         try {
@@ -219,10 +219,7 @@ class CobblestoneFactoryTest {
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
         val battery =
-            com.coderjoe.atlas.power.block.SmallBattery(
-                batteryLoc,
-                BlockFace.DOWN,
-            )
+            com.coderjoe.atlas.power.block.SmallBattery(batteryLoc)
         battery.currentPower = 5
         TestHelper.addToRegistry(
             powerRegistry,

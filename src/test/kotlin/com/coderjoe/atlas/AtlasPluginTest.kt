@@ -28,15 +28,15 @@ class AtlasPluginTest {
     }
 
     @Test
-    fun `power system initializes with 23 block types`() {
+    fun `power system initializes with 16 block types`() {
         TestHelper.initPowerFactory()
-        assertEquals(23, PowerBlockFactory.getRegisteredBlockIds().size)
+        assertEquals(16, PowerBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test
-    fun `fluid system initializes with 7 block types`() {
+    fun `fluid system initializes with 3 block types`() {
         TestHelper.initFluidFactory()
-        assertEquals(7, FluidBlockFactory.getRegisteredBlockIds().size)
+        assertEquals(3, FluidBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test

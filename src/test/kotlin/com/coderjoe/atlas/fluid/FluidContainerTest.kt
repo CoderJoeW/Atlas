@@ -224,36 +224,26 @@ class FluidContainerTest {
     // --- Directional pull ---
 
     @Test
-    fun `container pulls from pipe behind it`() {
+    fun `container fills from a pump across a pipe run`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container =
-            FluidContainer(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
-        val pipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, -1.0),
-                BlockFace.SOUTH,
-            )
-        pipe.storeFluid(FluidType.WATER)
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
+        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -2.0))
+        pump.storeFluid(FluidType.WATER)
+        val cauldronField = FluidPump::class.java.getDeclaredField("cauldronFace")
+        cauldronField.isAccessible = true
+        cauldronField.set(pump, BlockFace.NORTH)
 
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container,
-            "atlas:fluid_container",
-        )
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_pipe",
-        )
+        TestHelper.addToRegistry(fluidRegistry, container, "atlas:fluid_container")
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
 
         container.callFluidUpdate()
+
         assertEquals(FluidType.WATER, container.storedFluid)
         assertEquals(1, container.storedAmount)
-        assertEquals(FluidType.NONE, pipe.storedFluid)
+        assertEquals(FluidType.NONE, pump.storedFluid)
     }
 
     @Test
@@ -324,106 +314,65 @@ class FluidContainerTest {
     }
 
     @Test
-    fun `container does not pull when full`() {
+    fun `container does not fill when full`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container =
-            FluidContainer(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
-        repeat(FluidContainer.MAX_CAPACITY) {
-            container.storeFluid(FluidType.WATER)
-        }
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        container.restoreState(FluidType.WATER, FluidContainer.MAX_CAPACITY)
 
-        val pipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, -1.0),
-                BlockFace.SOUTH,
-            )
-        pipe.storeFluid(FluidType.WATER)
+        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
+        pump.storeFluid(FluidType.WATER)
+        val cauldronField = FluidPump::class.java.getDeclaredField("cauldronFace")
+        cauldronField.isAccessible = true
+        cauldronField.set(pump, BlockFace.NORTH)
 
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container,
-            "atlas:fluid_container",
-        )
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_pipe",
-        )
+        TestHelper.addToRegistry(fluidRegistry, container, "atlas:fluid_container")
+        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
 
         container.callFluidUpdate()
-        assertTrue(pipe.hasFluid()) // pipe still has fluid
+
+        assertTrue(pump.hasFluid(), "a full container leaves the source alone")
+        assertEquals(FluidContainer.MAX_CAPACITY, container.storedAmount)
     }
 
     @Test
-    fun `container rejects mismatched fluid from pipe`() {
+    fun `container rejects a fluid that does not match what it holds`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container =
-            FluidContainer(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
-        container.storeFluid(FluidType.WATER)
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        container.restoreState(FluidType.WATER, 1)
 
-        val pipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, -1.0),
-                BlockFace.SOUTH,
-            )
-        pipe.storeFluid(FluidType.LAVA)
+        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
+        pump.storeFluid(FluidType.LAVA)
+        val cauldronField = FluidPump::class.java.getDeclaredField("cauldronFace")
+        cauldronField.isAccessible = true
+        cauldronField.set(pump, BlockFace.NORTH)
 
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container,
-            "atlas:fluid_container",
-        )
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_pipe",
-        )
+        TestHelper.addToRegistry(fluidRegistry, container, "atlas:fluid_container")
+        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
 
         container.callFluidUpdate()
-        assertTrue(pipe.hasFluid())
-        assertEquals(1, container.storedAmount) // container unchanged
+
+        assertTrue(pump.hasFluid(), "lava must not go into a water tank")
+        assertEquals(1, container.storedAmount)
+        assertEquals(FluidType.WATER, container.storedFluid)
     }
 
     // --- Pipe pulling from container ---
 
     @Test
-    fun `pipe pulls from container front face`() {
+    fun `a run offers what a container is giving through its front`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
 
-        val container =
-            FluidContainer(
-                TestHelper.createLocation(0.0, 64.0, 0.0),
-                BlockFace.SOUTH,
-            )
-        container.storeFluid(FluidType.WATER)
+        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.SOUTH)
+        container.restoreState(FluidType.WATER, 1)
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
 
-        val pipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, 1.0),
-                BlockFace.SOUTH,
-            )
+        TestHelper.addToRegistry(fluidRegistry, container, "atlas:fluid_container")
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container,
-            "atlas:fluid_container",
-        )
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_pipe",
-        )
-
-        pipe.callFluidUpdate()
-        assertEquals(FluidType.WATER, pipe.storedFluid)
+        assertTrue(pipe.hasFluid())
+        assertEquals(FluidType.WATER, pipe.removeFluid())
         assertEquals(0, container.storedAmount)
     }
 
@@ -439,10 +388,7 @@ class FluidContainerTest {
         container.storeFluid(FluidType.WATER)
 
         val pipe =
-            FluidPipe(
-                TestHelper.createLocation(0.0, 64.0, 1.0),
-                BlockFace.SOUTH,
-            )
+            FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
 
         TestHelper.addToRegistry(
             fluidRegistry,

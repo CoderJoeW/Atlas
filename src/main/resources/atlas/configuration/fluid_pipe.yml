@@ -3,7 +3,24 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#1E90FF:#00CED1>Fluid Pipe"
-    model: minecraft:block/custom/fluid_pipe
+    # The inventory shows a painted icon so the item is recognisable at a glance; every other
+    # display context keeps the 3D block model so it still looks like a pipe in hand.
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+        - when:
+            - gui
+          model:
+            type: minecraft:model
+            path: minecraft:item/custom/fluid_pipe
+            generation:
+              parent: minecraft:item/generated
+              textures:
+                layer0: minecraft:item/custom/fluid_pipe
+      fallback:
+        type: minecraft:model
+        path: minecraft:block/custom/fluid_pipe
     behavior:
       type: block_item
       block:
@@ -12,8 +29,13 @@ items:
         settings:
           hardness: 2.0
           resistance: 2.0
-          is-suffocating: true
+          is-suffocating: false
           is-redstone-conductor: false
+          # The model is not a full cube, so it must not occlude - otherwise neighbouring blocks
+          # cull their faces against it and you can see straight through the world.
+          can-occlude: false
+          is-view-blocking: false
+          propagate-skylight: true
           push-reaction: push_only
           tags: ["minecraft:mineable/pickaxe"]
           sounds:
@@ -24,279 +46,2334 @@ items:
             fall: minecraft:block.metal.fall
         states:
           properties:
-            facing:
-              type: direction
-              default: north
+            north:
+              type: boolean
+              default: false
+            south:
+              type: boolean
+              default: false
+            east:
+              type: boolean
+              default: false
+            west:
+              type: boolean
+              default: false
+            up:
+              type: boolean
+              default: false
+            down:
+              type: boolean
+              default: false
             fluid:
               type: string
-              values: [none, water, lava, experience]
+              values: [none, water, lava]
               default: none
           appearances:
-            north:
-              auto-state: solid
+            c000000:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe
+                path: minecraft:block/custom/fluid_pipe_000000
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_000000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_front
-                    south: minecraft:block/custom/fluid_pipe_back
-                    east: minecraft:block/custom/fluid_pipe_side_right
-                    west: minecraft:block/custom/fluid_pipe_side_left
-                    up: minecraft:block/custom/fluid_pipe_side_up
-                    down: minecraft:block/custom/fluid_pipe_side_down
-            south:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c000000_water:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe
-                y: 180
-            east:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe
-                y: 90
-            west:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe
-                y: 270
-            up:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_up
+                path: minecraft:block/custom/fluid_pipe_000000_water
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_000000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_side_up
-                    south: minecraft:block/custom/fluid_pipe_side_down
-                    east: minecraft:block/custom/fluid_pipe_side_right
-                    west: minecraft:block/custom/fluid_pipe_side_left
-                    up: minecraft:block/custom/fluid_pipe_front
-                    down: minecraft:block/custom/fluid_pipe_back
-            down:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c000000_lava:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_down
+                path: minecraft:block/custom/fluid_pipe_000000_lava
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_000000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_side_down
-                    south: minecraft:block/custom/fluid_pipe_side_up
-                    east: minecraft:block/custom/fluid_pipe_side_right
-                    west: minecraft:block/custom/fluid_pipe_side_left
-                    up: minecraft:block/custom/fluid_pipe_back
-                    down: minecraft:block/custom/fluid_pipe_front
-            north_water:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c100000:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_water
+                path: minecraft:block/custom/fluid_pipe_100000
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_100000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_front_filled
-                    south: minecraft:block/custom/fluid_pipe_back_filled
-                    east: minecraft:block/custom/fluid_pipe_side_filled_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_left
-                    up: minecraft:block/custom/fluid_pipe_side_filled_up
-                    down: minecraft:block/custom/fluid_pipe_side_filled_down
-            south_water:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c100000_water:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_water
-                y: 180
-            east_water:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_water
-                y: 90
-            west_water:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_water
-                y: 270
-            up_water:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_up_water
+                path: minecraft:block/custom/fluid_pipe_100000_water
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_100000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_side_filled_up
-                    south: minecraft:block/custom/fluid_pipe_side_filled_down
-                    east: minecraft:block/custom/fluid_pipe_side_filled_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_left
-                    up: minecraft:block/custom/fluid_pipe_front_filled
-                    down: minecraft:block/custom/fluid_pipe_back_filled
-            down_water:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c100000_lava:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_down_water
+                path: minecraft:block/custom/fluid_pipe_100000_lava
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_100000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_side_filled_down
-                    south: minecraft:block/custom/fluid_pipe_side_filled_up
-                    east: minecraft:block/custom/fluid_pipe_side_filled_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_left
-                    up: minecraft:block/custom/fluid_pipe_back_filled
-                    down: minecraft:block/custom/fluid_pipe_front_filled
-            north_lava:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c010000:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_lava
+                path: minecraft:block/custom/fluid_pipe_010000
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_010000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_front_filled_lava
-                    south: minecraft:block/custom/fluid_pipe_back_filled_lava
-                    east: minecraft:block/custom/fluid_pipe_side_filled_lava_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_lava_left
-                    up: minecraft:block/custom/fluid_pipe_side_filled_lava_up
-                    down: minecraft:block/custom/fluid_pipe_side_filled_lava_down
-            south_lava:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c010000_water:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_lava
-                y: 180
-            east_lava:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_lava
-                y: 90
-            west_lava:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_lava
-                y: 270
-            up_lava:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_up_lava
+                path: minecraft:block/custom/fluid_pipe_010000_water
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_010000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_side_filled_lava_up
-                    south: minecraft:block/custom/fluid_pipe_side_filled_lava_down
-                    east: minecraft:block/custom/fluid_pipe_side_filled_lava_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_lava_left
-                    up: minecraft:block/custom/fluid_pipe_front_filled_lava
-                    down: minecraft:block/custom/fluid_pipe_back_filled_lava
-            down_lava:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c010000_lava:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_down_lava
+                path: minecraft:block/custom/fluid_pipe_010000_lava
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_010000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_side_filled_lava_down
-                    south: minecraft:block/custom/fluid_pipe_side_filled_lava_up
-                    east: minecraft:block/custom/fluid_pipe_side_filled_lava_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_lava_left
-                    up: minecraft:block/custom/fluid_pipe_back_filled_lava
-                    down: minecraft:block/custom/fluid_pipe_front_filled_lava
-            north_experience:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c110000:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_xp
+                path: minecraft:block/custom/fluid_pipe_110000
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_110000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_front_filled_xp
-                    south: minecraft:block/custom/fluid_pipe_back_filled_xp
-                    east: minecraft:block/custom/fluid_pipe_side_filled_xp_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_xp_left
-                    up: minecraft:block/custom/fluid_pipe_side_filled_xp_up
-                    down: minecraft:block/custom/fluid_pipe_side_filled_xp_down
-            south_experience:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c110000_water:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_xp
-                y: 180
-            east_experience:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_xp
-                y: 90
-            west_experience:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_xp
-                y: 270
-            up_experience:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/fluid_pipe_up_xp
+                path: minecraft:block/custom/fluid_pipe_110000_water
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_110000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_side_filled_xp_up
-                    south: minecraft:block/custom/fluid_pipe_side_filled_xp_down
-                    east: minecraft:block/custom/fluid_pipe_side_filled_xp_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_xp_left
-                    up: minecraft:block/custom/fluid_pipe_front_filled_xp
-                    down: minecraft:block/custom/fluid_pipe_back_filled_xp
-            down_experience:
-              auto-state: solid
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c110000_lava:
+              auto-state: cave_vines
               model:
-                path: minecraft:block/custom/fluid_pipe_down_xp
+                path: minecraft:block/custom/fluid_pipe_110000_lava
                 generation:
-                  parent: minecraft:block/cube
+                  parent: minecraft:block/custom/fluid_pipe_shape_110000
                   textures:
-                    north: minecraft:block/custom/fluid_pipe_side_filled_xp_down
-                    south: minecraft:block/custom/fluid_pipe_side_filled_xp_up
-                    east: minecraft:block/custom/fluid_pipe_side_filled_xp_right
-                    west: minecraft:block/custom/fluid_pipe_side_filled_xp_left
-                    up: minecraft:block/custom/fluid_pipe_back_filled_xp
-                    down: minecraft:block/custom/fluid_pipe_front_filled_xp
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c001000:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001000
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c001000_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001000_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c001000_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001000_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c101000:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101000
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c101000_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101000_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c101000_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101000_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c011000:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011000
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c011000_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011000_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c011000_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011000_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c111000:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111000
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c111000_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111000_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c111000_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111000_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111000
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c000100:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000100
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c000100_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000100_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c000100_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000100_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c100100:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100100
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c100100_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100100_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c100100_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100100_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c010100:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010100
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c010100_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010100_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c010100_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010100_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c110100:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110100
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c110100_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110100_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c110100_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110100_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c001100:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001100
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c001100_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001100_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c001100_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001100_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c101100:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101100
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c101100_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101100_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c101100_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101100_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c011100:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011100
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c011100_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011100_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c011100_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011100_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c111100:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111100
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c111100_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111100_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c111100_lava:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111100_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111100
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c000010:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000010
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c000010_water:
+              auto-state: cave_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000010_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c000010_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000010_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c100010:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100010
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c100010_water:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100010_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c100010_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100010_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c010010:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010010
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c010010_water:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010010_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c010010_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010010_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c110010:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110010
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c110010_water:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110010_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c110010_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110010_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c001010:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001010
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c001010_water:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001010_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c001010_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001010_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c101010:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101010
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c101010_water:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101010_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c101010_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101010_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c011010:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011010
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c011010_water:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011010_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c011010_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011010_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c111010:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111010
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c111010_water:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111010_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c111010_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111010_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111010
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c000110:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000110
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c000110_water:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000110_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c000110_lava:
+              auto-state: weeping_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000110_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c100110:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100110
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c100110_water:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100110_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c100110_lava:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100110_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c010110:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010110
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c010110_water:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010110_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c010110_lava:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_010110_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c110110:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110110
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c110110_water:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110110_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c110110_lava:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_110110_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c001110:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001110
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c001110_water:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001110_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c001110_lava:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_001110_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c101110:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101110
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c101110_water:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101110_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c101110_lava:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_101110_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c011110:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011110
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c011110_water:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011110_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c011110_lava:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_011110_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c111110:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111110
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c111110_water:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111110_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c111110_lava:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_111110_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111110
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c000001:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000001
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c000001_water:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000001_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c000001_lava:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_000001_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c100001:
+              auto-state: twisting_vines
+              model:
+                path: minecraft:block/custom/fluid_pipe_100001
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c100001_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_100001_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c100001_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_100001_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c010001:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010001
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c010001_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010001_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c010001_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010001_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c110001:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_110001
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c110001_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_110001_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c110001_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_110001_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c001001:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_001001
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c001001_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_001001_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c001001_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_001001_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c101001:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_101001
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c101001_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_101001_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c101001_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_101001_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c011001:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_011001
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c011001_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_011001_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c011001_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_011001_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c111001:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_111001
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c111001_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_111001_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c111001_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_111001_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111001
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c000101:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_000101
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c000101_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_000101_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c000101_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_000101_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c100101:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_100101
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c100101_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_100101_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c100101_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_100101_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c010101:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010101
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c010101_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010101_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c010101_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010101_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c110101:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_110101
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c110101_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_110101_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c110101_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_110101_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c001101:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_001101
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c001101_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_001101_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c001101_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_001101_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c101101:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_101101
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c101101_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_101101_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c101101_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_101101_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c011101:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_011101
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c011101_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_011101_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c011101_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_011101_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c111101:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_111101
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c111101_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_111101_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c111101_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_111101_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111101
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c000011:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_000011
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c000011_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_000011_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c000011_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_000011_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c100011:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_100011
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c100011_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_100011_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c100011_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_100011_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c010011:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010011
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c010011_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010011_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c010011_lava:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_010011_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c110011:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_110011
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c110011_water:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/fluid_pipe_110011_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c110011_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_110011_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c001011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_001011
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c001011_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_001011_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c001011_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_001011_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c101011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_101011
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c101011_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_101011_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c101011_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_101011_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c011011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_011011
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c011011_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_011011_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c011011_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_011011_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c111011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_111011
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c111011_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_111011_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c111011_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_111011_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111011
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c000111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_000111
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c000111_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_000111_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c000111_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_000111_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_000111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c100111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_100111
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c100111_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_100111_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c100111_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_100111_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_100111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c010111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_010111
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c010111_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_010111_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c010111_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_010111_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_010111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c110111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_110111
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c110111_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_110111_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c110111_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_110111_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_110111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c001111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_001111
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c001111_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_001111_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c001111_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_001111_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_001111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c101111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_101111
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c101111_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_101111_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c101111_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_101111_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_101111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c011111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_011111
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c011111_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_011111_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c011111_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_011111_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_011111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
+            c111111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_111111
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing
+                    end: minecraft:block/custom/fluid_pipe_end
+                    socket: minecraft:block/custom/fluid_pipe_end
+            c111111_water:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_111111_water
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_water
+                    end: minecraft:block/custom/fluid_pipe_end_water
+                    socket: minecraft:block/custom/fluid_pipe_end_water
+            c111111_lava:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/fluid_pipe_111111_lava
+                generation:
+                  parent: minecraft:block/custom/fluid_pipe_shape_111111
+                  textures:
+                    casing: minecraft:block/custom/fluid_pipe_casing_lava
+                    end: minecraft:block/custom/fluid_pipe_end_lava
+                    socket: minecraft:block/custom/fluid_pipe_end_lava
           variants:
-            facing=north,fluid=none:
-              appearance: north
-            facing=south,fluid=none:
-              appearance: south
-            facing=east,fluid=none:
-              appearance: east
-            facing=west,fluid=none:
-              appearance: west
-            facing=up,fluid=none:
-              appearance: up
-            facing=down,fluid=none:
-              appearance: down
-            facing=north,fluid=water:
-              appearance: north_water
-            facing=south,fluid=water:
-              appearance: south_water
-            facing=east,fluid=water:
-              appearance: east_water
-            facing=west,fluid=water:
-              appearance: west_water
-            facing=up,fluid=water:
-              appearance: up_water
-            facing=down,fluid=water:
-              appearance: down_water
-            facing=north,fluid=lava:
-              appearance: north_lava
-            facing=south,fluid=lava:
-              appearance: south_lava
-            facing=east,fluid=lava:
-              appearance: east_lava
-            facing=west,fluid=lava:
-              appearance: west_lava
-            facing=up,fluid=lava:
-              appearance: up_lava
-            facing=down,fluid=lava:
-              appearance: down_lava
-            facing=north,fluid=experience:
-              appearance: north_experience
-            facing=south,fluid=experience:
-              appearance: south_experience
-            facing=east,fluid=experience:
-              appearance: east_experience
-            facing=west,fluid=experience:
-              appearance: west_experience
-            facing=up,fluid=experience:
-              appearance: up_experience
-            facing=down,fluid=experience:
-              appearance: down_experience
+            north=false,south=false,east=false,west=false,up=false,down=false,fluid=none:
+              appearance: c000000
+            north=false,south=false,east=false,west=false,up=false,down=false,fluid=water:
+              appearance: c000000_water
+            north=false,south=false,east=false,west=false,up=false,down=false,fluid=lava:
+              appearance: c000000_lava
+            north=true,south=false,east=false,west=false,up=false,down=false,fluid=none:
+              appearance: c100000
+            north=true,south=false,east=false,west=false,up=false,down=false,fluid=water:
+              appearance: c100000_water
+            north=true,south=false,east=false,west=false,up=false,down=false,fluid=lava:
+              appearance: c100000_lava
+            north=false,south=true,east=false,west=false,up=false,down=false,fluid=none:
+              appearance: c010000
+            north=false,south=true,east=false,west=false,up=false,down=false,fluid=water:
+              appearance: c010000_water
+            north=false,south=true,east=false,west=false,up=false,down=false,fluid=lava:
+              appearance: c010000_lava
+            north=true,south=true,east=false,west=false,up=false,down=false,fluid=none:
+              appearance: c110000
+            north=true,south=true,east=false,west=false,up=false,down=false,fluid=water:
+              appearance: c110000_water
+            north=true,south=true,east=false,west=false,up=false,down=false,fluid=lava:
+              appearance: c110000_lava
+            north=false,south=false,east=true,west=false,up=false,down=false,fluid=none:
+              appearance: c001000
+            north=false,south=false,east=true,west=false,up=false,down=false,fluid=water:
+              appearance: c001000_water
+            north=false,south=false,east=true,west=false,up=false,down=false,fluid=lava:
+              appearance: c001000_lava
+            north=true,south=false,east=true,west=false,up=false,down=false,fluid=none:
+              appearance: c101000
+            north=true,south=false,east=true,west=false,up=false,down=false,fluid=water:
+              appearance: c101000_water
+            north=true,south=false,east=true,west=false,up=false,down=false,fluid=lava:
+              appearance: c101000_lava
+            north=false,south=true,east=true,west=false,up=false,down=false,fluid=none:
+              appearance: c011000
+            north=false,south=true,east=true,west=false,up=false,down=false,fluid=water:
+              appearance: c011000_water
+            north=false,south=true,east=true,west=false,up=false,down=false,fluid=lava:
+              appearance: c011000_lava
+            north=true,south=true,east=true,west=false,up=false,down=false,fluid=none:
+              appearance: c111000
+            north=true,south=true,east=true,west=false,up=false,down=false,fluid=water:
+              appearance: c111000_water
+            north=true,south=true,east=true,west=false,up=false,down=false,fluid=lava:
+              appearance: c111000_lava
+            north=false,south=false,east=false,west=true,up=false,down=false,fluid=none:
+              appearance: c000100
+            north=false,south=false,east=false,west=true,up=false,down=false,fluid=water:
+              appearance: c000100_water
+            north=false,south=false,east=false,west=true,up=false,down=false,fluid=lava:
+              appearance: c000100_lava
+            north=true,south=false,east=false,west=true,up=false,down=false,fluid=none:
+              appearance: c100100
+            north=true,south=false,east=false,west=true,up=false,down=false,fluid=water:
+              appearance: c100100_water
+            north=true,south=false,east=false,west=true,up=false,down=false,fluid=lava:
+              appearance: c100100_lava
+            north=false,south=true,east=false,west=true,up=false,down=false,fluid=none:
+              appearance: c010100
+            north=false,south=true,east=false,west=true,up=false,down=false,fluid=water:
+              appearance: c010100_water
+            north=false,south=true,east=false,west=true,up=false,down=false,fluid=lava:
+              appearance: c010100_lava
+            north=true,south=true,east=false,west=true,up=false,down=false,fluid=none:
+              appearance: c110100
+            north=true,south=true,east=false,west=true,up=false,down=false,fluid=water:
+              appearance: c110100_water
+            north=true,south=true,east=false,west=true,up=false,down=false,fluid=lava:
+              appearance: c110100_lava
+            north=false,south=false,east=true,west=true,up=false,down=false,fluid=none:
+              appearance: c001100
+            north=false,south=false,east=true,west=true,up=false,down=false,fluid=water:
+              appearance: c001100_water
+            north=false,south=false,east=true,west=true,up=false,down=false,fluid=lava:
+              appearance: c001100_lava
+            north=true,south=false,east=true,west=true,up=false,down=false,fluid=none:
+              appearance: c101100
+            north=true,south=false,east=true,west=true,up=false,down=false,fluid=water:
+              appearance: c101100_water
+            north=true,south=false,east=true,west=true,up=false,down=false,fluid=lava:
+              appearance: c101100_lava
+            north=false,south=true,east=true,west=true,up=false,down=false,fluid=none:
+              appearance: c011100
+            north=false,south=true,east=true,west=true,up=false,down=false,fluid=water:
+              appearance: c011100_water
+            north=false,south=true,east=true,west=true,up=false,down=false,fluid=lava:
+              appearance: c011100_lava
+            north=true,south=true,east=true,west=true,up=false,down=false,fluid=none:
+              appearance: c111100
+            north=true,south=true,east=true,west=true,up=false,down=false,fluid=water:
+              appearance: c111100_water
+            north=true,south=true,east=true,west=true,up=false,down=false,fluid=lava:
+              appearance: c111100_lava
+            north=false,south=false,east=false,west=false,up=true,down=false,fluid=none:
+              appearance: c000010
+            north=false,south=false,east=false,west=false,up=true,down=false,fluid=water:
+              appearance: c000010_water
+            north=false,south=false,east=false,west=false,up=true,down=false,fluid=lava:
+              appearance: c000010_lava
+            north=true,south=false,east=false,west=false,up=true,down=false,fluid=none:
+              appearance: c100010
+            north=true,south=false,east=false,west=false,up=true,down=false,fluid=water:
+              appearance: c100010_water
+            north=true,south=false,east=false,west=false,up=true,down=false,fluid=lava:
+              appearance: c100010_lava
+            north=false,south=true,east=false,west=false,up=true,down=false,fluid=none:
+              appearance: c010010
+            north=false,south=true,east=false,west=false,up=true,down=false,fluid=water:
+              appearance: c010010_water
+            north=false,south=true,east=false,west=false,up=true,down=false,fluid=lava:
+              appearance: c010010_lava
+            north=true,south=true,east=false,west=false,up=true,down=false,fluid=none:
+              appearance: c110010
+            north=true,south=true,east=false,west=false,up=true,down=false,fluid=water:
+              appearance: c110010_water
+            north=true,south=true,east=false,west=false,up=true,down=false,fluid=lava:
+              appearance: c110010_lava
+            north=false,south=false,east=true,west=false,up=true,down=false,fluid=none:
+              appearance: c001010
+            north=false,south=false,east=true,west=false,up=true,down=false,fluid=water:
+              appearance: c001010_water
+            north=false,south=false,east=true,west=false,up=true,down=false,fluid=lava:
+              appearance: c001010_lava
+            north=true,south=false,east=true,west=false,up=true,down=false,fluid=none:
+              appearance: c101010
+            north=true,south=false,east=true,west=false,up=true,down=false,fluid=water:
+              appearance: c101010_water
+            north=true,south=false,east=true,west=false,up=true,down=false,fluid=lava:
+              appearance: c101010_lava
+            north=false,south=true,east=true,west=false,up=true,down=false,fluid=none:
+              appearance: c011010
+            north=false,south=true,east=true,west=false,up=true,down=false,fluid=water:
+              appearance: c011010_water
+            north=false,south=true,east=true,west=false,up=true,down=false,fluid=lava:
+              appearance: c011010_lava
+            north=true,south=true,east=true,west=false,up=true,down=false,fluid=none:
+              appearance: c111010
+            north=true,south=true,east=true,west=false,up=true,down=false,fluid=water:
+              appearance: c111010_water
+            north=true,south=true,east=true,west=false,up=true,down=false,fluid=lava:
+              appearance: c111010_lava
+            north=false,south=false,east=false,west=true,up=true,down=false,fluid=none:
+              appearance: c000110
+            north=false,south=false,east=false,west=true,up=true,down=false,fluid=water:
+              appearance: c000110_water
+            north=false,south=false,east=false,west=true,up=true,down=false,fluid=lava:
+              appearance: c000110_lava
+            north=true,south=false,east=false,west=true,up=true,down=false,fluid=none:
+              appearance: c100110
+            north=true,south=false,east=false,west=true,up=true,down=false,fluid=water:
+              appearance: c100110_water
+            north=true,south=false,east=false,west=true,up=true,down=false,fluid=lava:
+              appearance: c100110_lava
+            north=false,south=true,east=false,west=true,up=true,down=false,fluid=none:
+              appearance: c010110
+            north=false,south=true,east=false,west=true,up=true,down=false,fluid=water:
+              appearance: c010110_water
+            north=false,south=true,east=false,west=true,up=true,down=false,fluid=lava:
+              appearance: c010110_lava
+            north=true,south=true,east=false,west=true,up=true,down=false,fluid=none:
+              appearance: c110110
+            north=true,south=true,east=false,west=true,up=true,down=false,fluid=water:
+              appearance: c110110_water
+            north=true,south=true,east=false,west=true,up=true,down=false,fluid=lava:
+              appearance: c110110_lava
+            north=false,south=false,east=true,west=true,up=true,down=false,fluid=none:
+              appearance: c001110
+            north=false,south=false,east=true,west=true,up=true,down=false,fluid=water:
+              appearance: c001110_water
+            north=false,south=false,east=true,west=true,up=true,down=false,fluid=lava:
+              appearance: c001110_lava
+            north=true,south=false,east=true,west=true,up=true,down=false,fluid=none:
+              appearance: c101110
+            north=true,south=false,east=true,west=true,up=true,down=false,fluid=water:
+              appearance: c101110_water
+            north=true,south=false,east=true,west=true,up=true,down=false,fluid=lava:
+              appearance: c101110_lava
+            north=false,south=true,east=true,west=true,up=true,down=false,fluid=none:
+              appearance: c011110
+            north=false,south=true,east=true,west=true,up=true,down=false,fluid=water:
+              appearance: c011110_water
+            north=false,south=true,east=true,west=true,up=true,down=false,fluid=lava:
+              appearance: c011110_lava
+            north=true,south=true,east=true,west=true,up=true,down=false,fluid=none:
+              appearance: c111110
+            north=true,south=true,east=true,west=true,up=true,down=false,fluid=water:
+              appearance: c111110_water
+            north=true,south=true,east=true,west=true,up=true,down=false,fluid=lava:
+              appearance: c111110_lava
+            north=false,south=false,east=false,west=false,up=false,down=true,fluid=none:
+              appearance: c000001
+            north=false,south=false,east=false,west=false,up=false,down=true,fluid=water:
+              appearance: c000001_water
+            north=false,south=false,east=false,west=false,up=false,down=true,fluid=lava:
+              appearance: c000001_lava
+            north=true,south=false,east=false,west=false,up=false,down=true,fluid=none:
+              appearance: c100001
+            north=true,south=false,east=false,west=false,up=false,down=true,fluid=water:
+              appearance: c100001_water
+            north=true,south=false,east=false,west=false,up=false,down=true,fluid=lava:
+              appearance: c100001_lava
+            north=false,south=true,east=false,west=false,up=false,down=true,fluid=none:
+              appearance: c010001
+            north=false,south=true,east=false,west=false,up=false,down=true,fluid=water:
+              appearance: c010001_water
+            north=false,south=true,east=false,west=false,up=false,down=true,fluid=lava:
+              appearance: c010001_lava
+            north=true,south=true,east=false,west=false,up=false,down=true,fluid=none:
+              appearance: c110001
+            north=true,south=true,east=false,west=false,up=false,down=true,fluid=water:
+              appearance: c110001_water
+            north=true,south=true,east=false,west=false,up=false,down=true,fluid=lava:
+              appearance: c110001_lava
+            north=false,south=false,east=true,west=false,up=false,down=true,fluid=none:
+              appearance: c001001
+            north=false,south=false,east=true,west=false,up=false,down=true,fluid=water:
+              appearance: c001001_water
+            north=false,south=false,east=true,west=false,up=false,down=true,fluid=lava:
+              appearance: c001001_lava
+            north=true,south=false,east=true,west=false,up=false,down=true,fluid=none:
+              appearance: c101001
+            north=true,south=false,east=true,west=false,up=false,down=true,fluid=water:
+              appearance: c101001_water
+            north=true,south=false,east=true,west=false,up=false,down=true,fluid=lava:
+              appearance: c101001_lava
+            north=false,south=true,east=true,west=false,up=false,down=true,fluid=none:
+              appearance: c011001
+            north=false,south=true,east=true,west=false,up=false,down=true,fluid=water:
+              appearance: c011001_water
+            north=false,south=true,east=true,west=false,up=false,down=true,fluid=lava:
+              appearance: c011001_lava
+            north=true,south=true,east=true,west=false,up=false,down=true,fluid=none:
+              appearance: c111001
+            north=true,south=true,east=true,west=false,up=false,down=true,fluid=water:
+              appearance: c111001_water
+            north=true,south=true,east=true,west=false,up=false,down=true,fluid=lava:
+              appearance: c111001_lava
+            north=false,south=false,east=false,west=true,up=false,down=true,fluid=none:
+              appearance: c000101
+            north=false,south=false,east=false,west=true,up=false,down=true,fluid=water:
+              appearance: c000101_water
+            north=false,south=false,east=false,west=true,up=false,down=true,fluid=lava:
+              appearance: c000101_lava
+            north=true,south=false,east=false,west=true,up=false,down=true,fluid=none:
+              appearance: c100101
+            north=true,south=false,east=false,west=true,up=false,down=true,fluid=water:
+              appearance: c100101_water
+            north=true,south=false,east=false,west=true,up=false,down=true,fluid=lava:
+              appearance: c100101_lava
+            north=false,south=true,east=false,west=true,up=false,down=true,fluid=none:
+              appearance: c010101
+            north=false,south=true,east=false,west=true,up=false,down=true,fluid=water:
+              appearance: c010101_water
+            north=false,south=true,east=false,west=true,up=false,down=true,fluid=lava:
+              appearance: c010101_lava
+            north=true,south=true,east=false,west=true,up=false,down=true,fluid=none:
+              appearance: c110101
+            north=true,south=true,east=false,west=true,up=false,down=true,fluid=water:
+              appearance: c110101_water
+            north=true,south=true,east=false,west=true,up=false,down=true,fluid=lava:
+              appearance: c110101_lava
+            north=false,south=false,east=true,west=true,up=false,down=true,fluid=none:
+              appearance: c001101
+            north=false,south=false,east=true,west=true,up=false,down=true,fluid=water:
+              appearance: c001101_water
+            north=false,south=false,east=true,west=true,up=false,down=true,fluid=lava:
+              appearance: c001101_lava
+            north=true,south=false,east=true,west=true,up=false,down=true,fluid=none:
+              appearance: c101101
+            north=true,south=false,east=true,west=true,up=false,down=true,fluid=water:
+              appearance: c101101_water
+            north=true,south=false,east=true,west=true,up=false,down=true,fluid=lava:
+              appearance: c101101_lava
+            north=false,south=true,east=true,west=true,up=false,down=true,fluid=none:
+              appearance: c011101
+            north=false,south=true,east=true,west=true,up=false,down=true,fluid=water:
+              appearance: c011101_water
+            north=false,south=true,east=true,west=true,up=false,down=true,fluid=lava:
+              appearance: c011101_lava
+            north=true,south=true,east=true,west=true,up=false,down=true,fluid=none:
+              appearance: c111101
+            north=true,south=true,east=true,west=true,up=false,down=true,fluid=water:
+              appearance: c111101_water
+            north=true,south=true,east=true,west=true,up=false,down=true,fluid=lava:
+              appearance: c111101_lava
+            north=false,south=false,east=false,west=false,up=true,down=true,fluid=none:
+              appearance: c000011
+            north=false,south=false,east=false,west=false,up=true,down=true,fluid=water:
+              appearance: c000011_water
+            north=false,south=false,east=false,west=false,up=true,down=true,fluid=lava:
+              appearance: c000011_lava
+            north=true,south=false,east=false,west=false,up=true,down=true,fluid=none:
+              appearance: c100011
+            north=true,south=false,east=false,west=false,up=true,down=true,fluid=water:
+              appearance: c100011_water
+            north=true,south=false,east=false,west=false,up=true,down=true,fluid=lava:
+              appearance: c100011_lava
+            north=false,south=true,east=false,west=false,up=true,down=true,fluid=none:
+              appearance: c010011
+            north=false,south=true,east=false,west=false,up=true,down=true,fluid=water:
+              appearance: c010011_water
+            north=false,south=true,east=false,west=false,up=true,down=true,fluid=lava:
+              appearance: c010011_lava
+            north=true,south=true,east=false,west=false,up=true,down=true,fluid=none:
+              appearance: c110011
+            north=true,south=true,east=false,west=false,up=true,down=true,fluid=water:
+              appearance: c110011_water
+            north=true,south=true,east=false,west=false,up=true,down=true,fluid=lava:
+              appearance: c110011_lava
+            north=false,south=false,east=true,west=false,up=true,down=true,fluid=none:
+              appearance: c001011
+            north=false,south=false,east=true,west=false,up=true,down=true,fluid=water:
+              appearance: c001011_water
+            north=false,south=false,east=true,west=false,up=true,down=true,fluid=lava:
+              appearance: c001011_lava
+            north=true,south=false,east=true,west=false,up=true,down=true,fluid=none:
+              appearance: c101011
+            north=true,south=false,east=true,west=false,up=true,down=true,fluid=water:
+              appearance: c101011_water
+            north=true,south=false,east=true,west=false,up=true,down=true,fluid=lava:
+              appearance: c101011_lava
+            north=false,south=true,east=true,west=false,up=true,down=true,fluid=none:
+              appearance: c011011
+            north=false,south=true,east=true,west=false,up=true,down=true,fluid=water:
+              appearance: c011011_water
+            north=false,south=true,east=true,west=false,up=true,down=true,fluid=lava:
+              appearance: c011011_lava
+            north=true,south=true,east=true,west=false,up=true,down=true,fluid=none:
+              appearance: c111011
+            north=true,south=true,east=true,west=false,up=true,down=true,fluid=water:
+              appearance: c111011_water
+            north=true,south=true,east=true,west=false,up=true,down=true,fluid=lava:
+              appearance: c111011_lava
+            north=false,south=false,east=false,west=true,up=true,down=true,fluid=none:
+              appearance: c000111
+            north=false,south=false,east=false,west=true,up=true,down=true,fluid=water:
+              appearance: c000111_water
+            north=false,south=false,east=false,west=true,up=true,down=true,fluid=lava:
+              appearance: c000111_lava
+            north=true,south=false,east=false,west=true,up=true,down=true,fluid=none:
+              appearance: c100111
+            north=true,south=false,east=false,west=true,up=true,down=true,fluid=water:
+              appearance: c100111_water
+            north=true,south=false,east=false,west=true,up=true,down=true,fluid=lava:
+              appearance: c100111_lava
+            north=false,south=true,east=false,west=true,up=true,down=true,fluid=none:
+              appearance: c010111
+            north=false,south=true,east=false,west=true,up=true,down=true,fluid=water:
+              appearance: c010111_water
+            north=false,south=true,east=false,west=true,up=true,down=true,fluid=lava:
+              appearance: c010111_lava
+            north=true,south=true,east=false,west=true,up=true,down=true,fluid=none:
+              appearance: c110111
+            north=true,south=true,east=false,west=true,up=true,down=true,fluid=water:
+              appearance: c110111_water
+            north=true,south=true,east=false,west=true,up=true,down=true,fluid=lava:
+              appearance: c110111_lava
+            north=false,south=false,east=true,west=true,up=true,down=true,fluid=none:
+              appearance: c001111
+            north=false,south=false,east=true,west=true,up=true,down=true,fluid=water:
+              appearance: c001111_water
+            north=false,south=false,east=true,west=true,up=true,down=true,fluid=lava:
+              appearance: c001111_lava
+            north=true,south=false,east=true,west=true,up=true,down=true,fluid=none:
+              appearance: c101111
+            north=true,south=false,east=true,west=true,up=true,down=true,fluid=water:
+              appearance: c101111_water
+            north=true,south=false,east=true,west=true,up=true,down=true,fluid=lava:
+              appearance: c101111_lava
+            north=false,south=true,east=true,west=true,up=true,down=true,fluid=none:
+              appearance: c011111
+            north=false,south=true,east=true,west=true,up=true,down=true,fluid=water:
+              appearance: c011111_water
+            north=false,south=true,east=true,west=true,up=true,down=true,fluid=lava:
+              appearance: c011111_lava
+            north=true,south=true,east=true,west=true,up=true,down=true,fluid=none:
+              appearance: c111111
+            north=true,south=true,east=true,west=true,up=true,down=true,fluid=water:
+              appearance: c111111_water
+            north=true,south=true,east=true,west=true,up=true,down=true,fluid=lava:
+              appearance: c111111_lava
 
 recipes:
   atlas:fluid_pipe:
@@ -305,6 +2382,8 @@ recipes:
     unlock-on-ingredient-obtained: true
     ingredients:
       - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:glass
     result:
       id: atlas:fluid_pipe
-      count: 1
+      count: 2

@@ -28,21 +28,18 @@ class PowerBlockInitializerTest {
         TestHelper.initPowerFactory()
         val ids = PowerBlockFactory.getRegisteredBlockIds()
 
-        // SmallSolarPanel: 5 (base + low/medium/high/full)
+        // SmallSolarPanel: 2 (base + active)
         // SmallDrill: 1
         // SmallBattery: 5 (base + low + medium + high + full)
         // PowerCable: 1
         // LavaGenerator: 2 (base + active)
         // AutoSmelter: 1
-        // PowerSplitter: 1
         // CobblestoneFactory: 1
         // ObsidianFactory: 1
         // Crusher: 1
-        // PowerMerger: 1
         // SoftTouchDrill: 1
-        // ExperienceExtractor: 2 (base + active)
-        // Total: 23
-        assertEquals(23, ids.size)
+        // Total: 16
+        assertEquals(16, ids.size)
     }
 
     @Test

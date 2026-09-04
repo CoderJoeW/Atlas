@@ -50,7 +50,7 @@ class FluidBlockFactoryTest {
     @Test
     fun `getRegisteredBlockIds returns all`() {
         FluidBlockFactory.register("a") { loc, _ -> FluidPump(loc) }
-        FluidBlockFactory.register("b") { loc, facing -> FluidPipe(loc, facing) }
+        FluidBlockFactory.register("b") { loc, _ -> FluidPipe(loc) }
         assertEquals(setOf("a", "b"), FluidBlockFactory.getRegisteredBlockIds())
     }
 }

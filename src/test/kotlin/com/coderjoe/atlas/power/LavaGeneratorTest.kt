@@ -5,7 +5,6 @@ import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.power.block.LavaGenerator
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
@@ -39,7 +38,7 @@ class LavaGeneratorTest {
     }
 
     @Test
-    fun `lava generator visual state idle when no power`() {
+    fun `lava generator visual state idle before it burns anything`() {
         val gen = LavaGenerator(TestHelper.createLocation())
         assertEquals(
             "atlas:lava_generator",
@@ -48,13 +47,46 @@ class LavaGeneratorTest {
     }
 
     @Test
-    fun `lava generator visual state active when has power`() {
+    fun `lava generator visual state active while burning lava`() {
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        PowerBlockRegistry(TestHelper.mockPlugin)
+
+        val gen = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 0.0))
+
+        val pipe = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH)
+        pipe.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_container")
+
+        gen.callPowerUpdate()
+        assertEquals("atlas:lava_generator_active", gen.getVisualStateBlockId())
+    }
+
+    @Test
+    fun `lava generator goes dark once the lava runs out`() {
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        PowerBlockRegistry(TestHelper.mockPlugin)
+
+        val gen = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 0.0))
+
+        val pipe = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.SOUTH)
+        pipe.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_container")
+
+        gen.callPowerUpdate()
+        assertEquals("atlas:lava_generator_active", gen.getVisualStateBlockId())
+
+        // the pipe is empty now, so the next update burns nothing
+        gen.callPowerUpdate()
+        assertEquals("atlas:lava_generator", gen.getVisualStateBlockId())
+    }
+
+    @Test
+    fun `lava generator holding charge but burning nothing reads as idle`() {
         val gen = LavaGenerator(TestHelper.createLocation())
-        gen.currentPower = 5
-        assertEquals(
-            "atlas:lava_generator_active",
-            gen.getVisualStateBlockId(),
-        )
+        gen.currentPower = gen.maxStorage
+
+        // stored charge is not the same as working - a full generator with no fire is dark
+        assertEquals("atlas:lava_generator", gen.getVisualStateBlockId())
     }
 
     @Test
@@ -71,12 +103,12 @@ class LavaGeneratorTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         gen.callPowerUpdate()
@@ -99,12 +131,12 @@ class LavaGeneratorTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         gen.callPowerUpdate()
@@ -184,12 +216,12 @@ class LavaGeneratorTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         gen.callPowerUpdate()
@@ -212,21 +244,21 @@ class LavaGeneratorTest {
         )
 
         val pipe1Loc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe1 = FluidPipe(pipe1Loc, BlockFace.SOUTH)
+        val pipe1 = FluidContainer(pipe1Loc, BlockFace.SOUTH)
         pipe1.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe1,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         val pipe2Loc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val pipe2 = FluidPipe(pipe2Loc, BlockFace.NORTH)
+        val pipe2 = FluidContainer(pipe2Loc, BlockFace.NORTH)
         pipe2.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe2,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         gen.callPowerUpdate()
@@ -255,7 +287,7 @@ class LavaGeneratorTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        gen.currentPower = 50
+        gen.currentPower = gen.maxStorage
         TestHelper.addToRegistry(
             powerRegistry,
             gen,
@@ -263,17 +295,17 @@ class LavaGeneratorTest {
         )
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidPipe(pipeLoc, BlockFace.SOUTH)
+        val pipe = FluidContainer(pipeLoc, BlockFace.SOUTH)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
             fluidRegistry,
             pipe,
-            "atlas:fluid_pipe",
+            "atlas:fluid_container",
         )
 
         gen.callPowerUpdate()
 
-        assertEquals(50, gen.currentPower)
+        assertEquals(gen.maxStorage, gen.currentPower)
         assertTrue(pipe.hasFluid())
     }
 

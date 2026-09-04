@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/custom/power_cable_shape_110000",
+  "textures": {
+    "casing": "minecraft:block/custom/power_cable_casing_powered",
+    "end": "minecraft:block/custom/power_cable_end_powered",
+    "socket": "minecraft:block/custom/power_cable_end_powered",
+    "particle": "minecraft:block/custom/power_cable_casing_powered"
+  }
+}

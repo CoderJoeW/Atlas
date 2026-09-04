@@ -107,7 +107,7 @@ class PowerBlockRegistryTest {
         val loc1 = TestHelper.createLocation(0.0, 64.0, 0.0)
         val loc2 = TestHelper.createLocation(1.0, 64.0, 0.0)
         val block1 = SmallSolarPanel(loc1)
-        val block2 = SmallBattery(loc2, BlockFace.NORTH)
+        val block2 = SmallBattery(loc2)
 
         TestHelper.addToRegistry(registry, block1, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, block2, "atlas:small_battery")

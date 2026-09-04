@@ -5,7 +5,6 @@ import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
-import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.BlockFace
@@ -16,10 +15,7 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4)
 
     companion object {
         const val BLOCK_ID = "atlas:small_solar_panel"
-        const val BLOCK_ID_LOW = "atlas:small_solar_panel_low"
-        const val BLOCK_ID_MEDIUM = "atlas:small_solar_panel_medium"
-        const val BLOCK_ID_HIGH = "atlas:small_solar_panel_high"
-        const val BLOCK_ID_FULL = "atlas:small_solar_panel_full"
+        const val BLOCK_ID_ACTIVE = "atlas:small_solar_panel_active"
 
         /** The panel hands power out through its base pad only; every other face is sealed. */
         val OUTPUT_FACE: BlockFace = BlockFace.DOWN
@@ -33,23 +29,23 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4)
                 displayName = "Small Solar Panel",
                 description = "Generator - produces 2 power/10s during daytime, outputs from its base",
                 placementType = PlacementType.SIMPLE,
-                additionalBlockIds =
-                    listOf(BLOCK_ID_LOW, BLOCK_ID_MEDIUM, BLOCK_ID_HIGH, BLOCK_ID_FULL),
+                additionalBlockIds = listOf(BLOCK_ID_ACTIVE),
                 constructor = { loc, _ -> SmallSolarPanel(loc) },
             )
     }
 
     override val baseBlockId: String = BLOCK_ID
 
-    /** One visual step per unit of charge; [maxStorage] is 4, so the array reads 0-4 directly. */
-    override fun getVisualStateBlockId(): String =
-        when (currentPower) {
-            0 -> BLOCK_ID
-            1 -> BLOCK_ID_LOW
-            2 -> BLOCK_ID_MEDIUM
-            3 -> BLOCK_ID_HIGH
-            else -> BLOCK_ID_FULL
-        }
+    /**
+     * Lit while the panel is taking in sunlight, dark when it is not.
+     *
+     * The readout answers "is this thing working?", which is what a player standing in front of
+     * it wants to know - not how many units happen to be buffered at that instant.
+     */
+    override fun getVisualStateBlockId(): String {
+        val world = location.world ?: return BLOCK_ID
+        return if (isCollectingSunlight(world)) BLOCK_ID_ACTIVE else BLOCK_ID
+    }
 
     override fun canOutputToward(face: BlockFace): Boolean = face == OUTPUT_FACE
 
@@ -71,20 +67,11 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4)
 
     /** Drives stored power out through [OUTPUT_FACE] into whatever sits below the base pad. */
     private fun pushPowerToOutput() {
-        if (!hasPower()) return
-        val registry = PowerBlockRegistry.instance ?: return
-        val target = registry.getAdjacentBlock(location, OUTPUT_FACE) ?: return
-        if (!target.canAcceptPower()) return
-
-        // debit first so a refused push can never leave the power in both blocks
-        val offered = removePowerToward(OUTPUT_FACE, currentPower)
-        val accepted = target.addPowerFrom(OUTPUT_FACE.oppositeFace, offered)
-        if (accepted < offered) addPower(offered - accepted)
+        val accepted = pushPowerToward(OUTPUT_FACE)
         if (accepted > 0) {
             plugin.logger.atlasInfo(
                 "SmallSolarPanel at ${location.coordinates} " +
-                    "pushed $accepted power to ${target::class.simpleName} " +
-                    "(now $currentPower/$maxStorage)",
+                    "pushed $accepted power out of its base (now $currentPower/$maxStorage)",
             )
         }
     }

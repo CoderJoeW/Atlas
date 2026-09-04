@@ -1,19 +1,21 @@
 package com.coderjoe.atlas.power.block
 
-import com.coderjoe.atlas.atlasInfo
-import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
-import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
-import org.bukkit.block.BlockFace
 
-class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location, maxStorage = 50) {
-    override val facing: BlockFace = if (facing == BlockFace.SELF) BlockFace.DOWN else facing
-
+/**
+ * Passive storage for a power run.
+ *
+ * Every face behaves the same way: generators and cable runs push charge in, machines and cable
+ * runs pull it back out. The battery never reaches for power itself and never picks a direction
+ * to send it, so there is no hidden front to line up when placing one.
+ */
+class SmallBattery(location: Location) : PowerBlock(location, maxStorage = 50) {
     override val canReceivePower: Boolean = true
     override val updateIntervalTicks: Long = 20L
+    override val isStorage: Boolean = true
 
     companion object {
         const val BLOCK_ID = "atlas:small_battery"
@@ -26,10 +28,10 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Small Battery",
-                description = "Storage - holds up to 50 power",
+                description = "Storage - holds up to 50 power, fills and drains from any side",
                 placementType = PlacementType.SIMPLE,
                 additionalBlockIds = listOf(BLOCK_ID_LOW, BLOCK_ID_MEDIUM, BLOCK_ID_HIGH, BLOCK_ID_FULL),
-                constructor = { loc, facing -> SmallBattery(loc, facing) },
+                constructor = { loc, _ -> SmallBattery(loc) },
             )
     }
 
@@ -53,21 +55,9 @@ class SmallBattery(location: Location, facing: BlockFace) : PowerBlock(location,
             else -> BLOCK_ID_FULL
         }
 
-    override fun powerUpdate() {
-        if (!canAcceptPower()) return
-        val registry = PowerBlockRegistry.instance ?: return
-
-        val source = registry.getAdjacentBlock(location, facing.oppositeFace)
-
-        if (source != null && canAcceptPower() && source.hasPower()) {
-            val pulled = source.removePowerToward(facing, 1)
-            if (pulled > 0) {
-                addPower(pulled)
-                plugin.logger.atlasInfo(
-                    "SmallBattery at ${location.coordinates} " +
-                        "pulled $pulled power from ${source::class.simpleName} (now $currentPower/$maxStorage)",
-                )
-            }
-        }
-    }
+    /**
+     * Storage does no work of its own - the charge readout still refreshes because the block tick
+     * updates the visual state after every [powerUpdate].
+     */
+    override fun powerUpdate() = Unit
 }
