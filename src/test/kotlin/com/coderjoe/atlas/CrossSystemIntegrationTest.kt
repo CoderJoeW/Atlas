@@ -4,6 +4,7 @@ import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
+import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlockRegistry
@@ -101,8 +102,8 @@ class CrossSystemIntegrationTest {
         val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 1.0))
         TestHelper.addToRegistry(powerRegistry, solar, "atlas:small_solar_panel")
 
-        // Cable at (0,64,1) facing DOWN - sits under the panel and pulls from it
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.DOWN)
+        // Cable at (0,64,1) - joins the panel above to the pump below, no facing to set
+        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0))
         TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
 
         // Pump at (0,63,1) - directly below the cable, in its output direction
@@ -126,13 +127,14 @@ class CrossSystemIntegrationTest {
         }
 
         // Pipe at (-1,63,1) facing WEST, pulling from the pump behind it (EAST = x+1)
-        val pipe = FluidPipe(TestHelper.createLocation(-1.0, 63.0, 1.0), BlockFace.WEST)
+        val pipe = FluidPipe(TestHelper.createLocation(-1.0, 63.0, 1.0))
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        // Step 1: solar generates 2 and pushes 1 down into the cable (cable maxStorage=1)
+        // Step 1: solar generates 2 and holds it; the cable makes that reachable to the pump,
+        // which draws off the run rather than out of the cable itself
         solar.callPowerUpdate()
-        assertEquals(1, solar.currentPower)
-        assertEquals(1, cable.currentPower)
+        assertEquals(2, solar.currentPower)
+        assertTrue(cable.canSupplyPower())
 
         // Step 3: pump extracts from cauldron using cable's power
         pump.callFluidUpdate()
@@ -209,23 +211,16 @@ class CrossSystemIntegrationTest {
         pump.callFluidUpdate()
         assertEquals(FluidType.WATER, pump.storedFluid)
 
-        // Pipe at (0,64,1) facing NORTH - pulls from pump behind it (SOUTH = z-1 = pump at 0,64,0)
-        // canRemoveFluidFrom(NORTH) checks: NORTH == cauldronFace.oppositeFace
-        // cauldronFace was set to NORTH (where cauldron was found), oppositeFace = SOUTH != NORTH
-        // So we need the pipe to pull from the correct direction
-        // Pump's cauldronFace = NORTH, so oppositeFace = SOUTH
-        // Pipe must request from SOUTH direction: canRemoveFluidFrom(SOUTH)
-        // Pipe facing NORTH pulls from behind = SOUTH, and calls canRemoveFluidFrom(NORTH)
-        // That won't match. Let's put pipe facing SOUTH instead.
-        // Pipe facing SOUTH: behind = NORTH, source at z-1 = pump
-        // pipe calls canRemoveFluidFrom(SOUTH), cauldronFace=NORTH, oppositeFace=SOUTH ✓
-
-        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
+        // A pipe holds nothing, so the run needs somewhere to put the water: pump -> pipe -> tank.
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        // Step 2: Pipe pulls from pump
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
+        TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
+
+        // Step 2: the run carries it from the pump to the tank in one tick
         pipe.callFluidUpdate()
-        assertEquals(FluidType.WATER, pipe.storedFluid)
+        assertEquals(FluidType.WATER, tank.storedFluid)
         assertEquals(FluidType.NONE, pump.storedFluid)
     }
 }

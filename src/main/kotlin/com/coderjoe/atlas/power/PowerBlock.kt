@@ -13,6 +13,14 @@ abstract class PowerBlock(
 ) : AtlasBlock(location) {
     protected open val canReceivePower: Boolean = true
 
+    /**
+     * Whether this block exists to hold power rather than to produce or spend it.
+     *
+     * Storage sits on a run as both a source and a sink, so without knowing which blocks are
+     * storage the network would move charge from one battery to another and straight back again.
+     */
+    open val isStorage: Boolean = false
+
     fun hasPower(): Boolean = currentPower > 0
 
     fun canAcceptPower(): Boolean = canReceivePower && currentPower < maxStorage
@@ -31,6 +39,15 @@ abstract class PowerBlock(
     }
 
     /**
+     * Whether power can be drawn from this block right now.
+     *
+     * Usually that just means it is holding some, but a cable holds nothing of its own and
+     * answers for the run it belongs to instead. Anything asking "is there power here?" rather
+     * than moving it should ask this.
+     */
+    open fun canSupplyPower(): Boolean = hasPower()
+
+    /**
      * Whether this block hands power out through [face], where [face] points from this block
      * toward the consumer. Sources with a dedicated output port override this; by default a
      * block can be drained from any side.
@@ -41,7 +58,7 @@ abstract class PowerBlock(
      * Face-aware counterpart to [removePower]. [face] points from this block toward the
      * consumer, and extraction yields nothing when [canOutputToward] rejects that face.
      */
-    fun removePowerToward(
+    open fun removePowerToward(
         face: BlockFace,
         amount: Int,
     ): Int {
@@ -57,6 +74,17 @@ abstract class PowerBlock(
     open fun canAcceptFrom(face: BlockFace): Boolean = true
 
     /**
+     * Whether power could ever move through [face], where [face] points from this block toward
+     * the neighbour. This asks about the port, not the moment: a battery that happens to be full
+     * still connects, because it will take power again as soon as it drains.
+     *
+     * A cable uses this to decide which faces to grow an arm on, so the wiring a player sees
+     * matches where power can actually flow - a panel that only outputs from its base draws no
+     * arm on its sides.
+     */
+    open fun canConnectToward(face: BlockFace): Boolean = canOutputToward(face) || (canReceivePower && canAcceptFrom(face))
+
+    /**
      * Face-aware counterpart to [addPower]. [face] points from this block toward the pusher, and
      * nothing is accepted when [canAcceptFrom] rejects that face.
      */
@@ -66,6 +94,30 @@ abstract class PowerBlock(
     ): Int {
         if (!canAcceptFrom(face)) return 0
         return addPower(amount)
+    }
+
+    /**
+     * Hands up to [amount] of stored power to the neighbour on [face], honouring this block's own
+     * output rules and the receiver's input rules.
+     *
+     * Power is debited before it is offered, so a refused push can never leave the same unit
+     * counted in two blocks at once; whatever the receiver declines is credited straight back.
+     * Returns how much the neighbour actually took.
+     */
+    protected fun pushPowerToward(
+        face: BlockFace,
+        amount: Int = currentPower,
+    ): Int {
+        if (amount <= 0) return 0
+        val registry = PowerBlockRegistry.instance ?: return 0
+        val target = registry.getAdjacentBlock(location, face) ?: return 0
+        if (!target.canAcceptPower()) return 0
+
+        val offered = removePowerToward(face, amount)
+        if (offered <= 0) return 0
+        val accepted = target.addPowerFrom(face.oppositeFace, offered)
+        if (accepted < offered) addPower(offered - accepted)
+        return accepted
     }
 
     protected fun pullPowerFromNeighbors() {
