@@ -53,6 +53,9 @@ items:
             facing:
               type: horizontal_direction
               default: north
+            running:
+              type: boolean
+              default: false
           # Rendered as display entities rather than vanilla block states: all four directions
           # share one forced state and one model, spun with `yaw`. That costs nothing from the
           # auto-state pool, and it means a single north-facing top texture serves every rotation
@@ -77,15 +80,87 @@ items:
               entity_renderer:
                 item: atlas:conveyor_belt
                 yaw: -90
+            north_running:
+              state: barrier
+              entity_renderer:
+                item: atlas:conveyor_belt_running
+            south_running:
+              state: barrier
+              entity_renderer:
+                item: atlas:conveyor_belt_running
+                yaw: 180
+            east_running:
+              state: barrier
+              entity_renderer:
+                item: atlas:conveyor_belt_running
+                yaw: 90
+            west_running:
+              state: barrier
+              entity_renderer:
+                item: atlas:conveyor_belt_running
+                yaw: -90
           variants:
-            facing=north:
+            facing=north,running=false:
               appearance: north
-            facing=south:
+            facing=south,running=false:
               appearance: south
-            facing=east:
+            facing=east,running=false:
               appearance: east
-            facing=west:
+            facing=west,running=false:
               appearance: west
+            facing=north,running=true:
+              appearance: north_running
+            facing=south,running=true:
+              appearance: south_running
+            facing=east,running=true:
+              appearance: east_running
+            facing=west,running=true:
+              appearance: west_running
+
+items#1:
+  # Render target only - the lit belt is never held or given, so it needs no icon and no recipe.
+  atlas:conveyor_belt_running:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#808080:#C0C0C0>Conveyor Belt"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/conveyor_belt_running
+      generation:
+        parent: minecraft:block/custom/conveyor_belt_base
+        textures:
+          north: minecraft:block/custom/conveyor_belt_front_running
+          south: minecraft:block/custom/conveyor_belt_back_running
+          east: minecraft:block/custom/conveyor_belt_side_running
+          west: minecraft:block/custom/conveyor_belt_side_running
+          up: minecraft:block/custom/conveyor_belt_top_running
+          down: minecraft:block/custom/conveyor_belt_bottom
+    behavior:
+      type: block_item
+      block:
+        loot:
+          pools:
+            - rolls: 1
+              entries:
+                - type: item
+                  item: atlas:conveyor_belt
+        settings:
+          hardness: 2.0
+          resistance: 2.0
+          is-suffocating: false
+          is-redstone-conductor: false
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        state:
+          state: barrier
+          entity_renderer:
+            item: atlas:conveyor_belt_running
 
 recipes:
   atlas:conveyor_belt:

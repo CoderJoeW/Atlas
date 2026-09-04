@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.transport.block
 
 import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.transport.TransportBlock
 import org.bukkit.Location
@@ -54,6 +55,18 @@ class ConveyorBelt(location: Location, override val facing: BlockFace) : Transpo
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
+    /**
+     * Whether anything is riding the belt.
+     *
+     * The belt lights its chevrons while it is carrying, so a run reads as working at a glance
+     * instead of looking identical whether or not anything is on it.
+     */
+    var isRunning: Boolean = false
+        private set
+
+    /** Remembered so the block state is only rewritten when the belt starts or stops carrying. */
+    private var renderedRunning: Boolean? = null
+
     override fun transportUpdate() {
         val world = location.world ?: return
 
@@ -61,6 +74,10 @@ class ConveyorBelt(location: Location, override val facing: BlockFace) : Transpo
         val items =
             world.getNearbyEntities(centre, REACH_HORIZONTAL, REACH_VERTICAL, REACH_HORIZONTAL)
                 .filterIsInstance<Item>()
+
+        // set before the empty-belt return, or a belt that just delivered its last item stays lit
+        isRunning = items.isNotEmpty()
+        renderState()
         if (items.isEmpty()) return
 
         val destination = containerAhead()
@@ -68,6 +85,13 @@ class ConveyorBelt(location: Location, override val facing: BlockFace) : Transpo
             if (destination != null && deposit(destination, item)) continue
             ride(item, centre)
         }
+    }
+
+    /** Lights the chevrons while the belt is carrying and darkens them when it empties. */
+    private fun renderState() {
+        if (isRunning == renderedRunning) return
+        CraftEngineHelper.setBooleanProperty(location, "running", isRunning)
+        renderedRunning = isRunning
     }
 
     /** Drives [item] along the belt, steering it back toward the centre line as it goes. */
