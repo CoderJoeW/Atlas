@@ -76,7 +76,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c000000_water:
               auto-state: cave_vines
@@ -85,7 +85,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c000000_lava:
               auto-state: cave_vines
@@ -94,7 +94,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c100000:
               auto-state: cave_vines
@@ -103,7 +103,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c100000_water:
               auto-state: cave_vines
@@ -112,7 +112,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c100000_lava:
               auto-state: cave_vines
@@ -121,7 +121,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c010000:
               auto-state: cave_vines
@@ -130,7 +130,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c010000_water:
               auto-state: cave_vines
@@ -139,7 +139,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c010000_lava:
               auto-state: cave_vines
@@ -148,7 +148,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c110000:
               auto-state: cave_vines
@@ -157,7 +157,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c110000_water:
               auto-state: cave_vines
@@ -166,7 +166,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c110000_lava:
               auto-state: cave_vines
@@ -175,7 +175,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c001000:
               auto-state: cave_vines
@@ -184,7 +184,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c001000_water:
               auto-state: cave_vines
@@ -193,7 +193,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c001000_lava:
               auto-state: cave_vines
@@ -202,7 +202,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c101000:
               auto-state: cave_vines
@@ -211,7 +211,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c101000_water:
               auto-state: cave_vines
@@ -220,7 +220,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c101000_lava:
               auto-state: cave_vines
@@ -229,7 +229,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c011000:
               auto-state: cave_vines
@@ -238,7 +238,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c011000_water:
               auto-state: cave_vines
@@ -247,7 +247,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c011000_lava:
               auto-state: cave_vines
@@ -256,7 +256,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c111000:
               auto-state: cave_vines
@@ -265,7 +265,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c111000_water:
               auto-state: cave_vines
@@ -274,7 +274,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c111000_lava:
               auto-state: cave_vines
@@ -283,7 +283,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111000
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c000100:
               auto-state: cave_vines
@@ -292,7 +292,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c000100_water:
               auto-state: cave_vines
@@ -301,7 +301,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c000100_lava:
               auto-state: cave_vines
@@ -310,7 +310,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c100100:
               auto-state: cave_vines
@@ -319,7 +319,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c100100_water:
               auto-state: cave_vines
@@ -328,7 +328,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c100100_lava:
               auto-state: cave_vines
@@ -337,7 +337,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c010100:
               auto-state: cave_vines
@@ -346,7 +346,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c010100_water:
               auto-state: cave_vines
@@ -355,7 +355,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c010100_lava:
               auto-state: cave_vines
@@ -364,7 +364,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c110100:
               auto-state: cave_vines
@@ -373,7 +373,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c110100_water:
               auto-state: cave_vines
@@ -382,7 +382,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c110100_lava:
               auto-state: cave_vines
@@ -391,7 +391,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c001100:
               auto-state: cave_vines
@@ -400,7 +400,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c001100_water:
               auto-state: cave_vines
@@ -409,7 +409,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c001100_lava:
               auto-state: cave_vines
@@ -418,7 +418,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c101100:
               auto-state: cave_vines
@@ -427,7 +427,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c101100_water:
               auto-state: cave_vines
@@ -436,7 +436,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c101100_lava:
               auto-state: cave_vines
@@ -445,7 +445,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c011100:
               auto-state: cave_vines
@@ -454,7 +454,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c011100_water:
               auto-state: cave_vines
@@ -463,7 +463,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c011100_lava:
               auto-state: cave_vines
@@ -472,7 +472,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c111100:
               auto-state: cave_vines
@@ -481,7 +481,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c111100_water:
               auto-state: cave_vines
@@ -490,7 +490,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c111100_lava:
               auto-state: cave_vines
@@ -499,7 +499,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111100
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c000010:
               auto-state: cave_vines
@@ -508,7 +508,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c000010_water:
               auto-state: cave_vines
@@ -517,7 +517,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c000010_lava:
               auto-state: weeping_vines
@@ -526,7 +526,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c100010:
               auto-state: weeping_vines
@@ -535,7 +535,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c100010_water:
               auto-state: weeping_vines
@@ -544,7 +544,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c100010_lava:
               auto-state: weeping_vines
@@ -553,7 +553,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c010010:
               auto-state: weeping_vines
@@ -562,7 +562,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c010010_water:
               auto-state: weeping_vines
@@ -571,7 +571,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c010010_lava:
               auto-state: weeping_vines
@@ -580,7 +580,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c110010:
               auto-state: weeping_vines
@@ -589,7 +589,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c110010_water:
               auto-state: weeping_vines
@@ -598,7 +598,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c110010_lava:
               auto-state: weeping_vines
@@ -607,7 +607,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c001010:
               auto-state: weeping_vines
@@ -616,7 +616,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c001010_water:
               auto-state: weeping_vines
@@ -625,7 +625,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c001010_lava:
               auto-state: weeping_vines
@@ -634,7 +634,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c101010:
               auto-state: weeping_vines
@@ -643,7 +643,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c101010_water:
               auto-state: weeping_vines
@@ -652,7 +652,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c101010_lava:
               auto-state: weeping_vines
@@ -661,7 +661,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c011010:
               auto-state: weeping_vines
@@ -670,7 +670,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c011010_water:
               auto-state: weeping_vines
@@ -679,7 +679,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c011010_lava:
               auto-state: weeping_vines
@@ -688,7 +688,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c111010:
               auto-state: weeping_vines
@@ -697,7 +697,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c111010_water:
               auto-state: weeping_vines
@@ -706,7 +706,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c111010_lava:
               auto-state: weeping_vines
@@ -715,7 +715,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111010
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c000110:
               auto-state: weeping_vines
@@ -724,7 +724,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c000110_water:
               auto-state: weeping_vines
@@ -733,7 +733,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c000110_lava:
               auto-state: weeping_vines
@@ -742,7 +742,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c100110:
               auto-state: twisting_vines
@@ -751,7 +751,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c100110_water:
               auto-state: twisting_vines
@@ -760,7 +760,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c100110_lava:
               auto-state: twisting_vines
@@ -769,7 +769,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c010110:
               auto-state: twisting_vines
@@ -778,7 +778,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c010110_water:
               auto-state: twisting_vines
@@ -787,7 +787,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c010110_lava:
               auto-state: twisting_vines
@@ -796,7 +796,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c110110:
               auto-state: twisting_vines
@@ -805,7 +805,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c110110_water:
               auto-state: twisting_vines
@@ -814,7 +814,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c110110_lava:
               auto-state: twisting_vines
@@ -823,7 +823,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c001110:
               auto-state: twisting_vines
@@ -832,7 +832,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c001110_water:
               auto-state: twisting_vines
@@ -841,7 +841,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c001110_lava:
               auto-state: twisting_vines
@@ -850,7 +850,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c101110:
               auto-state: twisting_vines
@@ -859,7 +859,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c101110_water:
               auto-state: twisting_vines
@@ -868,7 +868,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c101110_lava:
               auto-state: twisting_vines
@@ -877,7 +877,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c011110:
               auto-state: twisting_vines
@@ -886,7 +886,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c011110_water:
               auto-state: twisting_vines
@@ -895,7 +895,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c011110_lava:
               auto-state: twisting_vines
@@ -904,7 +904,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c111110:
               auto-state: twisting_vines
@@ -913,7 +913,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c111110_water:
               auto-state: twisting_vines
@@ -922,7 +922,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c111110_lava:
               auto-state: twisting_vines
@@ -931,7 +931,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111110
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c000001:
               auto-state: twisting_vines
@@ -940,7 +940,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c000001_water:
               auto-state: twisting_vines
@@ -949,7 +949,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c000001_lava:
               auto-state: twisting_vines
@@ -958,7 +958,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c100001:
               auto-state: twisting_vines
@@ -967,7 +967,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c100001_water:
               auto-state: tripwire
@@ -976,7 +976,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c100001_lava:
               auto-state: tripwire
@@ -985,7 +985,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c010001:
               auto-state: tripwire
@@ -994,7 +994,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c010001_water:
               auto-state: tripwire
@@ -1003,7 +1003,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c010001_lava:
               auto-state: tripwire
@@ -1012,7 +1012,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c110001:
               auto-state: tripwire
@@ -1021,7 +1021,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c110001_water:
               auto-state: tripwire
@@ -1030,7 +1030,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c110001_lava:
               auto-state: tripwire
@@ -1039,7 +1039,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c001001:
               auto-state: tripwire
@@ -1048,7 +1048,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c001001_water:
               auto-state: tripwire
@@ -1057,7 +1057,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c001001_lava:
               auto-state: tripwire
@@ -1066,7 +1066,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c101001:
               auto-state: tripwire
@@ -1075,7 +1075,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c101001_water:
               auto-state: tripwire
@@ -1084,7 +1084,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c101001_lava:
               auto-state: tripwire
@@ -1093,7 +1093,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c011001:
               auto-state: tripwire
@@ -1102,7 +1102,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c011001_water:
               auto-state: tripwire
@@ -1111,7 +1111,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c011001_lava:
               auto-state: tripwire
@@ -1120,7 +1120,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c111001:
               auto-state: tripwire
@@ -1129,7 +1129,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c111001_water:
               auto-state: tripwire
@@ -1138,7 +1138,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c111001_lava:
               auto-state: tripwire
@@ -1147,7 +1147,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111001
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c000101:
               auto-state: tripwire
@@ -1156,7 +1156,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c000101_water:
               auto-state: tripwire
@@ -1165,7 +1165,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c000101_lava:
               auto-state: tripwire
@@ -1174,7 +1174,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c100101:
               auto-state: tripwire
@@ -1183,7 +1183,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c100101_water:
               auto-state: tripwire
@@ -1192,7 +1192,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c100101_lava:
               auto-state: tripwire
@@ -1201,7 +1201,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c010101:
               auto-state: tripwire
@@ -1210,7 +1210,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c010101_water:
               auto-state: tripwire
@@ -1219,7 +1219,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c010101_lava:
               auto-state: tripwire
@@ -1228,7 +1228,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c110101:
               auto-state: tripwire
@@ -1237,7 +1237,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c110101_water:
               auto-state: tripwire
@@ -1246,7 +1246,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c110101_lava:
               auto-state: tripwire
@@ -1255,7 +1255,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c001101:
               auto-state: tripwire
@@ -1264,7 +1264,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c001101_water:
               auto-state: tripwire
@@ -1273,7 +1273,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c001101_lava:
               auto-state: tripwire
@@ -1282,7 +1282,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c101101:
               auto-state: tripwire
@@ -1291,7 +1291,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c101101_water:
               auto-state: tripwire
@@ -1300,7 +1300,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c101101_lava:
               auto-state: tripwire
@@ -1309,7 +1309,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c011101:
               auto-state: tripwire
@@ -1318,7 +1318,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c011101_water:
               auto-state: tripwire
@@ -1327,7 +1327,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c011101_lava:
               auto-state: tripwire
@@ -1336,7 +1336,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c111101:
               auto-state: tripwire
@@ -1345,7 +1345,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c111101_water:
               auto-state: tripwire
@@ -1354,7 +1354,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c111101_lava:
               auto-state: tripwire
@@ -1363,7 +1363,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111101
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c000011:
               auto-state: tripwire
@@ -1372,7 +1372,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c000011_water:
               auto-state: tripwire
@@ -1381,7 +1381,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c000011_lava:
               auto-state: tripwire
@@ -1390,7 +1390,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c100011:
               auto-state: tripwire
@@ -1399,7 +1399,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c100011_water:
               auto-state: tripwire
@@ -1408,7 +1408,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c100011_lava:
               auto-state: tripwire
@@ -1417,7 +1417,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c010011:
               auto-state: tripwire
@@ -1426,7 +1426,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c010011_water:
               auto-state: tripwire
@@ -1435,7 +1435,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c010011_lava:
               auto-state: tripwire
@@ -1444,7 +1444,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c110011:
               auto-state: tripwire
@@ -1453,7 +1453,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c110011_water:
               auto-state: tripwire
@@ -1462,7 +1462,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c110011_lava:
               auto-state: leaves
@@ -1471,7 +1471,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c001011:
               auto-state: leaves
@@ -1480,7 +1480,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c001011_water:
               auto-state: leaves
@@ -1489,7 +1489,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c001011_lava:
               auto-state: leaves
@@ -1498,7 +1498,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c101011:
               auto-state: leaves
@@ -1507,7 +1507,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c101011_water:
               auto-state: leaves
@@ -1516,7 +1516,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c101011_lava:
               auto-state: leaves
@@ -1525,7 +1525,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c011011:
               auto-state: leaves
@@ -1534,7 +1534,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c011011_water:
               auto-state: leaves
@@ -1543,7 +1543,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c011011_lava:
               auto-state: leaves
@@ -1552,7 +1552,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c111011:
               auto-state: leaves
@@ -1561,7 +1561,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c111011_water:
               auto-state: leaves
@@ -1570,7 +1570,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c111011_lava:
               auto-state: leaves
@@ -1579,7 +1579,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111011
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c000111:
               auto-state: leaves
@@ -1588,7 +1588,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c000111_water:
               auto-state: leaves
@@ -1597,7 +1597,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c000111_lava:
               auto-state: leaves
@@ -1606,7 +1606,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_000111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c100111:
               auto-state: leaves
@@ -1615,7 +1615,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c100111_water:
               auto-state: leaves
@@ -1624,7 +1624,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c100111_lava:
               auto-state: leaves
@@ -1633,7 +1633,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_100111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c010111:
               auto-state: leaves
@@ -1642,7 +1642,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c010111_water:
               auto-state: leaves
@@ -1651,7 +1651,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c010111_lava:
               auto-state: leaves
@@ -1660,7 +1660,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_010111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c110111:
               auto-state: leaves
@@ -1669,7 +1669,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c110111_water:
               auto-state: leaves
@@ -1678,7 +1678,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c110111_lava:
               auto-state: leaves
@@ -1687,7 +1687,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_110111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c001111:
               auto-state: leaves
@@ -1696,7 +1696,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c001111_water:
               auto-state: leaves
@@ -1705,7 +1705,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c001111_lava:
               auto-state: leaves
@@ -1714,7 +1714,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_001111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c101111:
               auto-state: leaves
@@ -1723,7 +1723,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c101111_water:
               auto-state: leaves
@@ -1732,7 +1732,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c101111_lava:
               auto-state: leaves
@@ -1741,7 +1741,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_101111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c011111:
               auto-state: leaves
@@ -1750,7 +1750,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c011111_water:
               auto-state: leaves
@@ -1759,7 +1759,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c011111_lava:
               auto-state: leaves
@@ -1768,7 +1768,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_011111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
             c111111:
               auto-state: leaves
@@ -1777,7 +1777,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_none
             c111111_water:
               auto-state: leaves
@@ -1786,7 +1786,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_water
             c111111_lava:
               auto-state: leaves
@@ -1795,7 +1795,7 @@ items:
                 generation:
                   parent: minecraft:block/custom/fluid_pipe_shape_111111
                   textures:
-                    glass: minecraft:block/custom/fluid_pipe_glass
+                    frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_pipe_core_lava
           variants:
             north=false,south=false,east=false,west=false,up=false,down=false,fluid=none:
