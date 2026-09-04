@@ -7,17 +7,13 @@ import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
-import com.coderjoe.atlas.fluid.block.FluidSplitter
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
-import com.coderjoe.atlas.power.block.PowerMerger
-import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.transport.TransportBlock
@@ -27,7 +23,6 @@ import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
-import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.utility.block.SoftTouchDrill
@@ -212,11 +207,9 @@ object TestHelper {
                 SmallSolarPanel.descriptor, SmallDrill.descriptor,
                 SmallBattery.descriptor, PowerCable.descriptor,
                 LavaGenerator.descriptor, AutoSmelter.descriptor,
-                PowerSplitter.descriptor, CobblestoneFactory.descriptor,
+                CobblestoneFactory.descriptor,
                 ObsidianFactory.descriptor, Crusher.descriptor,
-                PowerMerger.descriptor,
                 SoftTouchDrill.descriptor,
-                ExperienceExtractor.descriptor,
             ),
         )
     }
@@ -227,8 +220,6 @@ object TestHelper {
                 FluidPump.descriptor,
                 FluidPipe.descriptor,
                 FluidContainer.descriptor,
-                FluidMerger.descriptor,
-                FluidSplitter.descriptor,
             ),
         )
     }

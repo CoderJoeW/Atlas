@@ -11,10 +11,8 @@ import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockPersistence
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidMerger
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
-import com.coderjoe.atlas.fluid.block.FluidSplitter
 import com.coderjoe.atlas.guide.GuideBook
 import com.coderjoe.atlas.guide.GuideBookListener
 import com.coderjoe.atlas.power.PowerBlock
@@ -24,8 +22,6 @@ import com.coderjoe.atlas.power.PowerBlockPersistence
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
-import com.coderjoe.atlas.power.block.PowerMerger
-import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.transport.TransportBlock
@@ -37,7 +33,6 @@ import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
-import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.utility.block.SoftTouchDrill
@@ -200,13 +195,10 @@ class Atlas : JavaPlugin() {
             PowerCable.descriptor,
             LavaGenerator.descriptor,
             AutoSmelter.descriptor,
-            PowerSplitter.descriptor,
             CobblestoneFactory.descriptor,
             ObsidianFactory.descriptor,
             Crusher.descriptor,
-            PowerMerger.descriptor,
             SoftTouchDrill.descriptor,
-            ExperienceExtractor.descriptor,
         ).associateBy { it.baseBlockId }
     }
 
@@ -215,8 +207,6 @@ class Atlas : JavaPlugin() {
             FluidPump.descriptor,
             FluidPipe.descriptor,
             FluidContainer.descriptor,
-            FluidMerger.descriptor,
-            FluidSplitter.descriptor,
         ).associateBy { it.baseBlockId }
     }
 }

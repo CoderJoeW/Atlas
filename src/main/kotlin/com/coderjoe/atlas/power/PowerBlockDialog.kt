@@ -6,14 +6,11 @@ import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.core.displayName
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
-import com.coderjoe.atlas.power.block.PowerMerger
-import com.coderjoe.atlas.power.block.PowerSplitter
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
-import com.coderjoe.atlas.utility.block.ExperienceExtractor
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import com.coderjoe.atlas.utility.block.SmallDrill
 import com.coderjoe.atlas.utility.block.SoftTouchDrill
@@ -167,16 +164,13 @@ object PowerBlockDialog {
                         .color(NamedTextColor.GRAY)
                 }
                 is PowerCable ->
-                    Component.text("Cable - transfers power in facing direction")
+                    Component.text("Cable - carries power across the whole run")
                         .color(NamedTextColor.GRAY)
                 is LavaGenerator ->
                     Component.text("Generator - produces ${LavaGenerator.POWER_PER_LAVA} power per lava unit")
                         .color(NamedTextColor.GRAY)
                 is AutoSmelter ->
                     Component.text("Machine - smelts items passing through, consumes ${AutoSmelter.POWER_PER_SMELT} power/item")
-                        .color(NamedTextColor.GRAY)
-                is PowerSplitter ->
-                    Component.text("Cable - distributes power to all adjacent faces")
                         .color(NamedTextColor.GRAY)
                 is CobblestoneFactory ->
                     Component.text("Machine - consumes ${CobblestoneFactory.POWER_COST} power + water + lava → cobblestone")
@@ -186,15 +180,6 @@ object PowerBlockDialog {
                         .color(NamedTextColor.GRAY)
                 is Crusher ->
                     Component.text("Machine - crushes ore blocks into 2x ores, consumes ${Crusher.POWER_PER_CRUSH} power/item")
-                        .color(NamedTextColor.GRAY)
-                is PowerMerger ->
-                    Component.text("Cable - merges power from all sides, outputs in facing direction")
-                        .color(NamedTextColor.GRAY)
-                is ExperienceExtractor ->
-                    Component.text(
-                        "Machine - extracts XP from items via hopper, outputs Liquid Experience, " +
-                            "consumes ${ExperienceExtractor.POWER_PER_EXTRACT} power/item",
-                    )
                         .color(NamedTextColor.GRAY)
                 else ->
                     Component.text("Power block")

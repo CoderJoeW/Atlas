@@ -31,7 +31,7 @@ items:
               default: north
             fluid:
               type: string
-              values: [none, water, lava, experience]
+              values: [none, water, lava]
               default: none
             fill_level:
               type: int
@@ -129,45 +129,6 @@ items:
                     west: minecraft:block/custom/fluid_container_west_lava_full
                     up: minecraft:block/custom/fluid_container_up_lava_full
                     down: minecraft:block/custom/fluid_container_down_lava_full
-            xp_low:
-              auto-state: leaves
-              model:
-                path: minecraft:block/custom/fluid_container_xp_low
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/fluid_container_north_xp_low
-                    south: minecraft:block/custom/fluid_container_south_xp_low
-                    east: minecraft:block/custom/fluid_container_east_xp_low
-                    west: minecraft:block/custom/fluid_container_west_xp_low
-                    up: minecraft:block/custom/fluid_container_up_xp_low
-                    down: minecraft:block/custom/fluid_container_down_xp_low
-            xp_medium:
-              auto-state: leaves
-              model:
-                path: minecraft:block/custom/fluid_container_xp_medium
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/fluid_container_north_xp_medium
-                    south: minecraft:block/custom/fluid_container_south_xp_medium
-                    east: minecraft:block/custom/fluid_container_east_xp_medium
-                    west: minecraft:block/custom/fluid_container_west_xp_medium
-                    up: minecraft:block/custom/fluid_container_up_xp_medium
-                    down: minecraft:block/custom/fluid_container_down_xp_medium
-            xp_full:
-              auto-state: leaves
-              model:
-                path: minecraft:block/custom/fluid_container_xp_full
-                generation:
-                  parent: minecraft:block/cube
-                  textures:
-                    north: minecraft:block/custom/fluid_container_north_xp_full
-                    south: minecraft:block/custom/fluid_container_south_xp_full
-                    east: minecraft:block/custom/fluid_container_east_xp_full
-                    west: minecraft:block/custom/fluid_container_west_xp_full
-                    up: minecraft:block/custom/fluid_container_up_xp_full
-                    down: minecraft:block/custom/fluid_container_down_xp_full
           variants:
             facing=north,fluid=none,fill_level=0:
               appearance: empty
@@ -313,54 +274,6 @@ items:
               appearance: lava_full
             facing=down,fluid=lava,fill_level=3:
               appearance: lava_full
-            facing=north,fluid=experience,fill_level=0:
-              appearance: empty
-            facing=south,fluid=experience,fill_level=0:
-              appearance: empty
-            facing=east,fluid=experience,fill_level=0:
-              appearance: empty
-            facing=west,fluid=experience,fill_level=0:
-              appearance: empty
-            facing=up,fluid=experience,fill_level=0:
-              appearance: empty
-            facing=down,fluid=experience,fill_level=0:
-              appearance: empty
-            facing=north,fluid=experience,fill_level=1:
-              appearance: xp_low
-            facing=south,fluid=experience,fill_level=1:
-              appearance: xp_low
-            facing=east,fluid=experience,fill_level=1:
-              appearance: xp_low
-            facing=west,fluid=experience,fill_level=1:
-              appearance: xp_low
-            facing=up,fluid=experience,fill_level=1:
-              appearance: xp_low
-            facing=down,fluid=experience,fill_level=1:
-              appearance: xp_low
-            facing=north,fluid=experience,fill_level=2:
-              appearance: xp_medium
-            facing=south,fluid=experience,fill_level=2:
-              appearance: xp_medium
-            facing=east,fluid=experience,fill_level=2:
-              appearance: xp_medium
-            facing=west,fluid=experience,fill_level=2:
-              appearance: xp_medium
-            facing=up,fluid=experience,fill_level=2:
-              appearance: xp_medium
-            facing=down,fluid=experience,fill_level=2:
-              appearance: xp_medium
-            facing=north,fluid=experience,fill_level=3:
-              appearance: xp_full
-            facing=south,fluid=experience,fill_level=3:
-              appearance: xp_full
-            facing=east,fluid=experience,fill_level=3:
-              appearance: xp_full
-            facing=west,fluid=experience,fill_level=3:
-              appearance: xp_full
-            facing=up,fluid=experience,fill_level=3:
-              appearance: xp_full
-            facing=down,fluid=experience,fill_level=3:
-              appearance: xp_full
 
 recipes:
   atlas:fluid_container:
