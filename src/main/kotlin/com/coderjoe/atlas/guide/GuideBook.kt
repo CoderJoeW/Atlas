@@ -86,45 +86,52 @@ object GuideBook {
                 .append(Component.text("Power System\n", Style.style(TextDecoration.BOLD).color(gold)))
                 .append(
                     Component.text(
-                        "\nGenerators produce\npower. Cables transfer\nit. Batteries store it.\nMachines consume it.\n\n",
+                        "\nGenerators produce\npower. Cables transfer\nit. Batteries store it.\n" +
+                            "Machines consume it.\n\nHold an Atlas Wrench\n" +
+                            "and right-click a block\nto inspect it.\n\n",
                         darkGray,
                     ),
                 )
-                .append(Component.text("Pull-based: ", bold))
-                .append(Component.text("each block\npulls power from the\nblock behind it\n(opposite its facing\ndirection).", darkGray))
+                .append(Component.text("Cables: ", bold))
+                .append(
+                    Component.text(
+                        "a whole run acts\nas one network and\njoins itself to what it\ntouches. Nothing needs\naiming.",
+                        darkGray,
+                    ),
+                )
                 .build(),
             // Page 3: Small Solar Panel
             Component.text()
                 .append(Component.text(SOLAR_PANEL))
                 .append(Component.text(" "))
                 .append(Component.text("Small Solar Panel\n", Style.style(TextDecoration.BOLD).color(gold)))
-                .append(Component.text("\nGenerates 1 power per\nminute during daytime.\n\n", darkGray))
+                .append(Component.text("\nGenerates 2 power per\n10s during daytime. It\nlights up while it is\nworking.\n\n", darkGray))
                 .append(Component.text("Storage: ", bold))
-                .append(Component.text("1\n", darkGray))
-                .append(Component.text("Requires: ", bold))
-                .append(Component.text("clear sky access\nabove the panel.", darkGray))
+                .append(Component.text("4\n", darkGray))
+                .append(Component.text("Tip: ", bold))
+                .append(Component.text("power leaves through\nthe base only - put the\ncable underneath.", darkGray))
                 .build(),
             // Page 4: Lava Generator
             Component.text()
                 .append(Component.text(LAVA_GENERATOR))
                 .append(Component.text(" "))
                 .append(Component.text("Lava Generator\n", Style.style(TextDecoration.BOLD).color(gold)))
-                .append(Component.text("\nGenerates 5 power per\nlava unit consumed.\n\n", darkGray))
+                .append(Component.text("\nGenerates 5 power per\nlava unit consumed. It\nglows while burning.\n\n", darkGray))
                 .append(Component.text("Storage: ", bold))
-                .append(Component.text("50\n", darkGray))
+                .append(Component.text("20\n", darkGray))
                 .append(Component.text("Input: ", bold))
-                .append(Component.text("pulls lava from\nadjacent fluid blocks.", darkGray))
+                .append(Component.text("pulls lava from\nadjacent fluid blocks\non any side.", darkGray))
                 .build(),
             // Page 5: Power Cable
             Component.text()
                 .append(Component.text(POWER_CABLE))
                 .append(Component.text(" "))
                 .append(Component.text("Power Cable\n", Style.style(TextDecoration.BOLD).color(gold)))
-                .append(Component.text("\nTransfers power in one\ndirection. Pulls from\nthe block behind it.\n\n", darkGray))
+                .append(Component.text("\nJoins itself to any\npower block it touches.\nNo direction to set.\n\n", darkGray))
                 .append(Component.text("Storage: ", bold))
-                .append(Component.text("1\n", darkGray))
+                .append(Component.text("none - a whole run\nmoves power end to\nend each tick\n", darkGray))
                 .append(Component.text("Tip: ", bold))
-                .append(Component.text("place cables in a\nline from generator\nto machine.", darkGray))
+                .append(Component.text("branch freely. A run\nsplits and merges on\nits own.", darkGray))
                 .build(),
             // Page 6: Small Battery
             Component.text()
@@ -133,9 +140,9 @@ object GuideBook {
                 .append(Component.text("Small Battery\n", Style.style(TextDecoration.BOLD).color(gold)))
                 .append(Component.text("\nStores power for later\nuse. Visual indicator\nshows charge level.\n\n", darkGray))
                 .append(Component.text("Storage: ", bold))
-                .append(Component.text("10\n", darkGray))
+                .append(Component.text("50\n", darkGray))
                 .append(Component.text("Tip: ", bold))
-                .append(Component.text("place between a\ngenerator and machine\nto buffer power.", darkGray))
+                .append(Component.text("fills and drains from\nany side, so it needs\nno lining up.", darkGray))
                 .build(),
             // Page 7: Small Drill
             Component.text()
