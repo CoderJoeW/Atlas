@@ -88,6 +88,39 @@ object CraftEngineHelper {
         }
     }
 
+    /**
+     * Applies several boolean properties in one state change.
+     *
+     * A cable rewrites seven properties whenever its shape changes; setting them one at a time
+     * would place the block seven times over.
+     */
+    fun setBooleanProperties(
+        location: Location,
+        values: Map<String, Boolean>,
+    ) {
+        try {
+            val block = location.block
+            var state = CraftEngineBlocks.getCustomBlockState(block) ?: return
+            val customBlock = state.owner().value()
+            var changed = false
+
+            for ((propertyName, value) in values) {
+                val prop = customBlock.getProperty(propertyName) ?: continue
+                val currentValue = state.get(prop) as? Boolean ?: continue
+                if (currentValue == value) continue
+
+                @Suppress("UNCHECKED_CAST")
+                val typedProp = prop as Property<Boolean>
+                state = state.with(typedProp, value)
+                changed = true
+            }
+
+            if (changed) CraftEngineBlocks.place(location, state, false)
+        } catch (_: Throwable) {
+            // CraftEngine not available
+        }
+    }
+
     fun setStringProperty(
         location: Location,
         propertyName: String,
