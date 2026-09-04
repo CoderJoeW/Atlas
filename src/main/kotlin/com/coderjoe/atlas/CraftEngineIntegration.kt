@@ -27,8 +27,13 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
         copyPackYml()
         copyConfigurations()
         copyAssets(TEXTURES_PATH, ".png")
+        // An animated texture is a strip of frames plus a .mcmeta naming the frame rate. Without
+        // the .mcmeta the client has no reason to think the file is animated and draws the whole
+        // strip squashed onto one face, so it has to ship alongside the png.
+        copyAssets(TEXTURES_PATH, ".png.mcmeta")
         copyAssets(MODELS_PATH, ".json")
         copyAssets(ITEM_TEXTURES_PATH, ".png")
+        copyAssets(ITEM_TEXTURES_PATH, ".png.mcmeta")
         copyAssets(ITEM_MODELS_PATH, ".json")
         pruneStaleFiles()
         writeManifest()

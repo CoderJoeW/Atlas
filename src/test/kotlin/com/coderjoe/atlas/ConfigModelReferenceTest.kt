@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.yaml.snakeyaml.Yaml
 import java.io.File
+import javax.imageio.ImageIO
 
 /**
  * Checks that every model a config names actually exists.
@@ -154,6 +155,36 @@ class ConfigModelReferenceTest {
         }
 
         assertTrue(missing.isEmpty(), "textures named by a config but not shipped: $missing")
+    }
+
+    @Test
+    fun `every animated texture ships the mcmeta that describes it`() {
+        val problems = mutableListOf<String>()
+
+        for (directory in listOf(BLOCK_TEXTURE_DIR, ITEM_TEXTURE_DIR)) {
+            for (texture in directory.listFiles { f -> f.extension == "png" }.orEmpty()) {
+                val image = ImageIO.read(texture) ?: continue
+                val meta = File(directory, "${texture.name}.mcmeta")
+                // A strip of frames is the only reason a block texture is not square, and without
+                // the mcmeta the client draws the whole strip squashed onto one face.
+                if (image.height > image.width && !meta.exists()) {
+                    problems += "${texture.name} is a ${image.width}x${image.height} strip with no .mcmeta"
+                }
+                if (image.height == image.width && meta.exists()) {
+                    problems += "${texture.name} has an .mcmeta but only one frame"
+                }
+                if (image.height > image.width && image.height % image.width != 0) {
+                    problems += "${texture.name} is ${image.width}x${image.height}, not a whole number of frames"
+                }
+            }
+            for (meta in directory.listFiles { f -> f.name.endsWith(".png.mcmeta") }.orEmpty()) {
+                if (!File(directory, meta.name.removeSuffix(".mcmeta")).exists()) {
+                    problems += "${meta.name} describes a texture that is not shipped"
+                }
+            }
+        }
+
+        assertTrue(problems.isEmpty(), "animation metadata does not match the textures: $problems")
     }
 
     @Test
