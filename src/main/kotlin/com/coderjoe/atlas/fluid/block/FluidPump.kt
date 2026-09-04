@@ -5,6 +5,7 @@ import com.coderjoe.atlas.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.core.PowerConsumer
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
@@ -15,7 +16,7 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.Levelled
 
-class FluidPump(location: Location) : FluidBlock(location) {
+class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
     enum class PumpStatus {
         IDLE,
         NO_SOURCE,
@@ -68,6 +69,9 @@ class FluidPump(location: Location) : FluidBlock(location) {
      * on its own if the source was removed and re-found elsewhere.
      */
     override fun canProvideFluid(requestDirection: BlockFace): Boolean = hasFluid()
+
+    /** A pump takes power in through any side, so a cable touching it anywhere joins to it. */
+    override fun drawsPowerFrom(face: BlockFace): Boolean = true
 
     /** A pump only ever sources - it fills itself from the world, never from a pipe run. */
     override fun canAcceptFluid(

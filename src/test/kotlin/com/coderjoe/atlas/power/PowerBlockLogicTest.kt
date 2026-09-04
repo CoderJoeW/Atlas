@@ -2,6 +2,9 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.fluid.block.FluidPipe
+import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
@@ -325,6 +328,32 @@ class PowerBlockLogicTest {
         TestHelper.addToRegistry(registry, east, "atlas:power_cable")
 
         assertEquals(setOf(BlockFace.UP, BlockFace.EAST), cable.connections())
+    }
+
+    @Test
+    fun `cable connects to a fluid pump, which spends power from another registry`() {
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
+        TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
+
+        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 1.0))
+        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+
+        assertEquals(setOf(BlockFace.SOUTH), cable.connections())
+    }
+
+    @Test
+    fun `cable ignores a neighbour that neither carries nor spends power`() {
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
+        TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
+
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+
+        assertEquals(emptySet<BlockFace>(), cable.connections())
     }
 
     @Test

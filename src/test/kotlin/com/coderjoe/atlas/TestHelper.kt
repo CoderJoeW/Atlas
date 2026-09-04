@@ -1,6 +1,7 @@
 package com.coderjoe.atlas
 
 import com.coderjoe.atlas.core.AtlasBlock
+import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.core.InstanceHolder
 import com.coderjoe.atlas.fluid.FluidBlock
@@ -72,6 +73,7 @@ object TestHelper {
         every { mockScheduler.runTaskTimer(any<JavaPlugin>(), any<Runnable>(), any(), any()) } returns mockTask
 
         clearRegistries()
+        AtlasBlocks.clear()
         clearFactories()
     }
 
@@ -79,6 +81,7 @@ object TestHelper {
         unmockkAll()
         AtlasBlock.testPlugin = null
         clearRegistries()
+        AtlasBlocks.clear()
         clearFactories()
         dataFolder.deleteRecursively()
     }

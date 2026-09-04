@@ -8,6 +8,13 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.util.concurrent.ConcurrentHashMap
 
 open class BlockRegistry<T : AtlasBlock>(protected val plugin: JavaPlugin) {
+    init {
+        // Registered rather than looked up so a system that needs a block another system owns -
+        // a cable finding the fluid pump it feeds - does not have to import that system's registry.
+        @Suppress("LeakingThis")
+        AtlasBlocks.register(this)
+    }
+
     protected val blocks = ConcurrentHashMap<String, T>()
     protected val blockIds = ConcurrentHashMap<String, String>()
     val updatingLocations: MutableSet<String> = ConcurrentHashMap.newKeySet()
