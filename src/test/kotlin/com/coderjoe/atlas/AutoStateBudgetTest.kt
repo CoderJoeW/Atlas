@@ -28,6 +28,11 @@ class AutoStateBudgetTest {
          * appearance names that no longer exist. Retiring a block leaks its states until that
          * cache is pruned, which makes a group look full when it is not.
          *
+         * These pools are shared with every other pack installed on the server, and this test
+         * only sees Atlas's own configs. On the dev server two leaves and seven tripwire slots
+         * belong to another pack, so passing here is necessary but not sufficient - a config can
+         * still be refused at load. Treat a near-full group as full.
+         *
          * 'chorus' is absent on purpose. CraftEngine ships its 63 mappings commented out with the
          * note that the hitbox is "super weird", so it is not a pool we draw from for anything a
          * player walks past or clicks on.
@@ -40,6 +45,8 @@ class AutoStateBudgetTest {
                 // Measured from what CraftEngine actually allocated, not from raw state counts:
                 // cave_vines is age 0-25 x berries, so ~50 usable slots rather than 100.
                 "cave_vines" to 50,
+                // untinted, never waterlogged, and nothing else was using it
+                "cactus" to 16,
                 "weeping_vines" to 25,
                 "twisting_vines" to 25,
             )
