@@ -3,7 +3,24 @@ items:
     material: paper
     data:
       item-name: <!i><gradient:#FFD700:#FF4500>Power Cable
-    model: minecraft:block/custom/power_cable
+    # The inventory shows a painted icon so the item is recognisable at a glance; every other
+    # display context keeps the 3D block model so it still looks like a cable in hand.
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: minecraft:item/custom/power_cable
+          generation:
+            parent: minecraft:item/generated
+            textures:
+              layer0: minecraft:item/custom/power_cable
+      fallback:
+        type: minecraft:model
+        path: minecraft:block/custom/power_cable
     behavior:
       type: block_item
       block:
@@ -28,106 +45,1565 @@ items:
           propagate-skylight: true
         states:
           properties:
-            facing:
-              type: direction
-              default: north
+            north:
+              type: boolean
+              default: false
+            south:
+              type: boolean
+              default: false
+            east:
+              type: boolean
+              default: false
+            west:
+              type: boolean
+              default: false
+            up:
+              type: boolean
+              default: false
+            down:
+              type: boolean
+              default: false
             powered:
               type: boolean
               default: false
           appearances:
-            north:
-              auto-state: solid
+            c000000:
+              auto-state: leaves
               model:
-                path: minecraft:block/custom/power_cable
+                path: minecraft:block/custom/power_cable_000000
                 generation:
-                  parent: minecraft:block/custom/power_cable_base
+                  parent: minecraft:block/custom/power_cable_shape_000000
                   textures:
                     casing: minecraft:block/custom/power_cable_casing
                     end: minecraft:block/custom/power_cable_end
-            south:
-              auto-state: solid
+                    socket: minecraft:block/custom/power_cable_end
+            c000000_powered:
+              auto-state: tripwire
               model:
-                path: minecraft:block/custom/power_cable
-                y: 180
-            east:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/power_cable
-                y: 90
-            west:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/power_cable
-                y: 270
-            up:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/power_cable
-                x: 270
-            down:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/power_cable
-                x: 90
-            north_powered:
-              auto-state: solid
-              model:
-                path: minecraft:block/custom/power_cable_powered
+                path: minecraft:block/custom/power_cable_000000_powered
                 generation:
-                  parent: minecraft:block/custom/power_cable_base
+                  parent: minecraft:block/custom/power_cable_shape_000000
                   textures:
                     casing: minecraft:block/custom/power_cable_casing_powered
                     end: minecraft:block/custom/power_cable_end_powered
-            south_powered:
-              auto-state: solid
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c100000:
+              auto-state: leaves
               model:
-                path: minecraft:block/custom/power_cable_powered
-                y: 180
-            east_powered:
-              auto-state: solid
+                path: minecraft:block/custom/power_cable_100000
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c100000_powered:
+              auto-state: tripwire
               model:
-                path: minecraft:block/custom/power_cable_powered
-                y: 90
-            west_powered:
-              auto-state: solid
+                path: minecraft:block/custom/power_cable_100000_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c010000:
+              auto-state: leaves
               model:
-                path: minecraft:block/custom/power_cable_powered
-                y: 270
-            up_powered:
-              auto-state: solid
+                path: minecraft:block/custom/power_cable_010000
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c010000_powered:
+              auto-state: tripwire
               model:
-                path: minecraft:block/custom/power_cable_powered
-                x: 270
-            down_powered:
-              auto-state: solid
+                path: minecraft:block/custom/power_cable_010000_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c001000:
+              auto-state: leaves
               model:
-                path: minecraft:block/custom/power_cable_powered
-                x: 90
+                path: minecraft:block/custom/power_cable_001000
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c001000_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_001000_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c000100:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_000100
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c000100_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_000100_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c000010:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_000010
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c000010_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_000010_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c000001:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_000001
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c000001_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_000001_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c110000:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_110000
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c110000_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_110000_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c101000:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_101000
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c101000_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_101000_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c100100:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_100100
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c100100_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_100100_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c100010:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_100010
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c100010_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_100010_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c100001:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_100001
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c100001_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_100001_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c011000:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_011000
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c011000_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_011000_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c010100:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_010100
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c010100_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_010100_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c010010:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_010010
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c010010_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_010010_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c010001:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_010001
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c010001_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_010001_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c001100:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_001100
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c001100_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_001100_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c001010:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_001010
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c001010_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_001010_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c001001:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_001001
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c001001_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_001001_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c000110:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_000110
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c000110_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_000110_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c000101:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_000101
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c000101_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_000101_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c000011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_000011
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c000011_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_000011_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c111000:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_111000
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c111000_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_111000_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111000
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c110100:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_110100
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c110100_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_110100_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c110010:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_110010
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c110010_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_110010_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c110001:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_110001
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c110001_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_110001_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c101100:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_101100
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c101100_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_101100_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c101010:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_101010
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c101010_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_101010_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c101001:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_101001
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c101001_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_101001_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c100110:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_100110
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c100110_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_100110_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c100101:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_100101
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c100101_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_100101_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c100011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_100011
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c100011_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_100011_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c011100:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_011100
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c011100_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_011100_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c011010:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_011010
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c011010_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_011010_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c011001:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_011001
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c011001_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_011001_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c010110:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_010110
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c010110_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_010110_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c010101:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_010101
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c010101_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_010101_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c010011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_010011
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c010011_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_010011_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c001110:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_001110
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c001110_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_001110_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c001101:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_001101
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c001101_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_001101_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c001011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_001011
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c001011_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_001011_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c000111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_000111
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c000111_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_000111_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_000111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c111100:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_111100
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c111100_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_111100_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111100
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c111010:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_111010
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c111010_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_111010_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111010
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c111001:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_111001
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c111001_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_111001_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111001
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c110110:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_110110
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c110110_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_110110_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c110101:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_110101
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c110101_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_110101_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c110011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_110011
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c110011_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_110011_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c101110:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_101110
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c101110_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_101110_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c101101:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_101101
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c101101_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_101101_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c101011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_101011
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c101011_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_101011_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c100111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_100111
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c100111_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_100111_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_100111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c011110:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_011110
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c011110_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_011110_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c011101:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_011101
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c011101_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_011101_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c011011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_011011
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c011011_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_011011_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c010111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_010111
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c010111_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_010111_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_010111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c001111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_001111
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c001111_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_001111_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_001111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c111110:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_111110
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c111110_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_111110_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111110
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c111101:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_111101
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c111101_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_111101_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111101
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c111011:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_111011
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c111011_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_111011_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111011
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c110111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_110111
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c110111_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_110111_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_110111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c101111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_101111
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c101111_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_101111_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_101111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c011111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_011111
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c011111_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_011111_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_011111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
+            c111111:
+              auto-state: leaves
+              model:
+                path: minecraft:block/custom/power_cable_111111
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing
+                    end: minecraft:block/custom/power_cable_end
+                    socket: minecraft:block/custom/power_cable_end
+            c111111_powered:
+              auto-state: tripwire
+              model:
+                path: minecraft:block/custom/power_cable_111111_powered
+                generation:
+                  parent: minecraft:block/custom/power_cable_shape_111111
+                  textures:
+                    casing: minecraft:block/custom/power_cable_casing_powered
+                    end: minecraft:block/custom/power_cable_end_powered
+                    socket: minecraft:block/custom/power_cable_end_powered
           variants:
-            facing=north,powered=false:
-              appearance: north
-            facing=north,powered=true:
-              appearance: north_powered
-            facing=south,powered=false:
-              appearance: south
-            facing=south,powered=true:
-              appearance: south_powered
-            facing=east,powered=false:
-              appearance: east
-            facing=east,powered=true:
-              appearance: east_powered
-            facing=west,powered=false:
-              appearance: west
-            facing=west,powered=true:
-              appearance: west_powered
-            facing=up,powered=false:
-              appearance: up
-            facing=up,powered=true:
-              appearance: up_powered
-            facing=down,powered=false:
-              appearance: down
-            facing=down,powered=true:
-              appearance: down_powered
+            north=false,south=false,east=false,west=false,up=false,down=false,powered=false:
+              appearance: c000000
+            north=false,south=false,east=false,west=false,up=false,down=false,powered=true:
+              appearance: c000000_powered
+            north=true,south=false,east=false,west=false,up=false,down=false,powered=false:
+              appearance: c100000
+            north=true,south=false,east=false,west=false,up=false,down=false,powered=true:
+              appearance: c100000_powered
+            north=false,south=true,east=false,west=false,up=false,down=false,powered=false:
+              appearance: c010000
+            north=false,south=true,east=false,west=false,up=false,down=false,powered=true:
+              appearance: c010000_powered
+            north=false,south=false,east=true,west=false,up=false,down=false,powered=false:
+              appearance: c001000
+            north=false,south=false,east=true,west=false,up=false,down=false,powered=true:
+              appearance: c001000_powered
+            north=false,south=false,east=false,west=true,up=false,down=false,powered=false:
+              appearance: c000100
+            north=false,south=false,east=false,west=true,up=false,down=false,powered=true:
+              appearance: c000100_powered
+            north=false,south=false,east=false,west=false,up=true,down=false,powered=false:
+              appearance: c000010
+            north=false,south=false,east=false,west=false,up=true,down=false,powered=true:
+              appearance: c000010_powered
+            north=false,south=false,east=false,west=false,up=false,down=true,powered=false:
+              appearance: c000001
+            north=false,south=false,east=false,west=false,up=false,down=true,powered=true:
+              appearance: c000001_powered
+            north=true,south=true,east=false,west=false,up=false,down=false,powered=false:
+              appearance: c110000
+            north=true,south=true,east=false,west=false,up=false,down=false,powered=true:
+              appearance: c110000_powered
+            north=true,south=false,east=true,west=false,up=false,down=false,powered=false:
+              appearance: c101000
+            north=true,south=false,east=true,west=false,up=false,down=false,powered=true:
+              appearance: c101000_powered
+            north=true,south=false,east=false,west=true,up=false,down=false,powered=false:
+              appearance: c100100
+            north=true,south=false,east=false,west=true,up=false,down=false,powered=true:
+              appearance: c100100_powered
+            north=true,south=false,east=false,west=false,up=true,down=false,powered=false:
+              appearance: c100010
+            north=true,south=false,east=false,west=false,up=true,down=false,powered=true:
+              appearance: c100010_powered
+            north=true,south=false,east=false,west=false,up=false,down=true,powered=false:
+              appearance: c100001
+            north=true,south=false,east=false,west=false,up=false,down=true,powered=true:
+              appearance: c100001_powered
+            north=false,south=true,east=true,west=false,up=false,down=false,powered=false:
+              appearance: c011000
+            north=false,south=true,east=true,west=false,up=false,down=false,powered=true:
+              appearance: c011000_powered
+            north=false,south=true,east=false,west=true,up=false,down=false,powered=false:
+              appearance: c010100
+            north=false,south=true,east=false,west=true,up=false,down=false,powered=true:
+              appearance: c010100_powered
+            north=false,south=true,east=false,west=false,up=true,down=false,powered=false:
+              appearance: c010010
+            north=false,south=true,east=false,west=false,up=true,down=false,powered=true:
+              appearance: c010010_powered
+            north=false,south=true,east=false,west=false,up=false,down=true,powered=false:
+              appearance: c010001
+            north=false,south=true,east=false,west=false,up=false,down=true,powered=true:
+              appearance: c010001_powered
+            north=false,south=false,east=true,west=true,up=false,down=false,powered=false:
+              appearance: c001100
+            north=false,south=false,east=true,west=true,up=false,down=false,powered=true:
+              appearance: c001100_powered
+            north=false,south=false,east=true,west=false,up=true,down=false,powered=false:
+              appearance: c001010
+            north=false,south=false,east=true,west=false,up=true,down=false,powered=true:
+              appearance: c001010_powered
+            north=false,south=false,east=true,west=false,up=false,down=true,powered=false:
+              appearance: c001001
+            north=false,south=false,east=true,west=false,up=false,down=true,powered=true:
+              appearance: c001001_powered
+            north=false,south=false,east=false,west=true,up=true,down=false,powered=false:
+              appearance: c000110
+            north=false,south=false,east=false,west=true,up=true,down=false,powered=true:
+              appearance: c000110_powered
+            north=false,south=false,east=false,west=true,up=false,down=true,powered=false:
+              appearance: c000101
+            north=false,south=false,east=false,west=true,up=false,down=true,powered=true:
+              appearance: c000101_powered
+            north=false,south=false,east=false,west=false,up=true,down=true,powered=false:
+              appearance: c000011
+            north=false,south=false,east=false,west=false,up=true,down=true,powered=true:
+              appearance: c000011_powered
+            north=true,south=true,east=true,west=false,up=false,down=false,powered=false:
+              appearance: c111000
+            north=true,south=true,east=true,west=false,up=false,down=false,powered=true:
+              appearance: c111000_powered
+            north=true,south=true,east=false,west=true,up=false,down=false,powered=false:
+              appearance: c110100
+            north=true,south=true,east=false,west=true,up=false,down=false,powered=true:
+              appearance: c110100_powered
+            north=true,south=true,east=false,west=false,up=true,down=false,powered=false:
+              appearance: c110010
+            north=true,south=true,east=false,west=false,up=true,down=false,powered=true:
+              appearance: c110010_powered
+            north=true,south=true,east=false,west=false,up=false,down=true,powered=false:
+              appearance: c110001
+            north=true,south=true,east=false,west=false,up=false,down=true,powered=true:
+              appearance: c110001_powered
+            north=true,south=false,east=true,west=true,up=false,down=false,powered=false:
+              appearance: c101100
+            north=true,south=false,east=true,west=true,up=false,down=false,powered=true:
+              appearance: c101100_powered
+            north=true,south=false,east=true,west=false,up=true,down=false,powered=false:
+              appearance: c101010
+            north=true,south=false,east=true,west=false,up=true,down=false,powered=true:
+              appearance: c101010_powered
+            north=true,south=false,east=true,west=false,up=false,down=true,powered=false:
+              appearance: c101001
+            north=true,south=false,east=true,west=false,up=false,down=true,powered=true:
+              appearance: c101001_powered
+            north=true,south=false,east=false,west=true,up=true,down=false,powered=false:
+              appearance: c100110
+            north=true,south=false,east=false,west=true,up=true,down=false,powered=true:
+              appearance: c100110_powered
+            north=true,south=false,east=false,west=true,up=false,down=true,powered=false:
+              appearance: c100101
+            north=true,south=false,east=false,west=true,up=false,down=true,powered=true:
+              appearance: c100101_powered
+            north=true,south=false,east=false,west=false,up=true,down=true,powered=false:
+              appearance: c100011
+            north=true,south=false,east=false,west=false,up=true,down=true,powered=true:
+              appearance: c100011_powered
+            north=false,south=true,east=true,west=true,up=false,down=false,powered=false:
+              appearance: c011100
+            north=false,south=true,east=true,west=true,up=false,down=false,powered=true:
+              appearance: c011100_powered
+            north=false,south=true,east=true,west=false,up=true,down=false,powered=false:
+              appearance: c011010
+            north=false,south=true,east=true,west=false,up=true,down=false,powered=true:
+              appearance: c011010_powered
+            north=false,south=true,east=true,west=false,up=false,down=true,powered=false:
+              appearance: c011001
+            north=false,south=true,east=true,west=false,up=false,down=true,powered=true:
+              appearance: c011001_powered
+            north=false,south=true,east=false,west=true,up=true,down=false,powered=false:
+              appearance: c010110
+            north=false,south=true,east=false,west=true,up=true,down=false,powered=true:
+              appearance: c010110_powered
+            north=false,south=true,east=false,west=true,up=false,down=true,powered=false:
+              appearance: c010101
+            north=false,south=true,east=false,west=true,up=false,down=true,powered=true:
+              appearance: c010101_powered
+            north=false,south=true,east=false,west=false,up=true,down=true,powered=false:
+              appearance: c010011
+            north=false,south=true,east=false,west=false,up=true,down=true,powered=true:
+              appearance: c010011_powered
+            north=false,south=false,east=true,west=true,up=true,down=false,powered=false:
+              appearance: c001110
+            north=false,south=false,east=true,west=true,up=true,down=false,powered=true:
+              appearance: c001110_powered
+            north=false,south=false,east=true,west=true,up=false,down=true,powered=false:
+              appearance: c001101
+            north=false,south=false,east=true,west=true,up=false,down=true,powered=true:
+              appearance: c001101_powered
+            north=false,south=false,east=true,west=false,up=true,down=true,powered=false:
+              appearance: c001011
+            north=false,south=false,east=true,west=false,up=true,down=true,powered=true:
+              appearance: c001011_powered
+            north=false,south=false,east=false,west=true,up=true,down=true,powered=false:
+              appearance: c000111
+            north=false,south=false,east=false,west=true,up=true,down=true,powered=true:
+              appearance: c000111_powered
+            north=true,south=true,east=true,west=true,up=false,down=false,powered=false:
+              appearance: c111100
+            north=true,south=true,east=true,west=true,up=false,down=false,powered=true:
+              appearance: c111100_powered
+            north=true,south=true,east=true,west=false,up=true,down=false,powered=false:
+              appearance: c111010
+            north=true,south=true,east=true,west=false,up=true,down=false,powered=true:
+              appearance: c111010_powered
+            north=true,south=true,east=true,west=false,up=false,down=true,powered=false:
+              appearance: c111001
+            north=true,south=true,east=true,west=false,up=false,down=true,powered=true:
+              appearance: c111001_powered
+            north=true,south=true,east=false,west=true,up=true,down=false,powered=false:
+              appearance: c110110
+            north=true,south=true,east=false,west=true,up=true,down=false,powered=true:
+              appearance: c110110_powered
+            north=true,south=true,east=false,west=true,up=false,down=true,powered=false:
+              appearance: c110101
+            north=true,south=true,east=false,west=true,up=false,down=true,powered=true:
+              appearance: c110101_powered
+            north=true,south=true,east=false,west=false,up=true,down=true,powered=false:
+              appearance: c110011
+            north=true,south=true,east=false,west=false,up=true,down=true,powered=true:
+              appearance: c110011_powered
+            north=true,south=false,east=true,west=true,up=true,down=false,powered=false:
+              appearance: c101110
+            north=true,south=false,east=true,west=true,up=true,down=false,powered=true:
+              appearance: c101110_powered
+            north=true,south=false,east=true,west=true,up=false,down=true,powered=false:
+              appearance: c101101
+            north=true,south=false,east=true,west=true,up=false,down=true,powered=true:
+              appearance: c101101_powered
+            north=true,south=false,east=true,west=false,up=true,down=true,powered=false:
+              appearance: c101011
+            north=true,south=false,east=true,west=false,up=true,down=true,powered=true:
+              appearance: c101011_powered
+            north=true,south=false,east=false,west=true,up=true,down=true,powered=false:
+              appearance: c100111
+            north=true,south=false,east=false,west=true,up=true,down=true,powered=true:
+              appearance: c100111_powered
+            north=false,south=true,east=true,west=true,up=true,down=false,powered=false:
+              appearance: c011110
+            north=false,south=true,east=true,west=true,up=true,down=false,powered=true:
+              appearance: c011110_powered
+            north=false,south=true,east=true,west=true,up=false,down=true,powered=false:
+              appearance: c011101
+            north=false,south=true,east=true,west=true,up=false,down=true,powered=true:
+              appearance: c011101_powered
+            north=false,south=true,east=true,west=false,up=true,down=true,powered=false:
+              appearance: c011011
+            north=false,south=true,east=true,west=false,up=true,down=true,powered=true:
+              appearance: c011011_powered
+            north=false,south=true,east=false,west=true,up=true,down=true,powered=false:
+              appearance: c010111
+            north=false,south=true,east=false,west=true,up=true,down=true,powered=true:
+              appearance: c010111_powered
+            north=false,south=false,east=true,west=true,up=true,down=true,powered=false:
+              appearance: c001111
+            north=false,south=false,east=true,west=true,up=true,down=true,powered=true:
+              appearance: c001111_powered
+            north=true,south=true,east=true,west=true,up=true,down=false,powered=false:
+              appearance: c111110
+            north=true,south=true,east=true,west=true,up=true,down=false,powered=true:
+              appearance: c111110_powered
+            north=true,south=true,east=true,west=true,up=false,down=true,powered=false:
+              appearance: c111101
+            north=true,south=true,east=true,west=true,up=false,down=true,powered=true:
+              appearance: c111101_powered
+            north=true,south=true,east=true,west=false,up=true,down=true,powered=false:
+              appearance: c111011
+            north=true,south=true,east=true,west=false,up=true,down=true,powered=true:
+              appearance: c111011_powered
+            north=true,south=true,east=false,west=true,up=true,down=true,powered=false:
+              appearance: c110111
+            north=true,south=true,east=false,west=true,up=true,down=true,powered=true:
+              appearance: c110111_powered
+            north=true,south=false,east=true,west=true,up=true,down=true,powered=false:
+              appearance: c101111
+            north=true,south=false,east=true,west=true,up=true,down=true,powered=true:
+              appearance: c101111_powered
+            north=false,south=true,east=true,west=true,up=true,down=true,powered=false:
+              appearance: c011111
+            north=false,south=true,east=true,west=true,up=true,down=true,powered=true:
+              appearance: c011111_powered
+            north=true,south=true,east=true,west=true,up=true,down=true,powered=false:
+              appearance: c111111
+            north=true,south=true,east=true,west=true,up=true,down=true,powered=true:
+              appearance: c111111_powered
 recipes:
   atlas:power_cable:
     type: shapeless
