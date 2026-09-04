@@ -3,7 +3,30 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#FF4500:#FFD700>Lava Generator"
-    model: minecraft:block/custom/lava_generator
+    # The inventory shows a painted icon so the item is recognisable at a glance; every other
+    # display context keeps the 3D block model so it still looks like a generator in hand.
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+        - when:
+            - gui
+          model:
+            type: minecraft:model
+            path: minecraft:item/custom/lava_generator
+            generation:
+              parent: minecraft:item/generated
+              textures:
+                layer0: minecraft:item/custom/lava_generator
+      fallback:
+        type: minecraft:model
+        path: minecraft:block/custom/lava_generator
+        generation:
+          parent: minecraft:block/cube_bottom_top
+          textures:
+            top: minecraft:block/custom/lava_generator_top
+            bottom: minecraft:block/custom/lava_generator_bottom
+            side: minecraft:block/custom/lava_generator_side
     behavior:
       type: block_item
       block:
@@ -23,22 +46,26 @@ items:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/lava_generator
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/lava_generator_top
-                bottom: minecraft:block/custom/lava_generator_bottom
-                side: minecraft:block/custom/lava_generator_side
+          # Rendered as a display entity rather than a vanilla block state, so it costs no
+          # slot from the scarce non-occluding auto-state pool.
+          state: barrier
+          entity_renderer:
+            item: atlas:lava_generator
 
 items#1:
   atlas:lava_generator_active:
     material: paper
     data:
       item-name: "<!i><gradient:#FF4500:#FFD700>Lava Generator"
-    model: minecraft:block/custom/lava_generator_active
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/lava_generator_active
+      generation:
+        parent: minecraft:block/cube_bottom_top
+        textures:
+            top: minecraft:block/custom/lava_generator_top_active
+            bottom: minecraft:block/custom/lava_generator_bottom
+            side: minecraft:block/custom/lava_generator_side_active
     behavior:
       type: block_item
       block:
@@ -62,15 +89,11 @@ items#1:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/lava_generator_active
-            generation:
-              parent: minecraft:block/cube_bottom_top
-              textures:
-                top: minecraft:block/custom/lava_generator_top_active
-                bottom: minecraft:block/custom/lava_generator_bottom
-                side: minecraft:block/custom/lava_generator_side_active
+          # Rendered as a display entity rather than a vanilla block state, so it costs no
+          # slot from the scarce non-occluding auto-state pool.
+          state: barrier
+          entity_renderer:
+            item: atlas:lava_generator_active
 
 recipes:
   atlas:lava_generator:
