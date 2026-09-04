@@ -89,6 +89,59 @@ class FluidPumpTest {
         assertFalse(BlockFace.NORTH in ports, "a container facing away should not")
     }
 
+    private fun statusProperty(pump: FluidPump): String {
+        val method = FluidPump::class.java.getDeclaredMethod("statusProperty")
+        method.isAccessible = true
+        return method.invoke(pump) as String
+    }
+
+    private fun setStatus(
+        pump: FluidPump,
+        status: FluidPump.PumpStatus,
+    ) {
+        val field = FluidPump::class.java.getDeclaredField("pumpStatus")
+        field.isAccessible = true
+        field.set(pump, status)
+    }
+
+    @Test
+    fun `a working pump names the fluid it is handling`() {
+        val water = pump(fluid = FluidType.WATER).also { setStatus(it, FluidPump.PumpStatus.IDLE) }
+        val lava = pump(x = 1.0, fluid = FluidType.LAVA).also { setStatus(it, FluidPump.PumpStatus.EXTRACTING) }
+
+        assertEquals("idle_water", statusProperty(water))
+        assertEquals("extracting_lava", statusProperty(lava))
+    }
+
+    @Test
+    fun `a pump with nothing in hand has no fluid to name`() {
+        assertEquals("no_source", statusProperty(pump()))
+    }
+
+    @Test
+    fun `every status the pump can render is a value the config declares`() {
+        val config = java.io.File("src/main/resources/atlas/configuration/fluid_pump.yml").readText()
+        val declared =
+            Regex("""values: \[([^\]]+)]""")
+                .findAll(config)
+                .flatMap { it.groupValues[1].split(",") }
+                .map { it.trim() }
+                .toSet()
+
+        // Every combination the block can actually set, walked the same way the renderer builds it
+        val rendered = mutableSetOf<String>()
+        for (status in FluidPump.PumpStatus.entries) {
+            for (fluid in listOf(FluidType.NONE, FluidType.WATER, FluidType.LAVA)) {
+                val subject = pump(x = 5.0, fluid = fluid)
+                setStatus(subject, status)
+                rendered += statusProperty(subject)
+            }
+        }
+
+        val missing = rendered - declared
+        assertTrue(missing.isEmpty(), "the pump can render states the config does not declare: $missing")
+    }
+
     @Test
     fun `a pump alone has no ports`() {
         assertEquals(emptySet<BlockFace>(), pump().connections())

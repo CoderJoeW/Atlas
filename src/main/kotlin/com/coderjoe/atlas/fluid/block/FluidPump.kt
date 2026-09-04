@@ -97,21 +97,37 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
 
     /** Remembered so the block state is only rewritten when a port or the status changes. */
     private var renderedConnections: Set<BlockFace>? = null
-    private var renderedStatus: PumpStatus? = null
+    private var renderedStatus: String? = null
 
-    /** Shows which faces are plumbed in, and what the pump is currently doing. */
+    /**
+     * The `status` block state.
+     *
+     * Working states carry the fluid as well, so a pump reads as water or lava at a glance
+     * instead of only "busy" - the two look nothing alike downstream, and a player wiring a lava
+     * line into a water tank wants to see the mistake on the pump rather than at the tank.
+     * The states with nothing in hand have no fluid to name.
+     */
+    private fun statusProperty(): String =
+        when (pumpStatus) {
+            PumpStatus.NO_SOURCE, PumpStatus.NO_POWER -> pumpStatus.name.lowercase()
+            PumpStatus.IDLE, PumpStatus.EXTRACTING ->
+                "${pumpStatus.name.lowercase()}_${if (storedFluid == FluidType.LAVA) "lava" else "water"}"
+        }
+
+    /** Shows which faces are plumbed in, what the pump is doing, and what it is handling. */
     private fun renderState() {
         val connections = connections()
-        if (connections == renderedConnections && pumpStatus == renderedStatus) return
+        val status = statusProperty()
+        if (connections == renderedConnections && status == renderedStatus) return
 
         CraftEngineHelper.setBooleanProperties(
             location,
             CONNECTION_PROPERTIES.entries.associate { (face, property) -> property to (face in connections) },
         )
-        CraftEngineHelper.setStringProperty(location, "status", pumpStatus.name.lowercase())
+        CraftEngineHelper.setStringProperty(location, "status", status)
 
         renderedConnections = connections
-        renderedStatus = pumpStatus
+        renderedStatus = status
     }
 
     override fun fluidUpdate() {
