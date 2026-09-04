@@ -1,6 +1,11 @@
 package com.coderjoe.atlas.core
 
+import com.coderjoe.atlas.power.PowerBlock
+import com.coderjoe.atlas.power.PowerNetworkReport
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.block.BlockFace
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -130,20 +135,44 @@ class AtlasBlockListener(
         }
     }
 
+    /**
+     * Atlas blocks only open their dialog for a player holding the [AtlasWrench].
+     *
+     * A bare-handed right-click is left entirely alone, so machines can be built around and walked
+     * past without a dialog interrupting, and inspecting one stays a deliberate act.
+     */
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
-        if (event.player.isSneaking) return
+        if (event.isCancelled) return
+        if (!AtlasWrench.isWrench(event.item, plugin)) return
+
         val clickedBlock = event.clickedBlock ?: return
         val location = clickedBlock.location
 
         for (system in systems) {
-            val block = system.registry.getBlock(location)
-            if (block != null) {
+            val block = system.registry.getBlock(location) ?: continue
+            if (event.player.isSneaking) {
+                sneakAction(event.player, block)
+            } else {
                 system.showDialog(event.player, block)
-                event.isCancelled = true
-                return
             }
+            event.isCancelled = true
+            return
+        }
+    }
+
+    /** Sneaking with the wrench reads a power block's network instead of opening its dialog. */
+    private fun sneakAction(
+        player: Player,
+        block: AtlasBlock,
+    ) {
+        if (block is PowerBlock) {
+            PowerNetworkReport.report(player, block)
+        } else {
+            player.sendMessage(
+                Component.text("Nothing to read on this block.").color(NamedTextColor.GRAY),
+            )
         }
     }
 }
