@@ -68,6 +68,10 @@ class CrossSystemIntegrationTest {
             every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
         }
 
+        // the generator pushes into the pump; the pump never reaches out for power itself
+        solar.callPowerUpdate()
+        assertEquals(1, pump.storedPower, "the generator should have fed the pump")
+
         pump.callFluidUpdate()
         assertEquals(FluidPump.PumpStatus.EXTRACTING, pump.pumpStatus)
         assertEquals(FluidType.WATER, pump.storedFluid)
@@ -130,13 +134,19 @@ class CrossSystemIntegrationTest {
         val pipe = FluidPipe(TestHelper.createLocation(-1.0, 63.0, 1.0))
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        // Step 1: solar generates 2 and holds it; the cable makes that reachable to the pump,
-        // which draws off the run rather than out of the cable itself
+        // Step 1: solar generates 2 and holds it - a cable stores nothing, so there is nowhere
+        // for the panel to push it yet
         solar.callPowerUpdate()
         assertEquals(2, solar.currentPower)
         assertTrue(cable.canSupplyPower())
 
-        // Step 3: pump extracts from cauldron using cable's power
+        // Step 2: the run ticks and drives the panel's charge into the pump on its edge. The
+        // pump's buffer has room for both units, so the panel empties in one go.
+        cable.callPowerUpdate()
+        assertEquals(2, pump.storedPower, "the run should have fed the pump")
+        assertEquals(0, solar.currentPower, "and taken it off the panel")
+
+        // Step 3: pump spends it lifting water out of the cauldron
         pump.callFluidUpdate()
         assertEquals(FluidType.WATER, pump.storedFluid)
         assertEquals(FluidPump.PumpStatus.EXTRACTING, pump.pumpStatus)
@@ -174,6 +184,8 @@ class CrossSystemIntegrationTest {
             every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
         }
 
+        solar.callPowerUpdate()
+
         pump.callFluidUpdate()
         assertEquals(FluidType.LAVA, pump.storedFluid)
         assertEquals(FluidPump.PumpStatus.EXTRACTING, pump.pumpStatus)
@@ -207,7 +219,8 @@ class CrossSystemIntegrationTest {
             every { TestHelper.mockWorld.getBlockAt(offset.blockX, 64 + offset.blockY, offset.blockZ) } returns block
         }
 
-        // Step 1: Pump extracts water
+        // Step 1: the generator feeds the pump, and the pump lifts a unit out of the cauldron
+        solar.callPowerUpdate()
         pump.callFluidUpdate()
         assertEquals(FluidType.WATER, pump.storedFluid)
 
@@ -218,8 +231,8 @@ class CrossSystemIntegrationTest {
         val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
         TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
 
-        // Step 2: the run carries it from the pump to the tank in one tick
-        pipe.callFluidUpdate()
+        // Step 2: the pump hands its unit to the pipe, and the run carries it to the tank
+        pump.callFluidUpdate()
         assertEquals(FluidType.WATER, tank.storedFluid)
         assertEquals(FluidType.NONE, pump.storedFluid)
     }

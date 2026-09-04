@@ -190,18 +190,13 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        solar.currentPower = 1
-        TestHelper.addToRegistry(
-            powerRegistry,
-            solar,
-            "atlas:lava_generator",
-        )
+        // power is pushed to the pump by the run, not taken by it, so fill its buffer
+        pump.acceptPower(BlockFace.EAST, FluidPump.POWER_PER_EXTRACT)
 
         pump.callFluidUpdate()
         assertEquals(FluidPump.PumpStatus.EXTRACTING, pump.pumpStatus)
         assertEquals(FluidType.WATER, pump.storedFluid)
-        assertEquals(0, solar.currentPower) // power consumed
+        assertEquals(0, pump.storedPower, "the extraction spent the buffered unit")
     }
 
     @Test
@@ -232,13 +227,8 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        solar.currentPower = 1
-        TestHelper.addToRegistry(
-            powerRegistry,
-            solar,
-            "atlas:lava_generator",
-        )
+        // power is pushed to the pump by the run, not taken by it, so fill its buffer
+        pump.acceptPower(BlockFace.EAST, FluidPump.POWER_PER_EXTRACT)
 
         pump.callFluidUpdate()
         assertEquals(FluidType.LAVA, pump.storedFluid)
@@ -260,25 +250,20 @@ class FluidBlockLogicTest {
     }
 
     @Test
-    fun `pump isPowered reflects adjacent power blocks`() {
+    fun `pump reports powered once a run has pushed power into it`() {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
         pump.storeFluid(FluidType.WATER)
 
-        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        solar.currentPower = 1
-        TestHelper.addToRegistry(
-            powerRegistry,
-            solar,
-            "atlas:lava_generator",
-        )
+        // power is pushed to the pump by the run, not taken by it, so fill its buffer
+        pump.acceptPower(BlockFace.EAST, FluidPump.POWER_PER_EXTRACT)
 
         pump.callFluidUpdate()
         assertTrue(pump.isPowered)
     }
 
     @Test
-    fun `pump isPowered false when no adjacent power`() {
+    fun `pump reports unpowered while its buffer is empty`() {
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
         pump.storeFluid(FluidType.WATER)
@@ -318,13 +303,8 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        solar.currentPower = 1
-        TestHelper.addToRegistry(
-            powerRegistry,
-            solar,
-            "atlas:lava_generator",
-        )
+        // power is pushed to the pump by the run, not taken by it, so fill its buffer
+        pump.acceptPower(BlockFace.EAST, FluidPump.POWER_PER_EXTRACT)
 
         pump.callFluidUpdate()
         assertEquals(FluidType.WATER, pump.storedFluid)
@@ -364,13 +344,8 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        solar.currentPower = 1
-        TestHelper.addToRegistry(
-            powerRegistry,
-            solar,
-            "atlas:lava_generator",
-        )
+        // power is pushed to the pump by the run, not taken by it, so fill its buffer
+        pump.acceptPower(BlockFace.EAST, FluidPump.POWER_PER_EXTRACT)
 
         pump.callFluidUpdate()
         io.mockk.verify { levelled.level = 2 }
@@ -405,13 +380,8 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        solar.currentPower = 1
-        TestHelper.addToRegistry(
-            powerRegistry,
-            solar,
-            "atlas:lava_generator",
-        )
+        // power is pushed to the pump by the run, not taken by it, so fill its buffer
+        pump.acceptPower(BlockFace.EAST, FluidPump.POWER_PER_EXTRACT)
 
         pump.callFluidUpdate()
         assertEquals(FluidType.LAVA, pump.storedFluid)
@@ -451,13 +421,8 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        solar.currentPower = 1
-        TestHelper.addToRegistry(
-            powerRegistry,
-            solar,
-            "atlas:lava_generator",
-        )
+        // power is pushed to the pump by the run, not taken by it, so fill its buffer
+        pump.acceptPower(BlockFace.EAST, FluidPump.POWER_PER_EXTRACT)
 
         pump.callFluidUpdate()
         assertEquals(FluidType.WATER, pump.storedFluid)
@@ -496,13 +461,8 @@ class FluidBlockLogicTest {
             } returns block
         }
 
-        val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        solar.currentPower = 1
-        TestHelper.addToRegistry(
-            powerRegistry,
-            solar,
-            "atlas:lava_generator",
-        )
+        // power is pushed to the pump by the run, not taken by it, so fill its buffer
+        pump.acceptPower(BlockFace.EAST, FluidPump.POWER_PER_EXTRACT)
 
         pump.callFluidUpdate()
         assertEquals(FluidType.LAVA, pump.storedFluid)

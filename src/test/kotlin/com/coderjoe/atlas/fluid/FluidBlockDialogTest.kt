@@ -7,6 +7,7 @@ import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
+import org.bukkit.block.BlockFace
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.junit.jupiter.api.AfterEach
@@ -148,11 +149,10 @@ class FluidBlockDialogTest {
     }
 
     @Test
-    fun `pump info shows Powered when isPowered true`() {
+    fun `pump info shows Powered once a run has pushed power in`() {
         val pump = FluidPump(TestHelper.createLocation())
-        val field = FluidPump::class.java.getDeclaredField("isPowered")
-        field.isAccessible = true
-        field.set(pump, true)
+        // isPowered reads the buffer now: power arrives by being pushed, not by being taken
+        pump.acceptPower(BlockFace.NORTH, FluidPump.POWER_PER_EXTRACT)
 
         val text = flattenText(buildFluidInfo(pump))
         assertTrue(text.contains("Powered"))

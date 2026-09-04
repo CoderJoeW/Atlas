@@ -1,7 +1,9 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlock
+import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.core.PowerConsumer
 import com.coderjoe.atlas.power.block.PowerCable
 import org.bukkit.block.BlockFace
 
@@ -28,6 +30,19 @@ class PowerNetwork(val cables: List<PowerCable>) {
      * are asked about.
      */
     data class Terminal(val block: PowerBlock, val faceTowardCable: BlockFace)
+
+    /**
+     * A consumer from another system sitting on the run's edge.
+     *
+     * Kept apart from [Terminal] because it is not a power block: it has no charge to give back
+     * and no storage to report, so it can only ever be pushed to. The fluid pump is the one so
+     * far, which is why this is a second list rather than an abstraction over both.
+     */
+    data class ConsumerTerminal(
+        val block: AtlasBlock,
+        val consumer: PowerConsumer,
+        val faceTowardCable: BlockFace,
+    )
 
     /**
      * The cable that runs the transfer for the whole network.
@@ -64,6 +79,26 @@ class PowerNetwork(val cables: List<PowerCable>) {
         return sources.values.toList() to sinks.values.toList()
     }
 
+    /** The blocks on this run's edge that take power but are not power blocks themselves. */
+    fun consumers(): List<ConsumerTerminal> {
+        val found = LinkedHashMap<String, ConsumerTerminal>()
+        for (cable in cables) {
+            for (face in AtlasBlock.ADJACENT_FACES) {
+                val neighbor = AtlasBlocks.adjacent(cable.location, face) ?: continue
+                if (neighbor is PowerBlock) continue
+                val consumer = neighbor as? PowerConsumer ?: continue
+
+                val back = face.oppositeFace
+                if (!consumer.drawsPowerFrom(back)) continue
+                found.putIfAbsent(
+                    BlockRegistry.locationKey(neighbor.location),
+                    ConsumerTerminal(neighbor, consumer, back),
+                )
+            }
+        }
+        return found.values.toList()
+    }
+
     /** Whether any producer on this run has power to give, whether or not anything is drawing it. */
     fun hasSupply(): Boolean = terminals().first.isNotEmpty()
 
@@ -73,7 +108,8 @@ class PowerNetwork(val cables: List<PowerCable>) {
      */
     fun transfer(): Int {
         val (sources, sinks) = terminals()
-        if (sources.isEmpty() || sinks.isEmpty()) return 0
+        val consumers = consumers()
+        if (sources.isEmpty() || (sinks.isEmpty() && consumers.isEmpty())) return 0
 
         var moved = 0
         // an upper bound on the work available, so a refusing pair can never spin forever
@@ -92,6 +128,19 @@ class PowerNetwork(val cables: List<PowerCable>) {
                     progressed = true
                 } else {
                     // hand the unit back to whoever it came from
+                    source.block.addPower(1)
+                }
+            }
+
+            for (consumer in consumers) {
+                if (!consumer.consumer.wantsPower()) continue
+
+                val source = takeFromNextSource(sources, null) ?: continue
+                val accepted = consumer.consumer.acceptPower(consumer.faceTowardCable, 1)
+                if (accepted > 0) {
+                    moved += accepted
+                    progressed = true
+                } else {
                     source.block.addPower(1)
                 }
             }
@@ -140,15 +189,20 @@ class PowerNetwork(val cables: List<PowerCable>) {
         return source.currentPower - sink.currentPower >= MIN_BALANCE_GAP
     }
 
-    /** Debits a single unit from the next source with anything to give, skipping [sink] itself. */
+    /**
+     * Debits a single unit from the next source with anything to give, skipping [sink] itself.
+     *
+     * [sink] is null when the unit is bound for a consumer from another system, which is never
+     * also a source and never storage, so neither check applies.
+     */
     private fun takeFromNextSource(
         sources: List<Terminal>,
-        sink: Terminal,
+        sink: Terminal?,
     ): Terminal? {
         for (i in sources.indices) {
             val source = sources[(nextSourceIndex + i) % sources.size]
-            if (source.block === sink.block) continue
-            if (!canBalance(source.block, sink.block)) continue
+            if (sink != null && source.block === sink.block) continue
+            if (sink != null && !canBalance(source.block, sink.block)) continue
             if (source.block.removePowerToward(source.faceTowardCable, 1) > 0) {
                 nextSourceIndex = (nextSourceIndex + i + 1) % sources.size
                 return source

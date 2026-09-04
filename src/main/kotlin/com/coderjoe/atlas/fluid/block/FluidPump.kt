@@ -9,7 +9,6 @@ import com.coderjoe.atlas.core.PowerConsumer
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
-import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -29,14 +28,30 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
     var cauldronFace: BlockFace? = null
         private set
 
-    var isPowered: Boolean = false
+    /**
+     * Power pushed in by a cable run and not yet spent.
+     *
+     * The pump used to reach out and take a unit from whatever generator it could see at the
+     * moment it extracted. Power is a push system, so it waits to be fed instead and spends from
+     * this buffer, which also means a pump keeps working through a tick where the run happens to
+     * be busy elsewhere.
+     */
+    var storedPower: Int = 0
         private set
+
+    val isPowered: Boolean get() = storedPower >= POWER_PER_EXTRACT
 
     var pumpStatus: PumpStatus = PumpStatus.NO_SOURCE
         private set
 
     companion object {
         const val BLOCK_ID = "atlas:fluid_pump"
+
+        /** Spent on each unit of fluid lifted out of the world. */
+        const val POWER_PER_EXTRACT = 1
+
+        /** How much pushed power the pump will hold. A few extractions' worth is plenty. */
+        const val POWER_CAPACITY = 4
 
         /** Block state property names for the six connection ports, in [ADJACENT_FACES] order. */
         val CONNECTION_PROPERTIES: Map<BlockFace, String> =
@@ -72,6 +87,32 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
 
     /** A pump takes power in through any side, so a cable touching it anywhere joins to it. */
     override fun drawsPowerFrom(face: BlockFace): Boolean = true
+
+    override fun wantsPower(): Boolean = storedPower < POWER_CAPACITY
+
+    override fun acceptPower(
+        face: BlockFace,
+        amount: Int,
+    ): Int {
+        val taken = minOf(amount, POWER_CAPACITY - storedPower)
+        if (taken <= 0) return 0
+        storedPower += taken
+        return taken
+    }
+
+    /** Restores the buffer across a restart. */
+    fun restorePower(amount: Int) {
+        storedPower = amount.coerceIn(0, POWER_CAPACITY)
+    }
+
+    /**
+     * The pump moves its own fluid out rather than waiting for a run to pull it.
+     *
+     * It is the only block in the system that lifts fluid out of the world, so it is the one that
+     * knows a unit exists; leaving the run to notice meant the pipe had to reach back into the
+     * pump on every tick to check.
+     */
+    override val pushesFluid: Boolean = true
 
     /** A pump only ever sources - it fills itself from the world, never from a pipe run. */
     override fun canAcceptFluid(
@@ -130,16 +171,31 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
         renderedStatus = status
     }
 
+    /**
+     * Hands what the pump is holding to whatever will take it.
+     *
+     * A pipe takes it on behalf of its whole run, so this reaches anything plumbed to that run;
+     * a tank sitting straight against the pump is fed directly. Returns whether the unit moved.
+     */
+    private fun pushFluid(): Boolean {
+        val registry = FluidBlockRegistry.instance ?: return false
+        val fluid = storedFluid
+        if (fluid == FluidType.NONE) return false
+
+        for (face in ADJACENT_FACES) {
+            val neighbor = registry.getAdjacentBlock(location, face) ?: continue
+            if (!neighbor.canAcceptFluid(face.oppositeFace, fluid)) continue
+            if (neighbor.storeFluid(fluid)) {
+                removeFluid()
+                return true
+            }
+        }
+        return false
+    }
+
     override fun fluidUpdate() {
-        val powerRegistry = PowerBlockRegistry.instance ?: return
-        val powerNeighbors =
-            ADJACENT_FACES.mapNotNull { face ->
-                powerRegistry.getAdjacentBlock(location, face)?.let { face to it }
-            }
-        isPowered =
-            powerNeighbors.any { (face, neighbor) ->
-                neighbor.canSupplyPower() && neighbor.canOutputToward(face.oppositeFace)
-            }
+        // The pump owns what it lifted, so it hands it on itself rather than waiting to be drained
+        if (hasFluid()) pushFluid()
 
         if (hasFluid()) {
             pumpStatus = PumpStatus.IDLE
@@ -187,22 +243,12 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
             return
         }
 
-        var poweredThisTick = false
-        for ((face, neighbor) in powerNeighbors) {
-            if (neighbor.canSupplyPower()) {
-                val pulled = neighbor.removePowerToward(face.oppositeFace, 1)
-                if (pulled > 0) {
-                    poweredThisTick = true
-                    break
-                }
-            }
-        }
-
-        if (!poweredThisTick) {
+        if (storedPower < POWER_PER_EXTRACT) {
             pumpStatus = PumpStatus.NO_POWER
             renderState()
             return
         }
+        storedPower -= POWER_PER_EXTRACT
 
         when (foundBlock.type) {
             Material.WATER_CAULDRON -> {

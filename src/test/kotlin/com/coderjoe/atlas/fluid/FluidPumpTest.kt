@@ -1,7 +1,11 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.TestHelper.callFluidUpdate
+import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.core.AtlasBlock
+import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
@@ -140,6 +144,76 @@ class FluidPumpTest {
 
         val missing = rendered - declared
         assertTrue(missing.isEmpty(), "the pump can render states the config does not declare: $missing")
+    }
+
+    @Test
+    fun `a pump never takes power from a generator beside it`() {
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val pump = pump()
+
+        val generator = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
+        generator.currentPower = 5
+        TestHelper.addToRegistry(powerRegistry, generator, "atlas:lava_generator")
+
+        pump.callFluidUpdate()
+
+        assertEquals(5, generator.currentPower, "the pump must not reach into a generator")
+        assertEquals(0, pump.storedPower)
+    }
+
+    @Test
+    fun `a generator pushes power into the pump beside it`() {
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val pump = pump()
+
+        val generator = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
+        generator.currentPower = 5
+        TestHelper.addToRegistry(powerRegistry, generator, "atlas:lava_generator")
+
+        generator.callPowerUpdate()
+
+        assertTrue(pump.storedPower > 0, "the generator should have fed the pump")
+        assertTrue(generator.currentPower < 5, "and spent what it handed over")
+    }
+
+    @Test
+    fun `the pump fills its buffer and no further`() {
+        val pump = pump()
+
+        assertEquals(FluidPump.POWER_CAPACITY, pump.acceptPower(BlockFace.NORTH, 99))
+        assertFalse(pump.wantsPower())
+        assertEquals(0, pump.acceptPower(BlockFace.NORTH, 1), "a full pump takes nothing more")
+    }
+
+    @Test
+    fun `the pump hands its fluid to the pipe beside it`() {
+        val pump = pump(fluid = FluidType.WATER)
+
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
+        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
+        TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
+
+        pump.callFluidUpdate()
+
+        assertEquals(FluidType.NONE, pump.storedFluid, "the pump pushes its unit out itself")
+        assertEquals(FluidType.WATER, tank.storedFluid)
+    }
+
+    @Test
+    fun `a pipe run does not drain the pump behind its back`() {
+        val pump = pump(fluid = FluidType.WATER)
+
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
+        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0), BlockFace.SOUTH)
+        TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
+
+        // ticking the run must not move anything: the pump pushes, it is not pulled from
+        pipe.callFluidUpdate()
+
+        assertEquals(FluidType.WATER, pump.storedFluid, "the run must leave the pump alone")
+        assertEquals(FluidType.NONE, tank.storedFluid)
     }
 
     @Test

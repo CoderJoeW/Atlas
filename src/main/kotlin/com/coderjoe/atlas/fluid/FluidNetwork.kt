@@ -69,6 +69,7 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
 
         for (i in providers.indices) {
             val provider = providers[(nextProviderIndex + i) % providers.size]
+            if (provider.block.pushesFluid) continue
             if (!provider.block.hasFluid()) continue
 
             val offered = provider.block.storedFluid

@@ -1,8 +1,10 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlock
+import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.core.CraftEngineHelper
+import com.coderjoe.atlas.core.PowerConsumer
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
@@ -110,12 +112,26 @@ abstract class PowerBlock(
     ): Int {
         if (amount <= 0) return 0
         val registry = PowerBlockRegistry.instance ?: return 0
-        val target = registry.getAdjacentBlock(location, face) ?: return 0
-        if (!target.canAcceptPower()) return 0
+        val target = registry.getAdjacentBlock(location, face)
+        if (target != null) {
+            if (!target.canAcceptPower()) return 0
+
+            val offered = removePowerToward(face, amount)
+            if (offered <= 0) return 0
+            val accepted = target.addPowerFrom(face.oppositeFace, offered)
+            if (accepted < offered) addPower(offered - accepted)
+            return accepted
+        }
+
+        // Nothing in the power registry, but a block from another system may still be a consumer -
+        // the fluid pump is one, and it has to be pushed to like anything else rather than left to
+        // reach back for what it needs.
+        val consumer = AtlasBlocks.adjacent(location, face) as? PowerConsumer ?: return 0
+        if (!consumer.drawsPowerFrom(face.oppositeFace) || !consumer.wantsPower()) return 0
 
         val offered = removePowerToward(face, amount)
         if (offered <= 0) return 0
-        val accepted = target.addPowerFrom(face.oppositeFace, offered)
+        val accepted = consumer.acceptPower(face.oppositeFace, offered)
         if (accepted < offered) addPower(offered - accepted)
         return accepted
     }

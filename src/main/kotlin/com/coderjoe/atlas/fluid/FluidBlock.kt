@@ -19,6 +19,15 @@ abstract class FluidBlock(
     open fun canProvideFluid(requestDirection: BlockFace): Boolean = hasFluid()
 
     /**
+     * Whether this block moves its own fluid out rather than waiting for a run to pull from it.
+     *
+     * A run skips these when it looks for something to drain, so the unit is not moved twice. It
+     * still counts as a source everywhere else - what a run is carrying, and which pipes belong
+     * to which fluid, are both read off the blocks feeding it.
+     */
+    open val pushesFluid: Boolean = false
+
+    /**
      * Whether this block would take a unit of [type] pushed in through [face], where [face]
      * points from this block toward the pusher.
      *

@@ -16,6 +16,10 @@ import org.junit.jupiter.api.Test
  * End-to-end behaviour of a pipe run: pipes hold nothing themselves, so every case here is about
  * fluid moving from a provider on the edge of the run to an acceptor on the edge, in one tick and
  * regardless of how long the run is.
+ *
+ * A pump hands its own unit on, so the cases fed by one tick the pump rather than the pipe. The
+ * run still does the reaching - the pump only ever offers to the pipe beside it, and the pipe
+ * finds the acceptor, however far away and round however many corners it is.
  */
 class FluidNetworkIntegrationTest {
     private lateinit var registry: FluidBlockRegistry
@@ -73,7 +77,7 @@ class FluidNetworkIntegrationTest {
         // container at z=2 filling through its back, which faces the pipe at z=1
         val tank = container(0.0, 64.0, 2.0, BlockFace.SOUTH)
 
-        run.callFluidUpdate()
+        pump.callFluidUpdate()
 
         assertEquals(FluidType.NONE, pump.storedFluid, "pump should have handed its unit over")
         assertEquals(FluidType.WATER, tank.storedFluid)
@@ -89,7 +93,7 @@ class FluidNetworkIntegrationTest {
         pipe(0.0, 64.0, 4.0)
         val tank = container(0.0, 64.0, 5.0, BlockFace.SOUTH)
 
-        first.callFluidUpdate()
+        pump.callFluidUpdate()
 
         assertEquals(FluidType.NONE, pump.storedFluid)
         assertEquals(FluidType.LAVA, tank.storedFluid, "one tick should cross the whole run")
@@ -129,7 +133,7 @@ class FluidNetworkIntegrationTest {
         pipe(1.0, 64.0, 1.0)
         val tank = container(2.0, 64.0, 1.0, BlockFace.EAST)
 
-        corner.callFluidUpdate()
+        pump.callFluidUpdate()
 
         assertEquals(FluidType.NONE, pump.storedFluid)
         assertEquals(FluidType.WATER, tank.storedFluid)

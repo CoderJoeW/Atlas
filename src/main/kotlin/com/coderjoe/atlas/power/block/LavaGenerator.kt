@@ -2,8 +2,10 @@ package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
+import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.core.PowerConsumer
 import com.coderjoe.atlas.core.pushRoundRobinTo
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
@@ -63,15 +65,19 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20) 
      */
     private fun pushPowerToNeighbors() {
         if (!hasPower()) return
-        val registry = PowerBlockRegistry.instance ?: return
 
         nextOutputIndex =
             pushRoundRobinTo(
                 outputFaces = ADJACENT_FACES,
                 startIndex = nextOutputIndex,
-                getAdjacent = { face -> registry.getAdjacentBlock(location, face) },
+                // Every Atlas block, not just power blocks: a fluid pump takes power too, and it
+                // is registered elsewhere, so scanning the power registry alone walked past it.
+                getAdjacent = { face -> AtlasBlocks.adjacent(location, face) },
                 hasResource = { hasPower() },
-                isCandidate = { target -> target.canAcceptPower() },
+                isCandidate = { target ->
+                    (target as? PowerBlock)?.canAcceptPower() == true ||
+                        (target as? PowerConsumer)?.wantsPower() == true
+                },
                 tryPush = { _, face ->
                     val accepted = pushPowerToward(face, 1)
                     if (accepted > 0) {
