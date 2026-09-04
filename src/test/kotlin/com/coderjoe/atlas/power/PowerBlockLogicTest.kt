@@ -32,7 +32,7 @@ class PowerBlockLogicTest {
     @Test
     fun `addPower on empty block returns amount added`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         val added = block.addPower(5)
         assertEquals(5, added)
         assertEquals(5, block.currentPower)
@@ -41,7 +41,7 @@ class PowerBlockLogicTest {
     @Test
     fun `addPower caps at maxStorage`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         val added = block.addPower(55)
         assertEquals(50, added)
         assertEquals(50, block.currentPower)
@@ -50,7 +50,7 @@ class PowerBlockLogicTest {
     @Test
     fun `addPower with partial space returns space available`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         block.currentPower = 48
         val added = block.addPower(3)
         assertEquals(2, added)
@@ -60,7 +60,7 @@ class PowerBlockLogicTest {
     @Test
     fun `removePower returns amount removed`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         block.currentPower = 5
         val removed = block.removePower(3)
         assertEquals(3, removed)
@@ -70,7 +70,7 @@ class PowerBlockLogicTest {
     @Test
     fun `removePower caps at currentPower`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         block.currentPower = 3
         val removed = block.removePower(10)
         assertEquals(3, removed)
@@ -80,7 +80,7 @@ class PowerBlockLogicTest {
     @Test
     fun `removePower on empty block returns 0`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         val removed = block.removePower(1)
         assertEquals(0, removed)
         assertEquals(0, block.currentPower)
@@ -89,7 +89,7 @@ class PowerBlockLogicTest {
     @Test
     fun `hasPower returns true when power greater than 0`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         block.currentPower = 1
         assertTrue(block.hasPower())
     }
@@ -97,21 +97,21 @@ class PowerBlockLogicTest {
     @Test
     fun `hasPower returns false when power is 0`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         assertFalse(block.hasPower())
     }
 
     @Test
     fun `canAcceptPower returns true when below max and canReceivePower`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         assertTrue(block.canAcceptPower())
     }
 
     @Test
     fun `canAcceptPower returns false when full`() {
         val block =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         block.currentPower = 50
         assertFalse(block.canAcceptPower())
     }
@@ -137,7 +137,8 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `solar panel visual state empty when no power`() {
+    fun `solar panel visual state is dark at night`() {
+        every { TestHelper.mockWorld.time } returns 18000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
         assertEquals(
             "atlas:small_solar_panel",
@@ -146,12 +147,10 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `solar panel visual state steps up with charge`() {
+    fun `solar panel visual state is lit during the day`() {
+        every { TestHelper.mockWorld.time } returns 6000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
-        panel.currentPower = 1
-        assertEquals("atlas:small_solar_panel_low", panel.getVisualStateBlockId())
-        panel.currentPower = 4
-        assertEquals("atlas:small_solar_panel_full", panel.getVisualStateBlockId())
+        assertEquals("atlas:small_solar_panel_active", panel.getVisualStateBlockId())
     }
 
     @Test
@@ -184,21 +183,14 @@ class PowerBlockLogicTest {
     @Test
     fun `battery maxStorage is 50`() {
         val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         assertEquals(50, battery.maxStorage)
-    }
-
-    @Test
-    fun `battery facing defaults to DOWN when SELF`() {
-        val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.SELF)
-        assertEquals(BlockFace.DOWN, battery.facing)
     }
 
     @Test
     fun `battery visual state empty when power 0`() {
         val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         assertEquals(
             "atlas:small_battery",
             battery.getVisualStateBlockId(),
@@ -208,7 +200,7 @@ class PowerBlockLogicTest {
     @Test
     fun `battery visual state low when power 1-12`() {
         val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         for (p in 1..12) {
             battery.currentPower = p
             assertEquals(
@@ -222,7 +214,7 @@ class PowerBlockLogicTest {
     @Test
     fun `battery visual state medium when power 13-25`() {
         val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         for (p in 13..25) {
             battery.currentPower = p
             assertEquals(
@@ -236,7 +228,7 @@ class PowerBlockLogicTest {
     @Test
     fun `battery visual state high when power 26-37`() {
         val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         for (p in 26..37) {
             battery.currentPower = p
             assertEquals(
@@ -250,7 +242,7 @@ class PowerBlockLogicTest {
     @Test
     fun `battery visual state full when power 38-50`() {
         val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         for (p in 38..50) {
             battery.currentPower = p
             assertEquals(
@@ -262,10 +254,10 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `battery pulls power from block behind it`() {
+    fun `battery does not pull from a neighbouring generator`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         val batteryLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val battery = SmallBattery(batteryLoc, BlockFace.NORTH)
+        val battery = SmallBattery(batteryLoc)
 
         val sourceLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val source = LavaGenerator(sourceLoc)
@@ -283,15 +275,17 @@ class PowerBlockLogicTest {
         )
 
         battery.callPowerUpdate()
-        assertEquals(1, battery.currentPower)
-        assertEquals(0, source.currentPower)
+
+        // Storage is passive - the generator pushes into it, it never reaches out itself.
+        assertEquals(0, battery.currentPower)
+        assertEquals(1, source.currentPower)
     }
 
     @Test
     fun `battery does not pull when already full`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         battery.currentPower = 10
 
         battery.callPowerUpdate()
@@ -301,21 +295,16 @@ class PowerBlockLogicTest {
     // --- PowerCable specifics ---
 
     @Test
-    fun `cable maxStorage is 1`() {
-        val cable =
-            PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(1, cable.maxStorage)
+    fun `cable stores nothing of its own`() {
+        val cable = PowerCable(TestHelper.createLocation())
+        assertEquals(0, cable.maxStorage)
+        assertFalse(cable.hasPower())
+        assertFalse(cable.canAcceptPower())
     }
 
     @Test
     fun `cable visual state always returns BLOCK_ID`() {
-        val cable =
-            PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(
-            "atlas:power_cable",
-            cable.getVisualStateBlockId(),
-        )
-        cable.currentPower = 1
+        val cable = PowerCable(TestHelper.createLocation())
         assertEquals(
             "atlas:power_cable",
             cable.getVisualStateBlockId(),
@@ -323,76 +312,25 @@ class PowerBlockLogicTest {
     }
 
     @Test
-    fun `cable pulls from source behind it`() {
+    fun `cable connects to a power block on any face`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val cableLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val cable = PowerCable(cableLoc, BlockFace.NORTH)
+        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
-        val sourceLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val source = LavaGenerator(sourceLoc)
-        source.currentPower = 1
+        assertEquals(emptySet<BlockFace>(), cable.connections())
 
-        TestHelper.addToRegistry(
-            registry,
-            cable,
-            "atlas:power_cable",
-        )
-        TestHelper.addToRegistry(
-            registry,
-            source,
-            "atlas:lava_generator",
-        )
+        val above = SmallBattery(TestHelper.createLocation(0.0, 65.0, 0.0))
+        TestHelper.addToRegistry(registry, above, "atlas:small_battery")
+        val east = PowerCable(TestHelper.createLocation(1.0, 64.0, 0.0))
+        TestHelper.addToRegistry(registry, east, "atlas:power_cable")
 
-        cable.callPowerUpdate()
-        assertEquals(1, cable.currentPower)
-        assertEquals(0, source.currentPower)
+        assertEquals(setOf(BlockFace.UP, BlockFace.EAST), cable.connections())
     }
 
     @Test
-    fun `cable outputs only through its facing`() {
-        val cable = PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
-
-        assertTrue(cable.canOutputToward(BlockFace.NORTH))
-        for (face in listOf(BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
-            assertFalse(cable.canOutputToward(face), "cable should not output toward $face")
-        }
-    }
-
-    @Test
-    fun `cable refuses extraction from a sealed face`() {
-        val cable = PowerCable(TestHelper.createLocation(), BlockFace.NORTH)
-        cable.currentPower = 1
-
-        assertEquals(0, cable.removePowerToward(BlockFace.SOUTH, 1))
-        assertEquals(1, cable.currentPower)
-        assertEquals(1, cable.removePowerToward(BlockFace.NORTH, 1))
-        assertEquals(0, cable.currentPower)
-    }
-
-    @Test
-    fun `cable does not pull from blocks in other directions`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val cableLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val cable = PowerCable(cableLoc, BlockFace.NORTH)
-
-        val sourceLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
-        val source = LavaGenerator(sourceLoc)
-        source.currentPower = 1
-
-        TestHelper.addToRegistry(
-            registry,
-            cable,
-            "atlas:power_cable",
-        )
-        TestHelper.addToRegistry(
-            registry,
-            source,
-            "atlas:lava_generator",
-        )
-
-        cable.callPowerUpdate()
-        assertEquals(0, cable.currentPower)
-        assertEquals(1, source.currentPower)
+    fun `cable has no facing to get wrong`() {
+        val cable = PowerCable(TestHelper.createLocation())
+        assertEquals(BlockFace.SELF, cable.facing)
     }
 
     // --- SmallDrill specifics ---
@@ -474,36 +412,13 @@ class PowerBlockLogicTest {
         assertEquals(0, panel.currentPower)
     }
 
-    // --- Battery facing preservation ---
-
-    @Test
-    fun `battery facing preserves NORTH`() {
-        val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(BlockFace.NORTH, battery.facing)
-    }
-
-    @Test
-    fun `battery facing preserves EAST`() {
-        val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.EAST)
-        assertEquals(BlockFace.EAST, battery.facing)
-    }
-
-    @Test
-    fun `battery facing preserves UP`() {
-        val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.UP)
-        assertEquals(BlockFace.UP, battery.facing)
-    }
-
     // --- Battery powerUpdate edge cases ---
 
     @Test
     fun `battery powerUpdate when source has no power`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         val batteryLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val battery = SmallBattery(batteryLoc, BlockFace.NORTH)
+        val battery = SmallBattery(batteryLoc)
 
         val sourceLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
         val source = LavaGenerator(sourceLoc)
@@ -528,7 +443,7 @@ class PowerBlockLogicTest {
     fun `battery powerUpdate when no block behind it`() {
         val registry = PowerBlockRegistry(TestHelper.mockPlugin)
         val battery =
-            SmallBattery(TestHelper.createLocation(), BlockFace.NORTH)
+            SmallBattery(TestHelper.createLocation())
         TestHelper.addToRegistry(
             registry,
             battery,
