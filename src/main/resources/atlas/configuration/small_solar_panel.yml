@@ -3,7 +3,30 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#1E90FF:#FFD700>Small Solar Panel"
-    model: minecraft:block/custom/small_solar_panel
+    # The inventory shows a painted icon so the item is recognisable at a glance; every other
+    # display context keeps the 3D block model so it still looks like a panel in hand.
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+        - when:
+            - gui
+          model:
+            type: minecraft:model
+            path: minecraft:item/custom/small_solar_panel
+            generation:
+              parent: minecraft:item/generated
+              textures:
+                layer0: minecraft:item/custom/small_solar_panel
+      fallback:
+        type: minecraft:model
+        path: minecraft:block/custom/small_solar_panel
+        generation:
+          parent: minecraft:block/custom/small_solar_panel_base
+          textures:
+            top: minecraft:block/custom/small_solar_panel
+            bottom: minecraft:block/custom/small_solar_panel_bottom
+            side: minecraft:block/custom/small_solar_panel_side
     behavior:
       type: block_item
       block:
@@ -28,22 +51,27 @@ items:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_solar_panel
-            generation:
-              parent: minecraft:block/custom/small_solar_panel_base
-              textures:
-                top: minecraft:block/custom/small_solar_panel
-                bottom: minecraft:block/custom/small_solar_panel_bottom
-                side: minecraft:block/custom/small_solar_panel_side
+          # Rendered as a display entity rather than a vanilla block state. That costs no
+          # slot from the scarce non-occluding auto-state pool - every entity-rendered
+          # appearance shares this one forced state.
+          state: barrier
+          entity_renderer:
+            item: atlas:small_solar_panel
 
 items#1:
-  atlas:small_solar_panel_full:
+  atlas:small_solar_panel_active:
     material: paper
     data:
       item-name: "<!i><gradient:#1E90FF:#FFD700>Small Solar Panel"
-    model: minecraft:block/custom/small_solar_panel_full
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/small_solar_panel_active
+      generation:
+        parent: minecraft:block/custom/small_solar_panel_base
+        textures:
+          top: minecraft:block/custom/small_solar_panel_active
+          bottom: minecraft:block/custom/small_solar_panel_bottom
+          side: minecraft:block/custom/small_solar_panel_side
     behavior:
       type: block_item
       block:
@@ -72,147 +100,12 @@ items#1:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_solar_panel_full
-            generation:
-              parent: minecraft:block/custom/small_solar_panel_base
-              textures:
-                top: minecraft:block/custom/small_solar_panel_full
-                bottom: minecraft:block/custom/small_solar_panel_bottom
-                side: minecraft:block/custom/small_solar_panel_side
-
-items#2:
-  atlas:small_solar_panel_low:
-    material: paper
-    data:
-      item-name: "<!i><gradient:#1E90FF:#FFD700>Small Solar Panel"
-    model: minecraft:block/custom/small_solar_panel_low
-    behavior:
-      type: block_item
-      block:
-        loot:
-          pools:
-            - rolls: 1
-              entries:
-                - type: item
-                  item: atlas:small_solar_panel
-        settings:
-          hardness: 4.0
-          resistance: 4.0
-          is-suffocating: false
-          is-redstone-conductor: false
-          # The model is not a full cube, so it must not occlude - otherwise neighbouring
-          # blocks cull their faces against it and you can see straight through the world.
-          can-occlude: false
-          is-view-blocking: false
-          propagate-skylight: true
-          push-reaction: push_only
-          tags: ["minecraft:mineable/pickaxe"]
-          sounds:
-            break: minecraft:block.metal.break
-            step: minecraft:block.metal.step
-            place: minecraft:block.metal.place
-            hit: minecraft:block.metal.hit
-            fall: minecraft:block.metal.fall
-        state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_solar_panel_low
-            generation:
-              parent: minecraft:block/custom/small_solar_panel_base
-              textures:
-                top: minecraft:block/custom/small_solar_panel_low
-                bottom: minecraft:block/custom/small_solar_panel_bottom
-                side: minecraft:block/custom/small_solar_panel_side
-
-items#3:
-  atlas:small_solar_panel_medium:
-    material: paper
-    data:
-      item-name: "<!i><gradient:#1E90FF:#FFD700>Small Solar Panel"
-    model: minecraft:block/custom/small_solar_panel_medium
-    behavior:
-      type: block_item
-      block:
-        loot:
-          pools:
-            - rolls: 1
-              entries:
-                - type: item
-                  item: atlas:small_solar_panel
-        settings:
-          hardness: 4.0
-          resistance: 4.0
-          is-suffocating: false
-          is-redstone-conductor: false
-          # The model is not a full cube, so it must not occlude - otherwise neighbouring
-          # blocks cull their faces against it and you can see straight through the world.
-          can-occlude: false
-          is-view-blocking: false
-          propagate-skylight: true
-          push-reaction: push_only
-          tags: ["minecraft:mineable/pickaxe"]
-          sounds:
-            break: minecraft:block.metal.break
-            step: minecraft:block.metal.step
-            place: minecraft:block.metal.place
-            hit: minecraft:block.metal.hit
-            fall: minecraft:block.metal.fall
-        state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_solar_panel_medium
-            generation:
-              parent: minecraft:block/custom/small_solar_panel_base
-              textures:
-                top: minecraft:block/custom/small_solar_panel_medium
-                bottom: minecraft:block/custom/small_solar_panel_bottom
-                side: minecraft:block/custom/small_solar_panel_side
-
-items#4:
-  atlas:small_solar_panel_high:
-    material: paper
-    data:
-      item-name: "<!i><gradient:#1E90FF:#FFD700>Small Solar Panel"
-    model: minecraft:block/custom/small_solar_panel_high
-    behavior:
-      type: block_item
-      block:
-        loot:
-          pools:
-            - rolls: 1
-              entries:
-                - type: item
-                  item: atlas:small_solar_panel
-        settings:
-          hardness: 4.0
-          resistance: 4.0
-          is-suffocating: false
-          is-redstone-conductor: false
-          # The model is not a full cube, so it must not occlude - otherwise neighbouring
-          # blocks cull their faces against it and you can see straight through the world.
-          can-occlude: false
-          is-view-blocking: false
-          propagate-skylight: true
-          push-reaction: push_only
-          tags: ["minecraft:mineable/pickaxe"]
-          sounds:
-            break: minecraft:block.metal.break
-            step: minecraft:block.metal.step
-            place: minecraft:block.metal.place
-            hit: minecraft:block.metal.hit
-            fall: minecraft:block.metal.fall
-        state:
-          auto-state: solid
-          model:
-            path: minecraft:block/custom/small_solar_panel_high
-            generation:
-              parent: minecraft:block/custom/small_solar_panel_base
-              textures:
-                top: minecraft:block/custom/small_solar_panel_high
-                bottom: minecraft:block/custom/small_solar_panel_bottom
-                side: minecraft:block/custom/small_solar_panel_side
+          # Rendered as a display entity rather than a vanilla block state. That costs no
+          # slot from the scarce non-occluding auto-state pool - every entity-rendered
+          # appearance shares this one forced state.
+          state: barrier
+          entity_renderer:
+            item: atlas:small_solar_panel_active
 
 recipes:
   atlas:small_solar_panel:

@@ -42,27 +42,33 @@ class SmallSolarPanelTest {
     }
 
     @Test
-    fun `small solar panel visual state idle when no power`() {
+    fun `small solar panel visual state is dark at night`() {
+        every { TestHelper.mockWorld.time } returns NIGHT_TIME
         val panel = SmallSolarPanel(TestHelper.createLocation())
         assertEquals("atlas:small_solar_panel", panel.getVisualStateBlockId())
     }
 
     @Test
-    fun `small solar panel visual state steps through every charge level`() {
+    fun `small solar panel visual state is lit while collecting sunlight`() {
+        every { TestHelper.mockWorld.time } returns 6000L
+        val panel = SmallSolarPanel(TestHelper.createLocation())
+        assertEquals("atlas:small_solar_panel_active", panel.getVisualStateBlockId())
+    }
+
+    @Test
+    fun `small solar panel visual state ignores how much charge is buffered`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
 
-        val expected =
-            listOf(
-                0 to "atlas:small_solar_panel",
-                1 to "atlas:small_solar_panel_low",
-                2 to "atlas:small_solar_panel_medium",
-                3 to "atlas:small_solar_panel_high",
-                4 to "atlas:small_solar_panel_full",
-            )
-
-        for ((power, blockId) in expected) {
+        // The readout answers "is it working", so every charge level looks the same within a
+        // given time of day - only daylight moves it.
+        for (power in 0..panel.maxStorage) {
             panel.currentPower = power
-            assertEquals(blockId, panel.getVisualStateBlockId(), "wrong visual state at $power power")
+
+            every { TestHelper.mockWorld.time } returns 6000L
+            assertEquals("atlas:small_solar_panel_active", panel.getVisualStateBlockId(), "day, $power power")
+
+            every { TestHelper.mockWorld.time } returns NIGHT_TIME
+            assertEquals("atlas:small_solar_panel", panel.getVisualStateBlockId(), "night, $power power")
         }
     }
 
@@ -124,7 +130,7 @@ class SmallSolarPanelTest {
         every { TestHelper.mockWorld.time } returns 6000L
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.DOWN)
+        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0))
 
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
@@ -142,7 +148,7 @@ class SmallSolarPanelTest {
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
         // Cable to the SOUTH facing SOUTH, so it would pull from the panel behind it
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
+        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0))
 
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
@@ -169,20 +175,12 @@ class SmallSolarPanelTest {
     }
 
     @Test
-    fun `small solar panel descriptor registers every charge variant`() {
+    fun `small solar panel descriptor registers the active variant`() {
         val descriptor = SmallSolarPanel.descriptor
 
         assertEquals("atlas:small_solar_panel", descriptor.baseBlockId)
         assertEquals("Small Solar Panel", descriptor.displayName)
-        assertEquals(
-            listOf(
-                "atlas:small_solar_panel_low",
-                "atlas:small_solar_panel_medium",
-                "atlas:small_solar_panel_high",
-                "atlas:small_solar_panel_full",
-            ),
-            descriptor.additionalBlockIds,
-        )
+        assertEquals(listOf("atlas:small_solar_panel_active"), descriptor.additionalBlockIds)
     }
 
     @Test
@@ -192,7 +190,7 @@ class SmallSolarPanelTest {
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
         // a cable directly below, but pulling from the east rather than from above
-        val cable = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.WEST)
+        val cable = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0))
 
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
@@ -212,7 +210,7 @@ class SmallSolarPanelTest {
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
         panel.currentPower = 3
-        val cable = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0), BlockFace.EAST)
+        val cable = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0))
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
