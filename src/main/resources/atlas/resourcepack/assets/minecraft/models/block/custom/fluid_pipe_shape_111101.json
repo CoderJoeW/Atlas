@@ -1,10 +1,10 @@
 {
   "textures": {
-    "particle": "#casing"
+    "particle": "#core"
   },
   "elements": [
     {
-      "name": "hub",
+      "name": "shell",
       "from": [
         4,
         4,
@@ -17,27 +17,60 @@
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#socket"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#glass"
         }
       }
     },
     {
-      "name": "collar_north",
+      "name": "core",
+      "from": [
+        6,
+        6,
+        6
+      ],
+      "to": [
+        10,
+        10,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#core"
+        },
+        "south": {
+          "texture": "#core"
+        },
+        "east": {
+          "texture": "#core"
+        },
+        "west": {
+          "texture": "#core"
+        },
+        "up": {
+          "texture": "#core"
+        },
+        "down": {
+          "texture": "#core"
+        }
+      }
+    },
+    {
+      "name": "shell_north",
       "from": [
         4,
         4,
@@ -46,68 +79,70 @@
       "to": [
         12,
         12,
-        2
+        4
       ],
       "faces": {
         "north": {
-          "texture": "#end"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#glass"
         }
       }
     },
     {
       "name": "core_north",
       "from": [
-        5,
-        5,
-        2
+        6,
+        6,
+        0
       ],
       "to": [
-        11,
-        11,
-        4
+        10,
+        10,
+        10
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#core"
         }
       }
     },
     {
-      "name": "collar_south",
+      "name": "shell_south",
       "from": [
         4,
         4,
-        14
+        12
       ],
       "to": [
         12,
@@ -116,62 +151,64 @@
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#end"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#glass"
         }
       }
     },
     {
       "name": "core_south",
       "from": [
-        5,
-        5,
-        12
+        6,
+        6,
+        6
       ],
       "to": [
-        11,
-        11,
-        14
+        10,
+        10,
+        16
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#core"
         }
       }
     },
     {
-      "name": "collar_east",
+      "name": "shell_east",
       "from": [
-        14,
+        12,
         4,
         4
       ],
@@ -182,126 +219,134 @@
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#end"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#glass"
         }
       }
     },
     {
       "name": "core_east",
       "from": [
-        12,
-        5,
-        5
+        6,
+        6,
+        6
       ],
       "to": [
-        14,
-        11,
-        11
+        16,
+        10,
+        10
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         }
       }
     },
     {
-      "name": "collar_west",
+      "name": "shell_west",
       "from": [
         0,
         4,
         4
       ],
       "to": [
-        2,
+        4,
         12,
         12
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#end"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#glass"
         }
       }
     },
     {
       "name": "core_west",
       "from": [
-        2,
-        5,
-        5
+        0,
+        6,
+        6
       ],
       "to": [
-        4,
-        11,
-        11
+        10,
+        10,
+        10
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         }
       }
     },
     {
-      "name": "collar_down",
+      "name": "shell_down",
       "from": [
         4,
         0,
@@ -309,60 +354,60 @@
       ],
       "to": [
         12,
-        2,
+        4,
         12
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#end"
+          "texture": "#glass"
         }
       }
     },
     {
       "name": "core_down",
       "from": [
-        5,
-        2,
-        5
+        6,
+        0,
+        6
       ],
       "to": [
-        11,
-        4,
-        11
+        10,
+        10,
+        10
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#core"
         }
       }
     }

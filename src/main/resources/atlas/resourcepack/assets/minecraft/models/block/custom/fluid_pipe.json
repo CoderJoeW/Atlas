@@ -1,9 +1,8 @@
 {
   "parent": "minecraft:block/custom/fluid_pipe_shape_110000",
   "textures": {
-    "casing": "minecraft:block/custom/fluid_pipe_casing_water",
-    "end": "minecraft:block/custom/fluid_pipe_end_water",
-    "socket": "minecraft:block/custom/fluid_pipe_end_water",
-    "particle": "minecraft:block/custom/fluid_pipe_casing_water"
+    "glass": "minecraft:block/custom/fluid_pipe_glass",
+    "core": "minecraft:block/custom/fluid_pipe_core_water",
+    "particle": "minecraft:block/custom/fluid_pipe_core_water"
   }
 }

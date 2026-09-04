@@ -1,10 +1,10 @@
 {
   "textures": {
-    "particle": "#casing"
+    "particle": "#core"
   },
   "elements": [
     {
-      "name": "hub",
+      "name": "shell",
       "from": [
         4,
         4,
@@ -17,29 +17,62 @@
       ],
       "faces": {
         "north": {
-          "texture": "#socket"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#socket"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#socket"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#socket"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#glass"
         }
       }
     },
     {
-      "name": "collar_east",
+      "name": "core",
       "from": [
-        14,
+        6,
+        6,
+        6
+      ],
+      "to": [
+        10,
+        10,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#core"
+        },
+        "south": {
+          "texture": "#core"
+        },
+        "east": {
+          "texture": "#core"
+        },
+        "west": {
+          "texture": "#core"
+        },
+        "up": {
+          "texture": "#core"
+        },
+        "down": {
+          "texture": "#core"
+        }
+      }
+    },
+    {
+      "name": "shell_east",
+      "from": [
+        12,
         4,
         4
       ],
@@ -50,60 +83,64 @@
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#end"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#glass"
         }
       }
     },
     {
       "name": "core_east",
       "from": [
-        12,
-        5,
-        5
+        6,
+        6,
+        6
       ],
       "to": [
-        14,
-        11,
-        11
+        16,
+        10,
+        10
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#core",
+          "rotation": 90
         }
       }
     },
     {
-      "name": "collar_down",
+      "name": "shell_down",
       "from": [
         4,
         0,
@@ -111,60 +148,60 @@
       ],
       "to": [
         12,
-        2,
+        4,
         12
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#glass"
         },
         "down": {
-          "texture": "#end"
+          "texture": "#glass"
         }
       }
     },
     {
       "name": "core_down",
       "from": [
-        5,
-        2,
-        5
+        6,
+        0,
+        6
       ],
       "to": [
-        11,
-        4,
-        11
+        10,
+        10,
+        10
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "east": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "west": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#core"
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#core"
         }
       }
     }
