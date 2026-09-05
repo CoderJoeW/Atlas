@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
-import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
+import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump

@@ -7,7 +7,6 @@ import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
-import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

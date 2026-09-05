@@ -4,11 +4,11 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.core.AtlasBlock
-import com.coderjoe.atlas.power.PowerBlockRegistry
-import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.block.LavaGenerator
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
