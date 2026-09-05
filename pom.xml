@@ -12,11 +12,21 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>2.3.20</kotlin.version>
+        <kotlin.version>2.4.10</kotlin.version>
         <java.version>25</java.version>
         <jacoco.version>0.8.14</jacoco.version>
         <spotless.version>3.4.0</spotless.version>
         <maven-surefire.version>3.5.2</maven-surefire.version>
+        <maven-compiler.version>3.16.0</maven-compiler.version>
+        <maven-shade.version>3.6.2</maven-shade.version>
+        <ktlint.version>1.0.1</ktlint.version>
+        <google-java-format.version>1.19.1</google-java-format.version>
+        <adventure-api.version>5.2.0</adventure-api.version>
+        <paper-api.version>26.2.build.121-stable</paper-api.version>
+        <craft-engine.version>26.8.2</craft-engine.version>
+        <junit-jupiter.version>6.1.3</junit-jupiter.version>
+        <mockk.version>1.14.11</mockk.version>
+        <byte-buddy.version>1.18.12</byte-buddy.version>
     </properties>
 
     <repositories>
@@ -71,7 +81,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>${maven-compiler.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -88,7 +98,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>${maven-shade.version}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -108,12 +118,12 @@
                 <configuration>
                     <kotlin>
                         <ktlint>
-                            <version>1.0.1</version>
+                            <version>${ktlint.version}</version>
                         </ktlint>
                     </kotlin>
                     <java>
                         <googleJavaFormat>
-                            <version>1.19.1</version>
+                            <version>${google-java-format.version}</version>
                         </googleJavaFormat>
                     </java>
                 </configuration>
@@ -170,13 +180,13 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
-            <version>5.2.0</version>
+            <version>${adventure-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>26.2.build.121-stable</version>
+            <version>${paper-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -187,37 +197,37 @@
         <dependency>
             <groupId>net.momirealms</groupId>
             <artifactId>craft-engine-core</artifactId>
-            <version>26.8.2</version>
+            <version>${craft-engine.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.momirealms</groupId>
             <artifactId>craft-engine-bukkit</artifactId>
-            <version>26.8.2</version>
+            <version>${craft-engine.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.11.3</version>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
-            <version>1.14.9</version>
+            <version>${mockk.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.18.8</version>
+            <version>${byte-buddy.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
-            <version>1.18.8</version>
+            <version>${byte-buddy.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
