@@ -220,7 +220,7 @@ object GuideBook {
                     ),
                 )
                 .append(Component.text("Output: ", bold))
-                .append(Component.text("drops one ore\nabove the deck - run a\nconveyor under it.", darkGray))
+                .append(Component.text("drops one ore into the\nblock above it - put a\nconveyor there.", darkGray))
                 .build(),
             // Page 14: The seven mines
             Component.text()

@@ -113,8 +113,8 @@ The power system is <b>pull-based</b>. Each block pulls energy from the block be
 | **Diamond Mine** | Diamond | 18 | 8s |
 | **Netherite Mine** | Ancient Debris | 30 | 10s |
 
-> Ore drops one block above the deck, so a `Conveyor Belt` run underneath carries the haul away.
-> Every mine idles dark and lights up in its own ore colour while it is digging.
+> Ore drops into the block directly above the mine, so put a `Conveyor Belt` there to carry the
+> haul away. Every mine idles dark and lights up in its own ore colour while it is actually cutting.
 
 ---
 
