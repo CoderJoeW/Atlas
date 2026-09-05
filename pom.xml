@@ -15,6 +15,9 @@
         <kotlin.version>2.4.10</kotlin.version>
         <java.version>25</java.version>
         <jacoco.version>0.8.14</jacoco.version>
+        <!-- Filled in by jacoco:prepare-agent and consumed by surefire's argLine below.
+             Declared empty here so a build that skips prepare-agent still substitutes. -->
+        <jacocoArgLine/>
         <spotless.version>3.4.0</spotless.version>
         <maven-surefire.version>3.5.2</maven-surefire.version>
         <maven-compiler.version>3.16.0</maven-compiler.version>
@@ -92,7 +95,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire.version}</version>
                 <configuration>
-                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+                    <!-- @{jacocoArgLine} is late-replaced with the -javaagent flag that
+                         jacoco:prepare-agent sets. Without it this argLine simply replaces
+                         JaCoCo's, the agent never attaches, no jacoco.exec is written, and
+                         jacoco:report skips with "missing execution data file" - leaving the
+                         coverage workflow uploading nothing. -->
+                    <argLine>@{jacocoArgLine} -XX:+EnableDynamicAgentLoading</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -143,6 +151,9 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <propertyName>jacocoArgLine</propertyName>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>report</id>
