@@ -7,9 +7,9 @@ import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
-import org.bukkit.block.BlockFace
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
+import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals

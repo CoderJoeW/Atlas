@@ -10,6 +10,7 @@ import com.coderjoe.atlas.power.block.SmallSolarPanel
 import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
+import com.coderjoe.atlas.utility.block.Mine
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -100,6 +101,13 @@ object PowerBlockDialog {
                 is Crusher ->
                     Component.text("Machine - crushes ore blocks into 2x ores, consumes ${Crusher.POWER_PER_CRUSH} power/item")
                         .color(NamedTextColor.GRAY)
+                // One branch covers all seven mines: they differ only in what they dig, what a
+                // haul costs and how long the bore takes.
+                is Mine ->
+                    Component.text(
+                        "Mine - digs 1 ${powerBlock.output.name.lowercase().replace('_', ' ')} " +
+                            "per ${powerBlock.powerPerHaul} power",
+                    ).color(NamedTextColor.GRAY)
                 else ->
                     Component.text("Power block")
                         .color(NamedTextColor.GRAY)

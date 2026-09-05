@@ -98,6 +98,26 @@ The power system is <b>pull-based</b>. Each block pulls energy from the block be
 
 ---
 
+### Mining
+
+> Seven derricks that turn power straight into ore. A mine needs no deposit underneath it and never
+> runs dry - the rarer the ore, the more power a haul costs and the longer the bore takes.
+
+| Block | Digs | Power per haul | Bore time |
+|:------|:-----|:---------------|:----------|
+| **Coal Mine** | Coal | 2 | 2s |
+| **Iron Mine** | Raw Iron | 5 | 3s |
+| **Redstone Mine** | Redstone | 5 | 3s |
+| **Gold Mine** | Raw Gold | 8 | 4s |
+| **Emerald Mine** | Emerald | 14 | 6s |
+| **Diamond Mine** | Diamond | 18 | 8s |
+| **Netherite Mine** | Ancient Debris | 30 | 10s |
+
+> Ore drops into the block directly above the mine, so put a `Conveyor Belt` there to carry the
+> haul away. Every mine idles dark and lights up in its own ore colour while it is actually cutting.
+
+---
+
 ### Atlas Guide Book
 
 Craft a **Book** into an **Atlas Guide** to get a full illustrated manual covering every block, every system, and tips for building efficient factories. Everything you need to know, right in your inventory.

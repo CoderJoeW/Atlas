@@ -11,7 +11,6 @@ import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.power.PowerBlock
-import com.coderjoe.atlas.power.PowerBlockRegistry
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 

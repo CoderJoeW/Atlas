@@ -209,14 +209,39 @@ object GuideBook {
                 .append(Component.text("Power cost: ", bold))
                 .append(Component.text("2 per item", darkGray))
                 .build(),
-            // Page 13: Tips
+            // Page 13: Mining System
+            Component.text()
+                .append(Component.text("Mining System\n", Style.style(TextDecoration.BOLD).color(gold)))
+                .append(
+                    Component.text(
+                        "\nA mine is a derrick that\nturns power straight\ninto ore. It needs no\n" +
+                            "deposit underneath and\nnever runs dry.\n\n",
+                        darkGray,
+                    ),
+                )
+                .append(Component.text("Output: ", bold))
+                .append(Component.text("drops one ore into the\nblock above it - put a\nconveyor there.", darkGray))
+                .build(),
+            // Page 14: The seven mines
+            Component.text()
+                .append(Component.text("The Seven Mines\n", Style.style(TextDecoration.BOLD).color(gold)))
+                .append(Component.text("\nPower per haul, and\nhow long a bore takes:\n\n", darkGray))
+                .append(
+                    Component.text(
+                        "Coal 2 / 2s\nIron 5 / 3s\nRedstone 5 / 3s\nGold 8 / 4s\n" +
+                            "Emerald 14 / 6s\nDiamond 18 / 8s\nNetherite 30 / 10s",
+                        darkGray,
+                    ),
+                )
+                .build(),
+            // Page 15: Tips
             Component.text()
                 .append(Component.text("Tips & Tricks\n", Style.style(TextDecoration.BOLD).color(darkRed)))
                 .append(Component.text("\n"))
                 .append(Component.text("Lava power pipeline:\n", bold))
                 .append(Component.text("Pump > Pipe >\nContainer > Lava Gen\n\n", darkGray))
                 .append(Component.text("Ore processing:\n", bold))
-                .append(Component.text("Crusher > Conveyor\nBelt > Auto Smelter\nfor double ingots\n\n", darkGray))
+                .append(Component.text("Mine > Crusher >\nConveyor Belt > Auto\nSmelter for ingots\n\n", darkGray))
                 .append(Component.text("Placement:\n", bold))
                 .append(Component.text("blocks face where you\nlook. The pull direction\nis always from behind.", darkGray))
                 .build(),

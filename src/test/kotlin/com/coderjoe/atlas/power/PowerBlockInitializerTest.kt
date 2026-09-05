@@ -35,8 +35,9 @@ class PowerBlockInitializerTest {
         // CobblestoneFactory: 1
         // ObsidianFactory: 1
         // Crusher: 1
-        // Total: 14
-        assertEquals(14, ids.size)
+        // Mines: 7 (coal, iron, redstone, gold, emerald, diamond, netherite)
+        // Total: 21
+        assertEquals(21, ids.size)
     }
 
     @Test

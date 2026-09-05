@@ -1,0 +1,202 @@
+items:
+  atlas:netherite_mine:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#3A2038:#E040FB>Netherite Mine"
+    # The hardware is shared across all seven mines - the design chart draws every rig in the same
+    # charcoal, and only the digging state carries the per-ore glow. What tells one mine from
+    # another is the ore block in its jaws, rendered by the entity_renderer below.
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/netherite_mine
+      generation:
+        parent: minecraft:block/custom/mine_gantry
+        textures:
+          deck: minecraft:block/custom/mine_deck
+          side: minecraft:block/custom/mine_side
+          tower: minecraft:block/custom/mine_tower
+          bottom: minecraft:block/custom/mine_bottom
+    behavior:
+      type: block_item
+      block:
+        loot:
+          template: default:loot_table/self
+        settings:
+          hardness: 4.0
+          resistance: 4.0
+          is-suffocating: false
+          is-view-blocking: false
+          is-redstone-conductor: false
+          # An open gantry over an excavation is nowhere near a full cube, so it must not occlude -
+          # otherwise its neighbours cull their faces against it and the world shows through.
+          can-occlude: false
+          propagate-skylight: true
+          push-reaction: push_only
+          tags: ["minecraft:mineable/pickaxe"]
+          sounds:
+            break: minecraft:block.metal.break
+            step: minecraft:block.metal.step
+            place: minecraft:block.metal.place
+            hit: minecraft:block.metal.hit
+            fall: minecraft:block.metal.fall
+        states:
+          properties:
+            facing:
+              type: horizontal_direction
+              default: north
+            powered:
+              type: boolean
+              default: false
+          # Rendered as display entities rather than vanilla block states: every appearance shares
+          # one forced barrier state, so none of them claims a slot from the auto-state pools.
+          appearances:
+            idle_south:
+              state: barrier
+              entity_renderer:
+                - item: atlas:netherite_mine
+                # The ore being cut, as a real block held in the jaws under the bit. This is what
+                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
+                # all seven mines, so without it they are the same machine.
+                - block: minecraft:ancient_debris
+                  position: [0.25, 0.375, 0.25]
+                  scale: [0.5, 0.5, 0.5]
+            idle_north:
+              state: barrier
+              entity_renderer:
+                - item: atlas:netherite_mine
+                  yaw: 180
+                # The ore being cut, as a real block held in the jaws under the bit. This is what
+                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
+                # all seven mines, so without it they are the same machine.
+                - block: minecraft:ancient_debris
+                  position: [0.25, 0.375, 0.25]
+                  scale: [0.5, 0.5, 0.5]
+            idle_east:
+              state: barrier
+              entity_renderer:
+                - item: atlas:netherite_mine
+                  yaw: -90
+                # The ore being cut, as a real block held in the jaws under the bit. This is what
+                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
+                # all seven mines, so without it they are the same machine.
+                - block: minecraft:ancient_debris
+                  position: [0.25, 0.375, 0.25]
+                  scale: [0.5, 0.5, 0.5]
+            idle_west:
+              state: barrier
+              entity_renderer:
+                - item: atlas:netherite_mine
+                  yaw: 90
+                # The ore being cut, as a real block held in the jaws under the bit. This is what
+                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
+                # all seven mines, so without it they are the same machine.
+                - block: minecraft:ancient_debris
+                  position: [0.25, 0.375, 0.25]
+                  scale: [0.5, 0.5, 0.5]
+            digging_south:
+              state: barrier
+              entity_renderer:
+                - item: atlas:netherite_mine_digging
+                # The ore being cut, as a real block held in the jaws under the bit. This is what
+                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
+                # all seven mines, so without it they are the same machine.
+                - block: minecraft:ancient_debris
+                  position: [0.25, 0.375, 0.25]
+                  scale: [0.5, 0.5, 0.5]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging_north:
+              state: barrier
+              entity_renderer:
+                - item: atlas:netherite_mine_digging
+                  yaw: 180
+                # The ore being cut, as a real block held in the jaws under the bit. This is what
+                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
+                # all seven mines, so without it they are the same machine.
+                - block: minecraft:ancient_debris
+                  position: [0.25, 0.375, 0.25]
+                  scale: [0.5, 0.5, 0.5]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging_east:
+              state: barrier
+              entity_renderer:
+                - item: atlas:netherite_mine_digging
+                  yaw: -90
+                # The ore being cut, as a real block held in the jaws under the bit. This is what
+                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
+                # all seven mines, so without it they are the same machine.
+                - block: minecraft:ancient_debris
+                  position: [0.25, 0.375, 0.25]
+                  scale: [0.5, 0.5, 0.5]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging_west:
+              state: barrier
+              entity_renderer:
+                - item: atlas:netherite_mine_digging
+                  yaw: 90
+                # The ore being cut, as a real block held in the jaws under the bit. This is what
+                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
+                # all seven mines, so without it they are the same machine.
+                - block: minecraft:ancient_debris
+                  position: [0.25, 0.375, 0.25]
+                  scale: [0.5, 0.5, 0.5]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+          variants:
+            facing=south,powered=false:
+              appearance: idle_south
+            facing=north,powered=false:
+              appearance: idle_north
+            facing=east,powered=false:
+              appearance: idle_east
+            facing=west,powered=false:
+              appearance: idle_west
+            facing=south,powered=true:
+              appearance: digging_south
+            facing=north,powered=true:
+              appearance: digging_north
+            facing=east,powered=true:
+              appearance: digging_east
+            facing=west,powered=true:
+              appearance: digging_west
+
+items#1:
+  atlas:netherite_mine_digging:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#3A2038:#E040FB>Netherite Mine"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/netherite_mine_digging
+      generation:
+        parent: minecraft:block/custom/mine_gantry
+        textures:
+          deck: minecraft:block/custom/netherite_mine_deck_digging
+          side: minecraft:block/custom/netherite_mine_side_digging
+          tower: minecraft:block/custom/mine_tower
+          bottom: minecraft:block/custom/mine_bottom
+
+recipes:
+  atlas:netherite_mine:
+    type: shapeless
+    category: misc
+    unlock-on-ingredient-obtained: true
+    ingredients:
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:iron_ingot
+      - minecraft:redstone
+      - minecraft:redstone
+      - minecraft:netherite_ingot
+      - minecraft:diamond_block
+      - minecraft:diamond_block
+    result:
+      id: atlas:netherite_mine
+      count: 1
