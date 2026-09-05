@@ -192,53 +192,44 @@ class MineTest {
         assertEquals(BlockFace.EAST, CoalMine(location, BlockFace.EAST).facing)
     }
 
+    /**
+     * The renderer is the machine plus the ore in its jaws, and nothing else. The yield used to
+     * hang over the chute as well, which was redundant once the ore block was there.
+     */
     @Test
     @Suppress("UNCHECKED_CAST")
-    fun `the ore shown at each shaft mouth is the ore that mine digs`() {
-        val expected =
-            allMines(TestHelper.createLocation()).associate { (mine, ore, _) ->
-                mine.baseBlockId.removePrefix("atlas:") to "minecraft:${ore.name.lowercase()}"
-            }
-
-        for ((blockId, expectedOre) in expected) {
-            for ((name, appearance) in appearances("$blockId.yml")) {
+    fun `a mine renders its machine and the ore it holds, and nothing else`() {
+        for (file in configDir.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
+            for ((name, appearance) in appearances(file.name)) {
                 val elements = appearance["entity_renderer"] as List<Map<String, Any?>>
-                assertEquals(3, elements.size, "$blockId/$name renders machine, ore block and yield")
-                assertEquals(expectedOre, elements[2]["item"], "$blockId/$name yield")
+                assertEquals(2, elements.size, "${file.name}/$name renders machine + held ore")
+                assertTrue(elements[0].containsKey("item"), "${file.name}/$name first is the machine")
+                assertTrue(elements[1].containsKey("block"), "${file.name}/$name second is the ore")
             }
         }
     }
 
     /**
-     * The mouth has a front, so a mine faces. Each facing needs its OWN ore position: `position`
-     * is an absolute offset from the block corner and `yaw` turns the display entity in place
-     * without orbiting it, so reusing one position would strand the ore inside the pad on three
-     * of the four rotations.
+     * Four facings, each turning the machine a different way. Nothing in the renderer is off
+     * centre any more, so yaw alone carries the rotation - but the appearances still have to exist
+     * and differ, or three of the four facings would render identically.
      */
     @Test
     @Suppress("UNCHECKED_CAST")
-    fun `every facing puts the ore at its own mouth`() {
-        // Which coordinate leads, and which way, for a mouth opening toward each facing.
-        val mouth = mapOf("south" to (2 to 1), "north" to (2 to -1), "east" to (0 to 1), "west" to (0 to -1))
+    fun `every facing turns the machine a different way`() {
+        val expected = mapOf("south" to null, "north" to 180, "east" to -90, "west" to 90)
 
         for (file in configDir.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
             val found = appearances(file.name)
             assertEquals(8, found.size, "${file.name} has an appearance per facing per state")
 
             for ((name, appearance) in found) {
-                val facing = name.substringAfterLast('_')
-                val (axis, sign) = mouth.getValue(facing)
-                val ore = (appearance["entity_renderer"] as List<Map<String, Any?>>)[2]
-                val position = (ore["position"] as List<Number>).map { it.toDouble() }
-                val scale = (ore["scale"] as List<Number>).first().toDouble()
-                val label = "${file.name}/$name"
-
-                val offset = position[axis] - 0.5
-                assertTrue(
-                    offset * sign > 0.25,
-                    "$label sits at ${position[axis]} on axis $axis, not out at the $facing mouth",
+                val machine = (appearance["entity_renderer"] as List<Map<String, Any?>>)[0]
+                assertEquals(
+                    expected.getValue(name.substringAfterLast('_')),
+                    (machine["yaw"] as Number?)?.toInt(),
+                    "${file.name}/$name yaw",
                 )
-                assertTrue(scale >= 0.6, "$label is scaled to $scale, too small to read")
             }
         }
     }
