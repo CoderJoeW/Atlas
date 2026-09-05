@@ -22,9 +22,16 @@ import com.coderjoe.atlas.transport.TransportBlockFactory
 import com.coderjoe.atlas.transport.TransportBlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.utility.block.AutoSmelter
+import com.coderjoe.atlas.utility.block.CoalMine
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
+import com.coderjoe.atlas.utility.block.DiamondMine
+import com.coderjoe.atlas.utility.block.EmeraldMine
+import com.coderjoe.atlas.utility.block.GoldMine
+import com.coderjoe.atlas.utility.block.IronMine
+import com.coderjoe.atlas.utility.block.NetheriteMine
 import com.coderjoe.atlas.utility.block.ObsidianFactory
+import com.coderjoe.atlas.utility.block.RedstoneMine
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -213,6 +220,13 @@ object TestHelper {
                 CobblestoneFactory.descriptor,
                 ObsidianFactory.descriptor,
                 Crusher.descriptor,
+                CoalMine.descriptor,
+                IronMine.descriptor,
+                RedstoneMine.descriptor,
+                GoldMine.descriptor,
+                EmeraldMine.descriptor,
+                DiamondMine.descriptor,
+                NetheriteMine.descriptor,
             ),
         )
     }
