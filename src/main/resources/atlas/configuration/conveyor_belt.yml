@@ -58,47 +58,51 @@ items:
               default: false
           # Rendered as display entities rather than vanilla block states: all four directions
           # share one forced state and one model, spun with `yaw`. That costs nothing from the
-          # auto-state pool, and it means a single north-facing top texture serves every rotation
-          # instead of four pre-rotated copies.
+          # auto-state pool, and it means a single top texture serves every rotation instead of
+          # four pre-rotated copies.
+          #
+          # An unrotated display entity shows the model's chevrons pointing SOUTH, so every yaw
+          # here is the facing's compass angle turned a further 180 degrees. Without that half
+          # turn the arrows point back down the belt while items travel the other way.
           appearances:
             north:
               state: barrier
               entity_renderer:
                 item: atlas:conveyor_belt
+                yaw: 180
             south:
               state: barrier
               entity_renderer:
                 item: atlas:conveyor_belt
-                yaw: 180
             east:
               state: barrier
               entity_renderer:
                 item: atlas:conveyor_belt
-                yaw: 90
+                yaw: -90
             west:
               state: barrier
               entity_renderer:
                 item: atlas:conveyor_belt
-                yaw: -90
+                yaw: 90
             north_running:
               state: barrier
               entity_renderer:
                 item: atlas:conveyor_belt_running
+                yaw: 180
             south_running:
               state: barrier
               entity_renderer:
                 item: atlas:conveyor_belt_running
-                yaw: 180
             east_running:
               state: barrier
               entity_renderer:
                 item: atlas:conveyor_belt_running
-                yaw: 90
+                yaw: -90
             west_running:
               state: barrier
               entity_renderer:
                 item: atlas:conveyor_belt_running
-                yaw: -90
+                yaw: 90
           variants:
             facing=north,running=false:
               appearance: north

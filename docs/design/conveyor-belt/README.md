@@ -26,9 +26,25 @@ written on the start/stop edge only.
 ## Facing
 
 The chart's north/south/east/west variants are the *same art rotated*. The block is entity-rendered,
-so all four are one model spun with `yaw` (`180/90/-90`) rather than four pre-rotated textures. Two
-states × four facings = eight appearances sharing one forced barrier state, costing **zero**
-auto-state slots.
+so all four are one model spun with `yaw` rather than four pre-rotated textures. Two states × four
+facings = eight appearances sharing one forced barrier state, costing **zero** auto-state slots.
+
+An **unrotated** display entity shows the chevrons pointing *south*, not north, so each facing's yaw
+is its compass angle plus a further 180°:
+
+| `facing` | `yaw` |
+|---|---|
+| north | `180` |
+| south | *(none)* |
+| east | `-90` |
+| west | `90` |
+
+Items always travel along `facing` — that is also the side `containerAhead()` deposits into — so a
+missing half turn does not misroute anything, it just draws the arrows pointing back down the belt
+while the items run the other way. That was the state of the block until it was corrected.
+
+Only the top texture reveals the error: the two ends carry identical art and both sides share one
+texture, so a 180° turn of this model is invisible everywhere except the chevrons.
 
 ## Model and UVs
 
