@@ -17,6 +17,7 @@ import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -50,6 +51,23 @@ class MineTest {
         TestHelper.teardown()
     }
 
+    /**
+     * Runs [body], tolerating only the failure a mine legitimately hits in a unit test: building
+     * an [org.bukkit.inventory.ItemStack] needs Bukkit's registry, which no test server provides.
+     * Anything else is a real bug and is rethrown.
+     */
+    private fun expectingRegistryFailure(body: () -> Unit) {
+        try {
+            body()
+        } catch (e: Throwable) {
+            val cause = generateSequence(e) { it.cause }.last()
+            val registryFailure =
+                cause is NoClassDefFoundError || cause is ExceptionInInitializerError ||
+                    cause.message?.contains("Registry") == true
+            if (!registryFailure) throw e
+        }
+    }
+
     /** Every mine, paired with the ore it digs and what a haul costs. */
     private fun allMines(location: Location): List<Triple<Mine, Material, Int>> =
         listOf(
@@ -77,11 +95,7 @@ class MineTest {
         val mine = CoalMine(location)
         mine.currentPower = CoalMine.POWER_PER_HAUL
 
-        try {
-            mine.callPowerUpdate()
-        } catch (_: Throwable) {
-            // ItemStack constructor triggers Registry init
-        }
+        expectingRegistryFailure { mine.callPowerUpdate() }
 
         assertEquals(0, mine.currentPower)
     }
@@ -105,11 +119,7 @@ class MineTest {
         val mine = GoldMine(location)
         mine.currentPower = GoldMine.POWER_PER_HAUL * 2
 
-        try {
-            mine.callPowerUpdate()
-        } catch (_: Throwable) {
-            // ItemStack constructor triggers Registry init
-        }
+        expectingRegistryFailure { mine.callPowerUpdate() }
 
         assertEquals(GoldMine.POWER_PER_HAUL, mine.currentPower)
     }
@@ -176,10 +186,26 @@ class MineTest {
     }
 
     /**
-     * The ore shown at the shaft mouth is the only thing distinguishing one idle mine from
-     * another - the idle art is shared by all seven - so it has to be the ore that mine digs.
-     * Nothing at runtime ties the CraftEngine config to the block class, so this is the check.
+     * A mine shows the digging state only when it can actually afford a haul.
+     *
+     * The inherited powered flag answers "holds any charge", which for a mine is a lie whenever it
+     * is fed too slowly: a netherite mine costs 30, so a trickle would leave it sitting at 1-29
+     * looking like it is cutting, with the ore lit, while producing nothing.
      */
+    @Test
+    fun `a mine part way to a haul does not claim to be cutting`() {
+        val location = TestHelper.createLocation()
+        val mine = NetheriteMine(location)
+
+        mine.currentPower = NetheriteMine.POWER_PER_HAUL - 1
+        mine.callPowerUpdate()
+        assertFalse(mine.isCutting, "cannot afford a haul, so it is not cutting")
+
+        mine.currentPower = NetheriteMine.POWER_PER_HAUL
+        expectingRegistryFailure { mine.callPowerUpdate() }
+        assertTrue(mine.isCutting, "can afford a haul, so it is cutting")
+    }
+
     @Test
     fun `a mine placed on the ground still faces a horizontal direction`() {
         val location = TestHelper.createLocation()
@@ -287,32 +313,41 @@ class MineTest {
     }
 
     /**
-     * Each tier holds the ore block it actually digs in the machine's jaws. That block is the
-     * whole answer to "what is this mine mining" - the hardware is identical across all seven -
-     * so it must match the tier, and it must be lit while the mine is working.
+     * Each tier holds, in its jaws, the ore block that yields the material it drops. That block is
+     * the whole answer to "what is this mine mining" - the hardware is identical across all seven.
+     *
+     * The expectation is derived from each block class's own [Mine.output], so changing a mine's
+     * output material without changing its config fails here. A literal map of block id to ore
+     * would pass no matter what the Kotlin said.
      */
     @Test
     @Suppress("UNCHECKED_CAST")
-    fun `each mine holds the ore block it digs, lit while digging`() {
-        val oreBlocks =
+    fun `each mine holds the ore block that yields what it drops, lit while digging`() {
+        val oreBlockFor =
             mapOf(
-                "coal_mine" to "minecraft:coal_ore",
-                "iron_mine" to "minecraft:iron_ore",
-                "redstone_mine" to "minecraft:redstone_ore",
-                "gold_mine" to "minecraft:gold_ore",
-                "emerald_mine" to "minecraft:emerald_ore",
-                "diamond_mine" to "minecraft:diamond_ore",
-                "netherite_mine" to "minecraft:ancient_debris",
+                Material.COAL to "minecraft:coal_ore",
+                Material.RAW_IRON to "minecraft:iron_ore",
+                Material.REDSTONE to "minecraft:redstone_ore",
+                Material.RAW_GOLD to "minecraft:gold_ore",
+                Material.EMERALD to "minecraft:emerald_ore",
+                Material.DIAMOND to "minecraft:diamond_ore",
+                Material.ANCIENT_DEBRIS to "minecraft:ancient_debris",
             )
-        assertEquals(7, oreBlocks.size)
 
-        for ((blockId, expectedBlock) in oreBlocks) {
+        val mines = allMines(TestHelper.createLocation())
+        assertEquals(7, mines.size)
+
+        for ((mine, _, _) in mines) {
+            val blockId = mine.baseBlockId.removePrefix("atlas:")
+            val expected =
+                oreBlockFor[mine.output]
+                    ?: error("$blockId drops ${mine.output}, which no ore block in this test yields")
+
             for ((name, appearance) in appearances("$blockId.yml")) {
                 val held = (appearance["entity_renderer"] as List<Map<String, Any?>>)[1]
-                assertEquals(expectedBlock, held["block"], "$blockId/$name holds the wrong ore")
+                assertEquals(expected, held["block"], "$blockId/$name holds the wrong ore")
 
-                // Centred in the cut, so it needs no per-facing position - but that only holds
-                // while it stays centred, which this pins.
+                // Centred in the cut, which is why it needs no per-facing position.
                 val position = (held["position"] as List<Number>).map { it.toDouble() }
                 val scale = (held["scale"] as List<Number>).first().toDouble()
                 assertEquals(position[0], position[2], "$blockId/$name ore block is off centre")

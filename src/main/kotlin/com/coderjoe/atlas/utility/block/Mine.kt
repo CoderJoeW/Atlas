@@ -2,6 +2,7 @@ package com.coderjoe.atlas.utility.block
 
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
+import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Location
 import org.bukkit.Material
@@ -38,6 +39,14 @@ abstract class Mine(
 
     override val facing: BlockFace get() = direction
 
+    /**
+     * Whether the last tick completed a haul, which is what the digging appearance shows.
+     *
+     * Set before the ore is dropped so it reflects the decision rather than the drop's success.
+     */
+    var isCutting: Boolean = false
+        private set
+
     /** Power drawn per haul. Charged only on a tick that actually produces ore. */
     abstract val powerPerHaul: Int
 
@@ -50,25 +59,58 @@ abstract class Mine(
     }
 
     /**
-     * Where a haul lands: one block above the pad, so it falls clear of the machine and onto
-     * whatever the player has run alongside it.
+     * Where a haul lands: the middle of the block directly above the mine, so it drops clear of
+     * the machine and onto a conveyor belt placed in that block.
      */
     internal fun dropLocation(): Location = location.clone().add(0.5, 1.5, 0.5)
+
+    /**
+     * A mine never hands power back to the network.
+     *
+     * Without this it is listed as a source as well as a sink, and on a shared run one mine can
+     * siphon another's buffer a unit at a time - a netherite mine banking 29 of the 30 it needs
+     * can be drained by a coal mine next door and never complete a bore.
+     */
+    override fun canOutputToward(face: BlockFace): Boolean = false
 
     override fun getVisualStateBlockId(): String = baseBlockId
 
     override fun powerUpdate() {
         pullPowerFromNeighbors()
 
-        if (currentPower >= powerPerHaul) {
+        // Resolve the world before spending anything. Location.world is a weak reference, and the
+        // tick only stops when the block is unregistered - so on a server that unloads a world the
+        // mine would keep charging itself for hauls that can never be dropped.
+        val world = location.world
+        if (world == null) {
+            isCutting = false
+            showCutting(false)
+            return
+        }
+
+        val cutting = currentPower >= powerPerHaul
+        isCutting = cutting
+        if (cutting) {
             removePower(powerPerHaul)
-            location.world?.dropItem(dropLocation(), ItemStack(output))
+            world.dropItem(dropLocation(), ItemStack(output))
             plugin.logger.atlasInfo(
                 "${this::class.simpleName} at ${location.coordinates} " +
                     "produced 1 ${output.name.lowercase()}",
             )
         }
 
-        updatePoweredState()
+        showCutting(cutting)
+    }
+
+    /**
+     * Shows the digging state only on the ticks that actually complete a haul.
+     *
+     * The inherited [updatePoweredState] answers "holds any charge at all", which for a mine is a
+     * lie the whole time it is being fed too slowly: a netherite mine costs 30 a haul, so a trickle
+     * leaves it sitting at 1-29 power looking like it is cutting, with the ore lit, while producing
+     * nothing. Gating on affordability instead means a starved mine reads as idle, which is true.
+     */
+    private fun showCutting(cutting: Boolean) {
+        CraftEngineHelper.setBooleanProperty(location, "powered", cutting)
     }
 }
