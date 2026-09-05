@@ -3,7 +3,6 @@ package com.coderjoe.atlas.power
 import com.coderjoe.atlas.core.BlockPersistence
 import com.coderjoe.atlas.core.BlockPersister
 import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.utility.block.SmallDrill
 import org.bukkit.plugin.java.JavaPlugin
 
 class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {
@@ -14,23 +13,12 @@ class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {
             yamlKey = "power_blocks",
             factory = PowerBlockFactory,
             serialize = { block, _ ->
-                val map =
-                    mutableMapOf<String, Any>(
-                        "currentPower" to block.currentPower,
-                    )
-                if (block is SmallDrill) {
-                    map["enabled"] = block.enabled
-                }
-                map
+                mutableMapOf<String, Any>(
+                    "currentPower" to block.currentPower,
+                )
             },
             restore = { block, data ->
                 block.currentPower = (data["currentPower"] as? Number)?.toInt() ?: 0
-                if (block is SmallDrill) {
-                    val enabled = data["enabled"] as? Boolean
-                    if (enabled != null) {
-                        block.enabled = enabled
-                    }
-                }
             },
         )
 

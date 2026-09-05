@@ -4,12 +4,10 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
-import com.coderjoe.atlas.utility.block.SmallDrill
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -67,39 +65,6 @@ class PowerBlockPersistenceTest {
     }
 
     @Test
-    fun `drill enabled true persists correctly`() {
-        val drill = SmallDrill(TestHelper.createLocation(), BlockFace.DOWN)
-        drill.enabled = true
-        drill.currentPower = 5
-        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
-
-        persistence.save(registry)
-
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
-        persistence.load(loadRegistry)
-
-        val loaded = loadRegistry.getAllBlocks().first()
-        assertTrue(loaded is SmallDrill)
-        assertTrue((loaded as SmallDrill).enabled)
-        assertEquals(5, loaded.currentPower)
-    }
-
-    @Test
-    fun `drill enabled false persists correctly`() {
-        val drill = SmallDrill(TestHelper.createLocation(), BlockFace.NORTH)
-        drill.enabled = false
-        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
-
-        persistence.save(registry)
-
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
-        persistence.load(loadRegistry)
-
-        val loaded = loadRegistry.getAllBlocks().first() as SmallDrill
-        assertFalse(loaded.enabled)
-    }
-
-    @Test
     fun `facing direction persists for cables`() {
         val cable = PowerCable(TestHelper.createLocation())
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
@@ -115,9 +80,9 @@ class PowerBlockPersistenceTest {
 
     @Test
     fun `current power level persists accurately`() {
-        val drill = SmallDrill(TestHelper.createLocation(), BlockFace.DOWN)
-        drill.currentPower = 7
-        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
+        val battery = SmallBattery(TestHelper.createLocation())
+        battery.currentPower = 7
+        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
         persistence.save(registry)
 
@@ -151,12 +116,12 @@ class PowerBlockPersistenceTest {
         panel.currentPower = 1
         val cable = PowerCable(TestHelper.createLocation(1.0, 64.0, 0.0))
         cable.currentPower = 1
-        val drill = SmallDrill(TestHelper.createLocation(2.0, 64.0, 0.0), BlockFace.DOWN)
-        drill.currentPower = 5
+        val battery = SmallBattery(TestHelper.createLocation(2.0, 64.0, 0.0))
+        battery.currentPower = 5
 
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
-        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
+        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
         persistence.save(registry)
 

@@ -25,8 +25,6 @@ import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.ObsidianFactory
-import com.coderjoe.atlas.utility.block.SmallDrill
-import com.coderjoe.atlas.utility.block.SoftTouchDrill
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -207,12 +205,14 @@ object TestHelper {
     fun initPowerFactory() {
         PowerBlockFactory.registerFromDescriptors(
             listOf(
-                SmallSolarPanel.descriptor, SmallDrill.descriptor,
-                SmallBattery.descriptor, PowerCable.descriptor,
-                LavaGenerator.descriptor, AutoSmelter.descriptor,
+                SmallSolarPanel.descriptor,
+                SmallBattery.descriptor,
+                PowerCable.descriptor,
+                LavaGenerator.descriptor,
+                AutoSmelter.descriptor,
                 CobblestoneFactory.descriptor,
-                ObsidianFactory.descriptor, Crusher.descriptor,
-                SoftTouchDrill.descriptor,
+                ObsidianFactory.descriptor,
+                Crusher.descriptor,
             ),
         )
     }

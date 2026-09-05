@@ -17,7 +17,6 @@ object GuideBook {
     private const val LAVA_GENERATOR = "\uE101"
     private const val POWER_CABLE = "\uE102"
     private const val SMALL_BATTERY = "\uE103"
-    private const val SMALL_DRILL = "\uE104"
     private const val FLUID_PUMP = "\uE105"
     private const val FLUID_PIPE = "\uE106"
     private const val FLUID_CONTAINER = "\uE107"
@@ -144,18 +143,7 @@ object GuideBook {
                 .append(Component.text("Tip: ", bold))
                 .append(Component.text("fills and drains from\nany side, so it needs\nno lining up.", darkGray))
                 .build(),
-            // Page 7: Small Drill
-            Component.text()
-                .append(Component.text(SMALL_DRILL))
-                .append(Component.text(" "))
-                .append(Component.text("Small Drill\n", Style.style(TextDecoration.BOLD).color(gold)))
-                .append(Component.text("\nMines blocks in its\nfacing direction.\nToggle on/off by\nright-clicking.\n\n", darkGray))
-                .append(Component.text("Power cost: ", bold))
-                .append(Component.text("10 per block\n", darkGray))
-                .append(Component.text("Tip: ", bold))
-                .append(Component.text("combine with a\nconveyor belt to auto-\ncollect drops.", darkGray))
-                .build(),
-            // Page 8: Fluid System overview
+            // Page 7: Fluid System overview
             Component.text()
                 .append(Component.text("Fluid System\n", Style.style(TextDecoration.BOLD).color(darkAqua)))
                 .append(Component.text("\nPumps extract fluid.\nPipes transport it.\nContainers store it.\n\n", darkGray))
@@ -164,7 +152,7 @@ object GuideBook {
                 .append(Component.text("Pull-based: ", bold))
                 .append(Component.text("same as\npower — each block\npulls from behind.", darkGray))
                 .build(),
-            // Page 9: Fluid Pump
+            // Page 8: Fluid Pump
             Component.text()
                 .append(Component.text(FLUID_PUMP))
                 .append(Component.text(" "))
@@ -175,7 +163,7 @@ object GuideBook {
                 .append(Component.text("Storage: ", bold))
                 .append(Component.text("1 unit", darkGray))
                 .build(),
-            // Page 10: Fluid Pipe
+            // Page 9: Fluid Pipe
             Component.text()
                 .append(Component.text(FLUID_PIPE))
                 .append(Component.text(" "))
@@ -186,7 +174,7 @@ object GuideBook {
                 .append(Component.text("Tip: ", bold))
                 .append(Component.text("chain pipes from\npump to container.", darkGray))
                 .build(),
-            // Page 11: Fluid Container
+            // Page 10: Fluid Container
             Component.text()
                 .append(Component.text(FLUID_CONTAINER))
                 .append(Component.text(" "))
@@ -197,7 +185,7 @@ object GuideBook {
                 .append(Component.text("Tip: ", bold))
                 .append(Component.text("store lava for\nuse with the Lava\nGenerator.", darkGray))
                 .build(),
-            // Page 12: Transport System + Conveyor Belt
+            // Page 11: Transport System + Conveyor Belt
             Component.text()
                 .append(Component.text("Transport System\n", Style.style(TextDecoration.BOLD).color(darkGreen)))
                 .append(Component.text("\n"))
@@ -206,9 +194,9 @@ object GuideBook {
                 .append(Component.text("Conveyor Belt\n", Style.style(TextDecoration.BOLD).color(darkGreen)))
                 .append(Component.text("\nMoves dropped items\nin its facing direction.\nNo power required.\n\n", darkGray))
                 .append(Component.text("Tip: ", bold))
-                .append(Component.text("place after a drill\nto auto-collect mined\nblocks.", darkGray))
+                .append(Component.text("run a line into an\nAuto Smelter to cook\nitems on the move.", darkGray))
                 .build(),
-            // Page 13: Auto Smelter
+            // Page 12: Auto Smelter
             Component.text()
                 .append(Component.text("Auto Smelter\n", Style.style(TextDecoration.BOLD).color(darkGreen)))
                 .append(Component.text("\n"))
@@ -221,14 +209,14 @@ object GuideBook {
                 .append(Component.text("Power cost: ", bold))
                 .append(Component.text("2 per item", darkGray))
                 .build(),
-            // Page 14: Tips
+            // Page 13: Tips
             Component.text()
                 .append(Component.text("Tips & Tricks\n", Style.style(TextDecoration.BOLD).color(darkRed)))
                 .append(Component.text("\n"))
                 .append(Component.text("Lava power pipeline:\n", bold))
                 .append(Component.text("Pump > Pipe >\nContainer > Lava Gen\n\n", darkGray))
-                .append(Component.text("Auto-mining:\n", bold))
-                .append(Component.text("Drill + Conveyor Belt\n+ Auto Smelter for\nauto ore processing\n\n", darkGray))
+                .append(Component.text("Ore processing:\n", bold))
+                .append(Component.text("Crusher > Conveyor\nBelt > Auto Smelter\nfor double ingots\n\n", darkGray))
                 .append(Component.text("Placement:\n", bold))
                 .append(Component.text("blocks face where you\nlook. The pull direction\nis always from behind.", darkGray))
                 .build(),

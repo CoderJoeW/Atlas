@@ -3,7 +3,6 @@ package com.coderjoe.atlas.power
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.core.displayName
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
@@ -12,17 +11,7 @@ import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.ObsidianFactory
-import com.coderjoe.atlas.utility.block.SmallDrill
-import com.coderjoe.atlas.utility.block.SoftTouchDrill
-import io.papermc.paper.dialog.Dialog
-import io.papermc.paper.registry.data.dialog.ActionButton
-import io.papermc.paper.registry.data.dialog.DialogBase
-import io.papermc.paper.registry.data.dialog.action.DialogAction
-import io.papermc.paper.registry.data.dialog.action.DialogActionCallback
-import io.papermc.paper.registry.data.dialog.body.DialogBody
-import io.papermc.paper.registry.data.dialog.type.DialogType
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
@@ -34,71 +23,13 @@ object PowerBlockDialog {
         registry: BlockRegistry<*>,
         descriptors: Map<String, BlockDescriptor>,
     ) {
-        if (powerBlock is SmallDrill) {
-            AtlasBlockDialog.showDialog(player, powerBlock, registry) { p, block, onClose ->
-                sendDrillDialog(p, block as SmallDrill, descriptors, onClose)
-            }
-        } else {
-            AtlasBlockDialog.showBlockDialog(
-                player,
-                powerBlock,
-                registry,
-                { block -> getBlockDisplayName(block, descriptors) },
-                ::buildPowerInfo,
-            )
-        }
-    }
-
-    private fun sendDrillDialog(
-        player: Player,
-        drill: SmallDrill,
-        descriptors: Map<String, BlockDescriptor>,
-        onClose: (Player) -> Unit,
-    ) {
-        val title = Component.text(getBlockDisplayName(drill, descriptors))
-        val bodyText = buildPowerInfo(drill)
-        val body = DialogBody.plainMessage(bodyText)
-
-        val toggleLabel = if (drill.enabled) "Turn Off" else "Turn On"
-        val toggleAction =
-            DialogAction.customClick(
-                DialogActionCallback { _, _ ->
-                    drill.toggleEnabled()
-                },
-                ClickCallback.Options.builder().build(),
-            )
-        val toggleButton =
-            ActionButton.builder(Component.text(toggleLabel))
-                .action(toggleAction)
-                .build()
-
-        val closeAction =
-            DialogAction.customClick(
-                DialogActionCallback { _, audience ->
-                    val p = audience as? Player ?: return@DialogActionCallback
-                    onClose(p)
-                },
-                ClickCallback.Options.builder().build(),
-            )
-        val closeButton =
-            ActionButton.builder(Component.text("Close"))
-                .action(closeAction)
-                .build()
-
-        val dialog =
-            Dialog.create { factory ->
-                factory.empty()
-                    .base(
-                        DialogBase.builder(title)
-                            .body(listOf(body))
-                            .canCloseWithEscape(false)
-                            .afterAction(DialogBase.DialogAfterAction.CLOSE)
-                            .build(),
-                    )
-                    .type(DialogType.confirmation(toggleButton, closeButton))
-            }
-
-        player.showDialog(dialog)
+        AtlasBlockDialog.showBlockDialog(
+            player,
+            powerBlock,
+            registry,
+            { block -> getBlockDisplayName(block, descriptors) },
+            ::buildPowerInfo,
+        )
     }
 
     private fun getBlockDisplayName(
@@ -151,18 +82,6 @@ object PowerBlockDialog {
                 is SmallBattery ->
                     Component.text("Storage - holds up to 10 power")
                         .color(NamedTextColor.GRAY)
-                is SoftTouchDrill -> {
-                    val directionName = powerBlock.miningDirection.displayName()
-                    val status = if (powerBlock.enabled) "ON" else "OFF"
-                    Component.text("Machine - mining $directionName, $status, consumes 50 power/s (silk touch)")
-                        .color(NamedTextColor.GRAY)
-                }
-                is SmallDrill -> {
-                    val directionName = powerBlock.miningDirection.displayName()
-                    val status = if (powerBlock.enabled) "ON" else "OFF"
-                    Component.text("Machine - mining $directionName, $status, consumes 10 power/s")
-                        .color(NamedTextColor.GRAY)
-                }
                 is PowerCable ->
                     Component.text("Cable - carries power across the whole run")
                         .color(NamedTextColor.GRAY)

@@ -9,7 +9,6 @@ import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
-import com.coderjoe.atlas.utility.block.SmallDrill
 import io.mockk.every
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
@@ -360,59 +359,6 @@ class PowerBlockLogicTest {
     fun `cable has no facing to get wrong`() {
         val cable = PowerCable(TestHelper.createLocation())
         assertEquals(BlockFace.SELF, cable.facing)
-    }
-
-    // --- SmallDrill specifics ---
-
-    @Test
-    fun `drill maxStorage is 16`() {
-        val drill = SmallDrill(TestHelper.createLocation())
-        assertEquals(16, drill.maxStorage)
-    }
-
-    @Test
-    fun `drill toggleEnabled flips state`() {
-        val drill = SmallDrill(TestHelper.createLocation())
-        assertTrue(drill.enabled)
-        drill.toggleEnabled()
-        assertFalse(drill.enabled)
-        drill.toggleEnabled()
-        assertTrue(drill.enabled)
-    }
-
-    @Test
-    fun `drill miningDirection defaults to DOWN when null`() {
-        val drill = SmallDrill(TestHelper.createLocation(), null)
-        assertEquals(BlockFace.DOWN, drill.miningDirection)
-    }
-
-    @Test
-    fun `drill miningDirection defaults to DOWN when SELF`() {
-        val drill =
-            SmallDrill(TestHelper.createLocation(), BlockFace.SELF)
-        assertEquals(BlockFace.DOWN, drill.miningDirection)
-    }
-
-    @Test
-    fun `drill visual state always returns BLOCK_ID`() {
-        val drill =
-            SmallDrill(TestHelper.createLocation(), BlockFace.NORTH)
-        assertEquals(
-            "atlas:small_drill",
-            drill.getVisualStateBlockId(),
-        )
-    }
-
-    @Test
-    fun `drill disabled does nothing on powerUpdate`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val drill =
-            SmallDrill(TestHelper.createLocation(), BlockFace.DOWN)
-        drill.enabled = false
-        drill.currentPower = 10
-
-        drill.callPowerUpdate()
-        assertEquals(10, drill.currentPower)
     }
 
     // --- Solar panel time boundary tests ---

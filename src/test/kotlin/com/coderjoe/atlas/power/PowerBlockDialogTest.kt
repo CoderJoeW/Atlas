@@ -11,11 +11,8 @@ import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.ObsidianFactory
-import com.coderjoe.atlas.utility.block.SmallDrill
-import com.coderjoe.atlas.utility.block.SoftTouchDrill
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
-import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -38,7 +35,6 @@ class PowerBlockDialogTest {
     private val descriptors: Map<String, BlockDescriptor> =
         listOf(
             SmallSolarPanel.descriptor,
-            SmallDrill.descriptor,
             SmallBattery.descriptor,
             PowerCable.descriptor,
             LavaGenerator.descriptor,
@@ -46,7 +42,6 @@ class PowerBlockDialogTest {
             CobblestoneFactory.descriptor,
             ObsidianFactory.descriptor,
             Crusher.descriptor,
-            SoftTouchDrill.descriptor,
         ).associateBy { it.baseBlockId }
 
     private fun getDisplayName(block: PowerBlock): String {
@@ -74,11 +69,6 @@ class PowerBlockDialogTest {
     @Test
     fun `display name for SmallBattery`() {
         assertEquals("Small Battery", getDisplayName(SmallBattery(TestHelper.createLocation())))
-    }
-
-    @Test
-    fun `display name for SmallDrill`() {
-        assertEquals("Small Drill", getDisplayName(SmallDrill(TestHelper.createLocation())))
     }
 
     @Test
@@ -111,25 +101,6 @@ class PowerBlockDialogTest {
         val info = buildPowerInfo(battery)
         val text = flattenText(info)
         assertTrue(text.contains("10%"))
-    }
-
-    @Test
-    fun `drill info includes mining direction and status`() {
-        val drill = SmallDrill(TestHelper.createLocation(), BlockFace.NORTH)
-        drill.enabled = true
-        val info = buildPowerInfo(drill)
-        val text = flattenText(info)
-        assertTrue(text.contains("North"), "Should contain direction name")
-        assertTrue(text.contains("ON"), "Should contain ON status")
-    }
-
-    @Test
-    fun `drill info shows OFF when disabled`() {
-        val drill = SmallDrill(TestHelper.createLocation(), BlockFace.DOWN)
-        drill.enabled = false
-        val info = buildPowerInfo(drill)
-        val text = flattenText(info)
-        assertTrue(text.contains("OFF"))
     }
 
     @Test

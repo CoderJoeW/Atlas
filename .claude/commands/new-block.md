@@ -74,7 +74,7 @@ class {ClassName}(location: Location) : {BaseClass}(location, maxStorage = {N}) 
 
 **DIRECTIONAL block** (like PowerCable, FluidPipe): Include `facing` property via `override val facing: BlockFace` in the constructor. Constructor takes `(Location, BlockFace)`. Use `ADJACENT_FACES` (inherited from `AtlasBlock`) when iterating over all 6 block faces — never hardcode the face list.
 
-**DIRECTIONAL_OPPOSITE block** (like SmallDrill): Same directional pattern but placement type is `DIRECTIONAL_OPPOSITE`.
+**DIRECTIONAL_OPPOSITE block**: Same directional pattern but placement type is `DIRECTIONAL_OPPOSITE`.
 
 ### Important code patterns
 

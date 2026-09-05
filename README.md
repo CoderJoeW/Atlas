@@ -36,7 +36,7 @@ Every block is crafted from vanilla materials, follows vanilla placement and bre
 | | |
 |:---:|---|
 | **Zero Client Mods** | Server-side resource packs through CraftEngine. Players join and it just works. |
-| **Interconnected Systems** | Pump lava, pipe it to a generator, cable the power to a drill, conveyor-belt the drops into a smelter — all hands-free. |
+| **Interconnected Systems** | Pump lava, pipe it to a generator, cable the power to a crusher, conveyor-belt the output into a smelter — all hands-free. |
 | **Visual Feedback** | Batteries show charge level. Containers show fill amount. Cables light up when powered. Know what your factory is doing at a glance. |
 | **Easy to Learn** | Craft a book into an Atlas Guide for full in-game documentation. Start with one solar panel and scale to full automation. |
 | **Lightweight** | Auto-saves every 5 minutes, persists across restarts, runs cleanly alongside your other plugins. |
@@ -90,12 +90,11 @@ The power system is <b>pull-based</b>. Each block pulls energy from the block be
 | Block | Role |
 |:------|:-----|
 | **Conveyor Belt** | Pushes dropped items in its facing direction. No power needed |
-| **Small Drill** | Mines blocks ahead of it. Point it at stone and watch it dig |
 | **Auto Smelter** | Smelts items that pass through on a conveyor belt |
 | **Cobblestone Factory** | Produces cobblestone on demand |
 | **Obsidian Factory** | Produces obsidian on demand |
 
-> **Try this:** `Drill` -> `Conveyor Belt` -> `Auto Smelter` = fully automated ore processing with zero player input.
+> **Try this:** `Crusher` -> `Conveyor Belt` -> `Auto Smelter` = fully automated ore processing with zero player input.
 
 ---
 

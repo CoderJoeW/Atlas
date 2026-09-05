@@ -28,9 +28,9 @@ class GuideBookTest {
     }
 
     @Test
-    fun `buildPages produces 14 pages`() {
+    fun `buildPages produces 13 pages`() {
         val pages = GuideBook.buildPages()
-        assertEquals(14, pages.size)
+        assertEquals(13, pages.size)
     }
 
     @Test

@@ -6,12 +6,7 @@ import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
-import com.coderjoe.atlas.utility.block.SmallDrill
 import io.mockk.every
-import io.mockk.mockk
-import org.bukkit.Material
-import org.bukkit.block.Block
-import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -158,36 +153,7 @@ class PowerNetworkIntegrationTest {
     }
 
     @Test
-    fun `drill pulls from all adjacent neighbors`() {
-        val drill = SmallDrill(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.DOWN)
-        drill.currentPower = 0
-
-        // Place powered sources in multiple directions
-        val source1 = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
-        source1.currentPower = 1
-        val source2 = LavaGenerator(TestHelper.createLocation(0.0, 65.0, 0.0))
-        source2.currentPower = 1
-        val source3 = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 1.0))
-        source3.currentPower = 1
-
-        TestHelper.addToRegistry(registry, drill, "atlas:small_drill")
-        TestHelper.addToRegistry(registry, source1, "atlas:lava_generator")
-        TestHelper.addToRegistry(registry, source2, "atlas:lava_generator")
-        TestHelper.addToRegistry(registry, source3, "atlas:lava_generator")
-
-        // Mock blocks below so mining scan doesn't error
-        for (y in 63 downTo -64) {
-            val block = mockk<Block>(relaxed = true)
-            every { block.type } returns Material.AIR
-            every { TestHelper.mockWorld.getBlockAt(0, y, 0) } returns block
-        }
-
-        drill.callPowerUpdate()
-        assertEquals(3, drill.currentPower) // pulled from all 3
-    }
-
-    @Test
-    fun `full chain - solar to cable to cable to battery to drill`() {
+    fun `full chain - solar to cable to cable to battery`() {
         every { TestHelper.mockWorld.time } returns 6000L
 
         val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))

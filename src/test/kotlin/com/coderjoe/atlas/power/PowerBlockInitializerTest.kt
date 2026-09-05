@@ -4,7 +4,6 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
-import com.coderjoe.atlas.utility.block.SmallDrill
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -29,7 +28,6 @@ class PowerBlockInitializerTest {
         val ids = PowerBlockFactory.getRegisteredBlockIds()
 
         // SmallSolarPanel: 2 (base + active)
-        // SmallDrill: 1
         // SmallBattery: 5 (base + low + medium + high + full)
         // PowerCable: 1
         // LavaGenerator: 2 (base + active)
@@ -37,9 +35,8 @@ class PowerBlockInitializerTest {
         // CobblestoneFactory: 1
         // ObsidianFactory: 1
         // Crusher: 1
-        // SoftTouchDrill: 1
-        // Total: 16
-        assertEquals(16, ids.size)
+        // Total: 14
+        assertEquals(14, ids.size)
     }
 
     @Test
@@ -47,14 +44,6 @@ class PowerBlockInitializerTest {
         TestHelper.initPowerFactory()
         assertTrue(
             PowerBlockFactory.isRegistered("atlas:small_solar_panel"),
-        )
-    }
-
-    @Test
-    fun `drill base ID is registered`() {
-        TestHelper.initPowerFactory()
-        assertTrue(
-            PowerBlockFactory.isRegistered("atlas:small_drill"),
         )
     }
 
@@ -94,18 +83,6 @@ class PowerBlockInitializerTest {
                 TestHelper.createLocation(),
             )
         assertTrue(block is SmallSolarPanel)
-    }
-
-    @Test
-    fun `drill ID creates SmallDrill`() {
-        TestHelper.initPowerFactory()
-        val block =
-            PowerBlockFactory.create(
-                "atlas:small_drill",
-                TestHelper.createLocation(),
-                BlockFace.NORTH,
-            )
-        assertTrue(block is SmallDrill)
     }
 
     @Test
