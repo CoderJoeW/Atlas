@@ -3,6 +3,10 @@
 The Iron Mine replaces the Small Drill and the Soft Touch Drill, which were both retired on
 2026-09-04. It is the first Atlas block that fills more than one cell.
 
+Six further ore mines are proposed on this rig in
+[`../mining-system/README.md`](../mining-system/README.md); the Iron Mine is the tier the rest of
+that family is drawn and balanced against.
+
 ## Shape
 
 A drill rig boring straight down into the rock: **2 wide × 4 tall × 2 deep** — 16 cells. The
