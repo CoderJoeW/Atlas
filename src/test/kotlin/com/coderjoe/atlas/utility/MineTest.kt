@@ -327,4 +327,43 @@ class MineTest {
             }
         }
     }
+
+    /**
+     * Two boxes that share a face plane in the SAME direction z-fight: both quads draw at the same
+     * depth and the surface flickers. This shipped once - rails and legs that both spanned
+     * x 1-3.5 with their tops at y 25 - and showed up in game as mesh glitching on top of the mine.
+     *
+     * Opposite-facing coincident faces are fine, because backface culling drops one of them, so
+     * this only flags a shared `from` with a `from`, or a `to` with a `to`, where the two boxes
+     * also overlap across the other two axes.
+     */
+    @Test
+    @Suppress("UNCHECKED_CAST")
+    fun `no two parts of the machine share a face plane`() {
+        val boxes =
+            gantryElements().map { element ->
+                Triple(
+                    element["name"] as String,
+                    (element["from"] as List<Number>).map { it.toDouble() },
+                    (element["to"] as List<Number>).map { it.toDouble() },
+                )
+            }
+
+        val clashes = mutableListOf<String>()
+        for (i in boxes.indices) {
+            for (j in i + 1 until boxes.size) {
+                val (nameA, fromA, toA) = boxes[i]
+                val (nameB, fromB, toB) = boxes[j]
+                for (axis in 0..2) {
+                    val overlaps =
+                        (0..2).filter { it != axis }
+                            .all { o -> minOf(toA[o], toB[o]) - maxOf(fromA[o], fromB[o]) > 1e-9 }
+                    if (!overlaps) continue
+                    if (fromA[axis] == fromB[axis]) clashes += "$nameA/$nameB from.${"xyz"[axis]}"
+                    if (toA[axis] == toB[axis]) clashes += "$nameA/$nameB to.${"xyz"[axis]}"
+                }
+            }
+        }
+        assertTrue(clashes.isEmpty(), "coincident faces will z-fight in game: $clashes")
+    }
 }

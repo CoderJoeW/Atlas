@@ -13,6 +13,13 @@ import json, sys
 RIM, TOP = 3.0, 12.0         # rim thickness, and its top - the cable band is y 4-12
 FLOOR = 6.0                  # excavation floor, which the ore block stands on
 
+# Two boxes that share a face plane in the SAME direction z-fight: both quads are drawn at the same
+# depth and the renderer flickers between them. Opposite-facing coincident faces are fine, because
+# backface culling drops one of them. So the rim panels tile edge to edge (no overlapping area),
+# and everything stacked above it is inset or sunk into its neighbour rather than flush with it -
+# the legs sink into the rim, the rails sit inside the legs' footprint, the bridge inside the
+# rails', and each cutting part overlaps the one above. `MineTest` fails on any coincident pair.
+
 
 def r3(v):
     return [round(float(c), 3) for c in v]
@@ -34,33 +41,35 @@ E = []
 
 # The rim runs full height on all four sides so a power cable's hub and arms (y 4-12) always meet
 # solid metal, and it is cut away above 12 so the excavation and the ore in it stay visible.
-E.append(box("rim_north", [0, 0, 0], [16, TOP, RIM], "#side", LEDGE))
-E.append(box("rim_west", [0, 0, RIM], [RIM, TOP, 16 - RIM], "#side", LEDGE))
-E.append(box("rim_east", [16 - RIM, 0, RIM], [16, TOP, 16 - RIM], "#side", LEDGE))
-E.append(box("rim_south", [0, 0, 16 - RIM], [16, TOP, 16], "#side", LEDGE))
+E.append(box("rim_west", [0, 0, 0], [RIM, TOP, 16], "#side", LEDGE))
+E.append(box("rim_east", [16 - RIM, 0, 0], [16, TOP, 16], "#side", LEDGE))
+E.append(box("rim_north", [RIM, 0, 0], [16 - RIM, TOP, RIM], "#side", LEDGE))
+E.append(box("rim_south", [RIM, 0, 16 - RIM], [16 - RIM, TOP, 16], "#side", LEDGE))
 # Excavation floor. Takes the deck texture, whose centre is a dark bore that glows while digging,
 # so the cut face under the ore lights up.
 E.append(box("cut_floor", [RIM, 0, RIM], [16 - RIM, FLOOR, 16 - RIM], "#side",
              {"up_tex": "#deck", "up": [0, 0, 16, 16], "down_tex": "#bottom"}))
 
 # Gantry legs standing on the rim, and the rails they carry.
+# The legs sink 1.5 into the rim rather than standing flush on top of it.
 for name, x, z in (("leg_nw", 1, 1), ("leg_ne", 12.5, 1), ("leg_sw", 1, 12.5), ("leg_se", 12.5, 12.5)):
-    E.append(box(name, [x, TOP, z], [x + 2.5, 25, z + 2.5], "#tower", POST))
-E.append(box("rail_west", [1, 23, 1], [3.5, 25, 15], "#tower", BEAM))
-E.append(box("rail_east", [12.5, 23, 1], [15, 25, 15], "#tower", BEAM))
-# The bridge the cutting head is slung from, running across the rails.
-E.append(box("bridge", [1, 21.5, 6.5], [15, 24, 9.5], "#tower", BEAM))
+    E.append(box(name, [x, TOP - 1.5, z], [x + 2.5, 25, z + 2.5], "#tower", POST))
+# Rails inset half a pixel inside the legs on every axis, so no face lands on a leg's plane.
+E.append(box("rail_west", [1.5, 22.5, 1.5], [3, 24.5, 14.5], "#tower", BEAM))
+E.append(box("rail_east", [13, 22.5, 1.5], [14.5, 24.5, 14.5], "#tower", BEAM))
+# The bridge the cutting head is slung from, running inside the rails.
+E.append(box("bridge", [2, 20.5, 6.5], [14, 23.5, 9.5], "#tower", BEAM))
 
 # The cutting head, and the bit descending out of it onto the ore. Everything below the bridge is
 # on the machine's centre line, directly above the block being cut - that alignment is what says
 # the gantry is working rather than just standing there.
-E.append(box("head", [5, 19, 5], [11, 21.5, 11], "#tower"))
-E.append(box("drum", [5.5, 16.5, 5.5], [10.5, 19, 10.5], "#tower"))
-E.append(box("bit_upper", [6.5, 15, 6.5], [9.5, 16.5, 9.5], "#tower"))
-E.append(box("bit_tip", [7.25, 13.5, 7.25], [8.75, 15, 8.75], "#tower"))
+E.append(box("head", [5, 18, 5], [11, 21, 11], "#tower"))
+E.append(box("drum", [5.5, 15.5, 5.5], [10.5, 18.5, 10.5], "#tower"))
+E.append(box("bit_upper", [6.5, 14, 6.5], [9.5, 16, 9.5], "#tower"))
+E.append(box("bit_tip", [7.25, 12.5, 7.25], [8.75, 14.5, 8.75], "#tower"))
 
 # Output chute over the south rim, where the ore item is handed out.
-E.append(box("chute", [5, TOP, 13], [11, 15, 16], "#side", {"up": [4, 4, 12, 8]}))
+E.append(box("chute", [5, TOP - 1.5, 13.2], [11, 15, 15.7], "#side", {"up": [4, 4, 12, 8]}))
 
 json.dump({"textures": {"particle": "#side"}, "elements": E}, open(sys.argv[1], "w"), indent=2)
 print(f"{len(E)} elements")
