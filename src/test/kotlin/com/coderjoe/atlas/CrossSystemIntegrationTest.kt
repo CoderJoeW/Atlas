@@ -136,6 +136,7 @@ class CrossSystemIntegrationTest {
 
         // Step 1: solar generates 1 and holds it - a cable stores nothing, so there is nowhere
         // for the panel to push it yet
+        solar.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
         solar.callPowerUpdate()
         assertEquals(1, solar.currentPower)
         assertTrue(cable.canSupplyPower())

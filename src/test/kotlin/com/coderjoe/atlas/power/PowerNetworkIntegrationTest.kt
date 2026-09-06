@@ -43,6 +43,7 @@ class PowerNetworkIntegrationTest {
         cables.forEach { TestHelper.addToRegistry(registry, it, "atlas:power_cable") }
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
+        solar.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
         solar.callPowerUpdate()
         assertEquals(1, solar.currentPower)
 
@@ -108,6 +109,7 @@ class PowerNetworkIntegrationTest {
         // Two network ticks: the panel now generates 1 power/tick, so it takes two ticks to
         // supply one unit to each branch.
         repeat(2) {
+            solar.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
             solar.callPowerUpdate()
             for (cable in listOf(junction, eastArm, westArm)) cable.callPowerUpdate()
         }
@@ -130,11 +132,13 @@ class PowerNetworkIntegrationTest {
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
         // Tick 1: solar generates 1 and pushes all of it into the battery
+        solar.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
         solar.callPowerUpdate()
         battery.callPowerUpdate()
         assertEquals(1, battery.currentPower)
 
         // Tick 2: solar generates again and pushes again
+        solar.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
         solar.callPowerUpdate()
         battery.callPowerUpdate()
         assertEquals(2, battery.currentPower)
@@ -172,6 +176,7 @@ class PowerNetworkIntegrationTest {
 
         // Simulate several ticks of power flowing through the chain
         repeat(3) {
+            solar.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
             solar.callPowerUpdate()
             cable1.callPowerUpdate()
             cable2.callPowerUpdate()

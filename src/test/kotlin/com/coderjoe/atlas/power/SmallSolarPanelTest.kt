@@ -29,6 +29,16 @@ class SmallSolarPanelTest {
         TestHelper.teardown()
     }
 
+    /**
+     * Generation is gated behind [SmallSolarPanel.GENERATION_INTERVAL_TICKS] of accumulated ticks
+     * so the panel's own tick rate can stay fast (for a responsive day/night appearance) without
+     * generating every tick. Tests that want a single [callPowerUpdate] call to generate need to
+     * fast-forward the counter first, exactly like setting `currentPower` directly elsewhere.
+     */
+    private fun SmallSolarPanel.forceGenerationDue() {
+        ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
+    }
+
     @Test
     fun `small solar panel maxStorage is 4`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
@@ -75,6 +85,7 @@ class SmallSolarPanelTest {
     @Test
     fun `small solar panel generates power during daytime`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
+        panel.forceGenerationDue()
         panel.callPowerUpdate()
         assertEquals(1, panel.currentPower)
     }
@@ -84,6 +95,7 @@ class SmallSolarPanelTest {
         every { TestHelper.mockWorld.time } returns NIGHT_TIME
 
         val panel = SmallSolarPanel(TestHelper.createLocation())
+        panel.forceGenerationDue()
         panel.callPowerUpdate()
 
         assertEquals(0, panel.currentPower)
@@ -92,7 +104,10 @@ class SmallSolarPanelTest {
     @Test
     fun `small solar panel does not exceed max storage`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
-        repeat(5) { panel.callPowerUpdate() }
+        repeat(5) {
+            panel.forceGenerationDue()
+            panel.callPowerUpdate()
+        }
         assertEquals(4, panel.currentPower)
     }
 
@@ -135,6 +150,7 @@ class SmallSolarPanelTest {
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
+        panel.forceGenerationDue()
         panel.callPowerUpdate()
 
         assertEquals(1, battery.currentPower)
@@ -153,6 +169,7 @@ class SmallSolarPanelTest {
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
+        panel.forceGenerationDue()
         panel.callPowerUpdate()
         cable.callPowerUpdate()
 
@@ -168,7 +185,9 @@ class SmallSolarPanelTest {
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
 
+        panel.forceGenerationDue()
         panel.callPowerUpdate()
+        panel.forceGenerationDue()
         panel.callPowerUpdate()
 
         assertEquals(2, panel.currentPower)
@@ -195,6 +214,7 @@ class SmallSolarPanelTest {
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
+        panel.forceGenerationDue()
         panel.callPowerUpdate()
 
         // the cable's only input is its east face, so it must not be filled from above,
@@ -214,6 +234,7 @@ class SmallSolarPanelTest {
         TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
+        panel.forceGenerationDue()
         panel.callPowerUpdate()
 
         // refused push must be refunded, never lost or duplicated

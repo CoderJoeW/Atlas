@@ -159,6 +159,7 @@ class PowerBlockLogicTest {
     fun `solar panel generates power during daytime`() {
         every { TestHelper.mockWorld.time } returns 6000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
+        panel.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
         panel.callPowerUpdate()
         assertEquals(1, panel.currentPower)
     }
@@ -367,6 +368,7 @@ class PowerBlockLogicTest {
     fun `solar panel generates power at time 0`() {
         every { TestHelper.mockWorld.time } returns 0L
         val panel = SmallSolarPanel(TestHelper.createLocation())
+        panel.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
         panel.callPowerUpdate()
         assertEquals(1, panel.currentPower)
     }
@@ -375,6 +377,7 @@ class PowerBlockLogicTest {
     fun `solar panel generates power at time 12000`() {
         every { TestHelper.mockWorld.time } returns 12000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
+        panel.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
         panel.callPowerUpdate()
         assertEquals(1, panel.currentPower)
     }

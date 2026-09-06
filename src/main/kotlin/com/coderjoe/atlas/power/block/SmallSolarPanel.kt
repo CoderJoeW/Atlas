@@ -11,7 +11,17 @@ import org.bukkit.block.BlockFace
 
 class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4) {
     override val canReceivePower: Boolean = false
-    override val updateIntervalTicks: Long = 6000L
+
+    /**
+     * Fast enough that the lit/dark state tracks day and night responsively even with a whole
+     * farm of panels. [GENERATION_INTERVAL_TICKS] governs the (much slower) generation rate
+     * separately, via [ticksSinceGeneration] - the two used to be the same interval, which meant
+     * every panel's appearance only refreshed once every five real minutes.
+     */
+    override val updateIntervalTicks: Long = 20L
+
+    /** Exposed for tests to fast-forward past the generation cadence without 300 ticked calls. */
+    internal var ticksSinceGeneration: Long = 0L
 
     companion object {
         const val BLOCK_ID = "atlas:small_solar_panel"
@@ -22,6 +32,14 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4)
 
         private const val DAYTIME_START = 0L
         private const val DAYTIME_END = 12000L
+
+        /**
+         * How often the panel actually generates: 6000 ticks divides evenly into both the 12000-
+         * tick daytime window and the 24000-tick full day/night cycle, so exactly 2 of every 4
+         * generation checks land in daytime regardless of the panel's placement phase - 2 power
+         * per day, deterministically, no matter when it was placed.
+         */
+        internal const val GENERATION_INTERVAL_TICKS = 6000L
 
         val descriptor =
             BlockDescriptor(
@@ -52,13 +70,17 @@ class SmallSolarPanel(location: Location) : PowerBlock(location, maxStorage = 4)
     override fun powerUpdate() {
         val world = location.world ?: return
 
-        if (isCollectingSunlight(world)) {
-            val generated = addPower(1)
-            if (generated > 0) {
-                plugin.logger.atlasInfo(
-                    "SmallSolarPanel at ${location.coordinates} " +
-                        "generated $generated power (now $currentPower/$maxStorage)",
-                )
+        ticksSinceGeneration += updateIntervalTicks
+        if (ticksSinceGeneration >= GENERATION_INTERVAL_TICKS) {
+            ticksSinceGeneration = 0L
+            if (isCollectingSunlight(world)) {
+                val generated = addPower(1)
+                if (generated > 0) {
+                    plugin.logger.atlasInfo(
+                        "SmallSolarPanel at ${location.coordinates} " +
+                            "generated $generated power (now $currentPower/$maxStorage)",
+                    )
+                }
             }
         }
 
