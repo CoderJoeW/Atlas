@@ -18,7 +18,7 @@
         <!-- Filled in by jacoco:prepare-agent and consumed by surefire's argLine below.
              Declared empty here so a build that skips prepare-agent still substitutes. -->
         <jacocoArgLine/>
-        <spotless.version>3.4.0</spotless.version>
+        <spotless.version>3.10.1</spotless.version>
         <maven-surefire.version>3.5.2</maven-surefire.version>
         <maven-compiler.version>3.16.0</maven-compiler.version>
         <maven-shade.version>3.6.2</maven-shade.version>
