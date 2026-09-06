@@ -19,7 +19,7 @@
              Declared empty here so a build that skips prepare-agent still substitutes. -->
         <jacocoArgLine/>
         <spotless.version>3.4.0</spotless.version>
-        <maven-surefire.version>3.5.2</maven-surefire.version>
+        <maven-surefire.version>3.6.0</maven-surefire.version>
         <maven-compiler.version>3.16.0</maven-compiler.version>
         <maven-shade.version>3.6.2</maven-shade.version>
         <ktlint.version>1.0.1</ktlint.version>
