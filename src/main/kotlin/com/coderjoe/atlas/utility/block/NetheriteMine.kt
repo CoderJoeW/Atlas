@@ -11,13 +11,13 @@ class NetheriteMine(location: Location, facing: BlockFace = BlockFace.NORTH) :
     companion object {
         const val BLOCK_ID = "atlas:netherite_mine"
         const val POWER_PER_HAUL = 30
-        const val CYCLE_TICKS = 200L
+        const val CYCLE_TICKS = 1000L
 
         val descriptor =
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Netherite Mine",
-                description = "Mine - consumes $POWER_PER_HAUL power every 10s \u2192 1 ancient debris",
+                description = "Mine - consumes $POWER_PER_HAUL power every 50s \u2192 1 ancient debris",
                 // The shaft mouth is turned to look back at the player who placed it.
                 placementType = PlacementType.DIRECTIONAL_OPPOSITE,
                 constructor = { loc, face -> NetheriteMine(loc, face) },
@@ -25,7 +25,7 @@ class NetheriteMine(location: Location, facing: BlockFace = BlockFace.NORTH) :
     }
 
     override val baseBlockId: String = BLOCK_ID
-    override val updateIntervalTicks: Long = CYCLE_TICKS
+    override val cycleTicks: Long = CYCLE_TICKS
     override val powerPerHaul: Int = POWER_PER_HAUL
     override val output: Material = Material.ANCIENT_DEBRIS
 }

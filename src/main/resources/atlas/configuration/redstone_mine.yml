@@ -14,7 +14,6 @@ items:
         textures:
           deck: minecraft:block/custom/mine_deck
           side: minecraft:block/custom/mine_side
-          tower: minecraft:block/custom/mine_tower
           bottom: minecraft:block/custom/mine_bottom
     behavior:
       type: block_item
@@ -179,7 +178,6 @@ items#1:
         textures:
           deck: minecraft:block/custom/redstone_mine_deck_digging
           side: minecraft:block/custom/redstone_mine_side_digging
-          tower: minecraft:block/custom/mine_tower
           bottom: minecraft:block/custom/mine_bottom
 
 recipes:

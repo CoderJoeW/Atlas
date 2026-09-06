@@ -11,13 +11,13 @@ class RedstoneMine(location: Location, facing: BlockFace = BlockFace.NORTH) :
     companion object {
         const val BLOCK_ID = "atlas:redstone_mine"
         const val POWER_PER_HAUL = 5
-        const val CYCLE_TICKS = 60L
+        const val CYCLE_TICKS = 300L
 
         val descriptor =
             BlockDescriptor(
                 baseBlockId = BLOCK_ID,
                 displayName = "Redstone Mine",
-                description = "Mine - consumes $POWER_PER_HAUL power every 3s \u2192 1 redstone",
+                description = "Mine - consumes $POWER_PER_HAUL power every 15s \u2192 1 redstone",
                 // The shaft mouth is turned to look back at the player who placed it.
                 placementType = PlacementType.DIRECTIONAL_OPPOSITE,
                 constructor = { loc, face -> RedstoneMine(loc, face) },
@@ -25,7 +25,7 @@ class RedstoneMine(location: Location, facing: BlockFace = BlockFace.NORTH) :
     }
 
     override val baseBlockId: String = BLOCK_ID
-    override val updateIntervalTicks: Long = CYCLE_TICKS
+    override val cycleTicks: Long = CYCLE_TICKS
     override val powerPerHaul: Int = POWER_PER_HAUL
     override val output: Material = Material.REDSTONE
 }

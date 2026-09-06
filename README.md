@@ -104,16 +104,18 @@ The power system is <b>pull-based</b>. Each block pulls energy from the block be
 
 | Block | Digs | Power per haul | Bore time |
 |:------|:-----|:---------------|:----------|
-| **Coal Mine** | Coal | 2 | 2s |
-| **Iron Mine** | Raw Iron | 5 | 3s |
-| **Redstone Mine** | Redstone | 5 | 3s |
-| **Gold Mine** | Raw Gold | 8 | 4s |
-| **Emerald Mine** | Emerald | 14 | 6s |
-| **Diamond Mine** | Diamond | 18 | 8s |
-| **Netherite Mine** | Ancient Debris | 30 | 10s |
+| **Coal Mine** | Coal | 2 | 10s |
+| **Iron Mine** | Raw Iron | 5 | 15s |
+| **Redstone Mine** | Redstone | 5 | 15s |
+| **Gold Mine** | Raw Gold | 8 | 20s |
+| **Emerald Mine** | Emerald | 14 | 30s |
+| **Diamond Mine** | Diamond | 18 | 40s |
+| **Netherite Mine** | Ancient Debris | 30 | 50s |
 
-> Ore drops into the block directly above the mine, so put a `Conveyor Belt` there to carry the
-> haul away. Every mine idles dark and lights up in its own ore colour while it is actually cutting.
+> A mine hands each haul straight to a `Conveyor Belt` on any of its six faces (round-robining
+> across several), or drops it loose in the block above if nothing is attached. Bore time is a hard
+> floor no amount of power shortens - it's why a second mine of the same tier is worth building.
+> Every mine idles dark and lights up in its own ore colour while it is actually cutting.
 
 ---
 

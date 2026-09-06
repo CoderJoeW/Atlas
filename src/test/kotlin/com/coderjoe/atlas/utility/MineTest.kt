@@ -4,6 +4,8 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlockFactory
+import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.transport.TransportBlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.utility.block.CoalMine
@@ -14,9 +16,13 @@ import com.coderjoe.atlas.utility.block.IronMine
 import com.coderjoe.atlas.utility.block.Mine
 import com.coderjoe.atlas.utility.block.NetheriteMine
 import com.coderjoe.atlas.utility.block.RedstoneMine
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
+import org.bukkit.entity.Player
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -124,6 +130,137 @@ class MineTest {
         expectingRegistryFailure { mine.callPowerUpdate() }
 
         assertEquals(GoldMine.POWER_PER_HAUL, mine.currentPower)
+    }
+
+    /**
+     * The whole point of a drilling cycle: power can now be pulled every tick, so without a
+     * separate timer a mine sitting on a full battery would produce every single tick. `CYCLE_TICKS`
+     * has to actually gate completion, not just describe how the block used to be scheduled.
+     */
+    @Test
+    fun `a haul takes the full cycle to complete, not the first tick it is committed on`() {
+        val location = TestHelper.createLocation()
+        val mine = CoalMine(location)
+        mine.currentPower = CoalMine.POWER_PER_HAUL
+
+        // Committing tick: the cost is spent and drilling starts, but nothing is produced yet.
+        mine.callPowerUpdate()
+        assertEquals(0, mine.currentPower, "power is spent the moment the haul is committed")
+        assertTrue(mine.isCutting, "drilling has started")
+
+        // Mine.updateIntervalTicks is 20; the cycle needs that many calls to complete, all but
+        // the last still mid-drill.
+        val midCycleCalls = (CoalMine.CYCLE_TICKS / 20L - 1).toInt()
+        repeat(midCycleCalls) {
+            mine.callPowerUpdate()
+            assertTrue(mine.isCutting, "still drilling mid-cycle, nothing to produce yet")
+        }
+
+        // The final tick finishes it.
+        expectingRegistryFailure { mine.callPowerUpdate() }
+        assertFalse(mine.isCutting, "drilling finished, back to idle")
+    }
+
+    @Test
+    fun `a fully powered mine starts its next haul the instant the last one finishes`() {
+        val location = TestHelper.createLocation()
+        val mine = CoalMine(location)
+        mine.currentPower = CoalMine.POWER_PER_HAUL * 2
+
+        mine.callPowerUpdate() // commits haul 1
+        val midCycleCalls = (CoalMine.CYCLE_TICKS / 20L - 1).toInt()
+        repeat(midCycleCalls) { mine.callPowerUpdate() } // mid-cycle
+        // haul 1 completes and, in the same tick, haul 2 commits - no idle tick between them
+        expectingRegistryFailure { mine.callPowerUpdate() }
+
+        assertTrue(mine.isCutting, "haul 2 should already be drilling")
+        assertEquals(0, mine.currentPower, "both hauls' cost has now been committed")
+    }
+
+    @Test
+    fun `a mine keeps pulling power while mid-drill, banking it for the next haul`() {
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+        mine.currentPower = CoalMine.POWER_PER_HAUL
+
+        val battery = SmallBattery(TestHelper.createLocation(1.0, 64.0, 0.0))
+        battery.currentPower = 5
+        TestHelper.addToRegistry(powerRegistry, mine, "atlas:coal_mine")
+        TestHelper.addToRegistry(powerRegistry, battery, "atlas:small_battery")
+
+        // Pulls a unit from the battery, then commits the already-affordable haul in the same tick.
+        mine.callPowerUpdate()
+        assertTrue(mine.isCutting, "drilling has started")
+        val powerAfterCommit = mine.currentPower
+
+        mine.callPowerUpdate() // mid-drill - still pulls from the battery every tick
+        assertTrue(
+            mine.currentPower > powerAfterCommit,
+            "the mine should keep banking power from the battery while a haul is in progress",
+        )
+        assertTrue(battery.currentPower < 5, "that banked power came from the battery")
+    }
+
+    /** A single nearby player, standing right on top of the mine, for the break-overlay tests. */
+    private fun nearbyPlayer(): Player {
+        val player = mockk<Player>(relaxed = true)
+        every { player.location } returns TestHelper.createLocation(0.0, 64.0, 0.0)
+        every { TestHelper.mockWorld.players } returns listOf(player)
+        return player
+    }
+
+    @Test
+    fun `a freshly committed haul shows no crack yet`() {
+        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val player = nearbyPlayer()
+
+        mine.callPowerUpdate()
+
+        verify { player.sendBlockDamage(any<Location>(), 0f, any<Int>()) }
+    }
+
+    @Test
+    fun `the crack climbs toward fully broken as the drill counts down`() {
+        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val player = nearbyPlayer()
+
+        mine.callPowerUpdate() // commits the haul
+        repeat(5) { mine.callPowerUpdate() } // 100 of Coal's 200-tick cycle elapsed - halfway
+
+        val progress = mutableListOf<Float>()
+        verify(atLeast = 1) { player.sendBlockDamage(any<Location>(), capture(progress), any<Int>()) }
+        assertEquals(0.5f, progress.last(), 0.01f)
+    }
+
+    @Test
+    fun `the crack clears once a finished haul is left without power for another`() {
+        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val player = nearbyPlayer()
+
+        mine.callPowerUpdate() // commits the only haul this mine can afford
+        val midCycleCalls = (CoalMine.CYCLE_TICKS / 20L - 1).toInt()
+        repeat(midCycleCalls) { mine.callPowerUpdate() }
+        // completes the haul with nothing left to start another - the crack should clear
+        expectingRegistryFailure { mine.callPowerUpdate() }
+
+        assertFalse(mine.isCutting)
+        val progress = mutableListOf<Float>()
+        verify(atLeast = 1) { player.sendBlockDamage(any<Location>(), capture(progress), any<Int>()) }
+        assertEquals(0f, progress.last(), "the final update should clear the crack, not leave it fully broken")
+    }
+
+    @Test
+    fun `an idle mine never shows a crack`() {
+        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+        mine.currentPower = 0
+        val player = nearbyPlayer()
+
+        mine.callPowerUpdate()
+
+        verify(exactly = 0) { player.sendBlockDamage(any<Location>(), any<Float>(), any<Int>()) }
     }
 
     @Test

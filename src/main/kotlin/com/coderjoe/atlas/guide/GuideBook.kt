@@ -206,16 +206,16 @@ object GuideBook {
                     ),
                 )
                 .append(Component.text("Output: ", bold))
-                .append(Component.text("drops one ore into the\nblock above it - put a\nconveyor there.", darkGray))
+                .append(Component.text("hands each haul to an\nattached conveyor belt,\nor drops it loose above.", darkGray))
                 .build(),
             // Page 13: The seven mines
             Component.text()
                 .append(Component.text("The Seven Mines\n", Style.style(TextDecoration.BOLD).color(gold)))
-                .append(Component.text("\nPower per haul, and\nhow long a bore takes:\n\n", darkGray))
+                .append(Component.text("\nPower per haul, and\nhow long drilling takes:\n\n", darkGray))
                 .append(
                     Component.text(
-                        "Coal 2 / 2s\nIron 5 / 3s\nRedstone 5 / 3s\nGold 8 / 4s\n" +
-                            "Emerald 14 / 6s\nDiamond 18 / 8s\nNetherite 30 / 10s",
+                        "Coal 2 / 10s\nIron 5 / 15s\nRedstone 5 / 15s\nGold 8 / 20s\n" +
+                            "Emerald 14 / 30s\nDiamond 18 / 40s\nNetherite 30 / 50s",
                         darkGray,
                     ),
                 )
