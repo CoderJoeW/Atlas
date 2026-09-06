@@ -31,13 +31,11 @@ class PowerBlockInitializerTest {
         // SmallBattery: 5 (base + low + medium + high + full)
         // PowerCable: 1
         // LavaGenerator: 2 (base + active)
-        // AutoSmelter: 1
         // CobblestoneFactory: 1
         // ObsidianFactory: 1
-        // Crusher: 1
         // Mines: 7 (coal, iron, redstone, gold, emerald, diamond, netherite)
-        // Total: 21
-        assertEquals(21, ids.size)
+        // Total: 19
+        assertEquals(19, ids.size)
     }
 
     @Test

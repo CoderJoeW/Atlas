@@ -7,9 +7,7 @@ import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
-import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
-import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.Mine
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import net.kyori.adventure.text.Component
@@ -89,17 +87,11 @@ object PowerBlockDialog {
                 is LavaGenerator ->
                     Component.text("Generator - produces ${LavaGenerator.POWER_PER_LAVA} power per lava unit")
                         .color(NamedTextColor.GRAY)
-                is AutoSmelter ->
-                    Component.text("Machine - smelts items passing through, consumes ${AutoSmelter.POWER_PER_SMELT} power/item")
-                        .color(NamedTextColor.GRAY)
                 is CobblestoneFactory ->
                     Component.text("Machine - consumes ${CobblestoneFactory.POWER_COST} power + water + lava → cobblestone")
                         .color(NamedTextColor.GRAY)
                 is ObsidianFactory ->
                     Component.text("Machine - consumes ${ObsidianFactory.POWER_COST} power + water + lava → obsidian")
-                        .color(NamedTextColor.GRAY)
-                is Crusher ->
-                    Component.text("Machine - crushes ore blocks into 2x ores, consumes ${Crusher.POWER_PER_CRUSH} power/item")
                         .color(NamedTextColor.GRAY)
                 // One branch covers all seven mines: they differ only in what they dig, what a
                 // haul costs and how long the bore takes.

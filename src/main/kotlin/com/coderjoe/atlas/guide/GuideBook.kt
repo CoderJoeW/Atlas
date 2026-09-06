@@ -21,7 +21,6 @@ object GuideBook {
     private const val FLUID_PIPE = "\uE106"
     private const val FLUID_CONTAINER = "\uE107"
     private const val CONVEYOR_BELT = "\uE108"
-    private const val AUTO_SMELTER = "\uE109"
 
     fun create(): ItemStack {
         val book = ItemStack(Material.WRITTEN_BOOK)
@@ -194,22 +193,9 @@ object GuideBook {
                 .append(Component.text("Conveyor Belt\n", Style.style(TextDecoration.BOLD).color(darkGreen)))
                 .append(Component.text("\nMoves dropped items\nin its facing direction.\nNo power required.\n\n", darkGray))
                 .append(Component.text("Tip: ", bold))
-                .append(Component.text("run a line into an\nAuto Smelter to cook\nitems on the move.", darkGray))
+                .append(Component.text("feed a hopper into a\nvanilla furnace to cook\nores off the belt.", darkGray))
                 .build(),
-            // Page 12: Auto Smelter
-            Component.text()
-                .append(Component.text("Auto Smelter\n", Style.style(TextDecoration.BOLD).color(darkGreen)))
-                .append(Component.text("\n"))
-                .append(Component.text(AUTO_SMELTER))
-                .append(Component.text(" "))
-                .append(Component.text("Auto Smelter\n", Style.style(TextDecoration.BOLD).color(darkGreen)))
-                .append(
-                    Component.text("\nSmelts items passing\nthrough it. Conveyor\nbelt on the bottom,\nfire chamber on top.\n\n", darkGray),
-                )
-                .append(Component.text("Power cost: ", bold))
-                .append(Component.text("2 per item", darkGray))
-                .build(),
-            // Page 13: Mining System
+            // Page 12: Mining System
             Component.text()
                 .append(Component.text("Mining System\n", Style.style(TextDecoration.BOLD).color(gold)))
                 .append(
@@ -222,7 +208,7 @@ object GuideBook {
                 .append(Component.text("Output: ", bold))
                 .append(Component.text("drops one ore into the\nblock above it - put a\nconveyor there.", darkGray))
                 .build(),
-            // Page 14: The seven mines
+            // Page 13: The seven mines
             Component.text()
                 .append(Component.text("The Seven Mines\n", Style.style(TextDecoration.BOLD).color(gold)))
                 .append(Component.text("\nPower per haul, and\nhow long a bore takes:\n\n", darkGray))
@@ -234,14 +220,14 @@ object GuideBook {
                     ),
                 )
                 .build(),
-            // Page 15: Tips
+            // Page 14: Tips
             Component.text()
                 .append(Component.text("Tips & Tricks\n", Style.style(TextDecoration.BOLD).color(darkRed)))
                 .append(Component.text("\n"))
                 .append(Component.text("Lava power pipeline:\n", bold))
                 .append(Component.text("Pump > Pipe >\nContainer > Lava Gen\n\n", darkGray))
                 .append(Component.text("Ore processing:\n", bold))
-                .append(Component.text("Mine > Crusher >\nConveyor Belt > Auto\nSmelter for ingots\n\n", darkGray))
+                .append(Component.text("Mine > Conveyor Belt >\nHopper > Furnace for\ningots\n\n", darkGray))
                 .append(Component.text("Placement:\n", bold))
                 .append(Component.text("blocks face where you\nlook. The pull direction\nis always from behind.", darkGray))
                 .build(),

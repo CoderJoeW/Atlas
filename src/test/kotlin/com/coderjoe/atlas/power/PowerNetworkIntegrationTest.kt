@@ -44,14 +44,14 @@ class PowerNetworkIntegrationTest {
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
         solar.callPowerUpdate()
-        assertEquals(2, solar.currentPower)
+        assertEquals(1, solar.currentPower)
 
         // one network tick moves the charge the whole length of the run, not one block per tick.
         // Every cable ticks in game; only the run's leader actually performs the transfer.
         cables.forEach { it.callPowerUpdate() }
 
         assertEquals(0, solar.currentPower)
-        assertEquals(2, battery.currentPower)
+        assertEquals(1, battery.currentPower)
         assertTrue(cables.all { it.currentPower == 0 })
     }
 
@@ -105,8 +105,12 @@ class PowerNetworkIntegrationTest {
         TestHelper.addToRegistry(registry, east, "atlas:small_battery")
         TestHelper.addToRegistry(registry, west, "atlas:small_battery")
 
-        solar.callPowerUpdate()
-        for (cable in listOf(junction, eastArm, westArm)) cable.callPowerUpdate()
+        // Two network ticks: the panel now generates 1 power/tick, so it takes two ticks to
+        // supply one unit to each branch.
+        repeat(2) {
+            solar.callPowerUpdate()
+            for (cable in listOf(junction, eastArm, westArm)) cable.callPowerUpdate()
+        }
 
         // the run splits without any splitter block: a unit to each branch
         assertEquals(1, east.currentPower)
@@ -125,15 +129,15 @@ class PowerNetworkIntegrationTest {
         TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
         TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
 
-        // Tick 1: solar generates 2 and pushes all of it into the battery
+        // Tick 1: solar generates 1 and pushes all of it into the battery
         solar.callPowerUpdate()
         battery.callPowerUpdate()
-        assertEquals(2, battery.currentPower)
+        assertEquals(1, battery.currentPower)
 
         // Tick 2: solar generates again and pushes again
         solar.callPowerUpdate()
         battery.callPowerUpdate()
-        assertEquals(4, battery.currentPower)
+        assertEquals(2, battery.currentPower)
     }
 
     @Test

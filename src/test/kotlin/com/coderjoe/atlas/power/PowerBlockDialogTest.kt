@@ -7,9 +7,7 @@ import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
-import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
-import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.ObsidianFactory
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
@@ -38,10 +36,8 @@ class PowerBlockDialogTest {
             SmallBattery.descriptor,
             PowerCable.descriptor,
             LavaGenerator.descriptor,
-            AutoSmelter.descriptor,
             CobblestoneFactory.descriptor,
             ObsidianFactory.descriptor,
-            Crusher.descriptor,
         ).associateBy { it.baseBlockId }
 
     private fun getDisplayName(block: PowerBlock): String {

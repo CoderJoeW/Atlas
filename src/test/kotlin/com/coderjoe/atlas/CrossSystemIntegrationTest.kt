@@ -134,16 +134,16 @@ class CrossSystemIntegrationTest {
         val pipe = FluidPipe(TestHelper.createLocation(-1.0, 63.0, 1.0))
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        // Step 1: solar generates 2 and holds it - a cable stores nothing, so there is nowhere
+        // Step 1: solar generates 1 and holds it - a cable stores nothing, so there is nowhere
         // for the panel to push it yet
         solar.callPowerUpdate()
-        assertEquals(2, solar.currentPower)
+        assertEquals(1, solar.currentPower)
         assertTrue(cable.canSupplyPower())
 
         // Step 2: the run ticks and drives the panel's charge into the pump on its edge. The
-        // pump's buffer has room for both units, so the panel empties in one go.
+        // pump's buffer has room for the unit, so the panel empties in one go.
         cable.callPowerUpdate()
-        assertEquals(2, pump.storedPower, "the run should have fed the pump")
+        assertEquals(1, pump.storedPower, "the run should have fed the pump")
         assertEquals(0, solar.currentPower, "and taken it off the panel")
 
         // Step 3: pump spends it lifting water out of the cauldron

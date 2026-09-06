@@ -112,7 +112,7 @@ class LavaGeneratorTest {
 
         gen.callPowerUpdate()
 
-        assertEquals(5, gen.currentPower)
+        assertEquals(2, gen.currentPower)
         assertFalse(pipe.hasFluid())
     }
 
@@ -168,7 +168,7 @@ class LavaGeneratorTest {
 
         gen.callPowerUpdate()
 
-        assertEquals(5, gen.currentPower)
+        assertEquals(2, gen.currentPower)
         assertEquals(2, container.storedAmount)
     }
 
@@ -252,7 +252,7 @@ class LavaGeneratorTest {
 
         gen.callPowerUpdate()
 
-        assertEquals(10, gen.currentPower)
+        assertEquals(4, gen.currentPower)
         assertFalse(pipe1.hasFluid())
         assertFalse(pipe2.hasFluid())
     }

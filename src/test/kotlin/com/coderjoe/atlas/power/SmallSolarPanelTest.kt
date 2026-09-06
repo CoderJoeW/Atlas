@@ -76,7 +76,7 @@ class SmallSolarPanelTest {
     fun `small solar panel generates power during daytime`() {
         val panel = SmallSolarPanel(TestHelper.createLocation())
         panel.callPowerUpdate()
-        assertEquals(2, panel.currentPower)
+        assertEquals(1, panel.currentPower)
     }
 
     @Test
@@ -137,7 +137,7 @@ class SmallSolarPanelTest {
 
         panel.callPowerUpdate()
 
-        assertEquals(2, battery.currentPower)
+        assertEquals(1, battery.currentPower)
         assertEquals(0, panel.currentPower)
     }
 
@@ -157,7 +157,7 @@ class SmallSolarPanelTest {
         cable.callPowerUpdate()
 
         assertEquals(0, cable.currentPower)
-        assertEquals(2, panel.currentPower)
+        assertEquals(1, panel.currentPower)
     }
 
     @Test
@@ -171,7 +171,7 @@ class SmallSolarPanelTest {
         panel.callPowerUpdate()
         panel.callPowerUpdate()
 
-        assertEquals(4, panel.currentPower)
+        assertEquals(2, panel.currentPower)
     }
 
     @Test
@@ -200,7 +200,7 @@ class SmallSolarPanelTest {
         // the cable's only input is its east face, so it must not be filled from above,
         // which would otherwise strand power it can never discharge
         assertEquals(0, cable.currentPower)
-        assertEquals(2, panel.currentPower)
+        assertEquals(1, panel.currentPower)
     }
 
     @Test

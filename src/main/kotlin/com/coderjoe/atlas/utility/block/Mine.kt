@@ -2,8 +2,12 @@ package com.coderjoe.atlas.utility.block
 
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
+import com.coderjoe.atlas.core.AtlasBlock
+import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.CraftEngineHelper
+import com.coderjoe.atlas.core.pushRoundRobinTo
 import com.coderjoe.atlas.power.PowerBlock
+import com.coderjoe.atlas.transport.block.ConveyorBelt
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -53,6 +57,9 @@ abstract class Mine(
     /** What a completed bore drops. */
     abstract val output: Material
 
+    /** Round-robins hauls across every attached conveyor belt, so several belts share the output. */
+    private var nextBeltIndex: Int = 0
+
     companion object {
         /** The faces a shaft mouth can open toward. The model has no up or down variant. */
         val HORIZONTAL_FACES = listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST)
@@ -63,6 +70,32 @@ abstract class Mine(
      * the machine and onto a conveyor belt placed in that block.
      */
     internal fun dropLocation(): Location = location.clone().add(0.5, 1.5, 0.5)
+
+    /**
+     * Where the next haul lands: an attached conveyor belt if one is this round's turn, round-
+     * robining across every face that has one so several belts split the output evenly instead of
+     * one hogging every haul, or the loose drop above the mine - the landing spot from before
+     * belts could be wired in directly - when nothing is attached.
+     */
+    internal fun haulDestination(): Location {
+        var destination: Location? = null
+
+        nextBeltIndex =
+            pushRoundRobinTo(
+                outputFaces = AtlasBlock.ADJACENT_FACES,
+                startIndex = nextBeltIndex,
+                getAdjacent = { face -> AtlasBlocks.adjacent(location, face) },
+                hasResource = { true },
+                isCandidate = { target -> target is ConveyorBelt },
+                tryPush = { target, _ ->
+                    destination = (target as ConveyorBelt).location.clone().add(0.5, 0.75, 0.5)
+                    true
+                },
+                stopAfterFirstCandidate = true,
+            )
+
+        return destination ?: dropLocation()
+    }
 
     /**
      * A mine never hands power back to the network.
@@ -92,7 +125,7 @@ abstract class Mine(
         isCutting = cutting
         if (cutting) {
             removePower(powerPerHaul)
-            world.dropItem(dropLocation(), ItemStack(output))
+            world.dropItem(haulDestination(), ItemStack(output))
             plugin.logger.atlasInfo(
                 "${this::class.simpleName} at ${location.coordinates} " +
                     "produced 1 ${output.name.lowercase()}",

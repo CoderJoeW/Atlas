@@ -21,7 +21,7 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20) 
     companion object {
         const val BLOCK_ID = "atlas:lava_generator"
         const val BLOCK_ID_ACTIVE = "atlas:lava_generator_active"
-        const val POWER_PER_LAVA = 5
+        const val POWER_PER_LAVA = 2
 
         val descriptor =
             BlockDescriptor(

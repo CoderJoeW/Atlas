@@ -72,7 +72,12 @@ other three textures were deleted.
 
 ## Behaviour
 
-- Generates 2 power per 10s while `world.time` is in `0..12000`, capped at `maxStorage = 4`.
+- Generates 1 power per 5 minutes (6000 ticks) while `world.time` is in `0..12000`, capped at
+  `maxStorage = 4`. That's 2 power over a full daytime — one Coal Mine haul — so **a single panel
+  produces one Coal ore roughly every 10 real-life minutes**. Running any mine at full haul rate
+  (a mine never throttles its own cycle for lack of power — it just idles until enough arrives)
+  takes a large bank of panels scaled to that mine's `POWER_PER_HAUL`, or a higher-tier generator
+  once one exists. See [Mines](../mines/README.md) for the per-tier costs.
 - **Dedicated output through the base.** `canOutputToward` accepts only `BlockFace.DOWN`; every
   other face is sealed, and the panel actively pushes stored power into the block below rather than
   waiting to be drained. The bottom texture carries the cable socket accordingly.

@@ -4,6 +4,8 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlockFactory
+import com.coderjoe.atlas.transport.TransportBlockRegistry
+import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.utility.block.CoalMine
 import com.coderjoe.atlas.utility.block.DiamondMine
 import com.coderjoe.atlas.utility.block.EmeraldMine
@@ -132,6 +134,45 @@ class MineTest {
         assertEquals(10.5, drop.x)
         assertEquals(65.5, drop.y)
         assertEquals(-2.5, drop.z)
+    }
+
+    @Test
+    fun `haul destination falls back to the loose drop when nothing is attached`() {
+        TransportBlockRegistry(TestHelper.mockPlugin)
+        val mine = CoalMine(TestHelper.createLocation())
+
+        assertEquals(mine.dropLocation(), mine.haulDestination())
+    }
+
+    @Test
+    fun `haul destination lands directly on an attached conveyor belt`() {
+        val registry = TransportBlockRegistry(TestHelper.mockPlugin)
+        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+
+        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 65.0, 0.0), BlockFace.NORTH)
+        TestHelper.addToRegistry(registry, belt, "atlas:conveyor_belt")
+
+        val destination = mine.haulDestination()
+
+        assertEquals(0.5, destination.x)
+        assertEquals(65.75, destination.y)
+        assertEquals(0.5, destination.z)
+    }
+
+    @Test
+    fun `haul destination round-robins across every attached conveyor belt`() {
+        val registry = TransportBlockRegistry(TestHelper.mockPlugin)
+        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+
+        // one belt to the north, one to the south - neither is the vertical drop spot
+        val northBelt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.NORTH)
+        val southBelt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
+        TestHelper.addToRegistry(registry, northBelt, "atlas:conveyor_belt")
+        TestHelper.addToRegistry(registry, southBelt, "atlas:conveyor_belt")
+
+        val destinations = List(4) { mine.haulDestination().z }
+
+        assertEquals(listOf(-0.5, 1.5, -0.5, 1.5), destinations, "hauls should alternate between the two belts")
     }
 
     @Test

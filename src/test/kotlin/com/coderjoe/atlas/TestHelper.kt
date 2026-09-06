@@ -21,10 +21,8 @@ import com.coderjoe.atlas.transport.TransportBlock
 import com.coderjoe.atlas.transport.TransportBlockFactory
 import com.coderjoe.atlas.transport.TransportBlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
-import com.coderjoe.atlas.utility.block.AutoSmelter
 import com.coderjoe.atlas.utility.block.CoalMine
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
-import com.coderjoe.atlas.utility.block.Crusher
 import com.coderjoe.atlas.utility.block.DiamondMine
 import com.coderjoe.atlas.utility.block.EmeraldMine
 import com.coderjoe.atlas.utility.block.GoldMine
@@ -216,10 +214,8 @@ object TestHelper {
                 SmallBattery.descriptor,
                 PowerCable.descriptor,
                 LavaGenerator.descriptor,
-                AutoSmelter.descriptor,
                 CobblestoneFactory.descriptor,
                 ObsidianFactory.descriptor,
-                Crusher.descriptor,
                 CoalMine.descriptor,
                 IronMine.descriptor,
                 RedstoneMine.descriptor,

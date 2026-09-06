@@ -160,7 +160,7 @@ class PowerBlockLogicTest {
         every { TestHelper.mockWorld.time } returns 6000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
         panel.callPowerUpdate()
-        assertEquals(2, panel.currentPower)
+        assertEquals(1, panel.currentPower)
     }
 
     @Test
@@ -368,7 +368,7 @@ class PowerBlockLogicTest {
         every { TestHelper.mockWorld.time } returns 0L
         val panel = SmallSolarPanel(TestHelper.createLocation())
         panel.callPowerUpdate()
-        assertEquals(2, panel.currentPower)
+        assertEquals(1, panel.currentPower)
     }
 
     @Test
@@ -376,7 +376,7 @@ class PowerBlockLogicTest {
         every { TestHelper.mockWorld.time } returns 12000L
         val panel = SmallSolarPanel(TestHelper.createLocation())
         panel.callPowerUpdate()
-        assertEquals(2, panel.currentPower)
+        assertEquals(1, panel.currentPower)
     }
 
     @Test

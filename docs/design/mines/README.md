@@ -11,21 +11,29 @@ fiction — so there is no deposit to find, nothing to deplete, and no terrain i
 anywhere a cable reaches and it works forever.
 
 Each tick a mine pulls from its neighbours, and when it holds enough power it spends the cost and
-drops one ore at `+0.5, +1.5, +0.5` — the middle of the block **directly above** the mine. Put a
-Conveyor Belt in that block and the haul lands on it; a belt beside or below the mine never sees
-the item, because a belt only scans its own column.
+hauls one ore. If a Conveyor Belt sits on any of the mine's six faces, the haul drops straight onto
+it instead of into the world — no falling through the air first. Several belts attached at once
+share the output round-robin, one haul per belt in turn, rather than one belt taking every haul. A
+mine with no belt attached anywhere falls back to the original behaviour: the ore drops loose at
+`+0.5, +1.5, +0.5`, the middle of the block directly above the mine, for a hopper or a player to
+collect.
 
 The tiers differ only in what they dig, what a haul costs and how long the cycle takes:
 
-| Mine | Output | Storage | Power per haul | Cycle |
-|:--|:--|--:|--:|--:|
-| Coal | `COAL` | 10 | 2 | 40t (2s) |
-| Iron | `RAW_IRON` | 20 | 5 | 60t (3s) |
-| Redstone | `REDSTONE` | 20 | 5 | 60t (3s) |
-| Gold | `RAW_GOLD` | 30 | 8 | 80t (4s) |
-| Emerald | `EMERALD` | 50 | 14 | 120t (6s) |
-| Diamond | `DIAMOND` | 60 | 18 | 160t (8s) |
-| Netherite | `ANCIENT_DEBRIS` | 100 | 30 | 200t (10s) |
+| Mine | Output | Storage | Power per haul | Cycle | Small Solar Panels for full-rate hauling |
+|:--|:--|--:|--:|--:|--:|
+| Coal | `COAL` | 10 | 2 | 40t (2s) | 300 |
+| Iron | `RAW_IRON` | 20 | 5 | 60t (3s) | 500 |
+| Redstone | `REDSTONE` | 20 | 5 | 60t (3s) | 500 |
+| Gold | `RAW_GOLD` | 30 | 8 | 80t (4s) | 600 |
+| Emerald | `EMERALD` | 50 | 14 | 120t (6s) | 700 |
+| Diamond | `DIAMOND` | 60 | 18 | 160t (8s) | 675 |
+| Netherite | `ANCIENT_DEBRIS` | 100 | 30 | 200t (10s) | 900 |
+
+A [Small Solar Panel](../small-solar-panel/README.md) generates 2 power per full daytime — one
+Coal haul, roughly every 10 real-life minutes. That's the deliberate baseline: one panel is a
+trickle charge, not a power source for actually running a mine. Hauling any tier at its full cycle
+rate takes a large bank of panels (or a higher-tier generator, once one exists), not a handful.
 
 All seven share `Mine`, an abstract `PowerBlock` in `utility/block`. A subclass supplies only its
 block id, cycle length, haul cost and output material — there is no per-mine behaviour.
@@ -38,9 +46,9 @@ never completing a bore.
 ## Two states, and what "digging" means
 
 The chart draws two states per mine: **idle / no power** and **digging**. They are one CraftEngine
-block definition with a `powered` boolean and two appearances, the same shape the factories and the
-Auto Smelter use. Both are forced `state: barrier` with an `entity_renderer`, so neither claims a
-slot from the exhausted auto-state pools.
+block definition with a `powered` boolean and two appearances, the same shape the factories use.
+Both are forced `state: barrier` with an `entity_renderer`, so neither claims a slot from the
+exhausted auto-state pools.
 
 **The digging state means "this tick completed a haul", not "this block holds some charge."** The
 inherited `updatePoweredState()` answers the latter, which for a mine is a lie whenever it is fed
@@ -165,5 +173,5 @@ Judge a silhouette from a render, never from the JSON.
 ## No GUI icons
 
 The mines have no painted inventory icon — the model renders in the slot as it does for the
-Crusher, Auto Smelter and factories. If the in-hand look reads badly, seven `item/custom/{id}` icons
+factories. If the in-hand look reads badly, seven `item/custom/{id}` icons
 wired through a `minecraft:select` on `display_context` are the fix.
