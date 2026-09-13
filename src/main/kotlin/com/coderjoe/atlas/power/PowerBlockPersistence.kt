@@ -3,6 +3,7 @@ package com.coderjoe.atlas.power
 import com.coderjoe.atlas.core.BlockPersistence
 import com.coderjoe.atlas.core.BlockPersister
 import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.utility.block.MaterialFactory
 import org.bukkit.plugin.java.JavaPlugin
 
 class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {
@@ -15,10 +16,24 @@ class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {
             serialize = { block, _ ->
                 mutableMapOf<String, Any>(
                     "currentPower" to block.currentPower,
-                )
+                ).apply {
+                    // A factory banks each fluid until the other arrives, and now shows which it
+                    // is holding, so dropping that on a restart would visibly undo a half-filled
+                    // machine as well as quietly eating the unit a pump already spent power on.
+                    if (block is MaterialFactory) {
+                        put("hasWater", block.hasWater)
+                        put("hasLava", block.hasLava)
+                    }
+                }
             },
             restore = { block, data ->
                 block.currentPower = (data["currentPower"] as? Number)?.toInt() ?: 0
+                if (block is MaterialFactory) {
+                    block.restoreFluids(
+                        water = data["hasWater"] as? Boolean ?: false,
+                        lava = data["hasLava"] as? Boolean ?: false,
+                    )
+                }
             },
         )
 
