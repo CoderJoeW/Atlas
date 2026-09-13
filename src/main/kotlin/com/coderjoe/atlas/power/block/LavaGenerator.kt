@@ -7,14 +7,13 @@ import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.core.PowerConsumer
 import com.coderjoe.atlas.core.pushRoundRobinTo
-import com.coderjoe.atlas.fluid.FluidBlock
-import com.coderjoe.atlas.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.fluid.FluidConsumer
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20) {
+class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20), FluidConsumer {
     override val canReceivePower: Boolean = false
     override val updateIntervalTicks: Long = 20L
 
@@ -37,10 +36,23 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20) 
     override val baseBlockId: String = BLOCK_ID
 
     /**
-     * Whether the last update actually burned lava. Reset every tick, so the glow follows the
-     * fire rather than the buffer.
+     * Set the instant a pushed unit of lava is burned, and read once per tick by
+     * [getVisualStateBlockId] via [showBurning] - see that property for why it isn't read
+     * directly.
      */
     private var burning: Boolean = false
+
+    /**
+     * What the last tick actually rendered as burning.
+     *
+     * A pipe network pushes lava to this generator on the network's own tick, not this block's,
+     * so [burning] can be set at any point between two of this generator's own updates. Reading it
+     * once per [powerUpdate] and resetting it there - rather than reading [burning] directly from
+     * [getVisualStateBlockId], which [AtlasBlock.start] calls immediately after [powerUpdate] in
+     * the same cycle and would otherwise see whatever this same tick just reset it to - keeps the
+     * glow tied to "burned since my last update" instead of racing that reset.
+     */
+    private var showBurning: Boolean = false
 
     /**
      * Lit while the generator is burning lava, dark when it is not.
@@ -49,12 +61,34 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20) 
      * drawing from it glowing indefinitely, and a generator burning steadily while its output is
      * consumed as fast as it is made would look idle - both the wrong way round.
      */
-    override fun getVisualStateBlockId(): String = if (burning) BLOCK_ID_ACTIVE else BLOCK_ID
+    override fun getVisualStateBlockId(): String = if (showBurning) BLOCK_ID_ACTIVE else BLOCK_ID
+
+    /** The generator has no facing, so a pipe against any side reads as plumbed in. */
+    override fun drawsFluidFrom(face: BlockFace): Boolean = currentPower < maxStorage
+
+    override fun wantsFluid(type: FluidType): Boolean = type == FluidType.LAVA && currentPower < maxStorage
+
+    /** Burns a pushed unit of lava on the spot, rather than banking it for later. */
+    override fun acceptFluid(
+        face: BlockFace,
+        type: FluidType,
+    ): Boolean {
+        if (type != FluidType.LAVA || currentPower >= maxStorage) return false
+
+        val generated = addPower(POWER_PER_LAVA)
+        burning = true
+        plugin.logger.atlasInfo(
+            "LavaGenerator at ${location.coordinates} " +
+                "consumed 1 lava, generated $generated power (now $currentPower/$maxStorage)",
+        )
+        return true
+    }
 
     private var nextOutputIndex: Int = 0
 
     override fun powerUpdate() {
-        burning = generateFromLava()
+        showBurning = burning
+        burning = false
         pushPowerToNeighbors()
     }
 
@@ -88,42 +122,5 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20) 
                     accepted > 0
                 },
             )
-    }
-
-    /** Burns whatever lava the neighbours will give up. Returns whether any was consumed. */
-    private fun generateFromLava(): Boolean {
-        if (currentPower >= maxStorage) return false
-
-        val fluidRegistry = FluidBlockRegistry.instance ?: return false
-
-        var consumed = false
-        for (face in ADJACENT_FACES) {
-            val spaceAvailable = maxStorage - currentPower
-            if (spaceAvailable < POWER_PER_LAVA) break
-
-            val source = fluidRegistry.getAdjacentBlock(location, face) ?: continue
-
-            val lava = tryPullLava(source, face)
-            if (lava) {
-                consumed = true
-                val generated = addPower(POWER_PER_LAVA)
-                plugin.logger.atlasInfo(
-                    "LavaGenerator at ${location.coordinates} " +
-                        "consumed 1 lava, generated $generated power (now $currentPower/$maxStorage)",
-                )
-            }
-        }
-        return consumed
-    }
-
-    private fun tryPullLava(
-        source: FluidBlock,
-        face: BlockFace,
-    ): Boolean {
-        if (source.canProvideFluid(face.oppositeFace) && source.storedFluid == FluidType.LAVA) {
-            source.removeFluid()
-            return true
-        }
-        return false
     }
 }

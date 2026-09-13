@@ -1,11 +1,12 @@
 package com.coderjoe.atlas.fluid.block
 
+import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
-import com.coderjoe.atlas.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.fluid.FluidConsumer
 import com.coderjoe.atlas.fluid.FluidNetworks
 import com.coderjoe.atlas.fluid.FluidType
 import org.bukkit.Location
@@ -70,13 +71,18 @@ class FluidPipe(location: Location) : FluidBlock(location) {
      * is visible rather than looking like one continuous pipe that quietly carries both.
      */
     fun connections(): Set<BlockFace> {
-        val registry = FluidBlockRegistry.instance ?: return emptySet()
         val run = FluidNetworks.networkFor(this).pipes.mapTo(HashSet()) { BlockRegistry.locationKey(it.location) }
         return ADJACENT_FACES.filter { face ->
-            val neighbor = registry.getAdjacentBlock(location, face) ?: return@filter false
             val back = face.oppositeFace
-            if (neighbor is FluidPipe) return@filter BlockRegistry.locationKey(neighbor.location) in run
-            neighbor.canProvideFluid(back) || neighbor.canAcceptFluid(back)
+            val neighbor = AtlasBlocks.adjacent(location, face)
+
+            when {
+                neighbor is FluidPipe -> BlockRegistry.locationKey(neighbor.location) in run
+                neighbor is FluidBlock -> neighbor.canProvideFluid(back) || neighbor.canAcceptFluid(back)
+                // A block from another system may still draw fluid off this run - the lava
+                // generator is one, and it has to show as plumbed in like anything else.
+                else -> (neighbor as? FluidConsumer)?.drawsFluidFrom(back) == true
+            }
         }.toSet()
     }
 
@@ -85,15 +91,21 @@ class FluidPipe(location: Location) : FluidBlock(location) {
 
     override fun canProvideFluid(requestDirection: BlockFace): Boolean = hasFluid()
 
+    /**
+     * A pipe takes whatever its run has somewhere to put, so this asks the network rather than
+     * counting its fluid blocks alone - a run ending at a material factory or a lava generator
+     * has a real destination even though nothing on it is a [FluidBlock], and answering on the
+     * tanks only had a pump refuse to push into a pipe feeding a machine directly.
+     */
     override fun canAcceptFluid(
         face: BlockFace,
         type: FluidType,
-    ): Boolean = FluidNetworks.networkFor(this).terminals().second.isNotEmpty()
+    ): Boolean = FluidNetworks.networkFor(this).canDeliver(type)
 
     /** Drawing from a pipe is really drawing from the providers on its run. */
     override fun removeFluid(): FluidType = FluidNetworks.networkFor(this).draw()
 
-    /** Pushing into a pipe is really pushing to an acceptor on its run. */
+    /** Pushing into a pipe is really pushing to an acceptor or a consumer on its run. */
     override fun storeFluid(type: FluidType): Boolean = FluidNetworks.networkFor(this).deliver(type)
 
     override fun fluidUpdate() {

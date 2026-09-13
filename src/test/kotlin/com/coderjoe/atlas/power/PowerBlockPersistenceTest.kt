@@ -1,13 +1,16 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -76,6 +79,26 @@ class PowerBlockPersistenceTest {
 
         val loaded = loadRegistry.getAllBlocks().first()
         assertTrue(loaded is PowerCable)
+    }
+
+    @Test
+    fun `a factory's banked fluids persist across a restart`() {
+        // The two portholes report these, so losing them on a restart would visibly undo a
+        // half-filled machine as well as eating a unit a pump already spent power to lift.
+        val factory = CobblestoneFactory(TestHelper.createLocation())
+        factory.currentPower = 2
+        factory.acceptFluid(BlockFace.WEST, FluidType.WATER)
+        TestHelper.addToRegistry(registry, factory, "atlas:cobblestone_factory")
+
+        persistence.save(registry)
+
+        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        persistence.load(loadRegistry)
+
+        val loaded = loadRegistry.getAllBlocks().first() as CobblestoneFactory
+        assertEquals(2, loaded.currentPower)
+        assertTrue(loaded.hasWater, "the banked water should come back")
+        assertFalse(loaded.hasLava, "lava was never fed, so it must not come back")
     }
 
     @Test

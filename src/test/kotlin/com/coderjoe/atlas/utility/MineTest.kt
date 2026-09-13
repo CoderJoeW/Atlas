@@ -16,13 +16,9 @@ import com.coderjoe.atlas.utility.block.IronMine
 import com.coderjoe.atlas.utility.block.Mine
 import com.coderjoe.atlas.utility.block.NetheriteMine
 import com.coderjoe.atlas.utility.block.RedstoneMine
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
-import org.bukkit.entity.Player
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -38,12 +34,16 @@ class MineTest {
         File("src/main/resources/atlas/resourcepack/assets/minecraft/models/block/custom/mine_gantry.json")
 
     @Suppress("UNCHECKED_CAST")
-    private fun appearances(fileName: String): Map<String, Map<String, Any?>> {
+    private fun states(fileName: String): Map<String, Any?> {
         val doc = Yaml().load<Map<String, Any?>>(File(configDir, fileName).readText())
         val item = (doc["items"] as Map<String, Any?>).values.first() as Map<String, Any?>
         val block = (item["behavior"] as Map<String, Any?>)["block"] as Map<String, Any?>
-        return (block["states"] as Map<String, Any?>)["appearances"] as Map<String, Map<String, Any?>>
+        return block["states"] as Map<String, Any?>
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun appearances(fileName: String): Map<String, Map<String, Any?>> =
+        states(fileName)["appearances"] as Map<String, Map<String, Any?>>
 
     @Suppress("UNCHECKED_CAST")
     private fun gantryElements(): List<Map<String, Any?>> =
@@ -201,66 +201,64 @@ class MineTest {
         assertTrue(battery.currentPower < 5, "that banked power came from the battery")
     }
 
-    /** A single nearby player, standing right on top of the mine, for the break-overlay tests. */
-    private fun nearbyPlayer(): Player {
-        val player = mockk<Player>(relaxed = true)
-        every { player.location } returns TestHelper.createLocation(0.0, 64.0, 0.0)
-        every { TestHelper.mockWorld.players } returns listOf(player)
-        return player
-    }
-
     @Test
-    fun `a freshly committed haul shows no crack yet`() {
+    fun `a freshly committed haul lights the ore without having eaten into it yet`() {
         val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
         mine.currentPower = CoalMine.POWER_PER_HAUL
-        val player = nearbyPlayer()
 
         mine.callPowerUpdate()
 
-        verify { player.sendBlockDamage(any<Location>(), 0f, any<Int>()) }
+        assertEquals(Mine.IDLE_STAGE + 1, mine.drillStage, "the first digging stage still holds a whole ore")
     }
 
+    /**
+     * The progress read, and the reason `stage` is an int rather than the factories' `powered`
+     * boolean: a bore runs 200-1000 ticks, so the ore has to visibly come apart across it rather
+     * than the machine just switching a light on for fifty seconds.
+     */
     @Test
-    fun `the crack climbs toward fully broken as the drill counts down`() {
+    fun `the ore is eaten away step by step as the drill counts down`() {
         val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
         mine.currentPower = CoalMine.POWER_PER_HAUL
-        val player = nearbyPlayer()
 
         mine.callPowerUpdate() // commits the haul
-        repeat(5) { mine.callPowerUpdate() } // 100 of Coal's 200-tick cycle elapsed - halfway
+        val stages = mutableListOf(mine.drillStage)
+        repeat((CoalMine.CYCLE_TICKS / 20L - 1).toInt()) {
+            mine.callPowerUpdate()
+            stages += mine.drillStage
+        }
 
-        val progress = mutableListOf<Float>()
-        verify(atLeast = 1) { player.sendBlockDamage(any<Location>(), capture(progress), any<Int>()) }
-        assertEquals(0.5f, progress.last(), 0.01f)
+        // distinct() keeps first-seen order, so this pins the sequence as well as the coverage:
+        // every digging stage is shown, in order, and none of them is revisited.
+        assertEquals(
+            (Mine.IDLE_STAGE + 1..Mine.IDLE_STAGE + Mine.DIGGING_STAGES).toList(),
+            stages.distinct(),
+            "each digging stage should be shown once, in order",
+        )
     }
 
     @Test
-    fun `the crack clears once a finished haul is left without power for another`() {
+    fun `a finished haul left without power for another puts the ore back whole`() {
         val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
         mine.currentPower = CoalMine.POWER_PER_HAUL
-        val player = nearbyPlayer()
 
         mine.callPowerUpdate() // commits the only haul this mine can afford
         val midCycleCalls = (CoalMine.CYCLE_TICKS / 20L - 1).toInt()
         repeat(midCycleCalls) { mine.callPowerUpdate() }
-        // completes the haul with nothing left to start another - the crack should clear
         expectingRegistryFailure { mine.callPowerUpdate() }
 
         assertFalse(mine.isCutting)
-        val progress = mutableListOf<Float>()
-        verify(atLeast = 1) { player.sendBlockDamage(any<Location>(), capture(progress), any<Int>()) }
-        assertEquals(0f, progress.last(), "the final update should clear the crack, not leave it fully broken")
+        assertEquals(Mine.IDLE_STAGE, mine.drillStage, "a mine that has stopped digging shows a whole, unlit ore")
     }
 
     @Test
-    fun `an idle mine never shows a crack`() {
+    fun `an idle mine shows a whole ore`() {
         val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
         mine.currentPower = 0
-        val player = nearbyPlayer()
 
         mine.callPowerUpdate()
 
-        verify(exactly = 0) { player.sendBlockDamage(any<Location>(), any<Float>(), any<Int>()) }
+        assertEquals(Mine.IDLE_STAGE, mine.drillStage)
     }
 
     @Test
@@ -425,7 +423,8 @@ class MineTest {
 
         for (file in configDir.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
             val found = appearances(file.name)
-            assertEquals(8, found.size, "${file.name} has an appearance per facing per state")
+            val perFacing = 1 + Mine.DIGGING_STAGES
+            assertEquals(4 * perFacing, found.size, "${file.name} has an appearance per facing per stage")
 
             for ((name, appearance) in found) {
                 val machine = (appearance["entity_renderer"] as List<Map<String, Any?>>)[0]
@@ -536,6 +535,43 @@ class MineTest {
                     assertTrue(brightness != null, "$blockId/$name should light the ore it is cutting")
                 } else {
                     assertTrue(brightness == null, "$blockId/$name is idle and should not light the ore")
+                }
+            }
+        }
+    }
+
+    /**
+     * The Kotlin picks a `stage` number every tick and the YAML is the only thing that turns it
+     * into something a player can see, so the two have to agree on how many stages there are and
+     * on what each one looks like. A mismatch shows up in game as a mine frozen on one appearance,
+     * which is exactly the failure this replaced - nothing throws, it just never animates.
+     */
+    @Test
+    @Suppress("UNCHECKED_CAST")
+    fun `every mine declares the stages the drill counts through, eating the ore away across them`() {
+        val lastStage = Mine.IDLE_STAGE + Mine.DIGGING_STAGES
+
+        for (file in configDir.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
+            val states = states(file.name)
+            val stage = (states["properties"] as Map<String, Any?>)["stage"] as Map<String, Any?>
+            val variants = states["variants"] as Map<String, Map<String, Any?>>
+            val found = appearances(file.name)
+
+            assertEquals("${Mine.IDLE_STAGE}~$lastStage", stage["range"], "${file.name} stage range")
+
+            for (facing in listOf("north", "south", "east", "west")) {
+                val scales =
+                    (Mine.IDLE_STAGE..lastStage).map { value ->
+                        val key = "facing=$facing,stage=$value"
+                        val name = variants[key]?.get("appearance") as String?
+                        assertTrue(name != null, "${file.name} has no variant for $key")
+                        val held = (found.getValue(name!!)["entity_renderer"] as List<Map<String, Any?>>)[1]
+                        (held["scale"] as List<Number>).first().toDouble()
+                    }
+
+                assertEquals(scales[0], scales[1], "${file.name}/$facing: committing a haul lights the ore, it does not shrink it")
+                for ((whole, eaten) in scales.drop(1).zipWithNext()) {
+                    assertTrue(eaten < whole, "${file.name}/$facing: the ore should shrink at every stage, got $scales")
                 }
             }
         }

@@ -9,12 +9,12 @@ items:
       generation:
         parent: minecraft:block/cube
         textures:
-          north: minecraft:block/custom/obsidian_factory_idle_north
-          south: minecraft:block/custom/obsidian_factory_idle_south
-          east: minecraft:block/custom/obsidian_factory_idle_east
-          west: minecraft:block/custom/obsidian_factory_idle_west
-          up: minecraft:block/custom/obsidian_factory_idle_up
-          down: minecraft:block/custom/obsidian_factory_idle_down
+          north: minecraft:block/custom/material_factory_obsidian_face_idle
+          south: minecraft:block/custom/material_factory_obsidian_face_idle
+          east: minecraft:block/custom/material_factory_obsidian_face_idle
+          west: minecraft:block/custom/material_factory_obsidian_face_idle
+          up: minecraft:block/custom/material_factory_obsidian_housing
+          down: minecraft:block/custom/material_factory_obsidian_housing
     behavior:
       type: block_item
       block:
@@ -36,7 +36,17 @@ items:
             hit: minecraft:block.metal.hit
             fall: minecraft:block.metal.fall
         states:
+          # One lamp per ingredient: the left porthole is water, the right is lava, and the
+          # amber bar under them is power. Each is set independently by
+          # MaterialFactory.renderLamps(), so a half-fed machine shows which half it is
+          # still waiting on rather than lighting everything at once.
           properties:
+            water:
+              type: boolean
+              default: false
+            lava:
+              type: boolean
+              default: false
             powered:
               type: boolean
               default: false
@@ -49,34 +59,185 @@ items:
               state: barrier
               entity_renderer:
                 item: atlas:obsidian_factory
-            active:
+            water:
               state: barrier
               entity_renderer:
-                item: atlas:obsidian_factory_active
+                item: atlas:obsidian_factory_water
+            lava:
+              state: barrier
+              entity_renderer:
+                item: atlas:obsidian_factory_lava
+            water_lava:
+              state: barrier
+              entity_renderer:
+                item: atlas:obsidian_factory_water_lava
+            powered:
+              state: barrier
+              entity_renderer:
+                item: atlas:obsidian_factory_powered
+            water_powered:
+              state: barrier
+              entity_renderer:
+                item: atlas:obsidian_factory_water_powered
+            lava_powered:
+              state: barrier
+              entity_renderer:
+                item: atlas:obsidian_factory_lava_powered
+            water_lava_powered:
+              state: barrier
+              entity_renderer:
+                item: atlas:obsidian_factory_water_lava_powered
           variants:
-            powered=false:
+            water=false,lava=false,powered=false:
               appearance: idle
-            powered=true:
-              appearance: active
+            water=true,lava=false,powered=false:
+              appearance: water
+            water=false,lava=true,powered=false:
+              appearance: lava
+            water=true,lava=true,powered=false:
+              appearance: water_lava
+            water=false,lava=false,powered=true:
+              appearance: powered
+            water=true,lava=false,powered=true:
+              appearance: water_powered
+            water=false,lava=true,powered=true:
+              appearance: lava_powered
+            water=true,lava=true,powered=true:
+              appearance: water_lava_powered
 
 
 items#1:
-  atlas:obsidian_factory_active:
+  atlas:obsidian_factory_water:
     material: paper
     data:
       item-name: "<!i><gradient:#1A0A2E:#4B0082>Obsidian Factory"
     model:
       type: minecraft:model
-      path: minecraft:block/custom/obsidian_factory_active
+      path: minecraft:block/custom/obsidian_factory_water
       generation:
         parent: minecraft:block/cube
         textures:
-          north: minecraft:block/custom/obsidian_factory_active_north
-          south: minecraft:block/custom/obsidian_factory_active_south
-          east: minecraft:block/custom/obsidian_factory_active_east
-          west: minecraft:block/custom/obsidian_factory_active_west
-          up: minecraft:block/custom/obsidian_factory_active_up
-          down: minecraft:block/custom/obsidian_factory_active_down
+          north: minecraft:block/custom/material_factory_obsidian_face_water
+          south: minecraft:block/custom/material_factory_obsidian_face_water
+          east: minecraft:block/custom/material_factory_obsidian_face_water
+          west: minecraft:block/custom/material_factory_obsidian_face_water
+          up: minecraft:block/custom/material_factory_obsidian_housing
+          down: minecraft:block/custom/material_factory_obsidian_housing
+
+
+items#2:
+  atlas:obsidian_factory_lava:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1A0A2E:#4B0082>Obsidian Factory"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/obsidian_factory_lava
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/material_factory_obsidian_face_lava
+          south: minecraft:block/custom/material_factory_obsidian_face_lava
+          east: minecraft:block/custom/material_factory_obsidian_face_lava
+          west: minecraft:block/custom/material_factory_obsidian_face_lava
+          up: minecraft:block/custom/material_factory_obsidian_housing
+          down: minecraft:block/custom/material_factory_obsidian_housing
+
+
+items#3:
+  atlas:obsidian_factory_water_lava:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1A0A2E:#4B0082>Obsidian Factory"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/obsidian_factory_water_lava
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/material_factory_obsidian_face_water_lava
+          south: minecraft:block/custom/material_factory_obsidian_face_water_lava
+          east: minecraft:block/custom/material_factory_obsidian_face_water_lava
+          west: minecraft:block/custom/material_factory_obsidian_face_water_lava
+          up: minecraft:block/custom/material_factory_obsidian_housing
+          down: minecraft:block/custom/material_factory_obsidian_housing
+
+
+items#4:
+  atlas:obsidian_factory_powered:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1A0A2E:#4B0082>Obsidian Factory"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/obsidian_factory_powered
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/material_factory_obsidian_face_powered
+          south: minecraft:block/custom/material_factory_obsidian_face_powered
+          east: minecraft:block/custom/material_factory_obsidian_face_powered
+          west: minecraft:block/custom/material_factory_obsidian_face_powered
+          up: minecraft:block/custom/material_factory_obsidian_housing
+          down: minecraft:block/custom/material_factory_obsidian_housing
+
+
+items#5:
+  atlas:obsidian_factory_water_powered:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1A0A2E:#4B0082>Obsidian Factory"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/obsidian_factory_water_powered
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/material_factory_obsidian_face_water_powered
+          south: minecraft:block/custom/material_factory_obsidian_face_water_powered
+          east: minecraft:block/custom/material_factory_obsidian_face_water_powered
+          west: minecraft:block/custom/material_factory_obsidian_face_water_powered
+          up: minecraft:block/custom/material_factory_obsidian_housing
+          down: minecraft:block/custom/material_factory_obsidian_housing
+
+
+items#6:
+  atlas:obsidian_factory_lava_powered:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1A0A2E:#4B0082>Obsidian Factory"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/obsidian_factory_lava_powered
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/material_factory_obsidian_face_lava_powered
+          south: minecraft:block/custom/material_factory_obsidian_face_lava_powered
+          east: minecraft:block/custom/material_factory_obsidian_face_lava_powered
+          west: minecraft:block/custom/material_factory_obsidian_face_lava_powered
+          up: minecraft:block/custom/material_factory_obsidian_housing
+          down: minecraft:block/custom/material_factory_obsidian_housing
+
+
+items#7:
+  atlas:obsidian_factory_water_lava_powered:
+    material: paper
+    data:
+      item-name: "<!i><gradient:#1A0A2E:#4B0082>Obsidian Factory"
+    model:
+      type: minecraft:model
+      path: minecraft:block/custom/obsidian_factory_water_lava_powered
+      generation:
+        parent: minecraft:block/cube
+        textures:
+          north: minecraft:block/custom/material_factory_obsidian_face_water_lava_powered
+          south: minecraft:block/custom/material_factory_obsidian_face_water_lava_powered
+          east: minecraft:block/custom/material_factory_obsidian_face_water_lava_powered
+          west: minecraft:block/custom/material_factory_obsidian_face_water_lava_powered
+          up: minecraft:block/custom/material_factory_obsidian_housing
+          down: minecraft:block/custom/material_factory_obsidian_housing
+
 
 recipes:
   atlas:obsidian_factory:

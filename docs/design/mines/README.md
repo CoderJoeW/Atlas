@@ -27,15 +27,9 @@ with no belt attached anywhere falls back to the original behaviour: the ore dro
 `+0.5, +1.5, +0.5`, the middle of the block directly above the mine, for a hopper or a player to
 collect.
 
-A drill in progress fakes the vanilla break-progress crack texture over the mine's own block via
-Paper's `Player.sendBlockDamage(Location, Float, Int)` — climbing from bare at commit to fully
-cracked the tick before the haul completes, so a long cycle *reads* as a player steadily chipping
-at the ore rather than a silent countdown. It is entirely
-client-side and per-player (nearby players only, within 48 blocks), keyed to a fake damage-source id
-derived from the mine's own location so repeat updates replace the same overlay instead of stacking
-a new cracker every tick. The one update sent while otherwise idle is the closing `0f` the tick a
-finished haul is left without power for another — without it a mine that runs dry would leave its
-last crack frozen fully-broken on screen indefinitely.
+A drill in progress **eats the ore block in the pit away**, a step at a time, so a long cycle reads
+as work happening rather than as a silent countdown. See
+[Two states, and what "digging" means](#two-states-and-what-digging-means) for the stages.
 
 The tiers differ only in what they dig, what a haul costs and how long the cycle takes:
 
@@ -70,9 +64,26 @@ never completing a bore.
 ## Two states, and what "digging" means
 
 The chart draws two states per mine: **idle / no power** and **digging**. They are one CraftEngine
-block definition with a `powered` boolean and two appearances, the same shape the factories use.
-Both are forced `state: barrier` with an `entity_renderer`, so neither claims a slot from the
-exhausted auto-state pools.
+block definition, the same shape the factories use — but with a `stage` **int** (1–5) rather than a
+`powered` boolean, because a bore now takes 200–1000 ticks and has to read as progress rather than
+as a light switch. Stage 1 is idle; stages 2–5 are the four steps of a drill, and across them the
+ore block in the pit shrinks from half a cell to an eighth, staying centred on the pit floor, then
+snaps back to whole when the haul drops. Stage 2 is the ore still whole but lit, so committing a
+haul reads as the ore coming alive and everything after it as the ore being consumed.
+
+That works out to twenty appearances per mine — five stages × four facings — all forced
+`state: barrier` with an `entity_renderer`, so none of them claims a slot from the exhausted
+auto-state pools. `Mine.DIGGING_STAGES` and the configs' `range: 1~5` have to agree; `MineTest`
+pins them together, and pins that the ore actually shrinks at every step.
+
+**This is the second attempt.** The first faked the vanilla break-progress crack texture over the
+mine's own block with Paper's `Player.sendBlockDamage(Location, Float, Int)`, climbing from bare to
+fully cracked across the cycle. It could never have worked, and nothing said so: the client draws a
+crack by re-tessellating the *block model* at that position with the crumbling texture, and a
+barrier's render shape is `INVISIBLE`, so there is no model to crumble. The packets went out every
+tick and rendered nothing. **No entity-rendered Atlas block can use `sendBlockDamage`** — which is
+all of them but the fluid pipe and the power cable. Anything that has to show progress has to show
+it in the appearance itself.
 
 **The digging state means "this tick completed a haul", not "this block holds some charge."** The
 inherited `updatePoweredState()` answers the latter, which for a mine is a lie whenever it is fed
@@ -139,8 +150,8 @@ but now that the model is a symmetric rim with no chute, that rotation has **no 
 It is kept because `Mine.direction` is purely cosmetic infrastructure shared with every other
 utility block (see the class doc in `Mine.kt`: "a mine draws power from any side and drops ore
 [wherever a belt is attached, or] straight up"), not because the current model needs it. If a
-future model reintroduces a directional feature, the eight appearances per mine (four facings ×
-two `powered` states) are already wired up to take it; until then, all four facings of a given mine
+future model reintroduces a directional feature, the twenty appearances per mine (four facings ×
+five `stage` values) are already wired up to take it; until then, all four facings of a given mine
 render identically.
 
 Nothing in the renderer is off centre, so **yaw alone carries the rotation**. That is worth knowing

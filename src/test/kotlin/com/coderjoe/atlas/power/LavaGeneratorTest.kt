@@ -1,10 +1,12 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.fluid.block.FluidContainer
+import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.power.block.LavaGenerator
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,6 +15,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+/**
+ * Fluid reaches the generator by push now: a pipe's own tick moves a unit from a provider to
+ * whichever [com.coderjoe.atlas.fluid.FluidConsumer] on its edge wants it, so every case here
+ * puts a real [FluidPipe] between the tank and the generator and drives the pipe, not the
+ * generator, to move fluid. A bare tank touching the generator with no pipe between them is
+ * exactly as inert as a battery touching a machine with no cable - see
+ * [com.coderjoe.atlas.fluid.block.FluidContainer]'s own class doc.
+ */
 class LavaGeneratorTest {
     @BeforeEach
     fun setup() {
@@ -48,33 +58,45 @@ class LavaGeneratorTest {
     @Test
     fun `lava generator visual state active while burning lava`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val gen = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 0.0))
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:lava_generator")
 
-        val pipe = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0))
-        pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_container")
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -2.0))
+        tank.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
 
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+
+        pipe.callFluidUpdate()
         gen.callPowerUpdate()
+
         assertEquals("atlas:lava_generator_active", gen.getVisualStateBlockId())
     }
 
     @Test
     fun `lava generator goes dark once the lava runs out`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val gen = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 0.0))
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:lava_generator")
 
-        val pipe = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0))
-        pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_container")
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -2.0))
+        tank.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
 
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+
+        pipe.callFluidUpdate()
         gen.callPowerUpdate()
         assertEquals("atlas:lava_generator_active", gen.getVisualStateBlockId())
 
-        // the pipe is empty now, so the next update burns nothing
+        // the tank is empty now, so the next push moves nothing
+        pipe.callFluidUpdate()
         gen.callPowerUpdate()
         assertEquals("atlas:lava_generator", gen.getVisualStateBlockId())
     }
@@ -89,87 +111,51 @@ class LavaGeneratorTest {
     }
 
     @Test
-    fun `lava generator consumes lava from adjacent fluid pipe`() {
+    fun `lava generator consumes lava pushed through an adjacent fluid pipe`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(
-            powerRegistry,
-            gen,
-            "atlas:lava_generator",
-        )
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:lava_generator")
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc)
-        pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_container",
-        )
+        val pipe = FluidPipe(pipeLoc)
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        gen.callPowerUpdate()
+        val tankLoc = TestHelper.createLocation(0.0, 64.0, -2.0)
+        val tank = FluidContainer(tankLoc)
+        tank.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
+
+        pipe.callFluidUpdate()
 
         assertEquals(2, gen.currentPower)
-        assertFalse(pipe.hasFluid())
+        assertFalse(tank.hasFluid())
     }
 
     @Test
-    fun `lava generator ignores water from adjacent fluid pipe`() {
+    fun `lava generator ignores water offered through a fluid pipe`() {
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(
-            powerRegistry,
-            gen,
-            "atlas:lava_generator",
-        )
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:lava_generator")
 
         val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc)
-        pipe.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_container",
-        )
+        val pipe = FluidPipe(pipeLoc)
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        gen.callPowerUpdate()
+        val tankLoc = TestHelper.createLocation(0.0, 64.0, -2.0)
+        val tank = FluidContainer(tankLoc)
+        tank.storeFluid(FluidType.WATER)
+        TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
+
+        pipe.callFluidUpdate()
 
         assertEquals(0, gen.currentPower)
-        assertTrue(pipe.hasFluid())
-    }
-
-    @Test
-    fun `lava generator consumes lava from fluid container facing toward it`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
-
-        val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(
-            powerRegistry,
-            gen,
-            "atlas:lava_generator",
-        )
-
-        val containerLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val container = FluidContainer(containerLoc)
-        container.restoreState(FluidType.LAVA, 3)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            container,
-            "atlas:fluid_container",
-        )
-
-        gen.callPowerUpdate()
-
-        assertEquals(2, gen.currentPower)
-        assertEquals(2, container.storedAmount)
+        assertTrue(tank.hasFluid())
     }
 
     @Test
@@ -180,12 +166,13 @@ class LavaGeneratorTest {
         val gen = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 0.0))
         TestHelper.addToRegistry(powerRegistry, gen, "atlas:lava_generator")
 
-        // a tank has no facing to point away any more, so the case that gives nothing is an
-        // empty one
-        val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, container, "atlas:fluid_container")
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        gen.callPowerUpdate()
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -2.0))
+        TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
+
+        pipe.callFluidUpdate()
 
         assertEquals(0, gen.currentPower)
     }
@@ -197,64 +184,52 @@ class LavaGeneratorTest {
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        gen.currentPower = 48
-        TestHelper.addToRegistry(
-            powerRegistry,
-            gen,
-            "atlas:lava_generator",
-        )
+        gen.currentPower = gen.maxStorage
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:lava_generator")
 
-        val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc)
-        pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_container",
-        )
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
 
-        gen.callPowerUpdate()
+        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -2.0))
+        tank.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
 
-        assertEquals(48, gen.currentPower)
-        assertTrue(pipe.hasFluid())
+        pipe.callFluidUpdate()
+
+        assertEquals(gen.maxStorage, gen.currentPower)
+        assertTrue(tank.hasFluid())
     }
 
     @Test
-    fun `lava generator consumes from multiple sources in one tick`() {
+    fun `lava generator accepts a push from each of two separate runs`() {
+        // one network moves at most one unit per tick (see FluidNetwork.transfer), so "multiple
+        // sources in one tick" now means two independent runs each pushing once, not one run
+        // serving two providers at once.
         val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = LavaGenerator(genLoc)
-        TestHelper.addToRegistry(
-            powerRegistry,
-            gen,
-            "atlas:lava_generator",
-        )
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:lava_generator")
 
-        val pipe1Loc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe1 = FluidContainer(pipe1Loc)
-        pipe1.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe1,
-            "atlas:fluid_container",
-        )
+        val pipe1 = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
+        TestHelper.addToRegistry(fluidRegistry, pipe1, "atlas:fluid_pipe")
+        val tank1 = FluidContainer(TestHelper.createLocation(0.0, 64.0, -2.0))
+        tank1.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, tank1, "atlas:fluid_container")
 
-        val pipe2Loc = TestHelper.createLocation(0.0, 64.0, 1.0)
-        val pipe2 = FluidContainer(pipe2Loc)
-        pipe2.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe2,
-            "atlas:fluid_container",
-        )
+        val pipe2 = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
+        TestHelper.addToRegistry(fluidRegistry, pipe2, "atlas:fluid_pipe")
+        val tank2 = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
+        tank2.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, tank2, "atlas:fluid_container")
 
-        gen.callPowerUpdate()
+        pipe1.callFluidUpdate()
+        pipe2.callFluidUpdate()
 
         assertEquals(4, gen.currentPower)
-        assertFalse(pipe1.hasFluid())
-        assertFalse(pipe2.hasFluid())
+        assertFalse(tank1.hasFluid())
+        assertFalse(tank2.hasFluid())
     }
 
     @Test
@@ -267,35 +242,6 @@ class LavaGeneratorTest {
         gen.callPowerUpdate()
 
         assertEquals(0, gen.currentPower)
-    }
-
-    @Test
-    fun `lava generator does nothing when already at max storage`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
-
-        val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = LavaGenerator(genLoc)
-        gen.currentPower = gen.maxStorage
-        TestHelper.addToRegistry(
-            powerRegistry,
-            gen,
-            "atlas:lava_generator",
-        )
-
-        val pipeLoc = TestHelper.createLocation(0.0, 64.0, -1.0)
-        val pipe = FluidContainer(pipeLoc)
-        pipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            pipe,
-            "atlas:fluid_container",
-        )
-
-        gen.callPowerUpdate()
-
-        assertEquals(gen.maxStorage, gen.currentPower)
-        assertTrue(pipe.hasFluid())
     }
 
     @Test

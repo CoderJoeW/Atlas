@@ -2,12 +2,14 @@ package com.coderjoe.atlas.fluid.block
 
 import com.coderjoe.atlas.atlasInfo
 import com.coderjoe.atlas.coordinates
+import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.core.PowerConsumer
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.fluid.FluidConsumer
 import com.coderjoe.atlas.fluid.FluidType
 import org.bukkit.Location
 import org.bukkit.Material
@@ -129,10 +131,16 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
      * even while it has nowhere to deliver yet, because it is still connected.
      */
     fun connections(): Set<BlockFace> {
-        val registry = FluidBlockRegistry.instance ?: return emptySet()
         return ADJACENT_FACES.filter { face ->
-            val neighbor = registry.getAdjacentBlock(location, face) ?: return@filter false
-            neighbor is FluidPipe || neighbor.canAcceptFluid(face.oppositeFace)
+            val back = face.oppositeFace
+
+            when (val neighbor = AtlasBlocks.adjacent(location, face)) {
+                is FluidPipe -> true
+                is FluidBlock -> neighbor.canAcceptFluid(back)
+                // A machine from another system is fed straight off the pump when it sits against
+                // one, so it has to show as plumbed in like anything else.
+                else -> (neighbor as? FluidConsumer)?.drawsFluidFrom(back) == true
+            }
         }.toSet()
     }
 
@@ -183,9 +191,24 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
         if (fluid == FluidType.NONE) return false
 
         for (face in ADJACENT_FACES) {
-            val neighbor = registry.getAdjacentBlock(location, face) ?: continue
-            if (!neighbor.canAcceptFluid(face.oppositeFace, fluid)) continue
-            if (neighbor.storeFluid(fluid)) {
+            val neighbor = registry.getAdjacentBlock(location, face)
+            if (neighbor != null) {
+                if (!neighbor.canAcceptFluid(face.oppositeFace, fluid)) continue
+                if (neighbor.storeFluid(fluid)) {
+                    removeFluid()
+                    return true
+                }
+                continue
+            }
+
+            // Nothing in the fluid registry, but a block from another system may still be a
+            // consumer - a material factory is one - and it has to be pushed to like anything
+            // else rather than left to reach back for what it needs. The same fallback
+            // PowerBlock.pushPowerToward makes for a pump on the power side.
+            val consumer = AtlasBlocks.adjacent(location, face) as? FluidConsumer ?: continue
+            val back = face.oppositeFace
+            if (!consumer.drawsFluidFrom(back) || !consumer.wantsFluid(fluid)) continue
+            if (consumer.acceptFluid(back, fluid)) {
                 removeFluid()
                 return true
             }

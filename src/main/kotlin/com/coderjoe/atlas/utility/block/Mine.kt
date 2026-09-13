@@ -10,7 +10,6 @@ import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.transport.block.ConveyorBelt
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.World
 import org.bukkit.block.BlockFace
 import org.bukkit.inventory.ItemStack
 
@@ -22,9 +21,9 @@ import org.bukkit.inventory.ItemStack
  * not touch the world around it - the shaft is fiction - so a mine can be built anywhere a cable
  * reaches and never runs a deposit dry.
  *
- * The two visual states in the design chart are idle and digging, and they are one block
- * definition with a `powered` property rather than two: [updatePoweredState] flips it, exactly as
- * the factories do.
+ * Idle and digging are one block definition with a `stage` property rather than two blocks, the
+ * shape the factories use for `powered` - but an int rather than a boolean, because a bore takes
+ * between 200 and 1000 ticks and has to read as progress rather than as a light switch.
  */
 abstract class Mine(
     location: Location,
@@ -58,6 +57,14 @@ abstract class Mine(
     var isCutting: Boolean = false
         private set
 
+    /**
+     * Which step of the bore the ore block in the pit is showing: [IDLE_STAGE] while the mine is
+     * not drilling, then one of the [DIGGING_STAGES] steps above it, each shrinking the ore a
+     * little further. This is the whole progress read - see [drillStageFor].
+     */
+    var drillStage: Int = IDLE_STAGE
+        private set
+
     /** Power drawn per haul. Charged the moment a haul is committed, not when it completes. */
     abstract val powerPerHaul: Int
 
@@ -80,28 +87,21 @@ abstract class Mine(
     /** Ticks left on the haul in progress. Zero means the mine is idle, waiting on power. */
     private var drillTicksRemaining: Long = 0L
 
-    /**
-     * A stable, fake "cracker" id for [Player.sendBlockDamage] - keyed to this mine's own
-     * position rather than a real entity, so repeated updates replace the same overlay instead of
-     * layering a new one every tick. [Player.sendBlockDamage]'s own doc notes the id "can be one
-     * that does not associate directly with an existing or loaded entity."
-     */
-    private val breakOverlaySourceId: Int = location.hashCode()
-
-    /**
-     * Whether the overlay was showing last tick, so a mine that finishes a haul without enough
-     * power for the next one sends one last update clearing its crack, instead of leaving it
-     * frozen fully-broken on screen indefinitely.
-     */
-    private var wasShowingBreakOverlay: Boolean = false
-
     companion object {
         /** The faces a shaft mouth can open toward. The model has no up or down variant. */
         val HORIZONTAL_FACES = listOf(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST)
 
-        /** How far away a player still sees the crack overlay update. */
-        private const val OVERLAY_VISIBILITY_RADIUS = 48.0
-        private const val OVERLAY_VISIBILITY_RADIUS_SQUARED = OVERLAY_VISIBILITY_RADIUS * OVERLAY_VISIBILITY_RADIUS
+        /** The `stage` value for a mine that is not drilling: the ore whole, and unlit. */
+        const val IDLE_STAGE = 1
+
+        /**
+         * How many steps a bore is shown in, counting up from [IDLE_STAGE] + 1.
+         *
+         * Every mine config declares `stage` as `range: 1~5` and gives each step its own
+         * appearance per facing, so changing this means regenerating all seven. Nothing throws if
+         * they drift - the mine just freezes on one appearance - so `MineTest` pins them together.
+         */
+        const val DIGGING_STAGES = 4
     }
 
     /**
@@ -156,7 +156,7 @@ abstract class Mine(
         val world = location.world
         if (world == null) {
             isCutting = false
-            showCutting(false)
+            showDrillStage(IDLE_STAGE)
             return
         }
 
@@ -182,8 +182,7 @@ abstract class Mine(
                 }
         }
 
-        showCutting(isCutting)
-        updateBreakOverlay(world)
+        showDrillStage(drillStageFor(drillTicksRemaining))
 
         // Resolved after every state transition above, so a failure here (or a future change
         // that makes dropping fallible) can never leave the mine's own bookkeeping half-applied.
@@ -197,36 +196,35 @@ abstract class Mine(
     }
 
     /**
-     * Shows the digging state for as long as a haul is actively being drilled, not just the tick
-     * it completes on.
+     * How far into the bore [ticksRemaining] leaves the mine, as a `stage` value.
      *
-     * The inherited [updatePoweredState] answers "holds any charge at all", which for a mine is a
-     * lie the whole time it is being fed too slowly: a netherite mine costs 30 a haul, so a trickle
-     * leaves it sitting at 1-29 power looking like it is cutting, with the ore lit, while producing
-     * nothing. Gating on an active drill instead means a starved mine reads as idle, which is true.
+     * Idle is [IDLE_STAGE] rather than a stage of its own kind, so a starved mine reads as doing
+     * nothing - which is true. The inherited [updatePoweredState] answers "holds any charge at
+     * all" instead, a lie the whole time a mine is fed too slowly: a netherite mine costs 30 a
+     * haul, so a trickle leaves it sitting at 1-29 power looking like it is cutting, with the ore
+     * lit, while producing nothing.
+     *
+     * The digging steps divide the cycle evenly, so a bore first shows whole-but-lit, then loses a
+     * quarter of the ore at each of 25%, 50% and 75%.
      */
-    private fun showCutting(cutting: Boolean) {
-        CraftEngineHelper.setBooleanProperty(location, "powered", cutting)
+    private fun drillStageFor(ticksRemaining: Long): Int {
+        if (!isCutting) return IDLE_STAGE
+        val step = ((cycleTicks - ticksRemaining) * DIGGING_STAGES / cycleTicks).toInt()
+        return IDLE_STAGE + 1 + step.coerceIn(0, DIGGING_STAGES - 1)
     }
 
     /**
-     * Fakes the vanilla break-progress crack texture over the mine's own block, climbing from
-     * bare to fully cracked across the drill's duration so a haul in progress reads as a player
-     * actively chipping at the ore rather than a machine quietly ticking a timer down. Skips
-     * sending anything while idle, except the one update that clears an already-shown crack the
-     * tick a finished haul leaves the mine without enough power to start another.
+     * Eats the ore block in the pit away a step at a time as the bore runs down, which is what
+     * makes a long cycle read as work in progress rather than a silent countdown.
+     *
+     * This replaced a fake vanilla break overlay sent with `Player.sendBlockDamage`, which could
+     * never have worked: the client draws a crack by re-tessellating the block model at that
+     * position with the crumbling texture, and every mine appearance forces `state: barrier` so it
+     * costs nothing from the exhausted auto-state pools. A barrier has no model to crumble, so the
+     * packets arrived and rendered nothing. That goes for any entity-rendered Atlas block.
      */
-    private fun updateBreakOverlay(world: World) {
-        if (!isCutting && !wasShowingBreakOverlay) return
-
-        val progress = if (isCutting) 1f - (drillTicksRemaining.toFloat() / cycleTicks.toFloat()) else 0f
-
-        for (player in world.players) {
-            if (player.location.distanceSquared(location) <= OVERLAY_VISIBILITY_RADIUS_SQUARED) {
-                player.sendBlockDamage(location, progress, breakOverlaySourceId)
-            }
-        }
-
-        wasShowingBreakOverlay = isCutting
+    private fun showDrillStage(stage: Int) {
+        drillStage = stage
+        CraftEngineHelper.setIntProperty(location, "stage", stage)
     }
 }

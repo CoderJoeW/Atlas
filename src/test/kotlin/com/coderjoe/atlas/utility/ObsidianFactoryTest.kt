@@ -1,12 +1,15 @@
 package com.coderjoe.atlas.utility
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.fluid.FluidType
 import com.coderjoe.atlas.fluid.block.FluidContainer
+import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.utility.block.ObsidianFactory
+import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -151,38 +154,18 @@ class ObsidianFactoryTest {
     }
 
     @Test
-    fun `consumes water, lava, and power when all available`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+    fun `consumes power once both fluids have been pushed in`() {
+        // Fluid arrives by push now (see MaterialFactory.acceptFluid), so the factory itself
+        // never touches the registry - a network hands it a unit directly, exactly as it would
+        // via FluidNetwork.transfer(). The pipe-mediated path is covered end to end below.
         val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
 
-        val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
-        val gen = ObsidianFactory(genLoc)
+        val gen = ObsidianFactory(TestHelper.createLocation())
         gen.currentPower = 25
-        TestHelper.addToRegistry(
-            powerRegistry,
-            gen,
-            "atlas:obsidian_factory",
-        )
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:obsidian_factory")
 
-        val waterPipeLoc =
-            TestHelper.createLocation(0.0, 64.0, -1.0)
-        val waterPipe = FluidContainer(waterPipeLoc)
-        waterPipe.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            waterPipe,
-            "atlas:fluid_container",
-        )
-
-        val lavaPipeLoc =
-            TestHelper.createLocation(0.0, 64.0, 1.0)
-        val lavaPipe = FluidContainer(lavaPipeLoc)
-        lavaPipe.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(
-            fluidRegistry,
-            lavaPipe,
-            "atlas:fluid_container",
-        )
+        assertTrue(gen.acceptFluid(BlockFace.WEST, FluidType.WATER))
+        assertTrue(gen.acceptFluid(BlockFace.EAST, FluidType.LAVA))
 
         try {
             gen.callPowerUpdate()
@@ -191,8 +174,43 @@ class ObsidianFactoryTest {
         }
 
         assertEquals(0, gen.currentPower)
-        assertFalse(waterPipe.hasFluid())
-        assertFalse(lavaPipe.hasFluid())
+    }
+
+    @Test
+    fun `produces when water and lava are pushed in through real fluid pipes`() {
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+
+        val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
+        val gen = ObsidianFactory(genLoc)
+        gen.currentPower = 25
+        TestHelper.addToRegistry(powerRegistry, gen, "atlas:obsidian_factory")
+
+        val waterPipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
+        TestHelper.addToRegistry(fluidRegistry, waterPipe, "atlas:fluid_pipe")
+        val waterTank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -2.0))
+        waterTank.storeFluid(FluidType.WATER)
+        TestHelper.addToRegistry(fluidRegistry, waterTank, "atlas:fluid_container")
+
+        val lavaPipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
+        TestHelper.addToRegistry(fluidRegistry, lavaPipe, "atlas:fluid_pipe")
+        val lavaTank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
+        lavaTank.storeFluid(FluidType.LAVA)
+        TestHelper.addToRegistry(fluidRegistry, lavaTank, "atlas:fluid_container")
+
+        waterPipe.callFluidUpdate()
+        lavaPipe.callFluidUpdate()
+
+        assertFalse(waterTank.hasFluid())
+        assertFalse(lavaTank.hasFluid())
+
+        try {
+            gen.callPowerUpdate()
+        } catch (_: Throwable) {
+            // ItemStack constructor triggers Registry init
+        }
+
+        assertEquals(0, gen.currentPower)
     }
 
     @Test
