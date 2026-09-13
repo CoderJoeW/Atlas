@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.craftengine
 
+import net.momirealms.craftengine.core.util.Key
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks
 import net.momirealms.craftengine.core.block.property.Property
 import org.bukkit.Location
@@ -17,6 +18,13 @@ object CraftEngineHelper {
             "up" to BlockFace.UP,
             "down" to BlockFace.DOWN,
         )
+
+    fun placeState(
+        location: Location,
+        blockId: String,
+    ) {
+        CraftEngineBlocks.place(location, Key.of(blockId), false)
+    }
 
     fun getBlockId(block: Block): String? {
         return try {

@@ -4,8 +4,6 @@ import com.coderjoe.atlas.Atlas
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
-import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks
-import net.momirealms.craftengine.core.util.Key
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.plugin.java.JavaPlugin
@@ -57,7 +55,7 @@ abstract class AtlasBlock(
             val key = BlockRegistry.locationKey(location)
             registry.updatingLocations.add(key)
             try {
-                CraftEngineBlocks.place(location, Key.of(newState), false)
+                CraftEngineHelper.placeState(location, newState)
                 currentVisualState = newState
             } catch (e: Throwable) {
                 plugin.logger.warning(
@@ -70,12 +68,7 @@ abstract class AtlasBlock(
     }
 
     fun start() {
-        try {
-            val state = CraftEngineBlocks.getCustomBlockState(location.block)
-            currentVisualState = state?.owner()?.value()?.id()?.toString()
-        } catch (_: Throwable) {
-            // CraftEngine not loaded
-        }
+        currentVisualState = CraftEngineHelper.getBlockId(location.block)
 
         plugin.server.scheduler.runTask(
             plugin,
