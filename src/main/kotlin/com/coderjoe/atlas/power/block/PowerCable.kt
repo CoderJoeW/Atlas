@@ -2,7 +2,7 @@ package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.CraftEngineHelper
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.core.PowerConsumer
 import com.coderjoe.atlas.power.PowerBlock

@@ -6,6 +6,7 @@ import com.coderjoe.atlas.core.AtlasSubsystem
 import com.coderjoe.atlas.core.AtlasWrench
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.BlockSystem
+import com.coderjoe.atlas.craftengine.CraftEngineIntegration
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockDialog
 import com.coderjoe.atlas.fluid.FluidBlockFactory

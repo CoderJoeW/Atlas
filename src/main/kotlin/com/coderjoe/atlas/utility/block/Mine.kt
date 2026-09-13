@@ -4,7 +4,7 @@ import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
 import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.core.AtlasBlocks
-import com.coderjoe.atlas.core.CraftEngineHelper
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.core.pushRoundRobinTo
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.transport.block.ConveyorBelt

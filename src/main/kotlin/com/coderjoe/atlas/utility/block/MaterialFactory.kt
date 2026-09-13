@@ -3,7 +3,7 @@ package com.coderjoe.atlas.utility.block
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
 import com.coderjoe.atlas.core.AtlasBlocks
-import com.coderjoe.atlas.core.CraftEngineHelper
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.core.pushRoundRobinTo
 import com.coderjoe.atlas.fluid.FluidConsumer
 import com.coderjoe.atlas.fluid.FluidType

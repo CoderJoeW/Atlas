@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.core
 
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerNetworkReport
 import net.kyori.adventure.text.Component

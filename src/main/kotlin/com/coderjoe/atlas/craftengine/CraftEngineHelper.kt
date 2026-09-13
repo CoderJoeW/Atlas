@@ -1,10 +1,11 @@
-package com.coderjoe.atlas.core
+package com.coderjoe.atlas.craftengine
 
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks
 import net.momirealms.craftengine.core.block.property.Property
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import kotlin.collections.iterator
 
 object CraftEngineHelper {
     private val CE_FACING_TO_BLOCK_FACE =

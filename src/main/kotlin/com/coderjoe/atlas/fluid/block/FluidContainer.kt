@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.fluid.block
 
 import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.CraftEngineHelper
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidType

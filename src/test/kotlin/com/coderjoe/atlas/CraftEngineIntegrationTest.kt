@@ -1,5 +1,6 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.craftengine.CraftEngineIntegration
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

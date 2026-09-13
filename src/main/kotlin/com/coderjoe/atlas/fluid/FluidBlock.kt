@@ -2,7 +2,7 @@ package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.core.AtlasBlock
 import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.core.CraftEngineHelper
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 

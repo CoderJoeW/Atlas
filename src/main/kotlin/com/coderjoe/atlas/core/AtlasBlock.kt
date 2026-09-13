@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.core
 
 import com.coderjoe.atlas.Atlas
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks

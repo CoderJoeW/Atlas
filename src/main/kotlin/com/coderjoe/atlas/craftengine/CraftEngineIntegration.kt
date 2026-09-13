@@ -1,4 +1,4 @@
-package com.coderjoe.atlas
+package com.coderjoe.atlas.craftengine
 
 import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.plugin.java.JavaPlugin

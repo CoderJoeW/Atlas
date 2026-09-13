@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.transport.block
 
 import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.CraftEngineHelper
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.transport.TransportBlock
 import org.bukkit.Location
