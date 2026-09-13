@@ -5,6 +5,7 @@ import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlockRegistry
+import com.coderjoe.atlas.power.block.LavaGenerator
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.Material
@@ -572,6 +573,21 @@ class FluidBlockLogicTest {
         assertEquals(FluidType.NONE, pipe1.storedFluid)
         assertEquals(FluidType.NONE, pipe2.storedFluid)
         assertTrue(BlockFace.NORTH in pipe1.connections(), "the pipes should join each other")
+    }
+
+    @Test
+    fun `a pipe grows an arm toward a lava generator, a consumer from another registry`() {
+        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+
+        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
+        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+
+        val generator = LavaGenerator(TestHelper.createLocation(0.0, 64.0, -1.0))
+        TestHelper.addToRegistry(powerRegistry, generator, "atlas:lava_generator")
+
+        // the generator sits at -Z from the pipe, so NORTH is the arm pointing at it
+        assertTrue(BlockFace.NORTH in pipe.connections(), "the pipe should join a consumer from another registry")
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.core.AtlasBlock
+import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.BlockRegistry
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import org.bukkit.block.BlockFace
@@ -19,6 +20,19 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
      * pipe it touches - the face [FluidBlock.canProvideFluid] is asked about.
      */
     data class Terminal(val block: FluidBlock, val faceTowardPipe: BlockFace)
+
+    /**
+     * A consumer from another system sitting on the run's edge.
+     *
+     * Kept apart from [Terminal] because it is not a fluid block: it has nothing to give back and
+     * no fluid state to report, so it can only ever be pushed to. Mirrors
+     * [com.coderjoe.atlas.power.PowerNetwork.ConsumerTerminal].
+     */
+    data class ConsumerTerminal(
+        val block: AtlasBlock,
+        val consumer: FluidConsumer,
+        val faceTowardPipe: BlockFace,
+    )
 
     /**
      * The pipe that runs the transfer for the whole network.
@@ -56,16 +70,37 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
         return providers.values.toList() to acceptors.values.toList()
     }
 
+    /** The blocks on this run's edge that take fluid but are not fluid blocks themselves. */
+    fun consumers(): List<ConsumerTerminal> {
+        val found = LinkedHashMap<String, ConsumerTerminal>()
+        for (pipe in pipes) {
+            for (face in AtlasBlock.ADJACENT_FACES) {
+                val neighbor = AtlasBlocks.adjacent(pipe.location, face) ?: continue
+                if (neighbor is FluidBlock) continue
+                val consumer = neighbor as? FluidConsumer ?: continue
+
+                val back = face.oppositeFace
+                if (!consumer.drawsFluidFrom(back)) continue
+                found.putIfAbsent(
+                    BlockRegistry.locationKey(neighbor.location),
+                    ConsumerTerminal(neighbor, consumer, back),
+                )
+            }
+        }
+        return found.values.toList()
+    }
+
     /** The fluid a provider on this run has to offer right now, or [FluidType.NONE]. */
     fun availableFluid(): FluidType = terminals().first.firstOrNull { it.block.hasFluid() }?.block?.storedFluid ?: FluidType.NONE
 
     /**
-     * Moves one unit from a provider to an acceptor that will take it. Returns what moved, or
-     * [FluidType.NONE] if nothing did - which is also what the run renders as.
+     * Moves one unit from a provider to whichever acceptor or consumer on the run will take it.
+     * Returns what moved, or [FluidType.NONE] if nothing did - which is also what the run renders
+     * as.
      */
     fun transfer(): FluidType {
-        val (providers, acceptors) = terminals()
-        if (providers.isEmpty() || acceptors.isEmpty()) return FluidType.NONE
+        val (providers, _) = terminals()
+        if (providers.isEmpty()) return FluidType.NONE
 
         for (i in providers.indices) {
             val provider = providers[(nextProviderIndex + i) % providers.size]
@@ -73,12 +108,10 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
             if (!provider.block.hasFluid()) continue
 
             val offered = provider.block.storedFluid
-            val taker =
-                acceptors.firstOrNull { it.block !== provider.block && it.block.canAcceptFluid(it.faceTowardPipe, offered) }
-                    ?: continue
+            if (!canDeliver(offered, excluding = provider.block)) continue
 
             provider.block.removeFluid()
-            if (!taker.block.storeFluid(offered)) {
+            if (!deliver(offered, excluding = provider.block)) {
                 // refused after all - hand it straight back rather than destroying it
                 provider.block.storeFluid(offered)
                 continue
@@ -90,8 +123,11 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
     }
 
     /**
-     * Takes one unit off the run's providers, for consumers that ask a pipe for fluid rather than
-     * waiting to be filled - the lava generator works this way.
+     * Takes one unit off the run's providers directly, bypassing [transfer]'s push.
+     *
+     * This is what [FluidPipe.removeFluid] delegates to - a pipe carries nothing of its own, so
+     * anything that queries one as a plain [FluidBlock] (rather than going through a
+     * [FluidConsumer] push) needs the network to answer on its behalf.
      */
     fun draw(): FluidType {
         val (providers, _) = terminals()
@@ -103,12 +139,49 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
         return FluidType.NONE
     }
 
-    /** Hands one unit to whichever acceptor on the run will take it. */
-    fun deliver(type: FluidType): Boolean {
+    /**
+     * Whether anything on this run would take a unit of [type] right now, counting the consumers
+     * on its edge as well as its fluid blocks.
+     *
+     * [FluidType.NONE] asks only whether the run has somewhere to send things at all, which is
+     * what a pipe reports when it is being sized up rather than actually handed a unit.
+     *
+     * [excluding] drops one block from the search, so a provider the run is draining is never
+     * offered its own unit straight back.
+     */
+    fun canDeliver(
+        type: FluidType,
+        excluding: FluidBlock? = null,
+    ): Boolean {
+        val (_, acceptors) = terminals()
+        if (acceptors.any { it.block !== excluding && it.block.canAcceptFluid(it.faceTowardPipe, type) }) return true
+        if (type == FluidType.NONE) return consumers().isNotEmpty()
+        return consumers().any { it.consumer.wantsFluid(type) }
+    }
+
+    /**
+     * Hands one unit to whichever acceptor or consumer on the run will take it.
+     *
+     * Fluid blocks are offered it first and consumers only after, so a tank on the run banks what
+     * a machine is not ready for rather than the unit being burned on whichever of the two the
+     * scan happened to reach first.
+     */
+    fun deliver(
+        type: FluidType,
+        excluding: FluidBlock? = null,
+    ): Boolean {
         if (type == FluidType.NONE) return false
+
         val (_, acceptors) = terminals()
         for (acceptor in acceptors) {
+            if (acceptor.block === excluding) continue
             if (acceptor.block.canAcceptFluid(acceptor.faceTowardPipe, type) && acceptor.block.storeFluid(type)) {
+                return true
+            }
+        }
+
+        for (consumer in consumers()) {
+            if (consumer.consumer.wantsFluid(type) && consumer.consumer.acceptFluid(consumer.faceTowardPipe, type)) {
                 return true
             }
         }
