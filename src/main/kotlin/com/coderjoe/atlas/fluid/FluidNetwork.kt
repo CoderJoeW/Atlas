@@ -1,8 +1,10 @@
 package com.coderjoe.atlas.fluid
 
-import com.coderjoe.atlas.core.AtlasBlock
-import com.coderjoe.atlas.core.AtlasBlocks
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.AtlasBlocks
+import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.capability.FluidConsumer
+import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import org.bukkit.block.BlockFace
 
@@ -90,7 +92,7 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
         return found.values.toList()
     }
 
-    /** The fluid a provider on this run has to offer right now, or [FluidType.NONE]. */
+    /** The fluid a provider on this run has to offer right now, or [com.coderjoe.atlas.block.capability.FluidType.NONE]. */
     fun availableFluid(): FluidType = terminals().first.firstOrNull { it.block.hasFluid() }?.block?.storedFluid ?: FluidType.NONE
 
     /**

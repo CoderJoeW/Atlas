@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.core
+package com.coderjoe.atlas.block
 
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates

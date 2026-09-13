@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
-import com.coderjoe.atlas.fluid.FluidType
+import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
 import com.coderjoe.atlas.power.block.SmallSolarPanel

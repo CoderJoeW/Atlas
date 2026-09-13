@@ -1,9 +1,9 @@
 package com.coderjoe.atlas
 
-import com.coderjoe.atlas.core.AtlasBlock
-import com.coderjoe.atlas.core.AtlasBlocks
-import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.core.InstanceHolder
+import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.AtlasBlocks
+import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.InstanceHolder
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockFactory
 import com.coderjoe.atlas.fluid.FluidBlockRegistry

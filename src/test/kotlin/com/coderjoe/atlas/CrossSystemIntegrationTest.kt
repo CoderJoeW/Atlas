@@ -3,7 +3,7 @@ package com.coderjoe.atlas
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
-import com.coderjoe.atlas.fluid.FluidType
+import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump

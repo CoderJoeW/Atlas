@@ -1,7 +1,8 @@
 package com.coderjoe.atlas.fluid
 
-import com.coderjoe.atlas.core.AtlasBlock
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.fluid.block.FluidPipe
 
 /**

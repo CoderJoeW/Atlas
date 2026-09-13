@@ -1,5 +1,8 @@
 package com.coderjoe.atlas.core
 
+import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.util.displayName
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton

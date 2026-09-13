@@ -2,7 +2,7 @@ package com.coderjoe.atlas.utility
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
-import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.block.SmallBattery

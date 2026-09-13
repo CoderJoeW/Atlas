@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.transport
 
-import com.coderjoe.atlas.core.BlockFactory
+import com.coderjoe.atlas.block.BlockFactory
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 

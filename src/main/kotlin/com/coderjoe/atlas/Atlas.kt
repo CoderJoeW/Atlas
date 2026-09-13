@@ -2,10 +2,10 @@ package com.coderjoe.atlas
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.core.AtlasBlockListener
-import com.coderjoe.atlas.core.AtlasSubsystem
+import com.coderjoe.atlas.block.AtlasSubsystem
 import com.coderjoe.atlas.core.AtlasWrench
-import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.BlockSystem
+import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.craftengine.CraftEngineIntegration
 import com.coderjoe.atlas.fluid.FluidBlock
 import com.coderjoe.atlas.fluid.FluidBlockDialog

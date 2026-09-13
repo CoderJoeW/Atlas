@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.core
+package com.coderjoe.atlas.block
 
 import org.bukkit.block.BlockFace
 

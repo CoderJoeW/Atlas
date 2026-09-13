@@ -2,6 +2,7 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery
@@ -76,7 +77,7 @@ class SmallBatteryTest {
 
     @Test
     fun `battery takes power pushed in through any face`() {
-        for (face in com.coderjoe.atlas.core.AtlasBlock.ADJACENT_FACES) {
+        for (face in AtlasBlock.ADJACENT_FACES) {
             val battery = SmallBattery(TestHelper.createLocation())
             assertEquals(1, battery.addPowerFrom(face, 1), "should accept from $face")
         }
@@ -84,7 +85,7 @@ class SmallBatteryTest {
 
     @Test
     fun `battery gives power out through any face`() {
-        for (face in com.coderjoe.atlas.core.AtlasBlock.ADJACENT_FACES) {
+        for (face in AtlasBlock.ADJACENT_FACES) {
             val battery = SmallBattery(TestHelper.createLocation())
             battery.currentPower = 1
             assertEquals(1, battery.removePowerToward(face, 1), "should give toward $face")

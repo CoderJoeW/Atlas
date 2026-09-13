@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.transport
 
-import com.coderjoe.atlas.core.AtlasBlock
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockRegistry
 import org.bukkit.Location
 
 abstract class TransportBlock(

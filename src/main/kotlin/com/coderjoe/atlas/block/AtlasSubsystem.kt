@@ -1,5 +1,6 @@
-package com.coderjoe.atlas.core
+package com.coderjoe.atlas.block
 
+import com.coderjoe.atlas.core.BlockPersister
 import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.plugin.java.JavaPlugin
 

@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.core
+package com.coderjoe.atlas.block
 
 import com.coderjoe.atlas.Atlas
 import com.coderjoe.atlas.craftengine.CraftEngineHelper

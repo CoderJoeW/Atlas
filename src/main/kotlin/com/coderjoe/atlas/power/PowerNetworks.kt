@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.power
 
-import com.coderjoe.atlas.core.AtlasBlock
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.power.block.PowerCable
 
 /**

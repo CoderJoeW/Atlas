@@ -2,7 +2,7 @@ package com.coderjoe.atlas.transport
 
 import com.coderjoe.atlas.core.BlockPersistence
 import com.coderjoe.atlas.core.BlockPersister
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.BlockRegistry
 import org.bukkit.plugin.java.JavaPlugin
 
 class TransportBlockPersistence(plugin: JavaPlugin) : BlockPersister<TransportBlock> {

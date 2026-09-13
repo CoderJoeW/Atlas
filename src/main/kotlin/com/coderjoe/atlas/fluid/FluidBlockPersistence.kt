@@ -2,7 +2,8 @@ package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.core.BlockPersistence
 import com.coderjoe.atlas.core.BlockPersister
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPump
 import org.bukkit.plugin.java.JavaPlugin

@@ -1,14 +1,14 @@
 package com.coderjoe.atlas.fluid.block
 
-import com.coderjoe.atlas.core.AtlasBlocks
-import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.AtlasBlocks
+import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
-import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.fluid.FluidBlock
-import com.coderjoe.atlas.fluid.FluidConsumer
+import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.fluid.FluidNetworks
-import com.coderjoe.atlas.fluid.FluidType
+import com.coderjoe.atlas.block.capability.FluidType
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 

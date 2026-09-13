@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
-import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.power.block.LavaGenerator
 import com.coderjoe.atlas.power.block.PowerCable
 import com.coderjoe.atlas.power.block.SmallBattery

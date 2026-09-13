@@ -4,7 +4,7 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
 import com.coderjoe.atlas.fluid.FluidBlockRegistry
-import com.coderjoe.atlas.fluid.FluidType
+import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.fluid.block.FluidContainer
 import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.power.block.LavaGenerator
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 
 /**
  * Fluid reaches the generator by push now: a pipe's own tick moves a unit from a provider to
- * whichever [com.coderjoe.atlas.fluid.FluidConsumer] on its edge wants it, so every case here
+ * whichever [com.coderjoe.atlas.block.capability.FluidConsumer] on its edge wants it, so every case here
  * puts a real [FluidPipe] between the tank and the generator and drives the pipe, not the
  * generator, to move fluid. A bare tank touching the generator with no pipe between them is
  * exactly as inert as a battery touching a machine with no cable - see

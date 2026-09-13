@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.fluid
+package com.coderjoe.atlas.block.capability
 
 import org.bukkit.block.BlockFace
 
@@ -10,7 +10,7 @@ import org.bukkit.block.BlockFace
  * registry saw nothing beside it and drew no arm toward something it was actively feeding.
  *
  * Fluid is pushed, never pulled: a run finds the consumers on its edge and offers them a unit,
- * the same way [com.coderjoe.atlas.core.PowerConsumer] works for power. A consumer therefore
+ * the same way [PowerConsumer] works for power. A consumer therefore
  * needs somewhere to put what it is given, and spends from that in its own time.
  */
 interface FluidConsumer {

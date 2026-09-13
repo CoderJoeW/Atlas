@@ -1,5 +1,8 @@
 package com.coderjoe.atlas.core
 
+import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockFactory
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.Location
 import org.bukkit.block.BlockFace

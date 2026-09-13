@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.fluid
+package com.coderjoe.atlas.block.capability
 
 enum class FluidType {
     WATER,

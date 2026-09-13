@@ -2,6 +2,7 @@ package com.coderjoe.atlas.transport
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callTransportUpdate
+import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.transport.block.ConveyorBelt
 import io.mockk.every
 import io.mockk.mockk
@@ -66,7 +67,7 @@ class ConveyorBeltTest {
     fun `conveyor belt descriptor has directional placement`() {
         val desc = ConveyorBelt.descriptor
         assertEquals(
-            com.coderjoe.atlas.core.PlacementType.DIRECTIONAL,
+            PlacementType.DIRECTIONAL,
             desc.placementType,
         )
     }

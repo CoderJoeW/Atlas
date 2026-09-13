@@ -2,8 +2,8 @@ package com.coderjoe.atlas.power.block
 
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
-import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.power.PowerBlock
 import org.bukkit.Location
 import org.bukkit.World

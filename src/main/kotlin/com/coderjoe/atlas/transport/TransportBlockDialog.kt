@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.transport
 
 import com.coderjoe.atlas.core.AtlasBlockDialog
-import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.BlockRegistry
+import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.utility.block
 
-import com.coderjoe.atlas.core.BlockDescriptor
-import com.coderjoe.atlas.core.PlacementType
+import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.PlacementType
 import org.bukkit.Location
 import org.bukkit.Material
 

@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.fluid
 
+import com.coderjoe.atlas.block.capability.FluidType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.fluid
 
-import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.core.InstanceHolder
+import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.InstanceHolder
 import org.bukkit.plugin.java.JavaPlugin
 
 class FluidBlockRegistry(plugin: JavaPlugin) : BlockRegistry<FluidBlock>(plugin) {

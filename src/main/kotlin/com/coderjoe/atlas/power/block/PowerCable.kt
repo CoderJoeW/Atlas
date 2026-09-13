@@ -1,10 +1,10 @@
 package com.coderjoe.atlas.power.block
 
-import com.coderjoe.atlas.core.AtlasBlocks
-import com.coderjoe.atlas.core.BlockDescriptor
+import com.coderjoe.atlas.block.AtlasBlocks
+import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
-import com.coderjoe.atlas.core.PlacementType
-import com.coderjoe.atlas.core.PowerConsumer
+import com.coderjoe.atlas.block.PlacementType
+import com.coderjoe.atlas.block.capability.PowerConsumer
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.PowerNetworks

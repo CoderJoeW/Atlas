@@ -2,8 +2,8 @@ package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.core.AtlasBlockListener
-import com.coderjoe.atlas.core.BlockRegistry
-import com.coderjoe.atlas.core.BlockSystem
+import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.power.block.SmallSolarPanel
 import io.mockk.every
 import io.mockk.mockk

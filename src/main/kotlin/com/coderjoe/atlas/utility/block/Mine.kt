@@ -2,10 +2,9 @@ package com.coderjoe.atlas.utility.block
 
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
-import com.coderjoe.atlas.core.AtlasBlock
-import com.coderjoe.atlas.core.AtlasBlocks
+import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
-import com.coderjoe.atlas.core.pushRoundRobinTo
+import com.coderjoe.atlas.block.pushRoundRobinTo
 import com.coderjoe.atlas.power.PowerBlock
 import com.coderjoe.atlas.transport.block.ConveyorBelt
 import org.bukkit.Location
@@ -121,7 +120,7 @@ abstract class Mine(
 
         nextBeltIndex =
             pushRoundRobinTo(
-                outputFaces = AtlasBlock.ADJACENT_FACES,
+                outputFaces = ADJACENT_FACES,
                 startIndex = nextBeltIndex,
                 getAdjacent = { face -> AtlasBlocks.adjacent(location, face) },
                 hasResource = { true },

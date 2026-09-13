@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.power
 
+import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.power.block.PowerCable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -55,7 +56,7 @@ object PowerNetworkReport {
         if (block is PowerCable) return block
         val registry = PowerBlockRegistry.instance ?: return null
         return block.let { origin ->
-            com.coderjoe.atlas.core.AtlasBlock.ADJACENT_FACES
+            AtlasBlock.ADJACENT_FACES
                 .asSequence()
                 .mapNotNull { registry.getAdjacentBlock(origin.location, it) }
                 .filterIsInstance<PowerCable>()
