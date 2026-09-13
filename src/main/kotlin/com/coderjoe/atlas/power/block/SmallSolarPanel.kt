@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.power.block
 
-import com.coderjoe.atlas.atlasInfo
-import com.coderjoe.atlas.coordinates
+import com.coderjoe.atlas.util.atlasInfo
+import com.coderjoe.atlas.util.coordinates
 import com.coderjoe.atlas.core.BlockDescriptor
 import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlock

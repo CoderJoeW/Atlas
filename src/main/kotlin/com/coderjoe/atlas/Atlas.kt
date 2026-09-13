@@ -31,6 +31,8 @@ import com.coderjoe.atlas.transport.TransportBlockFactory
 import com.coderjoe.atlas.transport.TransportBlockPersistence
 import com.coderjoe.atlas.transport.TransportBlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
+import com.coderjoe.atlas.util.AtlasConfig
+import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.utility.block.CoalMine
 import com.coderjoe.atlas.utility.block.CobblestoneFactory
 import com.coderjoe.atlas.utility.block.DiamondMine

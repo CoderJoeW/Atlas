@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.core
 
-import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.plugin.java.JavaPlugin
 
 class AtlasSubsystem<T : AtlasBlock>(

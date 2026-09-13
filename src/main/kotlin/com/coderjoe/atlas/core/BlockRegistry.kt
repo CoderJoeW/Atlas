@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.core
 
-import com.coderjoe.atlas.atlasInfo
-import com.coderjoe.atlas.coordinates
+import com.coderjoe.atlas.util.atlasInfo
+import com.coderjoe.atlas.util.coordinates
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.plugin.java.JavaPlugin

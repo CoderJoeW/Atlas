@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.core
 
+import com.coderjoe.atlas.util.displayName
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton
 import io.papermc.paper.registry.data.dialog.DialogBase
@@ -15,8 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-
-fun BlockFace.displayName(): String = name.lowercase().replaceFirstChar { it.uppercase() }
 
 object AtlasBlockDialog {
     fun defaultDisplayName(

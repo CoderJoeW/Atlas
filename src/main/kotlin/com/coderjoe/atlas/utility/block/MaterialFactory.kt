@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.utility.block
 
-import com.coderjoe.atlas.atlasInfo
-import com.coderjoe.atlas.coordinates
+import com.coderjoe.atlas.util.atlasInfo
+import com.coderjoe.atlas.util.coordinates
 import com.coderjoe.atlas.core.AtlasBlocks
 import com.coderjoe.atlas.core.CraftEngineHelper
 import com.coderjoe.atlas.core.pushRoundRobinTo

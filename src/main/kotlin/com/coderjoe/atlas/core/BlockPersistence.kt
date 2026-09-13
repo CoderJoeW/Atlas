@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.core
 
-import com.coderjoe.atlas.atlasInfo
+import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.configuration.file.YamlConfiguration

@@ -1,5 +1,6 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.net.URI

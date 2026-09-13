@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.core
 
 import com.coderjoe.atlas.Atlas
-import com.coderjoe.atlas.atlasInfo
-import com.coderjoe.atlas.coordinates
+import com.coderjoe.atlas.util.atlasInfo
+import com.coderjoe.atlas.util.coordinates
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks
 import net.momirealms.craftengine.core.util.Key
 import org.bukkit.Location
