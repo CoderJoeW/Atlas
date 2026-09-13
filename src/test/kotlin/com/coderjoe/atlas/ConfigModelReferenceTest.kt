@@ -1,5 +1,10 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.testing.AtlasPaths.BLOCK_MODEL_DIR
+import com.coderjoe.atlas.testing.AtlasPaths.BLOCK_TEXTURE_DIR
+import com.coderjoe.atlas.testing.AtlasPaths.CONFIG_DIR
+import com.coderjoe.atlas.testing.AtlasPaths.ITEM_MODEL_DIR
+import com.coderjoe.atlas.testing.AtlasPaths.ITEM_TEXTURE_DIR
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.yaml.snakeyaml.Yaml
@@ -16,12 +21,6 @@ import javax.imageio.ImageIO
  */
 class ConfigModelReferenceTest {
     private companion object {
-        val CONFIG_DIR = File("src/main/resources/atlas/configuration")
-        val MODEL_DIR = File("src/main/resources/atlas/resourcepack/assets/minecraft/models/block/custom")
-        val ITEM_MODEL_DIR = File("src/main/resources/atlas/resourcepack/assets/minecraft/models/item/custom")
-        val ITEM_TEXTURE_DIR = File("src/main/resources/atlas/resourcepack/assets/minecraft/textures/item/custom")
-        val BLOCK_TEXTURE_DIR = File("src/main/resources/atlas/resourcepack/assets/minecraft/textures/block/custom")
-
         /** Keys of an item model definition that hold further model definitions. */
         val NESTED_MODEL_KEYS = setOf("cases", "fallback", "model", "on_true", "on_false")
     }
@@ -83,7 +82,7 @@ class ConfigModelReferenceTest {
             for (model in itemModels(cfg["model"])) {
                 val reference = model["path"] as String
                 val name = leaf(reference)
-                val directory = if (reference.contains("/item/")) ITEM_MODEL_DIR else MODEL_DIR
+                val directory = if (reference.contains("/item/")) ITEM_MODEL_DIR else BLOCK_MODEL_DIR
                 if (File(directory, "$name.json").exists()) continue
                 // A model carrying its own `generation` block is written by CraftEngine at pack build.
                 if (model["generation"] != null) continue
@@ -212,7 +211,7 @@ class ConfigModelReferenceTest {
             for (model in modelBlocks(cfg)) {
                 @Suppress("UNCHECKED_CAST")
                 val parent = (model["generation"] as? Map<String, Any?>)?.get("parent") as? String ?: continue
-                if (parent.startsWith("minecraft:block/custom/") && !File(MODEL_DIR, "${leaf(parent)}.json").exists()) {
+                if (parent.startsWith("minecraft:block/custom/") && !File(BLOCK_MODEL_DIR, "${leaf(parent)}.json").exists()) {
                     missing += "$id -> $parent"
                 }
             }

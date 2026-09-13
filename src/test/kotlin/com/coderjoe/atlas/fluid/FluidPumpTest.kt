@@ -9,6 +9,7 @@ import com.coderjoe.atlas.fluid.block.FluidPipe
 import com.coderjoe.atlas.fluid.block.FluidPump
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.block.LavaGenerator
+import com.coderjoe.atlas.testing.AtlasPaths.CONFIG_DIR
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.File
 
 /**
  * The pump is a pure source: it fills itself from the world and hands fluid out of any face.
@@ -125,7 +127,7 @@ class FluidPumpTest {
 
     @Test
     fun `every status the pump can render is a value the config declares`() {
-        val config = java.io.File("src/main/resources/atlas/configuration/fluid_pump.yml").readText()
+        val config = File(CONFIG_DIR, "/fluid_pump.yml").readText()
         val declared =
             Regex("""values: \[([^\]]+)]""")
                 .findAll(config)

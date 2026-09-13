@@ -1,5 +1,6 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.testing.AtlasPaths.CONFIG_DIR
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -78,7 +79,7 @@ class AutoStateBudgetTest {
 
     @Test
     fun `no auto-state group is over its capacity`() {
-        val configs = File("src/main/resources/atlas/configuration").listFiles { f -> f.extension == "yml" }
+        val configs = CONFIG_DIR.listFiles { f -> f.extension == "yml" }
         assertTrue(configs != null && configs.isNotEmpty(), "no configuration files found")
 
         val used = mutableMapOf<String, Int>()

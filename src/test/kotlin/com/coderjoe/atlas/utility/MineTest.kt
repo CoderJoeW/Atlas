@@ -6,6 +6,8 @@ import com.coderjoe.atlas.core.PlacementType
 import com.coderjoe.atlas.power.PowerBlockFactory
 import com.coderjoe.atlas.power.PowerBlockRegistry
 import com.coderjoe.atlas.power.block.SmallBattery
+import com.coderjoe.atlas.testing.AtlasPaths.BLOCK_MODEL_DIR
+import com.coderjoe.atlas.testing.AtlasPaths.CONFIG_DIR
 import com.coderjoe.atlas.transport.TransportBlockRegistry
 import com.coderjoe.atlas.transport.block.ConveyorBelt
 import com.coderjoe.atlas.utility.block.CoalMine
@@ -29,13 +31,12 @@ import org.yaml.snakeyaml.Yaml
 import java.io.File
 
 class MineTest {
-    private val configDir = File("src/main/resources/atlas/configuration")
     private val gantryModel =
-        File("src/main/resources/atlas/resourcepack/assets/minecraft/models/block/custom/mine_gantry.json")
+        File(BLOCK_MODEL_DIR, "/mine_gantry.json")
 
     @Suppress("UNCHECKED_CAST")
     private fun states(fileName: String): Map<String, Any?> {
-        val doc = Yaml().load<Map<String, Any?>>(File(configDir, fileName).readText())
+        val doc = Yaml().load<Map<String, Any?>>(File(CONFIG_DIR, fileName).readText())
         val item = (doc["items"] as Map<String, Any?>).values.first() as Map<String, Any?>
         val block = (item["behavior"] as Map<String, Any?>)["block"] as Map<String, Any?>
         return block["states"] as Map<String, Any?>
@@ -401,7 +402,7 @@ class MineTest {
     @Test
     @Suppress("UNCHECKED_CAST")
     fun `a mine renders its machine and the ore it holds, and nothing else`() {
-        for (file in configDir.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
+        for (file in CONFIG_DIR.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
             for ((name, appearance) in appearances(file.name)) {
                 val elements = appearance["entity_renderer"] as List<Map<String, Any?>>
                 assertEquals(2, elements.size, "${file.name}/$name renders machine + held ore")
@@ -421,7 +422,7 @@ class MineTest {
     fun `every facing turns the machine a different way`() {
         val expected = mapOf("south" to null, "north" to 180, "east" to -90, "west" to 90)
 
-        for (file in configDir.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
+        for (file in CONFIG_DIR.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
             val found = appearances(file.name)
             val perFacing = 1 + Mine.DIGGING_STAGES
             assertEquals(4 * perFacing, found.size, "${file.name} has an appearance per facing per stage")
@@ -551,7 +552,7 @@ class MineTest {
     fun `every mine declares the stages the drill counts through, eating the ore away across them`() {
         val lastStage = Mine.IDLE_STAGE + Mine.DIGGING_STAGES
 
-        for (file in configDir.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
+        for (file in CONFIG_DIR.listFiles { f -> f.name.endsWith("_mine.yml") }!!) {
             val states = states(file.name)
             val stage = (states["properties"] as Map<String, Any?>)["stage"] as Map<String, Any?>
             val variants = states["variants"] as Map<String, Map<String, Any?>>
