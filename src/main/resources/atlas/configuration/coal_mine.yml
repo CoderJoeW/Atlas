@@ -43,19 +43,31 @@ items:
             facing:
               type: horizontal_direction
               default: north
-            powered:
-              type: boolean
-              default: false
-          # Rendered as display entities rather than vanilla block states: every appearance shares
-          # one forced barrier state, so none of them claims a slot from the auto-state pools.
+            # How far through a bore the mine is: 1 is idle, 2-5 are the four digging
+            # steps. An int rather than the factories' `powered` boolean because a haul
+            # takes 200-1000 ticks and has to read as progress rather than as a light
+            # switch. It cannot be done with the vanilla break-progress overlay: a crack
+            # is drawn by re-tessellating the client's model for the block at that
+            # position, and every appearance below forces `state: barrier`, which has no
+            # model to crumble.
+            stage:
+              type: int
+              range: 1~5
+              default: 1
+          # Rendered as display entities rather than vanilla block states: every appearance
+          # shares one forced barrier state, so none of them claims a slot from the
+          # auto-state pools.
+          #
+          # Each is the shared charcoal hardware plus the ore being cut, as a real block in
+          # the pit - that second element is what says both "I am mining" and "I am mining
+          # THIS", the hardware being identical across all seven. Across the digging steps
+          # the ore is eaten from half a cell down to an eighth, staying centred on the pit
+          # floor, then snaps back to whole when the haul drops.
           appearances:
             idle_south:
               state: barrier
               entity_renderer:
                 - item: atlas:coal_mine
-                # The ore being cut, as a real block held in the jaws under the bit. This is what
-                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
-                # all seven mines, so without it they are the same machine.
                 - block: minecraft:coal_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
@@ -64,9 +76,6 @@ items:
               entity_renderer:
                 - item: atlas:coal_mine
                   yaw: 180
-                # The ore being cut, as a real block held in the jaws under the bit. This is what
-                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
-                # all seven mines, so without it they are the same machine.
                 - block: minecraft:coal_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
@@ -75,9 +84,6 @@ items:
               entity_renderer:
                 - item: atlas:coal_mine
                   yaw: -90
-                # The ore being cut, as a real block held in the jaws under the bit. This is what
-                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
-                # all seven mines, so without it they are the same machine.
                 - block: minecraft:coal_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
@@ -86,84 +92,222 @@ items:
               entity_renderer:
                 - item: atlas:coal_mine
                   yaw: 90
-                # The ore being cut, as a real block held in the jaws under the bit. This is what
-                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
-                # all seven mines, so without it they are the same machine.
                 - block: minecraft:coal_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
-            digging_south:
+            digging1_south:
               state: barrier
               entity_renderer:
                 - item: atlas:coal_mine_digging
-                # The ore being cut, as a real block held in the jaws under the bit. This is what
-                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
-                # all seven mines, so without it they are the same machine.
                 - block: minecraft:coal_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
                   brightness:
                     block_light: 15
                     sky_light: 15
-            digging_north:
+            digging1_north:
               state: barrier
               entity_renderer:
                 - item: atlas:coal_mine_digging
                   yaw: 180
-                # The ore being cut, as a real block held in the jaws under the bit. This is what
-                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
-                # all seven mines, so without it they are the same machine.
                 - block: minecraft:coal_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
                   brightness:
                     block_light: 15
                     sky_light: 15
-            digging_east:
+            digging1_east:
               state: barrier
               entity_renderer:
                 - item: atlas:coal_mine_digging
                   yaw: -90
-                # The ore being cut, as a real block held in the jaws under the bit. This is what
-                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
-                # all seven mines, so without it they are the same machine.
                 - block: minecraft:coal_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
                   brightness:
                     block_light: 15
                     sky_light: 15
-            digging_west:
+            digging1_west:
               state: barrier
               entity_renderer:
                 - item: atlas:coal_mine_digging
                   yaw: 90
-                # The ore being cut, as a real block held in the jaws under the bit. This is what
-                # says both "I am mining" and "I am mining THIS" - the idle hardware is shared by
-                # all seven mines, so without it they are the same machine.
                 - block: minecraft:coal_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
                   brightness:
                     block_light: 15
                     sky_light: 15
+            digging2_south:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                - block: minecraft:coal_ore
+                  position: [0.3125, 0.375, 0.3125]
+                  scale: [0.375, 0.375, 0.375]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging2_north:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: 180
+                - block: minecraft:coal_ore
+                  position: [0.3125, 0.375, 0.3125]
+                  scale: [0.375, 0.375, 0.375]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging2_east:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: -90
+                - block: minecraft:coal_ore
+                  position: [0.3125, 0.375, 0.3125]
+                  scale: [0.375, 0.375, 0.375]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging2_west:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: 90
+                - block: minecraft:coal_ore
+                  position: [0.3125, 0.375, 0.3125]
+                  scale: [0.375, 0.375, 0.375]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging3_south:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                - block: minecraft:coal_ore
+                  position: [0.375, 0.375, 0.375]
+                  scale: [0.25, 0.25, 0.25]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging3_north:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: 180
+                - block: minecraft:coal_ore
+                  position: [0.375, 0.375, 0.375]
+                  scale: [0.25, 0.25, 0.25]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging3_east:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: -90
+                - block: minecraft:coal_ore
+                  position: [0.375, 0.375, 0.375]
+                  scale: [0.25, 0.25, 0.25]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging3_west:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: 90
+                - block: minecraft:coal_ore
+                  position: [0.375, 0.375, 0.375]
+                  scale: [0.25, 0.25, 0.25]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging4_south:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                - block: minecraft:coal_ore
+                  position: [0.4375, 0.375, 0.4375]
+                  scale: [0.125, 0.125, 0.125]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging4_north:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: 180
+                - block: minecraft:coal_ore
+                  position: [0.4375, 0.375, 0.4375]
+                  scale: [0.125, 0.125, 0.125]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging4_east:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: -90
+                - block: minecraft:coal_ore
+                  position: [0.4375, 0.375, 0.4375]
+                  scale: [0.125, 0.125, 0.125]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
+            digging4_west:
+              state: barrier
+              entity_renderer:
+                - item: atlas:coal_mine_digging
+                  yaw: 90
+                - block: minecraft:coal_ore
+                  position: [0.4375, 0.375, 0.4375]
+                  scale: [0.125, 0.125, 0.125]
+                  brightness:
+                    block_light: 15
+                    sky_light: 15
           variants:
-            facing=south,powered=false:
+            facing=south,stage=1:
               appearance: idle_south
-            facing=north,powered=false:
+            facing=south,stage=2:
+              appearance: digging1_south
+            facing=south,stage=3:
+              appearance: digging2_south
+            facing=south,stage=4:
+              appearance: digging3_south
+            facing=south,stage=5:
+              appearance: digging4_south
+            facing=north,stage=1:
               appearance: idle_north
-            facing=east,powered=false:
+            facing=north,stage=2:
+              appearance: digging1_north
+            facing=north,stage=3:
+              appearance: digging2_north
+            facing=north,stage=4:
+              appearance: digging3_north
+            facing=north,stage=5:
+              appearance: digging4_north
+            facing=east,stage=1:
               appearance: idle_east
-            facing=west,powered=false:
+            facing=east,stage=2:
+              appearance: digging1_east
+            facing=east,stage=3:
+              appearance: digging2_east
+            facing=east,stage=4:
+              appearance: digging3_east
+            facing=east,stage=5:
+              appearance: digging4_east
+            facing=west,stage=1:
               appearance: idle_west
-            facing=south,powered=true:
-              appearance: digging_south
-            facing=north,powered=true:
-              appearance: digging_north
-            facing=east,powered=true:
-              appearance: digging_east
-            facing=west,powered=true:
-              appearance: digging_west
+            facing=west,stage=2:
+              appearance: digging1_west
+            facing=west,stage=3:
+              appearance: digging2_west
+            facing=west,stage=4:
+              appearance: digging3_west
+            facing=west,stage=5:
+              appearance: digging4_west
 
 items#1:
   atlas:coal_mine_digging:
