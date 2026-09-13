@@ -466,7 +466,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c011100_lava:
-              auto-state: cave_vines
+              auto-state: weeping_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_011100_lava
                 generation:
@@ -475,7 +475,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c111100:
-              auto-state: cave_vines
+              auto-state: weeping_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_111100
                 generation:
@@ -484,7 +484,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c111100_water:
-              auto-state: cave_vines
+              auto-state: weeping_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_111100_water
                 generation:
@@ -493,7 +493,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c111100_lava:
-              auto-state: cave_vines
+              auto-state: weeping_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_111100_lava
                 generation:
@@ -502,7 +502,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c000010:
-              auto-state: cave_vines
+              auto-state: weeping_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_000010
                 generation:
@@ -511,7 +511,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c000010_water:
-              auto-state: cave_vines
+              auto-state: weeping_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_000010_water
                 generation:
@@ -691,7 +691,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c111010:
-              auto-state: weeping_vines
+              auto-state: twisting_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_111010
                 generation:
@@ -700,7 +700,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c111010_water:
-              auto-state: weeping_vines
+              auto-state: twisting_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_111010_water
                 generation:
@@ -709,7 +709,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c111010_lava:
-              auto-state: weeping_vines
+              auto-state: twisting_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_111010_lava
                 generation:
@@ -718,7 +718,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c000110:
-              auto-state: weeping_vines
+              auto-state: twisting_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_000110
                 generation:
@@ -727,7 +727,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c000110_water:
-              auto-state: weeping_vines
+              auto-state: twisting_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_000110_water
                 generation:
@@ -736,7 +736,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c000110_lava:
-              auto-state: weeping_vines
+              auto-state: twisting_vines
               model:
                 path: minecraft:block/custom/fluid_pipe_000110_lava
                 generation:
@@ -916,7 +916,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c111110_water:
-              auto-state: twisting_vines
+              auto-state: tripwire
               model:
                 path: minecraft:block/custom/fluid_pipe_111110_water
                 generation:
@@ -925,7 +925,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c111110_lava:
-              auto-state: twisting_vines
+              auto-state: tripwire
               model:
                 path: minecraft:block/custom/fluid_pipe_111110_lava
                 generation:
@@ -934,7 +934,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c000001:
-              auto-state: twisting_vines
+              auto-state: tripwire
               model:
                 path: minecraft:block/custom/fluid_pipe_000001
                 generation:
@@ -943,7 +943,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c000001_water:
-              auto-state: twisting_vines
+              auto-state: tripwire
               model:
                 path: minecraft:block/custom/fluid_pipe_000001_water
                 generation:
@@ -952,7 +952,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c000001_lava:
-              auto-state: twisting_vines
+              auto-state: tripwire
               model:
                 path: minecraft:block/custom/fluid_pipe_000001_lava
                 generation:
@@ -961,7 +961,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c100001:
-              auto-state: twisting_vines
+              auto-state: tripwire
               model:
                 path: minecraft:block/custom/fluid_pipe_100001
                 generation:
@@ -1366,7 +1366,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c000011:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_000011
                 generation:
@@ -1375,7 +1375,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c000011_water:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_000011_water
                 generation:
@@ -1384,7 +1384,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c000011_lava:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_000011_lava
                 generation:
@@ -1393,7 +1393,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c100011:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_100011
                 generation:
@@ -1402,7 +1402,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c100011_water:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_100011_water
                 generation:
@@ -1411,7 +1411,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c100011_lava:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_100011_lava
                 generation:
@@ -1420,7 +1420,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c010011:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_010011
                 generation:
@@ -1429,7 +1429,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c010011_water:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_010011_water
                 generation:
@@ -1438,7 +1438,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_water
             c010011_lava:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_010011_lava
                 generation:
@@ -1447,7 +1447,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_lava
             c110011:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_110011
                 generation:
@@ -1456,7 +1456,7 @@ items:
                     frame: minecraft:block/custom/fluid_pipe_frame
                     core: minecraft:block/custom/fluid_core_none
             c110011_water:
-              auto-state: tripwire
+              auto-state: leaves
               model:
                 path: minecraft:block/custom/fluid_pipe_110011_water
                 generation:
