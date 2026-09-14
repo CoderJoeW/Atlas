@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
-import com.coderjoe.atlas.core.AtlasBlockListener
+import com.coderjoe.atlas.listener.AtlasBlockListener
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.power.PowerBlock

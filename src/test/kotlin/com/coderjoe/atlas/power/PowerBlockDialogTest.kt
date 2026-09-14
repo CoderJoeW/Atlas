@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
-import com.coderjoe.atlas.core.AtlasBlockDialog
+import com.coderjoe.atlas.dialog.AtlasBlockDialog
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.power.LavaGenerator
 import com.coderjoe.atlas.block.power.PowerBlock
@@ -10,6 +10,7 @@ import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.block.power.factory.CobblestoneFactory
 import com.coderjoe.atlas.block.power.factory.ObsidianFactory
+import com.coderjoe.atlas.dialog.PowerBlockDialog
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.junit.jupiter.api.AfterEach

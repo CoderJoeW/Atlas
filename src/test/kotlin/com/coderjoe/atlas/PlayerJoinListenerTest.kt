@@ -1,5 +1,6 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.listener.PlayerJoinListener
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.entity.Player

@@ -1,5 +1,6 @@
-package com.coderjoe.atlas.guide
+package com.coderjoe.atlas.listener
 
+import com.coderjoe.atlas.item.GuideBook
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

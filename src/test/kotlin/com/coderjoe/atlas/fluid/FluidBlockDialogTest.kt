@@ -2,7 +2,7 @@ package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
-import com.coderjoe.atlas.core.AtlasBlockDialog
+import com.coderjoe.atlas.dialog.AtlasBlockDialog
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.fluid.FluidBlock
@@ -10,6 +10,7 @@ import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidContainer
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
+import com.coderjoe.atlas.dialog.FluidBlockDialog
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.block.BlockFace

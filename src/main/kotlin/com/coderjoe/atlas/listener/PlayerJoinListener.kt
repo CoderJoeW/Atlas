@@ -1,4 +1,4 @@
-package com.coderjoe.atlas
+package com.coderjoe.atlas.listener
 
 import org.bukkit.Bukkit
 import org.bukkit.Keyed

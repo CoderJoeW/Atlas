@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.core
+package com.coderjoe.atlas.dialog
 
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.BlockDescriptor

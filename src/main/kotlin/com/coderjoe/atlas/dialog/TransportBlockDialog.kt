@@ -1,6 +1,5 @@
-package com.coderjoe.atlas.transport
+package com.coderjoe.atlas.dialog
 
-import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.transport.TransportBlock

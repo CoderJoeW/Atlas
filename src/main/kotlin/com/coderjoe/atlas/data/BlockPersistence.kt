@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.core
+package com.coderjoe.atlas.data
 
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.BlockFactory
@@ -9,6 +9,7 @@ import org.bukkit.block.BlockFace
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import kotlin.collections.get
 
 class BlockPersistence<T : AtlasBlock>(
     private val plugin: JavaPlugin,

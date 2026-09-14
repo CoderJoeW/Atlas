@@ -82,7 +82,7 @@ abstract class MaterialFactory(
 
     /**
      * The banked fluids, readable so the two portholes can report them and so a restart can put
-     * back what the factory was holding - see [com.coderjoe.atlas.power.PowerBlockPersistence].
+     * back what the factory was holding - see [com.coderjoe.atlas.data.PowerBlockPersistence].
      */
     var hasWater: Boolean = false
         private set

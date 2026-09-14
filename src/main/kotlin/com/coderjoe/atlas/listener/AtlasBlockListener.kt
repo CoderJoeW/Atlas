@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.core
+package com.coderjoe.atlas.listener
 
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.BlockDescriptor
@@ -6,11 +6,13 @@ import com.coderjoe.atlas.block.BlockFactory
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.PlacementType
-import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.block.power.PowerBlock
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
+import com.coderjoe.atlas.item.AtlasWrench
 import com.coderjoe.atlas.power.PowerNetworkReport
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -96,7 +98,7 @@ class AtlasBlockListener(
     private fun createAndRegister(
         system: BlockSystem<*>,
         blockId: String,
-        location: org.bukkit.Location,
+        location: Location,
         facing: BlockFace,
     ) {
         val factory = system.factory as BlockFactory<AtlasBlock>
@@ -143,7 +145,7 @@ class AtlasBlockListener(
     }
 
     /**
-     * Atlas blocks only open their dialog for a player holding the [AtlasWrench].
+     * Atlas blocks only open their dialog for a player holding the [com.coderjoe.atlas.item.AtlasWrench].
      *
      * A bare-handed right-click is left entirely alone, so machines can be built around and walked
      * past without a dialog interrupting, and inspecting one stays a deliberate act.

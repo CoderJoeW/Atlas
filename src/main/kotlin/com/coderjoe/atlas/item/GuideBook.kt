@@ -1,4 +1,4 @@
-package com.coderjoe.atlas.guide
+package com.coderjoe.atlas.item
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

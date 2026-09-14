@@ -1,7 +1,5 @@
-package com.coderjoe.atlas.power
+package com.coderjoe.atlas.data
 
-import com.coderjoe.atlas.core.BlockPersistence
-import com.coderjoe.atlas.core.BlockPersister
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.power.PowerBlockFactory

@@ -1,6 +1,8 @@
 package com.coderjoe.atlas.guide
 
 import com.coderjoe.atlas.TestHelper
+import com.coderjoe.atlas.item.GuideBook
+import com.coderjoe.atlas.listener.GuideBookListener
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just

@@ -7,6 +7,7 @@ import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.block.power.factory.CobblestoneFactory
+import com.coderjoe.atlas.data.PowerBlockPersistence
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow

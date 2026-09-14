@@ -1,6 +1,6 @@
 package com.coderjoe.atlas
 
-import com.coderjoe.atlas.core.AtlasBlockDialog
+import com.coderjoe.atlas.dialog.AtlasBlockDialog
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
 import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.power.PowerBlockFactory
