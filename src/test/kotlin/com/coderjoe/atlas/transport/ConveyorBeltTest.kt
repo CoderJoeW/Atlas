@@ -3,7 +3,9 @@ package com.coderjoe.atlas.transport
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callTransportUpdate
 import com.coderjoe.atlas.block.PlacementType
-import com.coderjoe.atlas.transport.block.ConveyorBelt
+import com.coderjoe.atlas.block.transport.TransportBlockFactory
+import com.coderjoe.atlas.block.transport.TransportBlockRegistry
+import com.coderjoe.atlas.block.transport.block.ConveyorBelt
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

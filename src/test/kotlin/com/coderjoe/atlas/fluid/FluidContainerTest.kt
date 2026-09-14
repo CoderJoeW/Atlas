@@ -4,9 +4,10 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.block.fluid.block.FluidContainer
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.fluid.block.FluidPump
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

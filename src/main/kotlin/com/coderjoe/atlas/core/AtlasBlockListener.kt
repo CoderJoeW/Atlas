@@ -7,7 +7,7 @@ import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
-import com.coderjoe.atlas.power.PowerBlock
+import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.power.PowerNetworkReport
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

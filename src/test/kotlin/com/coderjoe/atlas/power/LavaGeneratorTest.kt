@@ -3,11 +3,12 @@ package com.coderjoe.atlas.power
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
-import com.coderjoe.atlas.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.power.block.LavaGenerator
+import com.coderjoe.atlas.block.fluid.block.FluidContainer
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.power.LavaGenerator
+import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -21,7 +22,7 @@ import org.junit.jupiter.api.Test
  * puts a real [FluidPipe] between the tank and the generator and drives the pipe, not the
  * generator, to move fluid. A bare tank touching the generator with no pipe between them is
  * exactly as inert as a battery touching a machine with no cable - see
- * [com.coderjoe.atlas.fluid.block.FluidContainer]'s own class doc.
+ * [FluidContainer]'s own class doc.
  */
 class LavaGeneratorTest {
     @BeforeEach

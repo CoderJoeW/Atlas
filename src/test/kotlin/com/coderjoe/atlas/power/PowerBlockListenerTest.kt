@@ -4,7 +4,10 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.core.AtlasBlockListener
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
-import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.block.power.PowerBlock
+import com.coderjoe.atlas.block.power.PowerBlockFactory
+import com.coderjoe.atlas.block.power.PowerBlockRegistry
+import com.coderjoe.atlas.block.power.SmallSolarPanel
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

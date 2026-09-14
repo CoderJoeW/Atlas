@@ -1,9 +1,10 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.TestHelper
-import com.coderjoe.atlas.power.block.PowerCable
-import com.coderjoe.atlas.power.block.SmallBattery
-import com.coderjoe.atlas.power.block.SmallSolarPanel
+import com.coderjoe.atlas.block.power.PowerBlockFactory
+import com.coderjoe.atlas.block.power.PowerCable
+import com.coderjoe.atlas.block.power.SmallBattery
+import com.coderjoe.atlas.block.power.SmallSolarPanel
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

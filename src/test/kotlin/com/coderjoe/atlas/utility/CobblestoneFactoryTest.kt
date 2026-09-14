@@ -3,13 +3,14 @@ package com.coderjoe.atlas.utility
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.TestHelper.callPowerUpdate
-import com.coderjoe.atlas.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
-import com.coderjoe.atlas.power.PowerBlockRegistry
-import com.coderjoe.atlas.utility.block.CobblestoneFactory
+import com.coderjoe.atlas.block.power.SmallBattery
+import com.coderjoe.atlas.block.fluid.block.FluidContainer
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.fluid.block.FluidPump
+import com.coderjoe.atlas.block.power.PowerBlockRegistry
+import com.coderjoe.atlas.block.power.factory.CobblestoneFactory
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -382,7 +383,7 @@ class CobblestoneFactoryTest {
 
         val batteryLoc = TestHelper.createLocation(1.0, 64.0, 0.0)
         val battery =
-            com.coderjoe.atlas.power.block.SmallBattery(batteryLoc)
+            SmallBattery(batteryLoc)
         battery.currentPower = 5
         TestHelper.addToRegistry(
             powerRegistry,

@@ -4,7 +4,10 @@ import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.core.AtlasBlockListener
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
-import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidBlock
+import com.coderjoe.atlas.block.fluid.FluidBlockFactory
+import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.block.fluid.block.FluidPump
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

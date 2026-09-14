@@ -4,9 +4,10 @@ import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidBlock
+import com.coderjoe.atlas.block.fluid.block.FluidContainer
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.fluid.block.FluidPump
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration

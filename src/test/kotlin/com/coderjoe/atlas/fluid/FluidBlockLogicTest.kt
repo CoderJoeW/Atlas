@@ -3,10 +3,12 @@ package com.coderjoe.atlas.fluid
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
-import com.coderjoe.atlas.power.PowerBlockRegistry
-import com.coderjoe.atlas.power.block.LavaGenerator
+import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.block.fluid.FluidNetworks
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.fluid.block.FluidPump
+import com.coderjoe.atlas.block.power.PowerBlockRegistry
+import com.coderjoe.atlas.block.power.LavaGenerator
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.Material

@@ -5,9 +5,11 @@ import com.coderjoe.atlas.TestHelper.callFluidUpdate
 import com.coderjoe.atlas.core.AtlasBlockDialog
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidBlock
+import com.coderjoe.atlas.block.power.PowerBlockRegistry
+import com.coderjoe.atlas.block.fluid.block.FluidContainer
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.fluid.block.FluidPump
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.block.BlockFace
@@ -119,7 +121,7 @@ class FluidBlockDialogTest {
         val pump = FluidPump(TestHelper.createLocation())
         pump.storeFluid(FluidType.WATER)
         // Need to trigger fluidUpdate to set status to IDLE
-        val powerRegistry = com.coderjoe.atlas.power.PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         pump.callFluidUpdate()
 
         val text = flattenText(buildFluidInfo(pump))

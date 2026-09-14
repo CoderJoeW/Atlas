@@ -1,7 +1,10 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.power.block.PowerCable
+import com.coderjoe.atlas.block.power.PowerBlock
+import com.coderjoe.atlas.block.power.PowerBlockRegistry
+import com.coderjoe.atlas.block.power.PowerCable
+import com.coderjoe.atlas.block.power.PowerNetworks
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration

@@ -1,8 +1,9 @@
 package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidBlockFactory
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.fluid.block.FluidPump
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

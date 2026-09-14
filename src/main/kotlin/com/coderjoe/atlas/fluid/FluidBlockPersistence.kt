@@ -4,8 +4,10 @@ import com.coderjoe.atlas.core.BlockPersistence
 import com.coderjoe.atlas.core.BlockPersister
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.fluid.block.FluidContainer
-import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidBlock
+import com.coderjoe.atlas.block.fluid.FluidBlockFactory
+import com.coderjoe.atlas.block.fluid.block.FluidContainer
+import com.coderjoe.atlas.block.fluid.block.FluidPump
 import org.bukkit.plugin.java.JavaPlugin
 
 class FluidBlockPersistence(plugin: JavaPlugin) : BlockPersister<FluidBlock> {

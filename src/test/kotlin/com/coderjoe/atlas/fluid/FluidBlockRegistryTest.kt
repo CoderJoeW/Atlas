@@ -2,8 +2,9 @@ package com.coderjoe.atlas.fluid
 
 import com.coderjoe.atlas.TestHelper
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.fluid.block.FluidPipe
-import com.coderjoe.atlas.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.fluid.block.FluidPump
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
