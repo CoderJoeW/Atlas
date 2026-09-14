@@ -8,8 +8,8 @@ import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.block.power.factory.CobblestoneFactory
-import com.coderjoe.atlas.block.power.mine.Mine
 import com.coderjoe.atlas.block.power.factory.ObsidianFactory
+import com.coderjoe.atlas.block.power.mine.Mine
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
