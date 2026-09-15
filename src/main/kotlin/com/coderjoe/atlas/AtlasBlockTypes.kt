@@ -40,6 +40,6 @@ object AtlasBlockTypes {
                 FluidPipe.descriptor,
                 FluidContainer.descriptor,
                 ConveyorBelt.descriptor,
-                )
+            ),
         )
 }

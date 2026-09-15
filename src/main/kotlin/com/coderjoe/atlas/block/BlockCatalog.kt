@@ -18,7 +18,11 @@ class BlockCatalog(val descriptors: List<BlockDescriptor>) {
 
     fun find(blockId: String): BlockDescriptor? = byId[blockId]
 
-    fun create(blockId: String, location: Location, facing: BlockFace = BlockFace.SELF): AtlasBlock? {
+    fun create(
+        blockId: String,
+        location: Location,
+        facing: BlockFace = BlockFace.SELF,
+    ): AtlasBlock? {
         return byId[blockId]?.constructor?.invoke(location, facing)
     }
 }
