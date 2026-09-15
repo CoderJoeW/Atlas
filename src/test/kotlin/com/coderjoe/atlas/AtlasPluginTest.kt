@@ -1,12 +1,13 @@
 package com.coderjoe.atlas
 
-import com.coderjoe.atlas.core.AtlasBlockDialog
-import com.coderjoe.atlas.fluid.FluidBlockFactory
-import com.coderjoe.atlas.fluid.FluidBlockRegistry
-import com.coderjoe.atlas.power.PowerBlockFactory
-import com.coderjoe.atlas.power.PowerBlockRegistry
-import com.coderjoe.atlas.transport.TransportBlockFactory
-import com.coderjoe.atlas.transport.TransportBlockRegistry
+import com.coderjoe.atlas.block.fluid.FluidBlockFactory
+import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.block.power.PowerBlockFactory
+import com.coderjoe.atlas.block.power.PowerBlockRegistry
+import com.coderjoe.atlas.block.transport.TransportBlockFactory
+import com.coderjoe.atlas.block.transport.TransportBlockRegistry
+import com.coderjoe.atlas.dialog.AtlasBlockDialog
+import com.coderjoe.atlas.testing.TestHelper
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
