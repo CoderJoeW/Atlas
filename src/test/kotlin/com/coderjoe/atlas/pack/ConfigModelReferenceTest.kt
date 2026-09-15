@@ -2,9 +2,9 @@ package com.coderjoe.atlas.pack
 
 import com.coderjoe.atlas.testing.AtlasPaths.BLOCK_MODEL_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.BLOCK_TEXTURE_DIR
-import com.coderjoe.atlas.testing.AtlasPaths.CONFIG_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.ITEM_MODEL_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.ITEM_TEXTURE_DIR
+import com.coderjoe.atlas.testing.AtlasPaths.configFiles
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.yaml.snakeyaml.Yaml
@@ -25,9 +25,9 @@ class ConfigModelReferenceTest {
         val NESTED_MODEL_KEYS = setOf("cases", "fallback", "model", "on_true", "on_false")
     }
 
-    private fun configs(): List<Map<String, Any?>> =
-        CONFIG_DIR.listFiles { f -> f.extension == "yml" }!!
-            .map { Yaml().load<Map<String, Any?>>(it.readText()) }
+    private fun configs(): List<Map<String, Any?>> {
+        return configFiles().map { Yaml().load(it.readText()) }
+    }
 
     @Suppress("UNCHECKED_CAST")
     private fun blocks(): List<Pair<String, Map<String, Any?>>> =
@@ -134,7 +134,7 @@ class ConfigModelReferenceTest {
     fun `every texture a config names actually exists`() {
         val missing = mutableListOf<String>()
 
-        for (config in CONFIG_DIR.listFiles { f -> f.extension == "yml" }!!) {
+        for (config in configFiles()) {
             val doc = Yaml().load<Map<String, Any?>>(config.readText())
             for (textures in textureMaps(doc)) {
                 for ((slot, reference) in textures) {
