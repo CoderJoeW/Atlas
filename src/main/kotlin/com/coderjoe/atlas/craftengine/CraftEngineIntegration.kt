@@ -14,6 +14,48 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
         const val MODELS_PATH = "resourcepack/assets/minecraft/models/block/custom"
         const val ITEM_TEXTURES_PATH = "resourcepack/assets/minecraft/textures/item/custom"
         const val ITEM_MODELS_PATH = "resourcepack/assets/minecraft/models/item/custom"
+
+        /**
+         * Fails if two resources in different folders share a file name.
+         *
+         * Deploying keeps only the file name, so the second copy would overwrite the first and one
+         * block's config would silently disappear from CraftEngine.
+         */
+        internal fun requireUniqueFileNames(resourcePaths: List<String>) {
+            val clashes = resourcePaths.groupBy { it.substringAfterLast("/") }.filterValues { it.size > 1 }
+            check(clashes.isEmpty()) { "Config file names must be unique across folders: $clashes" }
+        }
+
+        /**
+         * Lists every resource under [prefix] ending in [suffix], at any depth, as paths relative to
+         * the jar root.
+         */
+        internal fun discoverResources(
+            prefix: String,
+            suffix: String,
+        ): List<String> {
+            val url = CraftEngineIntegration::class.java.classLoader.getResource(prefix) ?: return emptyList()
+
+            return when (url.protocol) {
+                "jar" -> {
+                    val jarPath = url.toURI().schemeSpecificPart.substringBefore("!")
+                    JarFile(File(URI(jarPath))).use { jar ->
+                        jar.entries().asSequence()
+                            .filter { it.name.startsWith(prefix) && it.name.endsWith(suffix) && !it.isDirectory }
+                            .map { it.name }
+                            .toList()
+                    }
+                }
+                "file" -> {
+                    val root = File(url.toURI())
+                    root.walkTopDown()
+                        .filter { it.isFile && it.name.endsWith(suffix) }
+                        .map { prefix + it.relativeTo(root).invariantSeparatorsPath }
+                        .toList()
+                }
+                else -> emptyList()
+            }
+        }
     }
 
     private val craftEngineFolder: File
@@ -101,6 +143,8 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
         val prefix = "atlas/configuration/"
         val configPaths = discoverResources(prefix, ".yml")
 
+        requireUniqueFileNames(configPaths)
+
         for (resourcePath in configPaths) {
             val fileName = resourcePath.substringAfterLast("/")
             val targetFile = File(configFolder, fileName)
@@ -141,32 +185,6 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
                 sourceFile.delete()
                 deployed.add("$assetPath/$fileName")
             }
-        }
-    }
-
-    private fun discoverResources(
-        prefix: String,
-        suffix: String,
-    ): List<String> {
-        val url = javaClass.classLoader.getResource(prefix) ?: return emptyList()
-
-        return when (url.protocol) {
-            "jar" -> {
-                val jarPath = url.toURI().schemeSpecificPart.substringBefore("!")
-                JarFile(File(URI(jarPath))).use { jar ->
-                    jar.entries().asSequence()
-                        .filter { it.name.startsWith(prefix) && it.name.endsWith(suffix) && !it.isDirectory }
-                        .map { it.name }
-                        .toList()
-                }
-            }
-            "file" -> {
-                File(url.toURI()).listFiles()
-                    ?.filter { it.name.endsWith(suffix) }
-                    ?.map { prefix + it.name }
-                    ?: emptyList()
-            }
-            else -> emptyList()
         }
     }
 }

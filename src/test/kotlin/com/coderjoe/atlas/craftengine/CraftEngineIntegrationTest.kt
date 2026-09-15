@@ -1,9 +1,13 @@
 package com.coderjoe.atlas.craftengine
 
+import com.coderjoe.atlas.testing.AtlasPaths.RESOURCES
+import com.coderjoe.atlas.testing.AtlasPaths.configFiles
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
@@ -83,5 +87,28 @@ class CraftEngineIntegrationTest {
     fun `the manifest paths match the folders resources are written to`() {
         assertEquals("resourcepack/assets/minecraft/models/block/custom", CraftEngineIntegration.MODELS_PATH)
         assertEquals("resourcepack/assets/minecraft/textures/block/custom", CraftEngineIntegration.TEXTURES_PATH)
+    }
+
+    @Test
+    fun `configs in subfolders are discovered`() {
+        val discovered = CraftEngineIntegration.discoverResources("atlas/configuration/", ".yml").sorted()
+        val onDisk = configFiles().map { "atlas/" + it.relativeTo(RESOURCES).invariantSeparatorsPath }.sorted()
+
+        assertEquals(onDisk, discovered)
+    }
+
+    @Test
+    fun `two configs with the same file name stop the deploy`() {
+        val clash = listOf("atlas/configuration/power/pump.yml", "atlas/configuration/fluid/pump.yml")
+
+        val error = assertThrows<IllegalStateException> { CraftEngineIntegration.requireUniqueFileNames(clash) }
+        assertTrue("pump.yml" in error.message!!, "the error should name the clashing file")
+    }
+
+    @Test
+    fun `the configs Atlas ships have unique file names`() {
+        val shipped = configFiles().map { it.invariantSeparatorsPath }
+
+        assertDoesNotThrow { CraftEngineIntegration.requireUniqueFileNames(shipped) }
     }
 }
