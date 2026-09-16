@@ -3,6 +3,8 @@ package com.coderjoe.atlas.block.power
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.Gauge
+import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.capability.PowerConsumer
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import org.bukkit.Location
@@ -163,6 +165,15 @@ abstract class PowerBlock(
 
     override fun readSaveData(data: Map<String, Any?>) {
         currentPower = (data["currentPower"] as? Number)?.toInt() ?: 0
+    }
+
+    override fun inspect(): Inspection {
+        return Inspection(
+            gauges = listOf(
+                Gauge("Power", currentPower, maxStorage
+                )
+            )
+        )
     }
 
     override fun blockUpdate() {

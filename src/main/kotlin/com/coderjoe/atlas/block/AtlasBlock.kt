@@ -37,7 +37,10 @@ abstract class AtlasBlock(
     }
 
     open fun writeSaveData(data: MutableMap<String, Any>) {}
+
     open fun readSaveData(data: Map<String, Any?>) {}
+
+    open fun inspect(): Inspection = Inspection()
 
     protected abstract fun blockUpdate()
 

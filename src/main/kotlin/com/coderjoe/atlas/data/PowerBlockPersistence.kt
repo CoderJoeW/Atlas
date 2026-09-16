@@ -3,7 +3,6 @@ package com.coderjoe.atlas.data
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.power.PowerBlockFactory
-import com.coderjoe.atlas.block.power.factory.MaterialFactory
 import org.bukkit.plugin.java.JavaPlugin
 
 class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {

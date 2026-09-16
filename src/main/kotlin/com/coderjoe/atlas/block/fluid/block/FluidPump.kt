@@ -2,7 +2,10 @@ package com.coderjoe.atlas.block.fluid.block
 
 import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.PlacementType
+import com.coderjoe.atlas.block.StatusLine
+import com.coderjoe.atlas.block.Tone
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.capability.PowerConsumer
@@ -110,6 +113,21 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
     override fun readSaveData(data: Map<String, Any?>) {
         super.readSaveData(data)
         storedPower = ((data["storedPower"] as? Number)?.toInt() ?: 0).coerceIn(0, POWER_CAPACITY)
+    }
+
+    override fun inspect(): Inspection {
+        val base = super.inspect()
+        val power = if (isPowered) StatusLine("Powered", Tone.GOOD) else StatusLine("No Power", Tone.FAULT)
+
+        val status =
+            when (pumpStatus) {
+                PumpStatus.IDLE -> StatusLine("Idle — holding fluid", Tone.WARNING)
+                PumpStatus.EXTRACTING -> StatusLine("Extracting from source", Tone.GOOD)
+                PumpStatus.NO_SOURCE -> StatusLine("No source nearby", Tone.FAULT)
+                PumpStatus.NO_POWER -> StatusLine("Waiting for power", Tone.FAULT)
+            }
+
+        return base.copy(lines = base.lines + power + status)
     }
 
     override val pushesFluid: Boolean = true
