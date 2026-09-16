@@ -92,6 +92,16 @@ class FluidContainer(location: Location) : FluidBlock(location) {
         CraftEngineHelper.setIntProperty(location, "fill_level", getFillLevel())
     }
 
+    override fun writeSaveData(data: MutableMap<String, Any>) {
+        super.writeSaveData(data)
+        data["storedAmount"] = storedAmount
+    }
+
+    override fun readSaveData(data: Map<String, Any?>) {
+        super.readSaveData(data)
+        restoreState(storedFluid, (data["storedAmount"] as? Number)?.toInt() ?: 0)
+    }
+
     fun restoreState(
         type: FluidType,
         amount: Int,

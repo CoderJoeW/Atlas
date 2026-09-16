@@ -157,6 +157,14 @@ abstract class PowerBlock(
 
     protected abstract fun powerUpdate()
 
+    override fun writeSaveData(data: MutableMap<String, Any>) {
+        data["currentPower"] = currentPower
+    }
+
+    override fun readSaveData(data: Map<String, Any?>) {
+        currentPower = (data["currentPower"] as? Number)?.toInt() ?: 0
+    }
+
     override fun blockUpdate() {
         powerUpdate()
     }

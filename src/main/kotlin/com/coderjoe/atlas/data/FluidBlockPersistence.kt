@@ -15,41 +15,6 @@ class FluidBlockPersistence(plugin: JavaPlugin) : BlockPersister<FluidBlock> {
             fileName = "fluid_blocks.yml",
             yamlKey = "fluid_blocks",
             factory = FluidBlockFactory,
-            serialize = { block, _ ->
-                val map =
-                    mutableMapOf<String, Any>(
-                        "fluidType" to block.storedFluid.name,
-                    )
-                if (block is FluidContainer) {
-                    map["storedAmount"] = block.storedAmount
-                }
-                if (block is FluidPump) {
-                    map["storedPower"] = block.storedPower
-                }
-                map
-            },
-            restore = { block, data ->
-                val fluidTypeName = data["fluidType"] as? String ?: "NONE"
-                val fluidType =
-                    try {
-                        FluidType.valueOf(fluidTypeName)
-                    } catch (_: Exception) {
-                        FluidType.NONE
-                    }
-                if (block is FluidContainer) {
-                    val storedAmount = (data["storedAmount"] as? Number)?.toInt()
-                    if (storedAmount != null) {
-                        block.restoreState(fluidType, storedAmount)
-                    } else {
-                        block.storedFluid = fluidType
-                    }
-                } else {
-                    block.storedFluid = fluidType
-                }
-                if (block is FluidPump) {
-                    block.restorePower((data["storedPower"] as? Number)?.toInt() ?: 0)
-                }
-            },
         )
 
     override fun save(registry: BlockRegistry<FluidBlock>) = persistence.save(registry)

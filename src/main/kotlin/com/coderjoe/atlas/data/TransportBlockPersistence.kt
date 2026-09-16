@@ -12,8 +12,6 @@ class TransportBlockPersistence(plugin: JavaPlugin) : BlockPersister<TransportBl
             fileName = "transport_blocks.yml",
             yamlKey = "transport_blocks",
             factory = TransportBlockFactory,
-            serialize = { _, _ -> emptyMap() },
-            restore = { _, _ -> },
         )
 
     override fun save(registry: BlockRegistry<TransportBlock>) = persistence.save(registry)

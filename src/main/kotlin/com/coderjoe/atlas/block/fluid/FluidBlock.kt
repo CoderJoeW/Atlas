@@ -55,6 +55,15 @@ abstract class FluidBlock(
 
     protected abstract fun fluidUpdate()
 
+    override fun writeSaveData(data: MutableMap<String, Any>) {
+        data["fluidType"] = storedFluid.name
+    }
+
+    override fun readSaveData(data: Map<String, Any?>) {
+        val name = data["fluidType"] as? String
+        storedFluid = FluidType.entries.firstOrNull { it.name == name } ?: FluidType.NONE
+    }
+
     override fun blockUpdate() {
         fluidUpdate()
     }

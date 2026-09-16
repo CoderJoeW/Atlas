@@ -102,21 +102,18 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
         return taken
     }
 
-    /** Restores the buffer across a restart. */
-    fun restorePower(amount: Int) {
-        storedPower = amount.coerceIn(0, POWER_CAPACITY)
+    override fun writeSaveData(data: MutableMap<String, Any>) {
+        super.writeSaveData(data)
+        data["storedPower"] = storedPower
     }
 
-    /**
-     * The pump moves its own fluid out rather than waiting for a run to pull it.
-     *
-     * It is the only block in the system that lifts fluid out of the world, so it is the one that
-     * knows a unit exists; leaving the run to notice meant the pipe had to reach back into the
-     * pump on every tick to check.
-     */
+    override fun readSaveData(data: Map<String, Any?>) {
+        super.readSaveData(data)
+        storedPower = ((data["storedPower"] as? Number)?.toInt() ?: 0).coerceIn(0, POWER_CAPACITY)
+    }
+
     override val pushesFluid: Boolean = true
 
-    /** A pump only ever sources - it fills itself from the world, never from a pipe run. */
     override fun canAcceptFluid(
         face: BlockFace,
         type: FluidType,

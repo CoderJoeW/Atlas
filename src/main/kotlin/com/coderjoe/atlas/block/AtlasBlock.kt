@@ -36,6 +36,9 @@ abstract class AtlasBlock(
             )
     }
 
+    open fun writeSaveData(data: MutableMap<String, Any>) {}
+    open fun readSaveData(data: Map<String, Any?>) {}
+
     protected abstract fun blockUpdate()
 
     /** Ambient visuals, run on its own timer at [effectIntervalTicks]. Purely cosmetic. */

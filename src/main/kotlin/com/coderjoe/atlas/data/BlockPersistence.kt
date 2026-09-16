@@ -16,8 +16,6 @@ class BlockPersistence<T : AtlasBlock>(
     private val fileName: String,
     private val yamlKey: String,
     private val factory: BlockFactory<T>,
-    private val serialize: (T, String) -> Map<String, Any>,
-    private val restore: (T, Map<String, Any>) -> Unit,
 ) {
     private val dataFile = File(plugin.dataFolder, fileName)
 
@@ -42,7 +40,7 @@ class BlockPersistence<T : AtlasBlock>(
             if (facing != BlockFace.SELF) {
                 map["facing"] = facing.name
             }
-            map.putAll(serialize(block, blockId))
+            block.writeSaveData(map)
             blockDataList.add(map)
         }
 
@@ -102,7 +100,7 @@ class BlockPersistence<T : AtlasBlock>(
                 val block = factory.create(blockId, location, facing)
                 if (block != null) {
                     @Suppress("UNCHECKED_CAST")
-                    restore(block, blockDataMap as Map<String, Any>)
+                    block.readSaveData(blockDataMap as Map<String, Any>)
                     registry.register(block, blockId)
                     loadedCount++
                 } else {
