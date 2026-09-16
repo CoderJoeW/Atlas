@@ -34,9 +34,7 @@ import com.coderjoe.atlas.data.FluidBlockPersistence
 import com.coderjoe.atlas.data.PowerBlockPersistence
 import com.coderjoe.atlas.data.TransportBlockPersistence
 import com.coderjoe.atlas.dialog.AtlasBlockDialog
-import com.coderjoe.atlas.dialog.FluidBlockDialog
-import com.coderjoe.atlas.dialog.PowerBlockDialog
-import com.coderjoe.atlas.dialog.TransportBlockDialog
+import com.coderjoe.atlas.dialog.BlockInspectorDialog
 import com.coderjoe.atlas.item.AtlasWrench
 import com.coderjoe.atlas.item.GuideBook
 import com.coderjoe.atlas.listener.AtlasBlockListener
@@ -108,12 +106,7 @@ class Atlas : JavaPlugin() {
                 factory = PowerBlockFactory,
                 descriptors = powerSubsystem.descriptors,
                 showDialog = { player, block ->
-                    PowerBlockDialog.showPowerDialog(
-                        player,
-                        block as PowerBlock,
-                        powerSubsystem.registry,
-                        powerSubsystem.descriptors,
-                    )
+                    BlockInspectorDialog.show(player, block, powerSubsystem.registry, AtlasBlockTypes.catalog)
                 },
             )
 
@@ -124,12 +117,7 @@ class Atlas : JavaPlugin() {
                 factory = FluidBlockFactory,
                 descriptors = fluidSubsystem.descriptors,
                 showDialog = { player, block ->
-                    FluidBlockDialog.showFluidDialog(
-                        player,
-                        block as FluidBlock,
-                        fluidSubsystem.registry,
-                        fluidSubsystem.descriptors,
-                    )
+                    BlockInspectorDialog.show(player, block, fluidSubsystem.registry, AtlasBlockTypes.catalog)
                 },
             )
 
@@ -140,12 +128,7 @@ class Atlas : JavaPlugin() {
                 factory = TransportBlockFactory,
                 descriptors = transportSubsystem.descriptors,
                 showDialog = { player, block ->
-                    TransportBlockDialog.showTransportDialog(
-                        player,
-                        block as TransportBlock,
-                        transportSubsystem.registry,
-                        transportSubsystem.descriptors,
-                    )
+                    BlockInspectorDialog.show(player, block, transportSubsystem.registry, AtlasBlockTypes.catalog)
                 },
             )
 
