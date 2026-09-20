@@ -2,6 +2,7 @@ package com.coderjoe.atlas.block.transport.block
 
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.PlacementType
+import com.coderjoe.atlas.block.capability.ItemInlet
 import com.coderjoe.atlas.block.transport.TransportBlock
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import org.bukkit.Location
@@ -17,7 +18,7 @@ import org.bukkit.util.Vector
  * of ticks and lets vanilla physics do the rest, so they glide, collide with whatever is in the
  * way on their own, and can be picked up by a hopper underneath like any other dropped item.
  */
-class ConveyorBelt(location: Location, override val facing: BlockFace) : TransportBlock(location) {
+class ConveyorBelt(location: Location, override val facing: BlockFace) : TransportBlock(location), ItemInlet {
     companion object {
         const val BLOCK_ID = "atlas:conveyor_belt"
 
@@ -66,6 +67,10 @@ class ConveyorBelt(location: Location, override val facing: BlockFace) : Transpo
 
     /** Remembered so the block state is only rewritten when the belt starts or stops carrying. */
     private var renderedRunning: Boolean? = null
+
+    override fun itemDropLocation(): Location {
+        return location.clone().add(0.5, 0.75, 0.5)
+    }
 
     override fun transportUpdate() {
         val world = location.world ?: return

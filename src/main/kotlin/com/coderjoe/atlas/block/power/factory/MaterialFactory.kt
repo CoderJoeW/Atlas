@@ -3,6 +3,7 @@ package com.coderjoe.atlas.block.power.factory
 import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
+import com.coderjoe.atlas.block.capability.ItemInlet
 import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.pushRoundRobinTo
 import com.coderjoe.atlas.block.transport.block.ConveyorBelt
@@ -123,9 +124,9 @@ abstract class MaterialFactory(
                 startIndex = nextBeltIndex,
                 getAdjacent = { face -> AtlasBlocks.adjacent(location, face) },
                 hasResource = { true },
-                isCandidate = { target -> target is ConveyorBelt },
+                isCandidate = { target -> target is ItemInlet },
                 tryPush = { target, _ ->
-                    destination = (target as ConveyorBelt).location.clone().add(0.5, 0.75, 0.5)
+                    destination = (target as ItemInlet).itemDropLocation()
                     true
                 },
                 stopAfterFirstCandidate = true,
