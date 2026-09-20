@@ -169,10 +169,14 @@ abstract class PowerBlock(
 
     override fun inspect(): Inspection {
         return Inspection(
-            gauges = listOf(
-                Gauge("Power", currentPower, maxStorage
-                )
-            )
+            gauges =
+                listOf(
+                    Gauge(
+                        "Power",
+                        currentPower,
+                        maxStorage,
+                    ),
+                ),
         )
     }
 

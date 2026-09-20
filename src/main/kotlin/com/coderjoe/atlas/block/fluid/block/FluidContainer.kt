@@ -106,9 +106,10 @@ class FluidContainer(location: Location) : FluidBlock(location) {
 
     override fun inspect(): Inspection {
         return super.inspect().copy(
-            gauges = listOf(
-                Gauge("Level", storedAmount, MAX_CAPACITY)
-            )
+            gauges =
+                listOf(
+                    Gauge("Level", storedAmount, MAX_CAPACITY),
+                ),
         )
     }
 

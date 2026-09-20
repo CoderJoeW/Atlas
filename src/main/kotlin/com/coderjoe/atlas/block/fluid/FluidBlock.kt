@@ -75,8 +75,8 @@ abstract class FluidBlock(
                         FluidType.WATER -> StatusLine("Fluid: Water", Tone.GOOD)
                         FluidType.LAVA -> StatusLine("Fluid: Lava", Tone.GOOD)
                         FluidType.NONE -> StatusLine("Fluid: Empty", Tone.NEUTRAL)
-                    }
-                )
+                    },
+                ),
         )
     }
 

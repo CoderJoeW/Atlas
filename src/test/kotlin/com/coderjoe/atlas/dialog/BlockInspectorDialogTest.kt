@@ -31,9 +31,7 @@ class BlockInspectorDialogTest {
         TestHelper.teardown()
     }
 
-    private fun bodyText(
-        block: com.coderjoe.atlas.block.AtlasBlock,
-    ): String {
+    private fun bodyText(block: com.coderjoe.atlas.block.AtlasBlock): String {
         val description = catalog.find(block.baseBlockId)?.description
         return flatten(BlockInspectorDialog.body(block, description))
     }
