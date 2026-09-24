@@ -1,12 +1,12 @@
+package com.coderjoe.atlas.dialog
+
 import com.coderjoe.atlas.AtlasBlockTypes
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.block.FluidContainer
-import com.coderjoe.atlas.block.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidContainer
+import com.coderjoe.atlas.block.fluid.FluidPump
 import com.coderjoe.atlas.block.power.SmallBattery
-import com.coderjoe.atlas.block.transport.block.ConveyorBelt
-import com.coderjoe.atlas.dialog.AtlasBlockDialog
-import com.coderjoe.atlas.dialog.BlockInspectorDialog
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.block.transport.ConveyorBelt
+import com.coderjoe.atlas.testing.MockServer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.block.BlockFace
@@ -23,12 +23,12 @@ class BlockInspectorDialogTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     private fun bodyText(block: com.coderjoe.atlas.block.AtlasBlock): String {
@@ -45,7 +45,7 @@ class BlockInspectorDialogTest {
 
     @Test
     fun `a power block shows a gauge above its descriptor's description`() {
-        val battery = SmallBattery(TestHelper.createLocation())
+        val battery = SmallBattery(MockServer.createLocation())
         battery.currentPower = 40
 
         val text = bodyText(battery)
@@ -57,14 +57,14 @@ class BlockInspectorDialogTest {
     /** The wrong half of the old pair: the dialog used to say the battery held 10. */
     @Test
     fun `the battery no longer claims to hold 10 power`() {
-        val text = bodyText(SmallBattery(TestHelper.createLocation()))
+        val text = bodyText(SmallBattery(MockServer.createLocation()))
 
         assertFalse(text.contains("holds up to 10 power"), text)
     }
 
     @Test
     fun `the bar tracks the fill ratio`() {
-        val battery = SmallBattery(TestHelper.createLocation())
+        val battery = SmallBattery(MockServer.createLocation())
 
         battery.currentPower = 40
         assertTrue(bodyText(battery).contains("80%"))
@@ -76,7 +76,7 @@ class BlockInspectorDialogTest {
 
     @Test
     fun `a pump shows its fluid, its power and what it is doing`() {
-        val pump = FluidPump(TestHelper.createLocation())
+        val pump = FluidPump(MockServer.createLocation())
         pump.storeFluid(FluidType.WATER)
         pump.acceptPower(BlockFace.NORTH, FluidPump.POWER_PER_EXTRACT)
 
@@ -90,7 +90,7 @@ class BlockInspectorDialogTest {
 
     @Test
     fun `a tank shows a level gauge`() {
-        val tank = FluidContainer(TestHelper.createLocation())
+        val tank = FluidContainer(MockServer.createLocation())
         tank.restoreState(FluidType.LAVA, 5)
 
         val text = bodyText(tank)
@@ -102,7 +102,7 @@ class BlockInspectorDialogTest {
     /** A block with no state of its own is all description: no gauge, no status line. */
     @Test
     fun `a belt is just its description`() {
-        val belt = ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
+        val belt = ConveyorBelt(MockServer.createLocation(), BlockFace.NORTH)
 
         assertEquals(
             "Moves items forward in the facing direction, into a container if one is ahead",
@@ -112,7 +112,7 @@ class BlockInspectorDialogTest {
 
     @Test
     fun `a directional block carries its facing in the title`() {
-        val belt = ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
+        val belt = ConveyorBelt(MockServer.createLocation(), BlockFace.NORTH)
 
         val title = AtlasBlockDialog.defaultDisplayName(catalog.find(belt.baseBlockId), belt.facing, "Atlas Block")
 
@@ -124,7 +124,7 @@ class BlockInspectorDialogTest {
     fun `every catalog block renders a body and a title`() {
         for (id in catalog.blockIds.sorted()) {
             val descriptor = catalog.find(id)!!
-            val block = catalog.create(id, TestHelper.createLocation(), BlockFace.NORTH)!!
+            val block = catalog.create(id, MockServer.createLocation(), BlockFace.NORTH)!!
 
             assertDoesNotThrow("$id failed to render") {
                 BlockInspectorDialog.body(block, descriptor.description)

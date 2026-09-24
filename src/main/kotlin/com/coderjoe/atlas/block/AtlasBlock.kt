@@ -1,6 +1,5 @@
 package com.coderjoe.atlas.block
 
-import com.coderjoe.atlas.Atlas
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
@@ -14,7 +13,8 @@ abstract class AtlasBlock(
 ) {
     private var updateTask: BukkitTask? = null
     private var effectTask: BukkitTask? = null
-    protected val plugin: JavaPlugin get() = testPlugin ?: JavaPlugin.getPlugin(Atlas::class.java)
+    private var context: BlockContext? = null
+    protected val plugin: JavaPlugin get() = requireContext().plugin
     protected open val updateIntervalTicks: Long = 20L
 
     /** Tick interval for [spawnEffects]. Zero disables the ambient effect task entirely. */
@@ -22,9 +22,6 @@ abstract class AtlasBlock(
     private var currentVisualState: String? = null
 
     companion object {
-        @JvmStatic
-        internal var testPlugin: JavaPlugin? = null
-
         val ADJACENT_FACES =
             listOf(
                 BlockFace.NORTH,
@@ -45,7 +42,7 @@ abstract class AtlasBlock(
     protected abstract fun blockUpdate()
 
     /** Ambient visuals, run on its own timer at [effectIntervalTicks]. Purely cosmetic. */
-    protected open fun spawnEffects() {}
+    internal open fun spawnEffects() {}
 
     abstract fun getVisualStateBlockId(): String
 
@@ -56,9 +53,9 @@ abstract class AtlasBlock(
         val newState = getVisualStateBlockId()
         if (newState == currentVisualState) return
 
-        val updating = BlockRegistry.active?.updatingLocations
+        val updating = requireContext().registry.updatingLocations
         val key = BlockRegistry.locationKey(location)
-        updating?.add(key)
+        updating.add(key)
 
         try {
             CraftEngineHelper.placeState(location, newState)
@@ -66,7 +63,16 @@ abstract class AtlasBlock(
         } catch (e: Throwable) {
             plugin.logger.warning("Failed to update visual state at ${location.coordinates}: ${e.message}")
         } finally {
-            updating?.remove(key)
+            updating.remove(key)
+        }
+    }
+
+    /** The block against [face], whatever family it belongs to, or null when that square holds none. */
+    fun neighbor(face: BlockFace): AtlasBlock? = requireContext().registry.getAdjacentBlock(location, face)
+
+    private fun requireContext(): BlockContext {
+        return checkNotNull(context) {
+            "${this::class.simpleName} at ${location.coordinates} is not registered"
         }
     }
 
@@ -129,5 +135,9 @@ abstract class AtlasBlock(
         effectTask?.cancel()
         effectTask = null
         plugin.logger.atlasInfo("${this::class.simpleName} at ${location.coordinates} stopped")
+    }
+
+    internal fun attach(context: BlockContext) {
+        this.context = context
     }
 }

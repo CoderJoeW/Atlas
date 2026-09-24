@@ -1,10 +1,9 @@
-package com.coderjoe.atlas.block.transport.block
+package com.coderjoe.atlas.block.transport
 
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
-import com.coderjoe.atlas.block.transport.TransportBlockFactory
-import com.coderjoe.atlas.testing.TestHelper
-import com.coderjoe.atlas.testing.TestHelper.callTransportUpdate
+import com.coderjoe.atlas.testing.Blocks
+import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -26,25 +25,25 @@ import org.junit.jupiter.api.Test
 class ConveyorBeltTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `conveyor belt has correct facing`() {
         val belt =
-            ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
+            ConveyorBelt(MockServer.createLocation(), BlockFace.NORTH)
         assertEquals(BlockFace.NORTH, belt.facing)
     }
 
     @Test
     fun `conveyor belt visual state always returns BLOCK_ID`() {
         val belt =
-            ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
+            ConveyorBelt(MockServer.createLocation(), BlockFace.NORTH)
         assertEquals(
             "atlas:conveyor_belt",
             belt.getVisualStateBlockId(),
@@ -54,7 +53,7 @@ class ConveyorBeltTest {
     @Test
     fun `conveyor belt base block ID is atlas conveyor_belt`() {
         val belt =
-            ConveyorBelt(TestHelper.createLocation(), BlockFace.SOUTH)
+            ConveyorBelt(MockServer.createLocation(), BlockFace.SOUTH)
         assertEquals("atlas:conveyor_belt", belt.baseBlockId)
     }
 
@@ -76,7 +75,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `base ID is registered`() {
-        TestHelper.initTransportFactory()
+        Blocks.initTransportFactory()
         assertTrue(
             TransportBlockFactory.isRegistered("atlas:conveyor_belt"),
         )
@@ -84,11 +83,11 @@ class ConveyorBeltTest {
 
     @Test
     fun `factory creates ConveyorBelt from base ID`() {
-        TestHelper.initTransportFactory()
+        Blocks.initTransportFactory()
         val block =
             TransportBlockFactory.create(
                 "atlas:conveyor_belt",
-                TestHelper.createLocation(),
+                MockServer.createLocation(),
                 BlockFace.NORTH,
             )
         val belt = assertInstanceOf(ConveyorBelt::class.java, block)
@@ -103,37 +102,37 @@ class ConveyorBeltTest {
         fallSpeed: Double = 0.0,
     ): Item {
         val item = mockk<Item>(relaxed = true)
-        every { item.location } returns Location(TestHelper.mockWorld, x, y, z)
+        every { item.location } returns Location(MockServer.world, x, y, z)
         every { item.velocity } returns Vector(0.0, fallSpeed, 0.0)
         return item
     }
 
     @Test
     fun `transport update does not throw with no nearby entities`() {
-        BlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(MockServer.plugin)
         val belt =
-            ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
+            ConveyorBelt(MockServer.createLocation(), BlockFace.NORTH)
 
         every {
-            TestHelper.mockWorld.getNearbyEntities(
+            MockServer.world.getNearbyEntities(
                 any<Location>(), any(), any(), any(),
             )
         } returns emptyList()
 
         assertDoesNotThrow {
-            belt.callTransportUpdate()
+            belt.transportUpdate()
         }
     }
 
     @Test
     fun `transport update drives an item along its facing`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        BlockRegistry(MockServer.plugin)
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val item = itemAt(0.5, 64.375, 0.5)
-        every { TestHelper.mockWorld.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
+        every { MockServer.world.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
 
-        belt.callTransportUpdate()
+        belt.transportUpdate()
 
         // north is -Z, and the belt drives with velocity rather than teleporting
         verify { item.velocity = match { it.z < 0 && it.x == 0.0 } }
@@ -141,27 +140,27 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update drives an item east`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.EAST)
+        BlockRegistry(MockServer.plugin)
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 0.0), BlockFace.EAST)
 
         val item = itemAt(0.5, 64.375, 0.5)
-        every { TestHelper.mockWorld.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
+        every { MockServer.world.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
 
-        belt.callTransportUpdate()
+        belt.transportUpdate()
 
         verify { item.velocity = match { it.x > 0 && it.z == 0.0 } }
     }
 
     @Test
     fun `transport update steers a drifting item back to the centre line`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        BlockRegistry(MockServer.plugin)
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         // sitting off to the west of the belt's centre line
         val item = itemAt(0.2, 64.375, 0.5)
-        every { TestHelper.mockWorld.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
+        every { MockServer.world.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
 
-        belt.callTransportUpdate()
+        belt.transportUpdate()
 
         // pushed east, back toward x = 0.5, while still travelling north
         verify { item.velocity = match { it.x > 0 && it.z < 0 } }
@@ -169,13 +168,13 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update leaves vertical motion alone`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        BlockRegistry(MockServer.plugin)
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val item = itemAt(0.5, 64.375, 0.5, fallSpeed = -0.4)
-        every { TestHelper.mockWorld.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
+        every { MockServer.world.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
 
-        belt.callTransportUpdate()
+        belt.transportUpdate()
 
         // an item still falling onto the belt must keep falling, not be pinned in the air
         verify { item.velocity = match { it.y == -0.4 } }
@@ -183,15 +182,15 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update drives every item on the belt`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        BlockRegistry(MockServer.plugin)
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val first = itemAt(0.5, 64.375, 0.5)
         val second = itemAt(0.5, 64.375, 0.6)
-        every { TestHelper.mockWorld.getNearbyEntities(any<Location>(), any(), any(), any()) } returns
+        every { MockServer.world.getNearbyEntities(any<Location>(), any(), any(), any()) } returns
             listOf(first, second)
 
-        belt.callTransportUpdate()
+        belt.transportUpdate()
 
         verify { first.velocity = any() }
         verify { second.velocity = any() }
@@ -199,20 +198,20 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update ignores non-item entities`() {
-        BlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(MockServer.plugin)
         val belt =
-            ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
+            ConveyorBelt(MockServer.createLocation(), BlockFace.NORTH)
 
         val mockPlayer =
             mockk<org.bukkit.entity.Player>(relaxed = true)
         every {
-            TestHelper.mockWorld.getNearbyEntities(
+            MockServer.world.getNearbyEntities(
                 any<Location>(), any(), any(), any(),
             )
         } returns listOf(mockPlayer)
 
         assertDoesNotThrow {
-            belt.callTransportUpdate()
+            belt.transportUpdate()
         }
     }
 
@@ -231,14 +230,14 @@ class ConveyorBeltTest {
         every { ahead.state } returns container
         val self = mockk<Block>(relaxed = true)
         every { self.getRelative(any<BlockFace>()) } returns ahead
-        every { TestHelper.mockWorld.getBlockAt(any<Location>()) } returns self
+        every { MockServer.world.getBlockAt(any<Location>()) } returns self
         return container
     }
 
     @Test
     fun `belt deposits into a container it points at`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        BlockRegistry(MockServer.plugin)
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val stack = stackOf(4)
         val item = itemAt(0.5, 64.375, 0.5)
@@ -248,9 +247,9 @@ class ConveyorBeltTest {
         every { inventory.addItem(stack) } returns HashMap()
         containerAhead(inventory)
 
-        every { TestHelper.mockWorld.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
+        every { MockServer.world.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
 
-        belt.callTransportUpdate()
+        belt.transportUpdate()
 
         verify { inventory.addItem(stack) }
         verify { item.remove() }
@@ -258,8 +257,8 @@ class ConveyorBeltTest {
 
     @Test
     fun `a full container leaves the item on the belt`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        BlockRegistry(MockServer.plugin)
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val stack = stackOf(4)
         val item = itemAt(0.5, 64.375, 0.5)
@@ -270,9 +269,9 @@ class ConveyorBeltTest {
         every { inventory.addItem(stack) } returns hashMapOf(0 to stackOf(4))
         containerAhead(inventory)
 
-        every { TestHelper.mockWorld.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
+        every { MockServer.world.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
 
-        belt.callTransportUpdate()
+        belt.transportUpdate()
 
         verify(exactly = 0) { item.remove() }
         // still carried, so it can queue up against the container rather than vanishing
@@ -281,8 +280,8 @@ class ConveyorBeltTest {
 
     @Test
     fun `a partial deposit leaves the remainder on the belt`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
+        BlockRegistry(MockServer.plugin)
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val stack = stackOf(4)
         val item = itemAt(0.5, 64.375, 0.5)
@@ -293,9 +292,9 @@ class ConveyorBeltTest {
         every { inventory.addItem(stack) } returns hashMapOf(0 to leftover)
         containerAhead(inventory)
 
-        every { TestHelper.mockWorld.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
+        every { MockServer.world.getNearbyEntities(any<Location>(), any(), any(), any()) } returns listOf(item)
 
-        belt.callTransportUpdate()
+        belt.transportUpdate()
 
         verify(exactly = 0) { item.remove() }
         verify { item.itemStack = leftover }

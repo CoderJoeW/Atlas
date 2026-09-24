@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.item
 
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -19,12 +19,12 @@ import org.junit.jupiter.api.Test
 class GuideBookTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test

@@ -1,6 +1,8 @@
-package com.coderjoe.atlas.block
+package com.coderjoe.atlas.data
 
-import com.coderjoe.atlas.data.BlockPersister
+import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockFactory
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.plugin.java.JavaPlugin
 

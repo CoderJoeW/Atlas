@@ -14,27 +14,9 @@ class BlockRegistry(private val plugin: JavaPlugin) {
     /** Locations Atlas is placing a block state at, so the listener ignores its own placements. */
     val updatingLocations: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
-    init {
-        active = this
-    }
+    private val context = BlockContext(plugin, this)
 
     companion object {
-        /**
-         * The registry the running plugin built, for blocks that have to find a neighbour and
-         * have nothing else to ask.
-         *
-         * Temporary, and the last global in the plugin. Phase 3 hands every block a context when
-         * it is registered and this goes with it - it is here so that this step stays about the
-         * index being single, not about how a block reaches it.
-         */
-        var active: BlockRegistry? = null
-            private set
-
-        /** Tests build a registry per case and must not be shown the last case's. */
-        internal fun clearActive() {
-            active = null
-        }
-
         fun locationKey(location: Location): String {
             return "${location.world?.name}:${location.coordinates}"
         }
@@ -44,15 +26,28 @@ class BlockRegistry(private val plugin: JavaPlugin) {
         block: AtlasBlock,
         blockId: String,
     ) {
-        val key = locationKey(block.location)
-        blocks[key] = block
-        blockIds[key] = blockId
+        track(block, blockId)
         block.start()
         plugin.logger.atlasInfo(
             """
             Registered ${block::class.simpleName} at ${block.location.coordinates}
             """.trimIndent(),
         )
+    }
+
+    /**
+     * Indexes [block] and hands it its context without starting its tick tasks. [register] is
+     * this plus [AtlasBlock.start]; tests call it alone to lay out a neighbourhood and drive each
+     * block's update by hand.
+     */
+    internal fun track(
+        block: AtlasBlock,
+        blockId: String,
+    ) {
+        val key = locationKey(block.location)
+        block.attach(context)
+        blocks[key] = block
+        blockIds[key] = blockId
     }
 
     fun unregister(location: Location): AtlasBlock? {
@@ -83,20 +78,6 @@ class BlockRegistry(private val plugin: JavaPlugin) {
                 (location.blockZ + offset.blockZ).toDouble(),
             ),
         )
-    }
-
-    /**
-     * The neighbour on [face] when it is a [T], and null when that square is empty or holds
-     * something else.
-     *
-     * This is what every call site that used to reach into its own system's registry wants: a
-     * cable asking for the power block beside it must still get null for the belt beside it.
-     */
-    inline fun <reified T> adjacentOf(
-        location: Location,
-        face: BlockFace,
-    ): T? {
-        return getAdjacentBlock(location, face) as? T
     }
 
     fun getAdjacentBlocks(location: Location): List<AtlasBlock> {

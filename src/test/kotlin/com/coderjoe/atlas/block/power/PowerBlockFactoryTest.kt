@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.block.power
 
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -14,12 +14,12 @@ import org.junit.jupiter.api.Test
 class PowerBlockFactoryTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
@@ -36,14 +36,14 @@ class PowerBlockFactoryTest {
     @Test
     fun `createPowerBlock returns correct instance`() {
         PowerBlockFactory.register("small_solar_panel") { loc, _ -> SmallSolarPanel(loc) }
-        val block = PowerBlockFactory.create("small_solar_panel", TestHelper.createLocation())
+        val block = PowerBlockFactory.create("small_solar_panel", MockServer.createLocation())
         assertNotNull(block)
         assertTrue(block is SmallSolarPanel)
     }
 
     @Test
     fun `createPowerBlock returns null for unregistered ID`() {
-        val block = PowerBlockFactory.create("unknown", TestHelper.createLocation())
+        val block = PowerBlockFactory.create("unknown", MockServer.createLocation())
         assertNull(block)
     }
 
@@ -59,7 +59,7 @@ class PowerBlockFactoryTest {
     fun `later registration overwrites earlier one`() {
         PowerBlockFactory.register("test_block") { loc, _ -> SmallSolarPanel(loc) }
         PowerBlockFactory.register("test_block") { loc, _ -> SmallBattery(loc) }
-        val block = PowerBlockFactory.create("test_block", TestHelper.createLocation(), BlockFace.NORTH)
+        val block = PowerBlockFactory.create("test_block", MockServer.createLocation(), BlockFace.NORTH)
         assertTrue(block is SmallBattery)
     }
 }

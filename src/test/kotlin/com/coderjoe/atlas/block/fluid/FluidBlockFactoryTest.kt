@@ -1,8 +1,6 @@
 package com.coderjoe.atlas.block.fluid
 
-import com.coderjoe.atlas.block.fluid.block.FluidPipe
-import com.coderjoe.atlas.block.fluid.block.FluidPump
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.MockServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -15,12 +13,12 @@ import org.junit.jupiter.api.Test
 class FluidBlockFactoryTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
@@ -37,14 +35,14 @@ class FluidBlockFactoryTest {
     @Test
     fun `createFluidBlock returns correct instance`() {
         FluidBlockFactory.register("atlas:fluid_pump") { loc, _ -> FluidPump(loc) }
-        val block = FluidBlockFactory.create("atlas:fluid_pump", TestHelper.createLocation())
+        val block = FluidBlockFactory.create("atlas:fluid_pump", MockServer.createLocation())
         assertNotNull(block)
         assertTrue(block is FluidPump)
     }
 
     @Test
     fun `createFluidBlock returns null for unknown`() {
-        assertNull(FluidBlockFactory.create("unknown", TestHelper.createLocation()))
+        assertNull(FluidBlockFactory.create("unknown", MockServer.createLocation()))
     }
 
     @Test

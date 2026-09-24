@@ -1,9 +1,8 @@
-package com.coderjoe.atlas.block.transport.block
+package com.coderjoe.atlas.block.transport
 
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.capability.ItemInlet
-import com.coderjoe.atlas.block.transport.TransportBlock
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import org.bukkit.Location
 import org.bukkit.block.BlockFace

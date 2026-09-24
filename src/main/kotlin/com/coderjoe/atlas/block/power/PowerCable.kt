@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.BlockDescriptor
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.capability.PowerConsumer
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
@@ -67,10 +66,9 @@ class PowerCable(location: Location) : PowerBlock(location, maxStorage = 0) {
      * so without that branch the cable feeding it would draw no arm and look disconnected.
      */
     fun connections(): Set<BlockFace> {
-        val registry = BlockRegistry.active ?: return emptySet()
         return ADJACENT_FACES.filter { face ->
             val back = face.oppositeFace
-            when (val neighbor = registry.getAdjacentBlock(location, face)) {
+            when (val neighbor = neighbor(face)) {
                 is PowerBlock -> neighbor.canConnectToward(back)
                 is PowerConsumer -> neighbor.drawsPowerFrom(back)
                 else -> false

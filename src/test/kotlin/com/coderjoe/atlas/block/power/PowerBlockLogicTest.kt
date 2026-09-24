@@ -1,10 +1,10 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.block.fluid.block.FluidPipe
-import com.coderjoe.atlas.block.fluid.block.FluidPump
-import com.coderjoe.atlas.testing.TestHelper
-import com.coderjoe.atlas.testing.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.block.fluid.FluidPipe
+import com.coderjoe.atlas.block.fluid.FluidPump
+import com.coderjoe.atlas.testing.Blocks.placedIn
+import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
@@ -15,14 +15,17 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class PowerBlockLogicTest {
+    private lateinit var registry: BlockRegistry
+
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     // --- PowerBlock base class (via SmallBattery, maxStorage=50) ---
@@ -30,7 +33,7 @@ class PowerBlockLogicTest {
     @Test
     fun `addPower on empty block returns amount added`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         val added = block.addPower(5)
         assertEquals(5, added)
         assertEquals(5, block.currentPower)
@@ -39,7 +42,7 @@ class PowerBlockLogicTest {
     @Test
     fun `addPower caps at maxStorage`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         val added = block.addPower(55)
         assertEquals(50, added)
         assertEquals(50, block.currentPower)
@@ -48,7 +51,7 @@ class PowerBlockLogicTest {
     @Test
     fun `addPower with partial space returns space available`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         block.currentPower = 48
         val added = block.addPower(3)
         assertEquals(2, added)
@@ -58,7 +61,7 @@ class PowerBlockLogicTest {
     @Test
     fun `removePower returns amount removed`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         block.currentPower = 5
         val removed = block.removePower(3)
         assertEquals(3, removed)
@@ -68,7 +71,7 @@ class PowerBlockLogicTest {
     @Test
     fun `removePower caps at currentPower`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         block.currentPower = 3
         val removed = block.removePower(10)
         assertEquals(3, removed)
@@ -78,7 +81,7 @@ class PowerBlockLogicTest {
     @Test
     fun `removePower on empty block returns 0`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         val removed = block.removePower(1)
         assertEquals(0, removed)
         assertEquals(0, block.currentPower)
@@ -87,7 +90,7 @@ class PowerBlockLogicTest {
     @Test
     fun `hasPower returns true when power greater than 0`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         block.currentPower = 1
         assertTrue(block.hasPower())
     }
@@ -95,28 +98,28 @@ class PowerBlockLogicTest {
     @Test
     fun `hasPower returns false when power is 0`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         assertFalse(block.hasPower())
     }
 
     @Test
     fun `canAcceptPower returns true when below max and canReceivePower`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         assertTrue(block.canAcceptPower())
     }
 
     @Test
     fun `canAcceptPower returns false when full`() {
         val block =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         block.currentPower = 50
         assertFalse(block.canAcceptPower())
     }
 
     @Test
     fun `canAcceptPower returns false when canReceivePower is false`() {
-        val block = SmallSolarPanel(TestHelper.createLocation())
+        val block = SmallSolarPanel(MockServer.createLocation())
         assertFalse(block.canAcceptPower())
     }
 
@@ -124,20 +127,20 @@ class PowerBlockLogicTest {
 
     @Test
     fun `solar panel canReceivePower is false`() {
-        val panel = SmallSolarPanel(TestHelper.createLocation())
+        val panel = SmallSolarPanel(MockServer.createLocation())
         assertFalse(panel.canAcceptPower())
     }
 
     @Test
     fun `solar panel maxStorage is 4`() {
-        val panel = SmallSolarPanel(TestHelper.createLocation())
+        val panel = SmallSolarPanel(MockServer.createLocation())
         assertEquals(4, panel.maxStorage)
     }
 
     @Test
     fun `solar panel visual state is dark at night`() {
-        every { TestHelper.mockWorld.time } returns 18000L
-        val panel = SmallSolarPanel(TestHelper.createLocation())
+        every { MockServer.world.time } returns 18000L
+        val panel = SmallSolarPanel(MockServer.createLocation())
         assertEquals(
             "atlas:small_solar_panel",
             panel.getVisualStateBlockId(),
@@ -146,34 +149,34 @@ class PowerBlockLogicTest {
 
     @Test
     fun `solar panel visual state is lit during the day`() {
-        every { TestHelper.mockWorld.time } returns 6000L
-        val panel = SmallSolarPanel(TestHelper.createLocation())
+        every { MockServer.world.time } returns 6000L
+        val panel = SmallSolarPanel(MockServer.createLocation())
         assertEquals("atlas:small_solar_panel_active", panel.getVisualStateBlockId())
     }
 
     @Test
     fun `solar panel generates power during daytime`() {
-        every { TestHelper.mockWorld.time } returns 6000L
-        val panel = SmallSolarPanel(TestHelper.createLocation())
+        every { MockServer.world.time } returns 6000L
+        val panel = SmallSolarPanel(MockServer.createLocation()).placedIn(registry)
         panel.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
-        panel.callPowerUpdate()
+        panel.powerUpdate()
         assertEquals(1, panel.currentPower)
     }
 
     @Test
     fun `solar panel does not generate power at night`() {
-        every { TestHelper.mockWorld.time } returns 13000L
-        val panel = SmallSolarPanel(TestHelper.createLocation())
-        panel.callPowerUpdate()
+        every { MockServer.world.time } returns 13000L
+        val panel = SmallSolarPanel(MockServer.createLocation())
+        panel.powerUpdate()
         assertEquals(0, panel.currentPower)
     }
 
     @Test
     fun `solar panel does not overflow past maxStorage`() {
-        every { TestHelper.mockWorld.time } returns 6000L
-        val panel = SmallSolarPanel(TestHelper.createLocation())
+        every { MockServer.world.time } returns 6000L
+        val panel = SmallSolarPanel(MockServer.createLocation()).placedIn(registry)
         panel.currentPower = 4
-        panel.callPowerUpdate()
+        panel.powerUpdate()
         assertEquals(4, panel.currentPower)
     }
 
@@ -182,14 +185,14 @@ class PowerBlockLogicTest {
     @Test
     fun `battery maxStorage is 50`() {
         val battery =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         assertEquals(50, battery.maxStorage)
     }
 
     @Test
     fun `battery visual state empty when power 0`() {
         val battery =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         assertEquals(
             "atlas:small_battery",
             battery.getVisualStateBlockId(),
@@ -199,7 +202,7 @@ class PowerBlockLogicTest {
     @Test
     fun `battery visual state low when power 1-12`() {
         val battery =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         for (p in 1..12) {
             battery.currentPower = p
             assertEquals(
@@ -213,7 +216,7 @@ class PowerBlockLogicTest {
     @Test
     fun `battery visual state medium when power 13-25`() {
         val battery =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         for (p in 13..25) {
             battery.currentPower = p
             assertEquals(
@@ -227,7 +230,7 @@ class PowerBlockLogicTest {
     @Test
     fun `battery visual state high when power 26-37`() {
         val battery =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         for (p in 26..37) {
             battery.currentPower = p
             assertEquals(
@@ -241,7 +244,7 @@ class PowerBlockLogicTest {
     @Test
     fun `battery visual state full when power 38-50`() {
         val battery =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         for (p in 38..50) {
             battery.currentPower = p
             assertEquals(
@@ -254,26 +257,23 @@ class PowerBlockLogicTest {
 
     @Test
     fun `battery does not pull from a neighbouring generator`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
-        val batteryLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
+        val batteryLoc = MockServer.createLocation(0.0, 64.0, 0.0)
         val battery = SmallBattery(batteryLoc)
 
-        val sourceLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
+        val sourceLoc = MockServer.createLocation(0.0, 64.0, 1.0)
         val source = LavaGenerator(sourceLoc)
         source.currentPower = 1
 
-        TestHelper.addToRegistry(
-            registry,
+        registry.track(
             battery,
             "atlas:small_battery",
         )
-        TestHelper.addToRegistry(
-            registry,
+        registry.track(
             source,
             "atlas:lava_generator",
         )
 
-        battery.callPowerUpdate()
+        battery.powerUpdate()
 
         // Storage is passive - the generator pushes into it, it never reaches out itself.
         assertEquals(0, battery.currentPower)
@@ -282,12 +282,11 @@ class PowerBlockLogicTest {
 
     @Test
     fun `battery does not pull when already full`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
         val battery =
-            SmallBattery(TestHelper.createLocation())
+            SmallBattery(MockServer.createLocation())
         battery.currentPower = 10
 
-        battery.callPowerUpdate()
+        battery.powerUpdate()
         assertEquals(10, battery.currentPower)
     }
 
@@ -295,7 +294,7 @@ class PowerBlockLogicTest {
 
     @Test
     fun `cable stores nothing of its own`() {
-        val cable = PowerCable(TestHelper.createLocation())
+        val cable = PowerCable(MockServer.createLocation())
         assertEquals(0, cable.maxStorage)
         assertFalse(cable.hasPower())
         assertFalse(cable.canAcceptPower())
@@ -303,7 +302,7 @@ class PowerBlockLogicTest {
 
     @Test
     fun `cable visual state always returns BLOCK_ID`() {
-        val cable = PowerCable(TestHelper.createLocation())
+        val cable = PowerCable(MockServer.createLocation())
         assertEquals(
             "atlas:power_cable",
             cable.getVisualStateBlockId(),
@@ -312,49 +311,44 @@ class PowerBlockLogicTest {
 
     @Test
     fun `cable connects to a power block on any face`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(cable, "atlas:power_cable")
 
         assertEquals(emptySet<BlockFace>(), cable.connections())
 
-        val above = SmallBattery(TestHelper.createLocation(0.0, 65.0, 0.0))
-        TestHelper.addToRegistry(registry, above, "atlas:small_battery")
-        val east = PowerCable(TestHelper.createLocation(1.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, east, "atlas:power_cable")
+        val above = SmallBattery(MockServer.createLocation(0.0, 65.0, 0.0))
+        registry.track(above, "atlas:small_battery")
+        val east = PowerCable(MockServer.createLocation(1.0, 64.0, 0.0))
+        registry.track(east, "atlas:power_cable")
 
         assertEquals(setOf(BlockFace.UP, BlockFace.EAST), cable.connections())
     }
 
     @Test
     fun `cable connects to a fluid pump, which spends power from another registry`() {
-        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
-        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(cable, "atlas:power_cable")
 
-        val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        val pump = FluidPump(MockServer.createLocation(0.0, 64.0, 1.0))
+        registry.track(pump, "atlas:fluid_pump")
 
         assertEquals(setOf(BlockFace.SOUTH), cable.connections())
     }
 
     @Test
     fun `cable ignores a neighbour that neither carries nor spends power`() {
-        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
-        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(cable, "atlas:power_cable")
 
-        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+        val pipe = FluidPipe(MockServer.createLocation(0.0, 64.0, 1.0))
+        registry.track(pipe, "atlas:fluid_pipe")
 
         assertEquals(emptySet<BlockFace>(), cable.connections())
     }
 
     @Test
     fun `cable has no facing to get wrong`() {
-        val cable = PowerCable(TestHelper.createLocation())
+        val cable = PowerCable(MockServer.createLocation())
         assertEquals(BlockFace.SELF, cable.facing)
     }
 
@@ -362,27 +356,27 @@ class PowerBlockLogicTest {
 
     @Test
     fun `solar panel generates power at time 0`() {
-        every { TestHelper.mockWorld.time } returns 0L
-        val panel = SmallSolarPanel(TestHelper.createLocation())
+        every { MockServer.world.time } returns 0L
+        val panel = SmallSolarPanel(MockServer.createLocation()).placedIn(registry)
         panel.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
-        panel.callPowerUpdate()
+        panel.powerUpdate()
         assertEquals(1, panel.currentPower)
     }
 
     @Test
     fun `solar panel generates power at time 12000`() {
-        every { TestHelper.mockWorld.time } returns 12000L
-        val panel = SmallSolarPanel(TestHelper.createLocation())
+        every { MockServer.world.time } returns 12000L
+        val panel = SmallSolarPanel(MockServer.createLocation()).placedIn(registry)
         panel.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
-        panel.callPowerUpdate()
+        panel.powerUpdate()
         assertEquals(1, panel.currentPower)
     }
 
     @Test
     fun `solar panel does not generate power at time 12001`() {
-        every { TestHelper.mockWorld.time } returns 12001L
-        val panel = SmallSolarPanel(TestHelper.createLocation())
-        panel.callPowerUpdate()
+        every { MockServer.world.time } returns 12001L
+        val panel = SmallSolarPanel(MockServer.createLocation())
+        panel.powerUpdate()
         assertEquals(0, panel.currentPower)
     }
 
@@ -390,41 +384,36 @@ class PowerBlockLogicTest {
 
     @Test
     fun `battery powerUpdate when source has no power`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
-        val batteryLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
+        val batteryLoc = MockServer.createLocation(0.0, 64.0, 0.0)
         val battery = SmallBattery(batteryLoc)
 
-        val sourceLoc = TestHelper.createLocation(0.0, 64.0, 1.0)
+        val sourceLoc = MockServer.createLocation(0.0, 64.0, 1.0)
         val source = LavaGenerator(sourceLoc)
         source.currentPower = 0
 
-        TestHelper.addToRegistry(
-            registry,
+        registry.track(
             battery,
             "atlas:small_battery",
         )
-        TestHelper.addToRegistry(
-            registry,
+        registry.track(
             source,
             "atlas:lava_generator",
         )
 
-        battery.callPowerUpdate()
+        battery.powerUpdate()
         assertEquals(0, battery.currentPower)
     }
 
     @Test
     fun `battery powerUpdate when no block behind it`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
         val battery =
-            SmallBattery(TestHelper.createLocation())
-        TestHelper.addToRegistry(
-            registry,
+            SmallBattery(MockServer.createLocation())
+        registry.track(
             battery,
             "atlas:small_battery",
         )
 
-        battery.callPowerUpdate()
+        battery.powerUpdate()
         assertEquals(0, battery.currentPower)
     }
 }

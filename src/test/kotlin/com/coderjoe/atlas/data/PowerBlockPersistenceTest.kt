@@ -2,12 +2,13 @@ package com.coderjoe.atlas.data
 
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.block.FluidPipe
+import com.coderjoe.atlas.block.fluid.FluidPipe
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.block.power.factory.CobblestoneFactory
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.Blocks
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
@@ -25,36 +26,36 @@ class PowerBlockPersistenceTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        registry = BlockRegistry(TestHelper.mockPlugin)
-        persistence = PowerBlockPersistence(TestHelper.mockPlugin)
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
+        persistence = PowerBlockPersistence(MockServer.plugin)
 
         // Initialize factory so load() can create blocks
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `save 0 blocks creates file with empty list`() {
         persistence.save(registry)
-        val file = File(TestHelper.dataFolder, "power_blocks.yml")
+        val file = File(MockServer.dataFolder, "power_blocks.yml")
         assertTrue(file.exists())
     }
 
     @Test
     fun `save and load round-trip preserves data`() {
-        val panel = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 2.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(1.0, 64.0, 2.0))
         panel.currentPower = 1
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
         persistence.save(registry)
 
         // Create fresh registry for loading
-        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(MockServer.plugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocksWithIds()
@@ -65,19 +66,19 @@ class PowerBlockPersistenceTest {
 
     @Test
     fun `load from missing file does not error`() {
-        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(MockServer.plugin)
         assertDoesNotThrow { persistence.load(loadRegistry) }
         assertEquals(0, loadRegistry.getAllBlocks().size)
     }
 
     @Test
     fun `facing direction persists for cables`() {
-        val cable = PowerCable(TestHelper.createLocation())
-        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation())
+        registry.track(cable, "atlas:power_cable")
 
         persistence.save(registry)
 
-        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(MockServer.plugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocks().first()
@@ -88,14 +89,14 @@ class PowerBlockPersistenceTest {
     fun `a factory's banked fluids persist across a restart`() {
         // The two portholes report these, so losing them on a restart would visibly undo a
         // half-filled machine as well as eating a unit a pump already spent power to lift.
-        val factory = CobblestoneFactory(TestHelper.createLocation())
+        val factory = CobblestoneFactory(MockServer.createLocation())
         factory.currentPower = 2
         factory.acceptFluid(BlockFace.WEST, FluidType.WATER)
-        TestHelper.addToRegistry(registry, factory, "atlas:cobblestone_factory")
+        registry.track(factory, "atlas:cobblestone_factory")
 
         persistence.save(registry)
 
-        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(MockServer.plugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocks().first() as CobblestoneFactory
@@ -106,13 +107,13 @@ class PowerBlockPersistenceTest {
 
     @Test
     fun `current power level persists accurately`() {
-        val battery = SmallBattery(TestHelper.createLocation())
+        val battery = SmallBattery(MockServer.createLocation())
         battery.currentPower = 7
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        registry.track(battery, "atlas:small_battery")
 
         persistence.save(registry)
 
-        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(MockServer.plugin)
         persistence.load(loadRegistry)
 
         assertEquals(7, assertInstanceOf(SmallBattery::class.java, loadRegistry.getAllBlocks().first()).currentPower)
@@ -120,13 +121,13 @@ class PowerBlockPersistenceTest {
 
     @Test
     fun `battery round-trip preserves power and stores no facing`() {
-        val battery = SmallBattery(TestHelper.createLocation(5.0, 64.0, 3.0))
+        val battery = SmallBattery(MockServer.createLocation(5.0, 64.0, 3.0))
         battery.currentPower = 7
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        registry.track(battery, "atlas:small_battery")
 
         persistence.save(registry)
 
-        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(MockServer.plugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocks().first()
@@ -138,20 +139,20 @@ class PowerBlockPersistenceTest {
 
     @Test
     fun `multiple blocks save and load correctly`() {
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 64.0, 0.0))
         panel.currentPower = 1
-        val cable = PowerCable(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val cable = PowerCable(MockServer.createLocation(1.0, 64.0, 0.0))
         cable.currentPower = 1
-        val battery = SmallBattery(TestHelper.createLocation(2.0, 64.0, 0.0))
+        val battery = SmallBattery(MockServer.createLocation(2.0, 64.0, 0.0))
         battery.currentPower = 5
 
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
-        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        registry.track(panel, "atlas:small_solar_panel")
+        registry.track(cable, "atlas:power_cable")
+        registry.track(battery, "atlas:small_battery")
 
         persistence.save(registry)
 
-        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(MockServer.plugin)
         persistence.load(loadRegistry)
 
         assertEquals(3, loadRegistry.getAllBlocks().size)
@@ -164,12 +165,12 @@ class PowerBlockPersistenceTest {
      */
     @Test
     fun `power_blocks yml holds only power blocks when the registry also holds a pipe`() {
-        TestHelper.addToRegistry(registry, SmallBattery(TestHelper.createLocation()), SmallBattery.BLOCK_ID)
-        TestHelper.addToRegistry(registry, FluidPipe(TestHelper.createLocation(x = 1.0)), FluidPipe.BLOCK_ID)
+        registry.track(SmallBattery(MockServer.createLocation()), SmallBattery.BLOCK_ID)
+        registry.track(FluidPipe(MockServer.createLocation(x = 1.0)), FluidPipe.BLOCK_ID)
 
         persistence.save(registry)
 
-        val saved = File(TestHelper.dataFolder, "power_blocks.yml").readText()
+        val saved = File(MockServer.dataFolder, "power_blocks.yml").readText()
         assertTrue("atlas:small_battery" in saved, saved)
         assertFalse("atlas:fluid_pipe" in saved, saved)
     }

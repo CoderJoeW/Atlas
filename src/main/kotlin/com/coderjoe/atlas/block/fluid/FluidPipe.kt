@@ -1,12 +1,10 @@
-package com.coderjoe.atlas.block.fluid.block
+package com.coderjoe.atlas.block.fluid
 
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.FluidBlock
-import com.coderjoe.atlas.block.fluid.FluidNetworks
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
@@ -73,7 +71,7 @@ class FluidPipe(location: Location) : FluidBlock(location) {
         val run = FluidNetworks.networkFor(this).pipes.mapTo(HashSet()) { BlockRegistry.locationKey(it.location) }
         return ADJACENT_FACES.filter { face ->
             val back = face.oppositeFace
-            val neighbor = BlockRegistry.active?.getAdjacentBlock(location, face)
+            val neighbor = neighbor(face)
 
             when {
                 neighbor is FluidPipe -> BlockRegistry.locationKey(neighbor.location) in run

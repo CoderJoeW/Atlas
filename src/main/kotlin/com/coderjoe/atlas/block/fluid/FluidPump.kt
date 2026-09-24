@@ -1,7 +1,6 @@
-package com.coderjoe.atlas.block.fluid.block
+package com.coderjoe.atlas.block.fluid
 
 import com.coderjoe.atlas.block.BlockDescriptor
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.StatusLine
@@ -9,7 +8,6 @@ import com.coderjoe.atlas.block.Tone
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.capability.PowerConsumer
-import com.coderjoe.atlas.block.fluid.FluidBlock
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
@@ -30,7 +28,7 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
     override val updateIntervalTicks: Long = 20L
 
     var cauldronFace: BlockFace? = null
-        private set
+        internal set
 
     /**
      * Power pushed in by a cable run and not yet spent.
@@ -46,7 +44,7 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
     val isPowered: Boolean get() = storedPower >= POWER_PER_EXTRACT
 
     var pumpStatus: PumpStatus = PumpStatus.NO_SOURCE
-        private set
+        internal set
 
     companion object {
         const val BLOCK_ID = "atlas:fluid_pump"
@@ -145,11 +143,10 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
      * even while it has nowhere to deliver yet, because it is still connected.
      */
     fun connections(): Set<BlockFace> {
-        val registry = BlockRegistry.active ?: return emptySet()
         return ADJACENT_FACES.filter { face ->
             val back = face.oppositeFace
 
-            when (val neighbor = registry.getAdjacentBlock(location, face)) {
+            when (val neighbor = neighbor(face)) {
                 is FluidPipe -> true
                 is FluidBlock -> neighbor.canAcceptFluid(back)
                 // A machine from another system is fed straight off the pump when it sits against
@@ -171,7 +168,7 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
      * line into a water tank wants to see the mistake on the pump rather than at the tank.
      * The states with nothing in hand have no fluid to name.
      */
-    private fun statusProperty(): String =
+    internal fun statusProperty(): String =
         when (pumpStatus) {
             PumpStatus.NO_SOURCE, PumpStatus.NO_POWER -> pumpStatus.name.lowercase()
             PumpStatus.IDLE, PumpStatus.EXTRACTING ->
@@ -201,13 +198,12 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
      * a tank sitting straight against the pump is fed directly. Returns whether the unit moved.
      */
     private fun pushFluid(): Boolean {
-        val registry = BlockRegistry.active ?: return false
         val fluid = storedFluid
         if (fluid == FluidType.NONE) return false
 
         for (face in ADJACENT_FACES) {
             val back = face.oppositeFace
-            when (val neighbor = registry.getAdjacentBlock(location, face)) {
+            when (val neighbor = neighbor(face)) {
                 is FluidBlock -> {
                     if (!neighbor.canAcceptFluid(back, fluid)) continue
                     if (neighbor.storeFluid(fluid)) {

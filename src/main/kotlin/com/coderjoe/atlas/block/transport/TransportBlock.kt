@@ -6,7 +6,7 @@ import org.bukkit.Location
 abstract class TransportBlock(
     location: Location,
 ) : AtlasBlock(location) {
-    protected abstract fun transportUpdate()
+    internal abstract fun transportUpdate()
 
     override fun blockUpdate() {
         transportUpdate()

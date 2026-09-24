@@ -4,12 +4,13 @@ import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.power.PowerBlockFactory
 import com.coderjoe.atlas.block.power.SmallBattery
-import com.coderjoe.atlas.block.transport.block.ConveyorBelt
+import com.coderjoe.atlas.block.transport.ConveyorBelt
 import com.coderjoe.atlas.testing.AtlasPaths.BLOCK_MODEL_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.config
 import com.coderjoe.atlas.testing.AtlasPaths.configFiles
-import com.coderjoe.atlas.testing.TestHelper
-import com.coderjoe.atlas.testing.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.testing.Blocks
+import com.coderjoe.atlas.testing.Blocks.placedIn
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -23,6 +24,8 @@ import org.yaml.snakeyaml.Yaml
 import java.io.File
 
 class MineTest {
+    private lateinit var registry: BlockRegistry
+
     private val gantryModel =
         File(BLOCK_MODEL_DIR, "/mine_gantry.json")
 
@@ -44,12 +47,13 @@ class MineTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     /**
@@ -72,18 +76,18 @@ class MineTest {
     /** Every mine, paired with the ore it digs and what a haul costs. */
     private fun allMines(location: Location): List<Triple<Mine, Material, Int>> =
         listOf(
-            Triple(CoalMine(location), Material.COAL, CoalMine.POWER_PER_HAUL),
-            Triple(IronMine(location), Material.RAW_IRON, IronMine.POWER_PER_HAUL),
-            Triple(RedstoneMine(location), Material.REDSTONE, RedstoneMine.POWER_PER_HAUL),
-            Triple(GoldMine(location), Material.RAW_GOLD, GoldMine.POWER_PER_HAUL),
-            Triple(EmeraldMine(location), Material.EMERALD, EmeraldMine.POWER_PER_HAUL),
-            Triple(DiamondMine(location), Material.DIAMOND, DiamondMine.POWER_PER_HAUL),
-            Triple(NetheriteMine(location), Material.ANCIENT_DEBRIS, NetheriteMine.POWER_PER_HAUL),
+            Triple(Mine(location, MineTier.COAL), Material.COAL, MineTier.COAL.powerPerHaul),
+            Triple(Mine(location, MineTier.IRON), Material.RAW_IRON, MineTier.IRON.powerPerHaul),
+            Triple(Mine(location, MineTier.REDSTONE), Material.REDSTONE, MineTier.REDSTONE.powerPerHaul),
+            Triple(Mine(location, MineTier.GOLD), Material.RAW_GOLD, MineTier.GOLD.powerPerHaul),
+            Triple(Mine(location, MineTier.EMERALD), Material.EMERALD, MineTier.EMERALD.powerPerHaul),
+            Triple(Mine(location, MineTier.DIAMOND), Material.DIAMOND, MineTier.DIAMOND.powerPerHaul),
+            Triple(Mine(location, MineTier.NETHERITE), Material.ANCIENT_DEBRIS, MineTier.NETHERITE.powerPerHaul),
         )
 
     @Test
     fun `each mine digs its own ore for its own price`() {
-        val location = TestHelper.createLocation()
+        val location = MockServer.createLocation()
         for ((mine, ore, cost) in allMines(location)) {
             assertEquals(ore, mine.output, "${mine::class.simpleName} output")
             assertEquals(cost, mine.powerPerHaul, "${mine::class.simpleName} power per haul")
@@ -92,37 +96,37 @@ class MineTest {
 
     @Test
     fun `a haul spends the power`() {
-        val location = TestHelper.createLocation()
-        val mine = CoalMine(location)
-        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val location = MockServer.createLocation()
+        val mine = Mine(location, MineTier.COAL).placedIn(registry)
+        mine.currentPower = MineTier.COAL.powerPerHaul
 
-        expectingRegistryFailure { mine.callPowerUpdate() }
+        expectingRegistryFailure { mine.powerUpdate() }
 
         assertEquals(0, mine.currentPower)
     }
 
     @Test
     fun `a mine short of power digs nothing and keeps what it has`() {
-        val location = TestHelper.createLocation()
-        val mine = DiamondMine(location)
-        mine.currentPower = DiamondMine.POWER_PER_HAUL - 1
+        val location = MockServer.createLocation()
+        val mine = Mine(location, MineTier.DIAMOND).placedIn(registry)
+        mine.currentPower = MineTier.DIAMOND.powerPerHaul - 1
 
         // No try/catch: a mine that cannot afford a haul never reaches the drop, so nothing
         // here touches the item registry.
-        mine.callPowerUpdate()
+        mine.powerUpdate()
 
-        assertEquals(DiamondMine.POWER_PER_HAUL - 1, mine.currentPower)
+        assertEquals(MineTier.DIAMOND.powerPerHaul - 1, mine.currentPower)
     }
 
     @Test
     fun `a haul takes only its own cost, leaving the rest banked`() {
-        val location = TestHelper.createLocation()
-        val mine = GoldMine(location)
-        mine.currentPower = GoldMine.POWER_PER_HAUL * 2
+        val location = MockServer.createLocation()
+        val mine = Mine(location, MineTier.GOLD).placedIn(registry)
+        mine.currentPower = MineTier.GOLD.powerPerHaul * 2
 
-        expectingRegistryFailure { mine.callPowerUpdate() }
+        expectingRegistryFailure { mine.powerUpdate() }
 
-        assertEquals(GoldMine.POWER_PER_HAUL, mine.currentPower)
+        assertEquals(MineTier.GOLD.powerPerHaul, mine.currentPower)
     }
 
     /**
@@ -132,39 +136,39 @@ class MineTest {
      */
     @Test
     fun `a haul takes the full cycle to complete, not the first tick it is committed on`() {
-        val location = TestHelper.createLocation()
-        val mine = CoalMine(location)
-        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val location = MockServer.createLocation()
+        val mine = Mine(location, MineTier.COAL).placedIn(registry)
+        mine.currentPower = MineTier.COAL.powerPerHaul
 
         // Committing tick: the cost is spent and drilling starts, but nothing is produced yet.
-        mine.callPowerUpdate()
+        mine.powerUpdate()
         assertEquals(0, mine.currentPower, "power is spent the moment the haul is committed")
         assertTrue(mine.isCutting, "drilling has started")
 
         // Mine.updateIntervalTicks is 20; the cycle needs that many calls to complete, all but
         // the last still mid-drill.
-        val midCycleCalls = (CoalMine.CYCLE_TICKS / 20L - 1).toInt()
+        val midCycleCalls = (MineTier.COAL.cycleTicks / 20L - 1).toInt()
         repeat(midCycleCalls) {
-            mine.callPowerUpdate()
+            mine.powerUpdate()
             assertTrue(mine.isCutting, "still drilling mid-cycle, nothing to produce yet")
         }
 
         // The final tick finishes it.
-        expectingRegistryFailure { mine.callPowerUpdate() }
+        expectingRegistryFailure { mine.powerUpdate() }
         assertFalse(mine.isCutting, "drilling finished, back to idle")
     }
 
     @Test
     fun `a fully powered mine starts its next haul the instant the last one finishes`() {
-        val location = TestHelper.createLocation()
-        val mine = CoalMine(location)
-        mine.currentPower = CoalMine.POWER_PER_HAUL * 2
+        val location = MockServer.createLocation()
+        val mine = Mine(location, MineTier.COAL).placedIn(registry)
+        mine.currentPower = MineTier.COAL.powerPerHaul * 2
 
-        mine.callPowerUpdate() // commits haul 1
-        val midCycleCalls = (CoalMine.CYCLE_TICKS / 20L - 1).toInt()
-        repeat(midCycleCalls) { mine.callPowerUpdate() } // mid-cycle
+        mine.powerUpdate() // commits haul 1
+        val midCycleCalls = (MineTier.COAL.cycleTicks / 20L - 1).toInt()
+        repeat(midCycleCalls) { mine.powerUpdate() } // mid-cycle
         // haul 1 completes and, in the same tick, haul 2 commits - no idle tick between them
-        expectingRegistryFailure { mine.callPowerUpdate() }
+        expectingRegistryFailure { mine.powerUpdate() }
 
         assertTrue(mine.isCutting, "haul 2 should already be drilling")
         assertEquals(0, mine.currentPower, "both hauls' cost has now been committed")
@@ -172,21 +176,20 @@ class MineTest {
 
     @Test
     fun `a mine keeps pulling power while mid-drill, banking it for the next haul`() {
-        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
-        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
-        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val mine = Mine(MockServer.createLocation(0.0, 64.0, 0.0), MineTier.COAL)
+        mine.currentPower = MineTier.COAL.powerPerHaul
 
-        val battery = SmallBattery(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val battery = SmallBattery(MockServer.createLocation(1.0, 64.0, 0.0))
         battery.currentPower = 5
-        TestHelper.addToRegistry(powerRegistry, mine, "atlas:coal_mine")
-        TestHelper.addToRegistry(powerRegistry, battery, "atlas:small_battery")
+        registry.track(mine, "atlas:coal_mine")
+        registry.track(battery, "atlas:small_battery")
 
         // Pulls a unit from the battery, then commits the already-affordable haul in the same tick.
-        mine.callPowerUpdate()
+        mine.powerUpdate()
         assertTrue(mine.isCutting, "drilling has started")
         val powerAfterCommit = mine.currentPower
 
-        mine.callPowerUpdate() // mid-drill - still pulls from the battery every tick
+        mine.powerUpdate() // mid-drill - still pulls from the battery every tick
         assertTrue(
             mine.currentPower > powerAfterCommit,
             "the mine should keep banking power from the battery while a haul is in progress",
@@ -196,10 +199,10 @@ class MineTest {
 
     @Test
     fun `a freshly committed haul lights the ore without having eaten into it yet`() {
-        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
-        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val mine = Mine(MockServer.createLocation(0.0, 64.0, 0.0), MineTier.COAL).placedIn(registry)
+        mine.currentPower = MineTier.COAL.powerPerHaul
 
-        mine.callPowerUpdate()
+        mine.powerUpdate()
 
         assertEquals(Mine.IDLE_STAGE + 1, mine.drillStage, "the first digging stage still holds a whole ore")
     }
@@ -211,13 +214,13 @@ class MineTest {
      */
     @Test
     fun `the ore is eaten away step by step as the drill counts down`() {
-        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
-        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val mine = Mine(MockServer.createLocation(0.0, 64.0, 0.0), MineTier.COAL).placedIn(registry)
+        mine.currentPower = MineTier.COAL.powerPerHaul
 
-        mine.callPowerUpdate() // commits the haul
+        mine.powerUpdate() // commits the haul
         val stages = mutableListOf(mine.drillStage)
-        repeat((CoalMine.CYCLE_TICKS / 20L - 1).toInt()) {
-            mine.callPowerUpdate()
+        repeat((MineTier.COAL.cycleTicks / 20L - 1).toInt()) {
+            mine.powerUpdate()
             stages += mine.drillStage
         }
 
@@ -232,13 +235,13 @@ class MineTest {
 
     @Test
     fun `a finished haul left without power for another puts the ore back whole`() {
-        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
-        mine.currentPower = CoalMine.POWER_PER_HAUL
+        val mine = Mine(MockServer.createLocation(0.0, 64.0, 0.0), MineTier.COAL).placedIn(registry)
+        mine.currentPower = MineTier.COAL.powerPerHaul
 
-        mine.callPowerUpdate() // commits the only haul this mine can afford
-        val midCycleCalls = (CoalMine.CYCLE_TICKS / 20L - 1).toInt()
-        repeat(midCycleCalls) { mine.callPowerUpdate() }
-        expectingRegistryFailure { mine.callPowerUpdate() }
+        mine.powerUpdate() // commits the only haul this mine can afford
+        val midCycleCalls = (MineTier.COAL.cycleTicks / 20L - 1).toInt()
+        repeat(midCycleCalls) { mine.powerUpdate() }
+        expectingRegistryFailure { mine.powerUpdate() }
 
         assertFalse(mine.isCutting)
         assertEquals(Mine.IDLE_STAGE, mine.drillStage, "a mine that has stopped digging shows a whole, unlit ore")
@@ -246,17 +249,17 @@ class MineTest {
 
     @Test
     fun `an idle mine shows a whole ore`() {
-        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+        val mine = Mine(MockServer.createLocation(0.0, 64.0, 0.0), MineTier.COAL).placedIn(registry)
         mine.currentPower = 0
 
-        mine.callPowerUpdate()
+        mine.powerUpdate()
 
         assertEquals(Mine.IDLE_STAGE, mine.drillStage)
     }
 
     @Test
     fun `the ore lands above the deck so it falls clear of the rig`() {
-        val mine = IronMine(TestHelper.createLocation(x = 10.0, y = 64.0, z = -3.0))
+        val mine = Mine(MockServer.createLocation(x = 10.0, y = 64.0, z = -3.0), MineTier.IRON)
         val drop = mine.dropLocation()
 
         assertEquals(10.5, drop.x)
@@ -266,19 +269,17 @@ class MineTest {
 
     @Test
     fun `haul destination falls back to the loose drop when nothing is attached`() {
-        BlockRegistry(TestHelper.mockPlugin)
-        val mine = CoalMine(TestHelper.createLocation())
+        val mine = Mine(MockServer.createLocation(), MineTier.COAL).placedIn(registry)
 
         assertEquals(mine.dropLocation(), mine.haulDestination())
     }
 
     @Test
     fun `haul destination lands directly on an attached conveyor belt`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
-        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+        val mine = Mine(MockServer.createLocation(0.0, 64.0, 0.0), MineTier.COAL).placedIn(registry)
 
-        val belt = ConveyorBelt(TestHelper.createLocation(0.0, 65.0, 0.0), BlockFace.NORTH)
-        TestHelper.addToRegistry(registry, belt, "atlas:conveyor_belt")
+        val belt = ConveyorBelt(MockServer.createLocation(0.0, 65.0, 0.0), BlockFace.NORTH)
+        registry.track(belt, "atlas:conveyor_belt")
 
         val destination = mine.haulDestination()
 
@@ -289,14 +290,13 @@ class MineTest {
 
     @Test
     fun `haul destination round-robins across every attached conveyor belt`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
-        val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
+        val mine = Mine(MockServer.createLocation(0.0, 64.0, 0.0), MineTier.COAL).placedIn(registry)
 
         // one belt to the north, one to the south - neither is the vertical drop spot
-        val northBelt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, -1.0), BlockFace.NORTH)
-        val southBelt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
-        TestHelper.addToRegistry(registry, northBelt, "atlas:conveyor_belt")
-        TestHelper.addToRegistry(registry, southBelt, "atlas:conveyor_belt")
+        val northBelt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, -1.0), BlockFace.NORTH)
+        val southBelt = ConveyorBelt(MockServer.createLocation(0.0, 64.0, 1.0), BlockFace.SOUTH)
+        registry.track(northBelt, "atlas:conveyor_belt")
+        registry.track(southBelt, "atlas:conveyor_belt")
 
         val destinations = List(4) { mine.haulDestination().z }
 
@@ -305,52 +305,70 @@ class MineTest {
 
     @Test
     fun `a mine keeps one visual state - digging is a property, not a second block`() {
-        val mine = EmeraldMine(TestHelper.createLocation())
+        val mine = Mine(MockServer.createLocation(), MineTier.EMERALD)
         mine.currentPower = 0
-        assertEquals(EmeraldMine.BLOCK_ID, mine.getVisualStateBlockId())
-        mine.currentPower = EmeraldMine.POWER_PER_HAUL
-        assertEquals(EmeraldMine.BLOCK_ID, mine.getVisualStateBlockId())
+        assertEquals(MineTier.EMERALD.blockId, mine.getVisualStateBlockId())
+        mine.currentPower = MineTier.EMERALD.powerPerHaul
+        assertEquals(MineTier.EMERALD.blockId, mine.getVisualStateBlockId())
     }
 
     @Test
     fun `rarer ore costs more power and takes longer to bore`() {
-        val location = TestHelper.createLocation()
+        val location = MockServer.createLocation()
         val ordered =
             listOf(
-                CoalMine(location),
-                IronMine(location),
-                GoldMine(location),
-                EmeraldMine(location),
-                DiamondMine(location),
-                NetheriteMine(location),
+                Mine(location, MineTier.COAL),
+                Mine(location, MineTier.IRON),
+                Mine(location, MineTier.GOLD),
+                Mine(location, MineTier.EMERALD),
+                Mine(location, MineTier.DIAMOND),
+                Mine(location, MineTier.NETHERITE),
             )
         for ((cheaper, dearer) in ordered.zipWithNext()) {
             assertTrue(
                 dearer.powerPerHaul > cheaper.powerPerHaul,
-                "${dearer::class.simpleName} should cost more than ${cheaper::class.simpleName}",
+                "${dearer.tier.displayName} should cost more than ${cheaper.tier.displayName}",
             )
         }
     }
 
     @Test
     fun `every mine descriptor faces the player and registers its own ID`() {
-        TestHelper.initPowerFactory()
-        val descriptors =
-            listOf(
-                CoalMine.descriptor,
-                IronMine.descriptor,
-                RedstoneMine.descriptor,
-                GoldMine.descriptor,
-                EmeraldMine.descriptor,
-                DiamondMine.descriptor,
-                NetheriteMine.descriptor,
-            )
+        Blocks.initPowerFactory()
+        val descriptors = MineTier.entries.map { it.descriptor }
         assertEquals(7, descriptors.map { it.baseBlockId }.toSet().size)
         for (descriptor in descriptors) {
             // The shaft mouth is turned back toward whoever placed it.
             assertEquals(PlacementType.DIRECTIONAL_OPPOSITE, descriptor.placementType, descriptor.baseBlockId)
             assertTrue(descriptor.displayName.endsWith("Mine"), descriptor.displayName)
             assertTrue(PowerBlockFactory.isRegistered(descriptor.baseBlockId), descriptor.baseBlockId)
+        }
+    }
+
+    /**
+     * The seven mine classes collapsed into [MineTier]. Block ids are persisted and held in
+     * CraftEngine's state pools, and the descriptions are now derived from the numbers, so both
+     * are pinned to exactly what the hand-written classes declared.
+     */
+    @Test
+    fun `every tier keeps the id, storage and description its class had`() {
+        val expected =
+            mapOf(
+                MineTier.COAL to Triple("atlas:coal_mine", 10, "Mine - consumes 2 power every 10s \u2192 1 coal"),
+                MineTier.IRON to Triple("atlas:iron_mine", 20, "Mine - consumes 5 power every 15s \u2192 1 raw iron"),
+                MineTier.REDSTONE to Triple("atlas:redstone_mine", 20, "Mine - consumes 5 power every 15s \u2192 1 redstone"),
+                MineTier.GOLD to Triple("atlas:gold_mine", 30, "Mine - consumes 8 power every 20s \u2192 1 raw gold"),
+                MineTier.EMERALD to Triple("atlas:emerald_mine", 50, "Mine - consumes 14 power every 30s \u2192 1 emerald"),
+                MineTier.DIAMOND to Triple("atlas:diamond_mine", 60, "Mine - consumes 18 power every 40s \u2192 1 diamond"),
+                MineTier.NETHERITE to
+                    Triple("atlas:netherite_mine", 100, "Mine - consumes 30 power every 50s \u2192 1 ancient debris"),
+            )
+        assertEquals(MineTier.entries.toSet(), expected.keys)
+        for ((tier, values) in expected) {
+            val (blockId, storage, description) = values
+            assertEquals(blockId, tier.descriptor.baseBlockId)
+            assertEquals(storage, Mine(MockServer.createLocation(), tier).maxStorage, tier.name)
+            assertEquals(description, tier.descriptor.description, tier.name)
         }
     }
 
@@ -363,28 +381,28 @@ class MineTest {
      */
     @Test
     fun `a mine part way to a haul does not claim to be cutting`() {
-        val location = TestHelper.createLocation()
-        val mine = NetheriteMine(location)
+        val location = MockServer.createLocation()
+        val mine = Mine(location, MineTier.NETHERITE).placedIn(registry)
 
-        mine.currentPower = NetheriteMine.POWER_PER_HAUL - 1
-        mine.callPowerUpdate()
+        mine.currentPower = MineTier.NETHERITE.powerPerHaul - 1
+        mine.powerUpdate()
         assertFalse(mine.isCutting, "cannot afford a haul, so it is not cutting")
 
-        mine.currentPower = NetheriteMine.POWER_PER_HAUL
-        expectingRegistryFailure { mine.callPowerUpdate() }
+        mine.currentPower = MineTier.NETHERITE.powerPerHaul
+        expectingRegistryFailure { mine.powerUpdate() }
         assertTrue(mine.isCutting, "can afford a haul, so it is cutting")
     }
 
     @Test
     fun `a mine placed on the ground still faces a horizontal direction`() {
-        val location = TestHelper.createLocation()
+        val location = MockServer.createLocation()
         // getPlayerFacing answers UP for anything set on the ground, and a block restored with no
         // stored facing replays SELF. Neither may leave the shaft mouth pointing at the sky.
         for (face in listOf(BlockFace.UP, BlockFace.DOWN, BlockFace.SELF)) {
-            val mine = CoalMine(location, face)
+            val mine = Mine(location, MineTier.COAL, face)
             assertTrue(mine.facing in Mine.HORIZONTAL_FACES, "placed against $face, faced ${mine.facing}")
         }
-        assertEquals(BlockFace.EAST, CoalMine(location, BlockFace.EAST).facing)
+        assertEquals(BlockFace.EAST, Mine(location, MineTier.COAL, BlockFace.EAST).facing)
     }
 
     /**
@@ -499,7 +517,7 @@ class MineTest {
                 Material.ANCIENT_DEBRIS to "minecraft:ancient_debris",
             )
 
-        val mines = allMines(TestHelper.createLocation())
+        val mines = allMines(MockServer.createLocation())
         assertEquals(7, mines.size)
 
         for ((mine, _, _) in mines) {

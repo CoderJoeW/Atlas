@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.PowerNetworks
@@ -57,14 +56,11 @@ object PowerNetworkReport {
     /** The block itself if it is cable, otherwise any cable touching it. */
     private fun nearestCable(block: PowerBlock): PowerCable? {
         if (block is PowerCable) return block
-        val registry = BlockRegistry.active ?: return null
-        return block.let { origin ->
-            AtlasBlock.ADJACENT_FACES
-                .asSequence()
-                .mapNotNull { registry.getAdjacentBlock(origin.location, it) }
-                .filterIsInstance<PowerCable>()
-                .firstOrNull()
-        }
+        return AtlasBlock.ADJACENT_FACES
+            .asSequence()
+            .mapNotNull { block.neighbor(it) }
+            .filterIsInstance<PowerCable>()
+            .firstOrNull()
     }
 
     private fun diagnosis(

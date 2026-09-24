@@ -1,13 +1,11 @@
-package com.coderjoe.atlas.block.fluid.block
+package com.coderjoe.atlas.block.fluid
 
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.power.LavaGenerator
 import com.coderjoe.atlas.testing.AtlasPaths.config
-import com.coderjoe.atlas.testing.TestHelper
-import com.coderjoe.atlas.testing.TestHelper.callFluidUpdate
-import com.coderjoe.atlas.testing.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,13 +25,13 @@ class FluidPumpTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        registry = BlockRegistry(TestHelper.mockPlugin)
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     private fun pump(
@@ -42,9 +40,9 @@ class FluidPumpTest {
         z: Double = 0.0,
         fluid: FluidType = FluidType.NONE,
     ): FluidPump =
-        FluidPump(TestHelper.createLocation(x, y, z)).also {
+        FluidPump(MockServer.createLocation(x, y, z)).also {
             if (fluid != FluidType.NONE) it.storeFluid(fluid)
-            TestHelper.addToRegistry(registry, it, "atlas:fluid_pump")
+            registry.track(it, "atlas:fluid_pump")
         }
 
     @Test
@@ -78,14 +76,14 @@ class FluidPumpTest {
     fun `ports show on the faces something will take fluid from`() {
         val pump = pump(fluid = FluidType.WATER)
 
-        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
+        val pipe = FluidPipe(MockServer.createLocation(0.0, 64.0, 1.0))
+        registry.track(pipe, "atlas:fluid_pipe")
 
         // a tank takes fluid in on every side now, so the face that stays plain casing is one
         // against a tank with no room left in it
-        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -1.0))
+        val tank = FluidContainer(MockServer.createLocation(0.0, 64.0, -1.0))
         repeat(FluidContainer.MAX_CAPACITY) { tank.storeFluid(FluidType.WATER) }
-        TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
+        registry.track(tank, "atlas:fluid_container")
 
         val ports = pump.connections()
 
@@ -93,33 +91,18 @@ class FluidPumpTest {
         assertFalse(BlockFace.NORTH in ports, "a tank with no room should not")
     }
 
-    private fun statusProperty(pump: FluidPump): String {
-        val method = FluidPump::class.java.getDeclaredMethod("statusProperty")
-        method.isAccessible = true
-        return method.invoke(pump) as String
-    }
-
-    private fun setStatus(
-        pump: FluidPump,
-        status: FluidPump.PumpStatus,
-    ) {
-        val field = FluidPump::class.java.getDeclaredField("pumpStatus")
-        field.isAccessible = true
-        field.set(pump, status)
-    }
-
     @Test
     fun `a working pump names the fluid it is handling`() {
-        val water = pump(fluid = FluidType.WATER).also { setStatus(it, FluidPump.PumpStatus.IDLE) }
-        val lava = pump(x = 1.0, fluid = FluidType.LAVA).also { setStatus(it, FluidPump.PumpStatus.EXTRACTING) }
+        val water = pump(fluid = FluidType.WATER).also { it.pumpStatus = FluidPump.PumpStatus.IDLE }
+        val lava = pump(x = 1.0, fluid = FluidType.LAVA).also { it.pumpStatus = FluidPump.PumpStatus.EXTRACTING }
 
-        assertEquals("idle_water", statusProperty(water))
-        assertEquals("extracting_lava", statusProperty(lava))
+        assertEquals("idle_water", water.statusProperty())
+        assertEquals("extracting_lava", lava.statusProperty())
     }
 
     @Test
     fun `a pump with nothing in hand has no fluid to name`() {
-        assertEquals("no_source", statusProperty(pump()))
+        assertEquals("no_source", pump().statusProperty())
     }
 
     @Test
@@ -137,8 +120,8 @@ class FluidPumpTest {
         for (status in FluidPump.PumpStatus.entries) {
             for (fluid in listOf(FluidType.NONE, FluidType.WATER, FluidType.LAVA)) {
                 val subject = pump(x = 5.0, fluid = fluid)
-                setStatus(subject, status)
-                rendered += statusProperty(subject)
+                subject.pumpStatus = status
+                rendered += subject.statusProperty()
             }
         }
 
@@ -150,11 +133,11 @@ class FluidPumpTest {
     fun `a pump never takes power from a generator beside it`() {
         val pump = pump()
 
-        val generator = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val generator = LavaGenerator(MockServer.createLocation(1.0, 64.0, 0.0))
         generator.currentPower = 5
-        TestHelper.addToRegistry(registry, generator, "atlas:lava_generator")
+        registry.track(generator, "atlas:lava_generator")
 
-        pump.callFluidUpdate()
+        pump.fluidUpdate()
 
         assertEquals(5, generator.currentPower, "the pump must not reach into a generator")
         assertEquals(0, pump.storedPower)
@@ -164,11 +147,11 @@ class FluidPumpTest {
     fun `a generator pushes power into the pump beside it`() {
         val pump = pump()
 
-        val generator = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val generator = LavaGenerator(MockServer.createLocation(1.0, 64.0, 0.0))
         generator.currentPower = 5
-        TestHelper.addToRegistry(registry, generator, "atlas:lava_generator")
+        registry.track(generator, "atlas:lava_generator")
 
-        generator.callPowerUpdate()
+        generator.powerUpdate()
 
         assertTrue(pump.storedPower > 0, "the generator should have fed the pump")
         assertTrue(generator.currentPower < 5, "and spent what it handed over")
@@ -187,12 +170,12 @@ class FluidPumpTest {
     fun `the pump hands its fluid to the pipe beside it`() {
         val pump = pump(fluid = FluidType.WATER)
 
-        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
-        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
-        TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
+        val pipe = FluidPipe(MockServer.createLocation(0.0, 64.0, 1.0))
+        registry.track(pipe, "atlas:fluid_pipe")
+        val tank = FluidContainer(MockServer.createLocation(0.0, 64.0, 2.0))
+        registry.track(tank, "atlas:fluid_container")
 
-        pump.callFluidUpdate()
+        pump.fluidUpdate()
 
         assertEquals(FluidType.NONE, pump.storedFluid, "the pump pushes its unit out itself")
         assertEquals(FluidType.WATER, tank.storedFluid)
@@ -202,13 +185,13 @@ class FluidPumpTest {
     fun `a pipe run does not drain the pump behind its back`() {
         val pump = pump(fluid = FluidType.WATER)
 
-        val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
-        val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
-        TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
+        val pipe = FluidPipe(MockServer.createLocation(0.0, 64.0, 1.0))
+        registry.track(pipe, "atlas:fluid_pipe")
+        val tank = FluidContainer(MockServer.createLocation(0.0, 64.0, 2.0))
+        registry.track(tank, "atlas:fluid_container")
 
         // ticking the run must not move anything: the pump pushes, it is not pulled from
-        pipe.callFluidUpdate()
+        pipe.fluidUpdate()
 
         assertEquals(FluidType.WATER, pump.storedFluid, "the run must leave the pump alone")
         assertEquals(FluidType.NONE, tank.storedFluid)

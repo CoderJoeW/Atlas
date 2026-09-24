@@ -2,11 +2,10 @@ package com.coderjoe.atlas.scenario
 
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.block.FluidContainer
-import com.coderjoe.atlas.block.fluid.block.FluidPipe
-import com.coderjoe.atlas.block.fluid.block.FluidPump
-import com.coderjoe.atlas.testing.TestHelper
-import com.coderjoe.atlas.testing.TestHelper.callFluidUpdate
+import com.coderjoe.atlas.block.fluid.FluidContainer
+import com.coderjoe.atlas.block.fluid.FluidPipe
+import com.coderjoe.atlas.block.fluid.FluidPump
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -28,13 +27,13 @@ class FluidNetworkIntegrationTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        registry = BlockRegistry(TestHelper.mockPlugin)
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     private fun pipe(
@@ -42,8 +41,8 @@ class FluidNetworkIntegrationTest {
         y: Double,
         z: Double,
     ): FluidPipe =
-        FluidPipe(TestHelper.createLocation(x, y, z)).also {
-            TestHelper.addToRegistry(registry, it, "atlas:fluid_pipe")
+        FluidPipe(MockServer.createLocation(x, y, z)).also {
+            registry.track(it, "atlas:fluid_pipe")
         }
 
     /** A pump primed with [fluid] and willing to give it up through [outputFace]. */
@@ -54,12 +53,10 @@ class FluidNetworkIntegrationTest {
         fluid: FluidType,
         outputFace: BlockFace,
     ): FluidPump =
-        FluidPump(TestHelper.createLocation(x, y, z)).also {
+        FluidPump(MockServer.createLocation(x, y, z)).also {
             it.storeFluid(fluid)
-            val cauldronField = FluidPump::class.java.getDeclaredField("cauldronFace")
-            cauldronField.isAccessible = true
-            cauldronField.set(it, outputFace.oppositeFace)
-            TestHelper.addToRegistry(registry, it, "atlas:fluid_pump")
+            it.cauldronFace = outputFace.oppositeFace
+            registry.track(it, "atlas:fluid_pump")
         }
 
     private fun container(
@@ -67,8 +64,8 @@ class FluidNetworkIntegrationTest {
         y: Double,
         z: Double,
     ): FluidContainer =
-        FluidContainer(TestHelper.createLocation(x, y, z)).also {
-            TestHelper.addToRegistry(registry, it, "atlas:fluid_container")
+        FluidContainer(MockServer.createLocation(x, y, z)).also {
+            registry.track(it, "atlas:fluid_container")
         }
 
     @Test
@@ -77,7 +74,7 @@ class FluidNetworkIntegrationTest {
         val run = pipe(0.0, 64.0, 1.0)
         val tank = container(0.0, 64.0, 2.0)
 
-        pump.callFluidUpdate()
+        pump.fluidUpdate()
 
         assertEquals(FluidType.NONE, pump.storedFluid, "pump should have handed its unit over")
         assertEquals(FluidType.WATER, tank.storedFluid)
@@ -93,7 +90,7 @@ class FluidNetworkIntegrationTest {
         pipe(0.0, 64.0, 4.0)
         val tank = container(0.0, 64.0, 5.0)
 
-        pump.callFluidUpdate()
+        pump.fluidUpdate()
 
         assertEquals(FluidType.NONE, pump.storedFluid)
         assertEquals(FluidType.LAVA, tank.storedFluid, "one tick should cross the whole run")
@@ -111,7 +108,7 @@ class FluidNetworkIntegrationTest {
         val pump = pump(0.0, 64.0, 0.0, FluidType.WATER, BlockFace.SOUTH)
         val run = pipe(0.0, 64.0, 1.0)
 
-        run.callFluidUpdate()
+        run.fluidUpdate()
 
         assertEquals(FluidType.WATER, pump.storedFluid, "nowhere to send it, so it stays put")
     }
@@ -121,7 +118,7 @@ class FluidNetworkIntegrationTest {
         pump(0.0, 64.0, 0.0, FluidType.LAVA, BlockFace.SOUTH)
         val run = pipe(0.0, 64.0, 1.0)
 
-        run.callFluidUpdate()
+        run.fluidUpdate()
 
         assertEquals(FluidType.LAVA, run.carrying, "the run should glow with the fluid available on it")
     }
@@ -133,7 +130,7 @@ class FluidNetworkIntegrationTest {
         pipe(1.0, 64.0, 1.0)
         val tank = container(2.0, 64.0, 1.0)
 
-        pump.callFluidUpdate()
+        pump.fluidUpdate()
 
         assertEquals(FluidType.NONE, pump.storedFluid)
         assertEquals(FluidType.WATER, tank.storedFluid)

@@ -2,8 +2,7 @@ package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.testing.TestHelper
-import com.coderjoe.atlas.testing.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -21,13 +20,13 @@ class SmallBatteryTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        registry = BlockRegistry(TestHelper.mockPlugin)
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     private fun battery(
@@ -35,8 +34,8 @@ class SmallBatteryTest {
         y: Double = 64.0,
         z: Double = 0.0,
     ): SmallBattery =
-        SmallBattery(TestHelper.createLocation(x, y, z)).also {
-            TestHelper.addToRegistry(registry, it, "atlas:small_battery")
+        SmallBattery(MockServer.createLocation(x, y, z)).also {
+            registry.track(it, "atlas:small_battery")
         }
 
     private fun cable(
@@ -44,8 +43,8 @@ class SmallBatteryTest {
         y: Double,
         z: Double,
     ): PowerCable =
-        PowerCable(TestHelper.createLocation(x, y, z)).also {
-            TestHelper.addToRegistry(registry, it, "atlas:power_cable")
+        PowerCable(MockServer.createLocation(x, y, z)).also {
+            registry.track(it, "atlas:power_cable")
         }
 
     @Test
@@ -75,7 +74,7 @@ class SmallBatteryTest {
     @Test
     fun `battery takes power pushed in through any face`() {
         for (face in AtlasBlock.ADJACENT_FACES) {
-            val battery = SmallBattery(TestHelper.createLocation())
+            val battery = SmallBattery(MockServer.createLocation())
             assertEquals(1, battery.addPowerFrom(face, 1), "should accept from $face")
         }
     }
@@ -83,7 +82,7 @@ class SmallBatteryTest {
     @Test
     fun `battery gives power out through any face`() {
         for (face in AtlasBlock.ADJACENT_FACES) {
-            val battery = SmallBattery(TestHelper.createLocation())
+            val battery = SmallBattery(MockServer.createLocation())
             battery.currentPower = 1
             assertEquals(1, battery.removePowerToward(face, 1), "should give toward $face")
         }
@@ -116,11 +115,11 @@ class SmallBatteryTest {
     fun `battery leaves a neighbouring generator alone`() {
         val battery = battery()
 
-        val generator = LavaGenerator(TestHelper.createLocation(0.0, 64.0, 1.0))
+        val generator = LavaGenerator(MockServer.createLocation(0.0, 64.0, 1.0))
         generator.currentPower = 5
-        TestHelper.addToRegistry(registry, generator, "atlas:lava_generator")
+        registry.track(generator, "atlas:lava_generator")
 
-        battery.callPowerUpdate()
+        battery.powerUpdate()
 
         assertEquals(0, battery.currentPower)
         assertEquals(5, generator.currentPower)
@@ -131,10 +130,10 @@ class SmallBatteryTest {
         val battery = battery()
         battery.currentPower = 10
 
-        val other = SmallBattery(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(registry, other, "atlas:small_battery")
+        val other = SmallBattery(MockServer.createLocation(0.0, 64.0, 1.0))
+        registry.track(other, "atlas:small_battery")
 
-        battery.callPowerUpdate()
+        battery.powerUpdate()
 
         assertEquals(10, battery.currentPower)
         assertEquals(0, other.currentPower)
@@ -142,14 +141,14 @@ class SmallBatteryTest {
 
     @Test
     fun `a cable run fills a battery from a panel`() {
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 65.0, 0.0))
         panel.currentPower = 3
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
         val run = cable(0.0, 64.0, 0.0)
         val battery = battery(0.0, 63.0, 0.0)
 
-        run.callPowerUpdate()
+        run.powerUpdate()
 
         assertEquals(3, battery.currentPower)
         assertEquals(0, panel.currentPower)
@@ -163,7 +162,7 @@ class SmallBatteryTest {
         charged.currentPower = 20
         val empty = battery(0.0, 63.0, 0.0)
 
-        run.callPowerUpdate()
+        run.powerUpdate()
 
         assertEquals(10, charged.currentPower)
         assertEquals(10, empty.currentPower)
@@ -178,7 +177,7 @@ class SmallBatteryTest {
         val b = battery(0.0, 63.0, 0.0)
         b.currentPower = 10
 
-        run.callPowerUpdate()
+        run.powerUpdate()
 
         assertEquals(10, a.currentPower)
         assertEquals(10, b.currentPower)
@@ -195,7 +194,7 @@ class SmallBatteryTest {
 
         // A single unit cannot close a gap of one - it only swaps which battery leads - so the
         // pair has to be left as it is, or it would oscillate for as long as the run existed.
-        repeat(3) { run.callPowerUpdate() }
+        repeat(3) { run.powerUpdate() }
 
         assertEquals(11, ahead.currentPower)
         assertEquals(10, behind.currentPower)
@@ -209,7 +208,7 @@ class SmallBatteryTest {
         charged.currentPower = 7
         val empty = battery(0.0, 63.0, 0.0)
 
-        repeat(3) { run.callPowerUpdate() }
+        repeat(3) { run.powerUpdate() }
 
         assertEquals(7, charged.currentPower + empty.currentPower, "no charge may be created or lost")
         assertTrue(
@@ -229,7 +228,7 @@ class SmallBatteryTest {
         mid.currentPower = 6
         val empty = battery(1.0, 65.0, 0.0)
 
-        repeat(5) { run.callPowerUpdate() }
+        repeat(5) { run.powerUpdate() }
 
         val totals = listOf(full.currentPower, mid.currentPower, empty.currentPower)
         assertEquals(36, totals.sum(), "no charge may be created or lost")

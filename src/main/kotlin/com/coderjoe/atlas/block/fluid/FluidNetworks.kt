@@ -3,7 +3,6 @@ package com.coderjoe.atlas.block.fluid
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import kotlin.collections.iterator
 
 /**
@@ -20,21 +19,16 @@ import kotlin.collections.iterator
  */
 object FluidNetworks {
     fun networkFor(start: FluidPipe): FluidNetwork {
-        val registry = BlockRegistry.active ?: return FluidNetwork(listOf(start))
-
-        val touching = touching(start, registry)
-        val fluids = fluidsBySource(touching, registry)
+        val touching = touching(start)
+        val fluids = fluidsBySource(touching)
         val own = fluids[key(start)] ?: FluidType.NONE
-        return FluidNetwork(sameFluidRun(start, touching, fluids, own, registry))
+        return FluidNetwork(sameFluidRun(start, touching, fluids, own))
     }
 
     private fun key(pipe: FluidPipe) = BlockRegistry.locationKey(pipe.location)
 
     /** Every pipe reachable from [start] through touching pipe, ignoring what any of it carries. */
-    private fun touching(
-        start: FluidPipe,
-        registry: BlockRegistry,
-    ): Map<String, FluidPipe> {
+    private fun touching(start: FluidPipe): Map<String, FluidPipe> {
         val found = LinkedHashMap<String, FluidPipe>()
         val queue = ArrayDeque<FluidPipe>()
         found[key(start)] = start
@@ -43,7 +37,7 @@ object FluidNetworks {
         while (queue.isNotEmpty()) {
             val pipe = queue.removeFirst()
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.getAdjacentBlock(pipe.location, face)
+                val neighbor = pipe.neighbor(face)
                 if (neighbor !is FluidPipe) continue
                 if (found.putIfAbsent(key(neighbor), neighbor) == null) queue.add(neighbor)
             }
@@ -59,16 +53,13 @@ object FluidNetworks {
      * between them. A pipe no source reaches is left unlabelled and reads as carrying nothing,
      * which keeps an unfed run behaving as the single network it looks like.
      */
-    private fun fluidsBySource(
-        pipes: Map<String, FluidPipe>,
-        registry: BlockRegistry,
-    ): Map<String, FluidType> {
+    private fun fluidsBySource(pipes: Map<String, FluidPipe>): Map<String, FluidType> {
         val labelled = HashMap<String, FluidType>()
         val queue = ArrayDeque<String>()
 
         for ((pipeKey, pipe) in pipes) {
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.adjacentOf<FluidBlock>(pipe.location, face) ?: continue
+                val neighbor = pipe.neighbor(face) as? FluidBlock ?: continue
                 if (neighbor is FluidPipe) continue
                 if (!neighbor.canProvideFluid(face.oppositeFace) || !neighbor.hasFluid()) continue
 
@@ -87,7 +78,7 @@ object FluidNetworks {
             val fluid = labelled[pipeKey] ?: continue
             val pipe = pipes[pipeKey] ?: continue
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.getAdjacentBlock(pipe.location, face)
+                val neighbor = pipe.neighbor(face)
                 if (neighbor !is FluidPipe) continue
                 val neighborKey = key(neighbor)
                 if (neighborKey !in pipes || neighborKey in labelled) continue
@@ -104,7 +95,6 @@ object FluidNetworks {
         pipes: Map<String, FluidPipe>,
         fluids: Map<String, FluidType>,
         own: FluidType,
-        registry: BlockRegistry,
     ): List<FluidPipe> {
         val found = LinkedHashMap<String, FluidPipe>()
         val queue = ArrayDeque<FluidPipe>()
@@ -114,7 +104,7 @@ object FluidNetworks {
         while (queue.isNotEmpty()) {
             val pipe = queue.removeFirst()
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.getAdjacentBlock(pipe.location, face)
+                val neighbor = pipe.neighbor(face)
                 if (neighbor !is FluidPipe) continue
                 val neighborKey = key(neighbor)
                 if (neighborKey !in pipes) continue

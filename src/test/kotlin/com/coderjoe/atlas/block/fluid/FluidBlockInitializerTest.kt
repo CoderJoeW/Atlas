@@ -1,8 +1,7 @@
 package com.coderjoe.atlas.block.fluid
 
-import com.coderjoe.atlas.block.fluid.block.FluidPipe
-import com.coderjoe.atlas.block.fluid.block.FluidPump
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.Blocks
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,17 +12,17 @@ import org.junit.jupiter.api.Test
 class FluidBlockInitializerTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `initialize registers all expected IDs`() {
-        TestHelper.initFluidFactory()
+        Blocks.initFluidFactory()
         val ids = FluidBlockFactory.getRegisteredBlockIds()
 
         // FluidPump: 1 (base only - connections and status are block state properties)
@@ -35,34 +34,34 @@ class FluidBlockInitializerTest {
 
     @Test
     fun `pump ID is registered`() {
-        TestHelper.initFluidFactory()
+        Blocks.initFluidFactory()
         assertTrue(FluidBlockFactory.isRegistered(FluidPump.BLOCK_ID))
     }
 
     @Test
     fun `pipe base ID is registered`() {
-        TestHelper.initFluidFactory()
+        Blocks.initFluidFactory()
         assertTrue(FluidBlockFactory.isRegistered(FluidPipe.BLOCK_ID))
     }
 
     @Test
     fun `pump ID creates FluidPump`() {
-        TestHelper.initFluidFactory()
+        Blocks.initFluidFactory()
         val block =
             FluidBlockFactory.create(
                 "atlas:fluid_pump",
-                TestHelper.createLocation(),
+                MockServer.createLocation(),
             )
         assertTrue(block is FluidPump)
     }
 
     @Test
     fun `pipe ID creates FluidPipe`() {
-        TestHelper.initFluidFactory()
+        Blocks.initFluidFactory()
         val block =
             FluidBlockFactory.create(
                 "atlas:fluid_pipe",
-                TestHelper.createLocation(),
+                MockServer.createLocation(),
                 BlockFace.NORTH,
             )
         assertTrue(block is FluidPipe)
