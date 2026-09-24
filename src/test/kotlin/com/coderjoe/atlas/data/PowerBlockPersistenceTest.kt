@@ -1,7 +1,8 @@
 package com.coderjoe.atlas.data
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
+import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
@@ -12,19 +13,20 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
 class PowerBlockPersistenceTest {
-    private lateinit var registry: PowerBlockRegistry
+    private lateinit var registry: BlockRegistry
     private lateinit var persistence: PowerBlockPersistence
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
         persistence = PowerBlockPersistence(TestHelper.mockPlugin)
 
         // Initialize factory so load() can create blocks
@@ -52,18 +54,18 @@ class PowerBlockPersistenceTest {
         persistence.save(registry)
 
         // Create fresh registry for loading
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocksWithIds()
         assertEquals(1, loaded.size)
         assertEquals("atlas:small_solar_panel", loaded[0].second)
-        assertEquals(1, loaded[0].first.currentPower)
+        assertEquals(1, assertInstanceOf(SmallSolarPanel::class.java, loaded[0].first).currentPower)
     }
 
     @Test
     fun `load from missing file does not error`() {
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         assertDoesNotThrow { persistence.load(loadRegistry) }
         assertEquals(0, loadRegistry.getAllBlocks().size)
     }
@@ -75,7 +77,7 @@ class PowerBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocks().first()
@@ -93,7 +95,7 @@ class PowerBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocks().first() as CobblestoneFactory
@@ -110,10 +112,10 @@ class PowerBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        assertEquals(7, loadRegistry.getAllBlocks().first().currentPower)
+        assertEquals(7, assertInstanceOf(SmallBattery::class.java, loadRegistry.getAllBlocks().first()).currentPower)
     }
 
     @Test
@@ -124,7 +126,7 @@ class PowerBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocks().first()
@@ -149,9 +151,26 @@ class PowerBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
         assertEquals(3, loadRegistry.getAllBlocks().size)
+    }
+
+    /**
+     * One registry holds every block, so the file has to pick its own family out of it. Without
+     * the `owns` predicate a pipe would land in power_blocks.yml too, and every other test here
+     * would still pass.
+     */
+    @Test
+    fun `power_blocks yml holds only power blocks when the registry also holds a pipe`() {
+        TestHelper.addToRegistry(registry, SmallBattery(TestHelper.createLocation()), SmallBattery.BLOCK_ID)
+        TestHelper.addToRegistry(registry, FluidPipe(TestHelper.createLocation(x = 1.0)), FluidPipe.BLOCK_ID)
+
+        persistence.save(registry)
+
+        val saved = File(TestHelper.dataFolder, "power_blocks.yml").readText()
+        assertTrue("atlas:small_battery" in saved, saved)
+        assertFalse("atlas:fluid_pipe" in saved, saved)
     }
 }

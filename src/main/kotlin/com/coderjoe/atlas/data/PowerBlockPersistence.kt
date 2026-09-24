@@ -5,16 +5,17 @@ import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.power.PowerBlockFactory
 import org.bukkit.plugin.java.JavaPlugin
 
-class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister<PowerBlock> {
+class PowerBlockPersistence(plugin: JavaPlugin) : BlockPersister {
     private val persistence =
-        BlockPersistence<PowerBlock>(
+        BlockPersistence(
             plugin = plugin,
             fileName = "power_blocks.yml",
             yamlKey = "power_blocks",
             factory = PowerBlockFactory,
+            owns = { it is PowerBlock },
         )
 
-    override fun save(registry: BlockRegistry<PowerBlock>) = persistence.save(registry)
+    override fun save(registry: BlockRegistry) = persistence.save(registry)
 
-    override fun load(registry: BlockRegistry<PowerBlock>) = persistence.load(registry)
+    override fun load(registry: BlockRegistry) = persistence.load(registry)
 }

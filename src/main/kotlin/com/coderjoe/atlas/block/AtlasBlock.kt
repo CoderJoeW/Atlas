@@ -49,27 +49,24 @@ abstract class AtlasBlock(
 
     abstract fun getVisualStateBlockId(): String
 
-    abstract fun getRegistry(): BlockRegistry<*>
-
     open val facing: BlockFace get() = BlockFace.SELF
     open val baseBlockId: String get() = ""
 
     protected fun updateVisualState() {
         val newState = getVisualStateBlockId()
-        if (newState != currentVisualState) {
-            val registry = getRegistry()
-            val key = BlockRegistry.locationKey(location)
-            registry.updatingLocations.add(key)
-            try {
-                CraftEngineHelper.placeState(location, newState)
-                currentVisualState = newState
-            } catch (e: Throwable) {
-                plugin.logger.warning(
-                    "Failed to update visual state at ${location.coordinates}: ${e.message}",
-                )
-            } finally {
-                registry.updatingLocations.remove(key)
-            }
+        if (newState == currentVisualState) return
+
+        val updating = BlockRegistry.active?.updatingLocations
+        val key = BlockRegistry.locationKey(location)
+        updating?.add(key)
+
+        try {
+            CraftEngineHelper.placeState(location, newState)
+            currentVisualState = newState
+        } catch (e: Throwable) {
+            plugin.logger.warning("Failed to update visual state at ${location.coordinates}: ${e.message}")
+        } finally {
+            updating?.remove(key)
         }
     }
 

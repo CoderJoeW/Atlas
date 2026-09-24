@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.testing.TestHelper
 import com.coderjoe.atlas.testing.TestHelper.callPowerUpdate
 import org.bukkit.block.BlockFace
@@ -16,12 +17,12 @@ import org.junit.jupiter.api.Test
  * touches and never reaches out on its own, so it has no front to line up when placed.
  */
 class SmallBatteryTest {
-    private lateinit var registry: PowerBlockRegistry
+    private lateinit var registry: BlockRegistry
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
     }
 
     @AfterEach

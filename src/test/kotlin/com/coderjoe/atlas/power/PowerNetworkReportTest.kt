@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.power
 
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
@@ -18,14 +18,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class PowerNetworkReportTest {
-    private lateinit var registry: PowerBlockRegistry
+    private lateinit var registry: BlockRegistry
     private lateinit var player: Player
     private lateinit var messages: MutableList<Component>
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
         player = mockk(relaxed = true)
         messages = mutableListOf()
         val captured = slot<Component>()

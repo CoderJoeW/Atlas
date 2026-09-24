@@ -2,17 +2,14 @@ package com.coderjoe.atlas
 
 import com.coderjoe.atlas.block.AtlasSubsystem
 import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
-import com.coderjoe.atlas.block.fluid.FluidBlock
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidContainer
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
 import com.coderjoe.atlas.block.power.LavaGenerator
-import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.power.PowerBlockFactory
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
@@ -25,9 +22,7 @@ import com.coderjoe.atlas.block.power.mine.GoldMine
 import com.coderjoe.atlas.block.power.mine.IronMine
 import com.coderjoe.atlas.block.power.mine.NetheriteMine
 import com.coderjoe.atlas.block.power.mine.RedstoneMine
-import com.coderjoe.atlas.block.transport.TransportBlock
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
-import com.coderjoe.atlas.block.transport.TransportBlockRegistry
 import com.coderjoe.atlas.block.transport.block.ConveyorBelt
 import com.coderjoe.atlas.craftengine.CraftEngineIntegration
 import com.coderjoe.atlas.data.FluidBlockPersistence
@@ -47,12 +42,13 @@ import org.bukkit.scheduler.BukkitTask
 
 class Atlas : JavaPlugin() {
     private lateinit var craftEngineIntegration: CraftEngineIntegration
-    private lateinit var powerSubsystem: AtlasSubsystem<PowerBlock>
-    private lateinit var fluidSubsystem: AtlasSubsystem<FluidBlock>
-    private lateinit var transportSubsystem: AtlasSubsystem<TransportBlock>
+    private lateinit var registry: BlockRegistry
+    private lateinit var powerSubsystem: AtlasSubsystem
+    private lateinit var fluidSubsystem: AtlasSubsystem
+    private lateinit var transportSubsystem: AtlasSubsystem
     private var autoSaveTask: BukkitTask? = null
 
-    private val subsystems: List<AtlasSubsystem<*>>
+    private val subsystems: List<AtlasSubsystem>
         get() = listOf(powerSubsystem, fluidSubsystem, transportSubsystem)
 
     override fun onEnable() {
@@ -69,10 +65,15 @@ class Atlas : JavaPlugin() {
 
         AtlasBlockDialog.init(this)
 
+        // One index for every block, whatever system it belongs to, so a lookup can no longer miss
+        // a neighbour because it was filed somewhere else. The three subsystems still own a save
+        // file and a factory each until steps 2.6 and 2.7 retire them.
+        registry = BlockRegistry(this)
+
         powerSubsystem =
             AtlasSubsystem(
                 name = "power",
-                registry = PowerBlockRegistry(this),
+                registry = registry,
                 factory = PowerBlockFactory,
                 descriptors = powerDescriptors(),
                 persistence = PowerBlockPersistence(this),
@@ -81,7 +82,7 @@ class Atlas : JavaPlugin() {
         fluidSubsystem =
             AtlasSubsystem(
                 name = "fluid",
-                registry = FluidBlockRegistry(this),
+                registry = registry,
                 factory = FluidBlockFactory,
                 descriptors = fluidDescriptors(),
                 persistence = FluidBlockPersistence(this),
@@ -90,7 +91,7 @@ class Atlas : JavaPlugin() {
         transportSubsystem =
             AtlasSubsystem(
                 name = "transport",
-                registry = TransportBlockRegistry(this),
+                registry = registry,
                 factory = TransportBlockFactory,
                 descriptors = transportDescriptors(),
                 persistence = TransportBlockPersistence(this),
@@ -100,40 +101,33 @@ class Atlas : JavaPlugin() {
 
         // Register unified listener
         val powerSystem =
-            BlockSystem<PowerBlock>(
+            BlockSystem(
                 name = "power",
-                registry = powerSubsystem.registry,
+                registry = registry,
                 factory = PowerBlockFactory,
                 descriptors = powerSubsystem.descriptors,
-                showDialog = { player, block ->
-                    BlockInspectorDialog.show(player, block, powerSubsystem.registry, AtlasBlockTypes.catalog)
-                },
             )
 
         val fluidSystem =
-            BlockSystem<FluidBlock>(
+            BlockSystem(
                 name = "fluid",
-                registry = fluidSubsystem.registry,
+                registry = registry,
                 factory = FluidBlockFactory,
                 descriptors = fluidSubsystem.descriptors,
-                showDialog = { player, block ->
-                    BlockInspectorDialog.show(player, block, fluidSubsystem.registry, AtlasBlockTypes.catalog)
-                },
             )
 
         val transportSystem =
-            BlockSystem<TransportBlock>(
+            BlockSystem(
                 name = "transport",
-                registry = transportSubsystem.registry,
+                registry = registry,
                 factory = TransportBlockFactory,
                 descriptors = transportSubsystem.descriptors,
-                showDialog = { player, block ->
-                    BlockInspectorDialog.show(player, block, transportSubsystem.registry, AtlasBlockTypes.catalog)
-                },
             )
 
         server.pluginManager.registerEvents(
-            AtlasBlockListener(this, listOf(powerSystem, fluidSystem, transportSystem)),
+            AtlasBlockListener(this, registry, listOf(powerSystem, fluidSystem, transportSystem)) { player, block ->
+                BlockInspectorDialog.show(player, block, registry, AtlasBlockTypes.catalog)
+            },
             this,
         )
 
@@ -165,8 +159,8 @@ class Atlas : JavaPlugin() {
         logger.atlasInfo("Atlas plugin has been disabled!")
     }
 
-    private fun initializedSubsystems(): List<AtlasSubsystem<*>> {
-        val result = mutableListOf<AtlasSubsystem<*>>()
+    private fun initializedSubsystems(): List<AtlasSubsystem> {
+        val result = mutableListOf<AtlasSubsystem>()
         if (::powerSubsystem.isInitialized) result.add(powerSubsystem)
         if (::fluidSubsystem.isInitialized) result.add(fluidSubsystem)
         if (::transportSubsystem.isInitialized) result.add(transportSubsystem)

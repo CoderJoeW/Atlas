@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.Gauge
 import com.coderjoe.atlas.block.Inspection
@@ -113,22 +112,20 @@ abstract class PowerBlock(
         amount: Int = currentPower,
     ): Int {
         if (amount <= 0) return 0
-        val registry = PowerBlockRegistry.instance ?: return 0
-        val target = registry.getAdjacentBlock(location, face)
-        if (target != null) {
-            if (!target.canAcceptPower()) return 0
+        val neighbor = BlockRegistry.active?.getAdjacentBlock(location, face) ?: return 0
 
+        if (neighbor is PowerBlock) {
+            if (!neighbor.canAcceptPower()) return 0
             val offered = removePowerToward(face, amount)
             if (offered <= 0) return 0
-            val accepted = target.addPowerFrom(face.oppositeFace, offered)
+            val accepted = neighbor.addPowerFrom(face.oppositeFace, offered)
             if (accepted < offered) addPower(offered - accepted)
             return accepted
         }
 
-        // Nothing in the power registry, but a block from another system may still be a consumer -
-        // the fluid pump is one, and it has to be pushed to like anything else rather than left to
-        // reach back for what it needs.
-        val consumer = AtlasBlocks.adjacent(location, face) as? PowerConsumer ?: return 0
+        // A neighbour that spends power without being a power block - the fluid pump is the one -
+        // is pushed to like anything else rather than left to reach back for what it needs.
+        val consumer = neighbor as? PowerConsumer ?: return 0
         if (!consumer.drawsPowerFrom(face.oppositeFace) || !consumer.wantsPower()) return 0
 
         val offered = removePowerToward(face, amount)
@@ -140,10 +137,10 @@ abstract class PowerBlock(
 
     protected fun pullPowerFromNeighbors() {
         if (!canAcceptPower()) return
-        val registry = PowerBlockRegistry.instance ?: return
+        val registry = BlockRegistry.active ?: return
         for (face in ADJACENT_FACES) {
             if (!canAcceptPower()) break
-            val neighbor = registry.getAdjacentBlock(location, face) ?: continue
+            val neighbor = registry.adjacentOf<PowerBlock>(location, face) ?: continue
             if (neighbor.hasPower()) {
                 val pulled = neighbor.removePowerToward(face.oppositeFace, 1)
                 if (pulled > 0) {
@@ -182,9 +179,5 @@ abstract class PowerBlock(
 
     override fun blockUpdate() {
         powerUpdate()
-    }
-
-    override fun getRegistry(): BlockRegistry<*> {
-        return PowerBlockRegistry.instance ?: throw IllegalStateException("PowerBlockRegistry not initialized")
     }
 }

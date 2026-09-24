@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.scenario
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidContainer
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
@@ -24,12 +24,12 @@ import org.junit.jupiter.api.Test
  * finds the acceptor, however far away and round however many corners it is.
  */
 class FluidNetworkIntegrationTest {
-    private lateinit var registry: FluidBlockRegistry
+    private lateinit var registry: BlockRegistry
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        registry = FluidBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
     }
 
     @AfterEach

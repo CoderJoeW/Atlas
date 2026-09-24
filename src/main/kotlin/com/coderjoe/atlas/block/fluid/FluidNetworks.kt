@@ -20,7 +20,7 @@ import kotlin.collections.iterator
  */
 object FluidNetworks {
     fun networkFor(start: FluidPipe): FluidNetwork {
-        val registry = FluidBlockRegistry.instance ?: return FluidNetwork(listOf(start))
+        val registry = BlockRegistry.active ?: return FluidNetwork(listOf(start))
 
         val touching = touching(start, registry)
         val fluids = fluidsBySource(touching, registry)
@@ -33,7 +33,7 @@ object FluidNetworks {
     /** Every pipe reachable from [start] through touching pipe, ignoring what any of it carries. */
     private fun touching(
         start: FluidPipe,
-        registry: FluidBlockRegistry,
+        registry: BlockRegistry,
     ): Map<String, FluidPipe> {
         val found = LinkedHashMap<String, FluidPipe>()
         val queue = ArrayDeque<FluidPipe>()
@@ -61,14 +61,14 @@ object FluidNetworks {
      */
     private fun fluidsBySource(
         pipes: Map<String, FluidPipe>,
-        registry: FluidBlockRegistry,
+        registry: BlockRegistry,
     ): Map<String, FluidType> {
         val labelled = HashMap<String, FluidType>()
         val queue = ArrayDeque<String>()
 
         for ((pipeKey, pipe) in pipes) {
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.getAdjacentBlock(pipe.location, face) ?: continue
+                val neighbor = registry.adjacentOf<FluidBlock>(pipe.location, face) ?: continue
                 if (neighbor is FluidPipe) continue
                 if (!neighbor.canProvideFluid(face.oppositeFace) || !neighbor.hasFluid()) continue
 
@@ -104,7 +104,7 @@ object FluidNetworks {
         pipes: Map<String, FluidPipe>,
         fluids: Map<String, FluidType>,
         own: FluidType,
-        registry: FluidBlockRegistry,
+        registry: BlockRegistry,
     ): List<FluidPipe> {
         val found = LinkedHashMap<String, FluidPipe>()
         val queue = ArrayDeque<FluidPipe>()

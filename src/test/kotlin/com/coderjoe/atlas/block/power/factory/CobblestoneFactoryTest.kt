@@ -1,11 +1,10 @@
 package com.coderjoe.atlas.block.power.factory
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidContainer
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.testing.TestHelper
 import com.coderjoe.atlas.testing.TestHelper.callFluidUpdate
@@ -57,14 +56,13 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `does not generate when only water available`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         gen.currentPower = 2
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             gen,
             "atlas:cobblestone_factory",
         )
@@ -73,7 +71,7 @@ class CobblestoneFactoryTest {
         val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            fluidRegistry,
+            registry,
             pipe,
             "atlas:fluid_container",
         )
@@ -86,14 +84,13 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `does not generate when only lava available`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         gen.currentPower = 2
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             gen,
             "atlas:cobblestone_factory",
         )
@@ -102,7 +99,7 @@ class CobblestoneFactoryTest {
         val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            fluidRegistry,
+            registry,
             pipe,
             "atlas:fluid_container",
         )
@@ -115,14 +112,13 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `does not generate when insufficient power`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         gen.currentPower = 1
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             gen,
             "atlas:cobblestone_factory",
         )
@@ -132,7 +128,7 @@ class CobblestoneFactoryTest {
         val waterPipe = FluidContainer(waterPipeLoc)
         waterPipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            fluidRegistry,
+            registry,
             waterPipe,
             "atlas:fluid_container",
         )
@@ -142,7 +138,7 @@ class CobblestoneFactoryTest {
         val lavaPipe = FluidContainer(lavaPipeLoc)
         lavaPipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            fluidRegistry,
+            registry,
             lavaPipe,
             "atlas:fluid_container",
         )
@@ -159,11 +155,11 @@ class CobblestoneFactoryTest {
         // Fluid arrives by push now (see MaterialFactory.acceptFluid), so the factory itself
         // never touches the registry - a network hands it a unit directly, exactly as it would
         // via FluidNetwork.transfer(). The pipe-mediated path is covered end to end below.
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val gen = CobblestoneFactory(TestHelper.createLocation())
         gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "atlas:cobblestone_factory")
+        TestHelper.addToRegistry(registry, gen, "atlas:cobblestone_factory")
 
         assertTrue(gen.acceptFluid(BlockFace.WEST, FluidType.WATER))
         assertTrue(gen.acceptFluid(BlockFace.EAST, FluidType.LAVA))
@@ -179,25 +175,24 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `produces when water and lava are pushed in through real fluid pipes`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "atlas:cobblestone_factory")
+        TestHelper.addToRegistry(registry, gen, "atlas:cobblestone_factory")
 
         val waterPipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
-        TestHelper.addToRegistry(fluidRegistry, waterPipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, waterPipe, "atlas:fluid_pipe")
         val waterTank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -2.0))
         waterTank.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, waterTank, "atlas:fluid_container")
+        TestHelper.addToRegistry(registry, waterTank, "atlas:fluid_container")
 
         val lavaPipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, lavaPipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, lavaPipe, "atlas:fluid_pipe")
         val lavaTank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
         lavaTank.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, lavaTank, "atlas:fluid_container")
+        TestHelper.addToRegistry(registry, lavaTank, "atlas:fluid_container")
 
         waterPipe.callFluidUpdate()
         lavaPipe.callFluidUpdate()
@@ -221,24 +216,23 @@ class CobblestoneFactoryTest {
         // waiting to be drained, so this exercises the push path into a pipe rather than the
         // run's own transfer, and that path has to see the factory even though it is a power
         // block and so appears nowhere in the fluid registry.
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val gen = CobblestoneFactory(TestHelper.createLocation(0.0, 64.0, 0.0))
         gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "atlas:cobblestone_factory")
+        TestHelper.addToRegistry(registry, gen, "atlas:cobblestone_factory")
 
         val waterPipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
-        TestHelper.addToRegistry(fluidRegistry, waterPipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, waterPipe, "atlas:fluid_pipe")
         val waterPump = FluidPump(TestHelper.createLocation(0.0, 64.0, -2.0))
         waterPump.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, waterPump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, waterPump, "atlas:fluid_pump")
 
         val lavaPipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, lavaPipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, lavaPipe, "atlas:fluid_pipe")
         val lavaPump = FluidPump(TestHelper.createLocation(0.0, 64.0, 2.0))
         lavaPump.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, lavaPump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, lavaPump, "atlas:fluid_pump")
 
         waterPump.callFluidUpdate()
         lavaPump.callFluidUpdate()
@@ -257,20 +251,19 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `produces when pumps sit straight against the factory with no pipe between`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val gen = CobblestoneFactory(TestHelper.createLocation(0.0, 64.0, 0.0))
         gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "atlas:cobblestone_factory")
+        TestHelper.addToRegistry(registry, gen, "atlas:cobblestone_factory")
 
         val waterPump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
         waterPump.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, waterPump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, waterPump, "atlas:fluid_pump")
 
         val lavaPump = FluidPump(TestHelper.createLocation(0.0, 64.0, 1.0))
         lavaPump.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, lavaPump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, lavaPump, "atlas:fluid_pump")
 
         waterPump.callFluidUpdate()
         lavaPump.callFluidUpdate()
@@ -289,14 +282,14 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `a pipe run with nowhere to send anything refuses a pump's push`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
-        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
 
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -2.0))
         pump.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         pump.callFluidUpdate()
 
@@ -324,11 +317,11 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `a haul spends both banked fluids`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val gen = CobblestoneFactory(TestHelper.createLocation())
         gen.currentPower = 2
-        TestHelper.addToRegistry(powerRegistry, gen, "atlas:cobblestone_factory")
+        TestHelper.addToRegistry(registry, gen, "atlas:cobblestone_factory")
 
         gen.acceptFluid(BlockFace.WEST, FluidType.WATER)
         gen.acceptFluid(BlockFace.EAST, FluidType.LAVA)
@@ -345,11 +338,11 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `banked fluid is held while the factory cannot afford a haul`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val gen = CobblestoneFactory(TestHelper.createLocation())
         gen.currentPower = 0
-        TestHelper.addToRegistry(powerRegistry, gen, "atlas:cobblestone_factory")
+        TestHelper.addToRegistry(registry, gen, "atlas:cobblestone_factory")
 
         gen.acceptFluid(BlockFace.WEST, FluidType.WATER)
         gen.acceptFluid(BlockFace.EAST, FluidType.LAVA)
@@ -369,13 +362,12 @@ class CobblestoneFactoryTest {
 
     @Test
     fun `pulls power from adjacent blocks`() {
-        FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = CobblestoneFactory(genLoc)
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             gen,
             "atlas:cobblestone_factory",
         )
@@ -385,7 +377,7 @@ class CobblestoneFactoryTest {
             SmallBattery(batteryLoc)
         battery.currentPower = 5
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             battery,
             "atlas:small_battery",
         )

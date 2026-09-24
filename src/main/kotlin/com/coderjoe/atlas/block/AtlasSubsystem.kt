@@ -4,12 +4,12 @@ import com.coderjoe.atlas.data.BlockPersister
 import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.plugin.java.JavaPlugin
 
-class AtlasSubsystem<T : AtlasBlock>(
+class AtlasSubsystem(
     private val name: String,
-    val registry: BlockRegistry<T>,
-    private val factory: BlockFactory<T>,
+    val registry: BlockRegistry,
+    private val factory: BlockFactory,
     val descriptors: Map<String, BlockDescriptor>,
-    private val persistence: BlockPersister<T>,
+    private val persistence: BlockPersister,
     private val plugin: JavaPlugin,
 ) {
     fun init() {

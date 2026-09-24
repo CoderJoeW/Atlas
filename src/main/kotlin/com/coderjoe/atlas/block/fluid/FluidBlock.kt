@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.block.fluid
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.StatusLine
 import com.coderjoe.atlas.block.Tone
@@ -82,9 +81,5 @@ abstract class FluidBlock(
 
     override fun blockUpdate() {
         fluidUpdate()
-    }
-
-    override fun getRegistry(): BlockRegistry<*> {
-        return FluidBlockRegistry.instance ?: throw IllegalStateException("FluidBlockRegistry not initialized")
     }
 }

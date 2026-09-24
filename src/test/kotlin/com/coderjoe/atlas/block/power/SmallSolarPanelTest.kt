@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.block.power
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.testing.TestHelper
 import com.coderjoe.atlas.testing.TestHelper.callPowerUpdate
 import io.mockk.every
@@ -138,7 +139,7 @@ class SmallSolarPanelTest {
 
     @Test
     fun `small solar panel pushes stored power into the block below`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         every { TestHelper.mockWorld.time } returns 6000L
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
@@ -156,7 +157,7 @@ class SmallSolarPanelTest {
 
     @Test
     fun `small solar panel does not push into a cable beside it`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         every { TestHelper.mockWorld.time } returns 6000L
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
@@ -176,7 +177,7 @@ class SmallSolarPanelTest {
 
     @Test
     fun `small solar panel holds power when nothing sits below it`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         every { TestHelper.mockWorld.time } returns 6000L
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
@@ -201,7 +202,7 @@ class SmallSolarPanelTest {
 
     @Test
     fun `small solar panel does not push into a cable facing the wrong way`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         every { TestHelper.mockWorld.time } returns 6000L
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
@@ -222,7 +223,7 @@ class SmallSolarPanelTest {
 
     @Test
     fun `small solar panel keeps its power when the push is refused`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         every { TestHelper.mockWorld.time } returns 6000L
 
         val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))

@@ -77,7 +77,7 @@ object AtlasBlockDialog {
     fun showDialog(
         player: Player,
         block: AtlasBlock,
-        registry: BlockRegistry<*>,
+        registry: BlockRegistry,
         renderDialog: (Player, AtlasBlock, onClose: (Player) -> Unit) -> Unit,
     ) {
         activeDialogs.remove(player.uniqueId)?.cancel()

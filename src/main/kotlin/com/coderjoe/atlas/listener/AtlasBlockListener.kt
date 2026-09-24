@@ -2,7 +2,6 @@ package com.coderjoe.atlas.listener
 
 import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.BlockDescriptor
-import com.coderjoe.atlas.block.BlockFactory
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.PlacementType
@@ -25,14 +24,16 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class AtlasBlockListener(
     private val plugin: JavaPlugin,
-    private val systems: List<BlockSystem<*>>,
+    private val registry: BlockRegistry,
+    private val systems: List<BlockSystem>,
+    private val showDialog: (Player, AtlasBlock) -> Unit,
 ) : Listener {
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
         val location = event.block.location
         val key = BlockRegistry.locationKey(location)
 
-        if (systems.any { it.registry.updatingLocations.contains(key) }) return
+        if (registry.updatingLocations.contains(key)) return
 
         val blockId = CraftEngineHelper.getBlockId(event.block) ?: return
 
@@ -47,7 +48,7 @@ class AtlasBlockListener(
 
     private fun handlePlacement(
         event: BlockPlaceEvent,
-        system: BlockSystem<*>,
+        system: BlockSystem,
         descriptor: BlockDescriptor,
     ) {
         val location = event.block.location.clone()
@@ -94,18 +95,15 @@ class AtlasBlockListener(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun createAndRegister(
-        system: BlockSystem<*>,
+        system: BlockSystem,
         blockId: String,
         location: Location,
         facing: BlockFace,
     ) {
-        val factory = system.factory as BlockFactory<AtlasBlock>
-        val registry = system.registry as BlockRegistry<AtlasBlock>
-        val block = factory.create(blockId, location, facing)
+        val block = system.factory.create(blockId, location, facing)
         if (block != null) {
-            registry.register(block, blockId)
+            system.registry.register(block, blockId)
         }
     }
 
@@ -114,14 +112,9 @@ class AtlasBlockListener(
         val location = event.block.location
         val key = BlockRegistry.locationKey(location)
 
-        if (systems.any { it.registry.updatingLocations.contains(key) }) return
+        if (registry.updatingLocations.contains(key)) return
 
-        for (system in systems) {
-            val block = system.registry.unregister(location)
-            if (block != null) {
-                return
-            }
-        }
+        registry.unregister(location)
     }
 
     companion object {
@@ -159,16 +152,13 @@ class AtlasBlockListener(
         val clickedBlock = event.clickedBlock ?: return
         val location = clickedBlock.location
 
-        for (system in systems) {
-            val block = system.registry.getBlock(location) ?: continue
-            if (event.player.isSneaking) {
-                sneakAction(event.player, block)
-            } else {
-                system.showDialog(event.player, block)
-            }
-            event.isCancelled = true
-            return
+        val block = registry.getBlock(location) ?: return
+        if (event.player.isSneaking) {
+            sneakAction(event.player, block)
+        } else {
+            showDialog(event.player, block)
         }
+        event.isCancelled = true
     }
 
     /** Sneaking with the wrench reads a power block's network instead of opening its dialog. */

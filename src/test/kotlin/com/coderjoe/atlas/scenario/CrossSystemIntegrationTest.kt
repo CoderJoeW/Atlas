@@ -1,12 +1,11 @@
 package com.coderjoe.atlas.scenario
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidContainer
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
 import com.coderjoe.atlas.block.power.LavaGenerator
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.testing.TestHelper
@@ -25,14 +24,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class CrossSystemIntegrationTest {
-    private lateinit var powerRegistry: PowerBlockRegistry
-    private lateinit var fluidRegistry: FluidBlockRegistry
+    private lateinit var registry: BlockRegistry
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
-        fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
     }
 
     @AfterEach
@@ -47,11 +44,11 @@ class CrossSystemIntegrationTest {
         // Solar panel at (1,64,0)
         val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, solar, "atlas:lava_generator")
 
         // Pump at (0,64,0)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         // Water cauldron to the NORTH
         val levelled = mockk<Levelled>(relaxed = true)
@@ -81,7 +78,7 @@ class CrossSystemIntegrationTest {
     @Test
     fun `pump with no powered neighbors gets NO_POWER`() {
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         // Water cauldron to the NORTH
         val cauldronBlock = mockk<Block>(relaxed = true)
@@ -105,15 +102,15 @@ class CrossSystemIntegrationTest {
 
         // Solar at (0,65,1) - generates power, outputs through its base pad (DOWN)
         val solar = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 1.0))
-        TestHelper.addToRegistry(powerRegistry, solar, "atlas:small_solar_panel")
+        TestHelper.addToRegistry(registry, solar, "atlas:small_solar_panel")
 
         // Cable at (0,64,1) - joins the panel above to the pump below, no facing to set
         val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
+        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
         // Pump at (0,63,1) - directly below the cable, in its output direction
         val pump = FluidPump(TestHelper.createLocation(0.0, 63.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         // Water cauldron at (0,63,2) = SOUTH of pump
         val levelled = mockk<Levelled>(relaxed = true)
@@ -133,7 +130,7 @@ class CrossSystemIntegrationTest {
 
         // Pipe at (-1,63,1) facing WEST, pulling from the pump behind it (EAST = x+1)
         val pipe = FluidPipe(TestHelper.createLocation(-1.0, 63.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
 
         // Step 1: solar generates 1 and holds it - a cable stores nothing, so there is nowhere
         // for the panel to push it yet
@@ -170,10 +167,10 @@ class CrossSystemIntegrationTest {
     fun `pump extracts lava from lava cauldron with power`() {
         val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, solar, "atlas:lava_generator")
 
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         val cauldronBlock = mockk<Block>(relaxed = true)
         every { cauldronBlock.type } returns Material.LAVA_CAULDRON
@@ -200,11 +197,11 @@ class CrossSystemIntegrationTest {
         // Solar at (1,64,0)
         val solar = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         solar.currentPower = 1
-        TestHelper.addToRegistry(powerRegistry, solar, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, solar, "atlas:lava_generator")
 
         // Pump at (0,64,0)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(fluidRegistry, pump, "atlas:fluid_pump")
+        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
 
         // Water cauldron to the NORTH of pump
         val levelled = mockk<Levelled>(relaxed = true)
@@ -228,10 +225,10 @@ class CrossSystemIntegrationTest {
 
         // A pipe holds nothing, so the run needs somewhere to put the water: pump -> pipe -> tank.
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, pipe, "atlas:fluid_pipe")
 
         val tank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
-        TestHelper.addToRegistry(fluidRegistry, tank, "atlas:fluid_container")
+        TestHelper.addToRegistry(registry, tank, "atlas:fluid_container")
 
         // Step 2: the pump hands its unit to the pipe, and the run carries it to the tank
         pump.callFluidUpdate()

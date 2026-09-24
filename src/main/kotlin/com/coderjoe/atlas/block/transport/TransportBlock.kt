@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.block.transport
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.BlockRegistry
 import org.bukkit.Location
 
 abstract class TransportBlock(
@@ -11,9 +10,5 @@ abstract class TransportBlock(
 
     override fun blockUpdate() {
         transportUpdate()
-    }
-
-    override fun getRegistry(): BlockRegistry<*> {
-        return TransportBlockRegistry.instance ?: throw IllegalStateException("TransportBlockRegistry not initialized")
     }
 }

@@ -11,17 +11,26 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import kotlin.collections.get
 
-class BlockPersistence<T : AtlasBlock>(
+class BlockPersistence(
     private val plugin: JavaPlugin,
     private val fileName: String,
     private val yamlKey: String,
-    private val factory: BlockFactory<T>,
+    private val factory: BlockFactory,
+    /**
+     * Which blocks in the shared registry belong in this file.
+     *
+     * Scaffolding with a known end date: one registry now holds every block, but there are still
+     * three save files until step 2.6 merges them, so each file has to pick its own family out of
+     * the shared index. The three predicates are exhaustive and never overlap, so nothing is
+     * dropped and nothing is written twice.
+     */
+    private val owns: (AtlasBlock) -> Boolean,
 ) {
     private val dataFile = File(plugin.dataFolder, fileName)
 
-    fun save(registry: BlockRegistry<T>) {
+    fun save(registry: BlockRegistry) {
         val config = YamlConfiguration()
-        val blocksWithIds = registry.getAllBlocksWithIds()
+        val blocksWithIds = registry.getAllBlocksWithIds().filter { (block, _) -> owns(block) }
 
         plugin.logger.atlasInfo("Saving ${blocksWithIds.size} blocks to $fileName...")
 
@@ -55,7 +64,7 @@ class BlockPersistence<T : AtlasBlock>(
         }
     }
 
-    fun load(registry: BlockRegistry<T>) {
+    fun load(registry: BlockRegistry) {
         if (!dataFile.exists()) {
             plugin.logger.atlasInfo("No $fileName data file found, starting fresh")
             return

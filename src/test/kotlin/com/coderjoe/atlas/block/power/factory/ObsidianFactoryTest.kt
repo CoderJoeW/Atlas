@@ -1,10 +1,9 @@
 package com.coderjoe.atlas.block.power.factory
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidContainer
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.testing.TestHelper
 import com.coderjoe.atlas.testing.TestHelper.callFluidUpdate
@@ -56,14 +55,13 @@ class ObsidianFactoryTest {
 
     @Test
     fun `does not generate when only water available`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
         gen.currentPower = 25
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             gen,
             "atlas:obsidian_factory",
         )
@@ -72,7 +70,7 @@ class ObsidianFactoryTest {
         val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            fluidRegistry,
+            registry,
             pipe,
             "atlas:fluid_container",
         )
@@ -85,14 +83,13 @@ class ObsidianFactoryTest {
 
     @Test
     fun `does not generate when only lava available`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
         gen.currentPower = 100
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             gen,
             "atlas:obsidian_factory",
         )
@@ -101,7 +98,7 @@ class ObsidianFactoryTest {
         val pipe = FluidContainer(pipeLoc)
         pipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            fluidRegistry,
+            registry,
             pipe,
             "atlas:fluid_container",
         )
@@ -114,14 +111,13 @@ class ObsidianFactoryTest {
 
     @Test
     fun `does not generate when insufficient power`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
         gen.currentPower = 24
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             gen,
             "atlas:obsidian_factory",
         )
@@ -131,7 +127,7 @@ class ObsidianFactoryTest {
         val waterPipe = FluidContainer(waterPipeLoc)
         waterPipe.storeFluid(FluidType.WATER)
         TestHelper.addToRegistry(
-            fluidRegistry,
+            registry,
             waterPipe,
             "atlas:fluid_container",
         )
@@ -141,7 +137,7 @@ class ObsidianFactoryTest {
         val lavaPipe = FluidContainer(lavaPipeLoc)
         lavaPipe.storeFluid(FluidType.LAVA)
         TestHelper.addToRegistry(
-            fluidRegistry,
+            registry,
             lavaPipe,
             "atlas:fluid_container",
         )
@@ -158,11 +154,11 @@ class ObsidianFactoryTest {
         // Fluid arrives by push now (see MaterialFactory.acceptFluid), so the factory itself
         // never touches the registry - a network hands it a unit directly, exactly as it would
         // via FluidNetwork.transfer(). The pipe-mediated path is covered end to end below.
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val gen = ObsidianFactory(TestHelper.createLocation())
         gen.currentPower = 25
-        TestHelper.addToRegistry(powerRegistry, gen, "atlas:obsidian_factory")
+        TestHelper.addToRegistry(registry, gen, "atlas:obsidian_factory")
 
         assertTrue(gen.acceptFluid(BlockFace.WEST, FluidType.WATER))
         assertTrue(gen.acceptFluid(BlockFace.EAST, FluidType.LAVA))
@@ -178,25 +174,24 @@ class ObsidianFactoryTest {
 
     @Test
     fun `produces when water and lava are pushed in through real fluid pipes`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
         gen.currentPower = 25
-        TestHelper.addToRegistry(powerRegistry, gen, "atlas:obsidian_factory")
+        TestHelper.addToRegistry(registry, gen, "atlas:obsidian_factory")
 
         val waterPipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
-        TestHelper.addToRegistry(fluidRegistry, waterPipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, waterPipe, "atlas:fluid_pipe")
         val waterTank = FluidContainer(TestHelper.createLocation(0.0, 64.0, -2.0))
         waterTank.storeFluid(FluidType.WATER)
-        TestHelper.addToRegistry(fluidRegistry, waterTank, "atlas:fluid_container")
+        TestHelper.addToRegistry(registry, waterTank, "atlas:fluid_container")
 
         val lavaPipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 1.0))
-        TestHelper.addToRegistry(fluidRegistry, lavaPipe, "atlas:fluid_pipe")
+        TestHelper.addToRegistry(registry, lavaPipe, "atlas:fluid_pipe")
         val lavaTank = FluidContainer(TestHelper.createLocation(0.0, 64.0, 2.0))
         lavaTank.storeFluid(FluidType.LAVA)
-        TestHelper.addToRegistry(fluidRegistry, lavaTank, "atlas:fluid_container")
+        TestHelper.addToRegistry(registry, lavaTank, "atlas:fluid_container")
 
         waterPipe.callFluidUpdate()
         lavaPipe.callFluidUpdate()
@@ -223,13 +218,12 @@ class ObsidianFactoryTest {
 
     @Test
     fun `accumulates power over multiple ticks`() {
-        FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
         val genLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val gen = ObsidianFactory(genLoc)
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             gen,
             "atlas:obsidian_factory",
         )
@@ -239,7 +233,7 @@ class ObsidianFactoryTest {
             SmallBattery(batteryLoc)
         battery.currentPower = 10
         TestHelper.addToRegistry(
-            powerRegistry,
+            registry,
             battery,
             "atlas:small_battery",
         )

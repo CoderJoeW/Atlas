@@ -1,11 +1,9 @@
 package com.coderjoe.atlas
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.power.PowerBlockFactory
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
-import com.coderjoe.atlas.block.transport.TransportBlockRegistry
 import com.coderjoe.atlas.dialog.AtlasBlockDialog
 import com.coderjoe.atlas.testing.TestHelper
 import org.junit.jupiter.api.AfterEach
@@ -47,24 +45,11 @@ class AtlasPluginTest {
     }
 
     @Test
-    fun `power registry is set after creation`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        assertNotNull(PowerBlockRegistry.instance)
-        assertSame(registry, PowerBlockRegistry.instance)
-    }
+    fun `the registry is discoverable after creation`() {
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
-    @Test
-    fun `fluid registry is set after creation`() {
-        val registry = FluidBlockRegistry(TestHelper.mockPlugin)
-        assertNotNull(FluidBlockRegistry.instance)
-        assertSame(registry, FluidBlockRegistry.instance)
-    }
-
-    @Test
-    fun `transport registry is set after creation`() {
-        val registry = TransportBlockRegistry(TestHelper.mockPlugin)
-        assertNotNull(TransportBlockRegistry.instance)
-        assertSame(registry, TransportBlockRegistry.instance)
+        assertNotNull(BlockRegistry.active)
+        assertSame(registry, BlockRegistry.active)
     }
 
     @Test
@@ -75,27 +60,12 @@ class AtlasPluginTest {
     }
 
     @Test
-    fun `stopAll clears power blocks`() {
-        TestHelper.initPowerFactory()
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
-        registry.stopAll()
-        assertEquals(0, registry.getAllBlocks().size)
-    }
+    fun `stopAll clears the registry`() {
+        val registry = BlockRegistry(TestHelper.mockPlugin)
 
-    @Test
-    fun `stopAll clears fluid blocks`() {
-        TestHelper.initFluidFactory()
-        val registry = FluidBlockRegistry(TestHelper.mockPlugin)
         registry.stopAll()
+
         assertEquals(0, registry.getAllBlocksWithIds().size)
-    }
-
-    @Test
-    fun `stopAll clears transport blocks`() {
-        TestHelper.initTransportFactory()
-        val registry = TransportBlockRegistry(TestHelper.mockPlugin)
-        registry.stopAll()
-        assertEquals(0, registry.getAllTransportBlocksWithIds().size)
     }
 
     @Test

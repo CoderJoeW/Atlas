@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.block.fluid.block
 
-import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.StatusLine
@@ -10,7 +10,6 @@ import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.capability.PowerConsumer
 import com.coderjoe.atlas.block.fluid.FluidBlock
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
@@ -146,10 +145,11 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
      * even while it has nowhere to deliver yet, because it is still connected.
      */
     fun connections(): Set<BlockFace> {
+        val registry = BlockRegistry.active ?: return emptySet()
         return ADJACENT_FACES.filter { face ->
             val back = face.oppositeFace
 
-            when (val neighbor = AtlasBlocks.adjacent(location, face)) {
+            when (val neighbor = registry.getAdjacentBlock(location, face)) {
                 is FluidPipe -> true
                 is FluidBlock -> neighbor.canAcceptFluid(back)
                 // A machine from another system is fed straight off the pump when it sits against
@@ -201,31 +201,33 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
      * a tank sitting straight against the pump is fed directly. Returns whether the unit moved.
      */
     private fun pushFluid(): Boolean {
-        val registry = FluidBlockRegistry.instance ?: return false
+        val registry = BlockRegistry.active ?: return false
         val fluid = storedFluid
         if (fluid == FluidType.NONE) return false
 
         for (face in ADJACENT_FACES) {
-            val neighbor = registry.getAdjacentBlock(location, face)
-            if (neighbor != null) {
-                if (!neighbor.canAcceptFluid(face.oppositeFace, fluid)) continue
-                if (neighbor.storeFluid(fluid)) {
-                    removeFluid()
-                    return true
-                }
-                continue
-            }
-
-            // Nothing in the fluid registry, but a block from another system may still be a
-            // consumer - a material factory is one - and it has to be pushed to like anything
-            // else rather than left to reach back for what it needs. The same fallback
-            // PowerBlock.pushPowerToward makes for a pump on the power side.
-            val consumer = AtlasBlocks.adjacent(location, face) as? FluidConsumer ?: continue
             val back = face.oppositeFace
-            if (!consumer.drawsFluidFrom(back) || !consumer.wantsFluid(fluid)) continue
-            if (consumer.acceptFluid(back, fluid)) {
-                removeFluid()
-                return true
+            when (val neighbor = registry.getAdjacentBlock(location, face)) {
+                is FluidBlock -> {
+                    if (!neighbor.canAcceptFluid(back, fluid)) continue
+                    if (neighbor.storeFluid(fluid)) {
+                        removeFluid()
+                        return true
+                    }
+                }
+
+                // A block that takes fluid without being a fluid block - a material factory is
+                // one - is pushed to like anything else rather than left to reach back for what
+                // it needs. The same fold PowerBlock.pushPowerToward makes on the power side.
+                is FluidConsumer -> {
+                    if (!neighbor.drawsFluidFrom(back) || !neighbor.wantsFluid(fluid)) continue
+                    if (neighbor.acceptFluid(back, fluid)) {
+                        removeFluid()
+                        return true
+                    }
+                }
+
+                else -> continue
             }
         }
         return false

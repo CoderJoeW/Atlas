@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.block.fluid.block
 
 import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.testing.TestHelper
 import com.coderjoe.atlas.testing.TestHelper.callFluidUpdate
 import org.bukkit.block.BlockFace
@@ -234,7 +234,7 @@ class FluidContainerTest {
 
     @Test
     fun `a pipe run delivers into the tank when the pump pushes`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
@@ -258,7 +258,7 @@ class FluidContainerTest {
 
     @Test
     fun `a pump beside the tank fills it directly`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 1.0))
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
@@ -276,7 +276,7 @@ class FluidContainerTest {
 
     @Test
     fun `a tank never drains the tank next to it`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val full = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         full.storeFluid(FluidType.LAVA)
@@ -294,7 +294,7 @@ class FluidContainerTest {
 
     @Test
     fun `container does not fill when full`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         container.restoreState(FluidType.WATER, FluidContainer.MAX_CAPACITY)
@@ -316,7 +316,7 @@ class FluidContainerTest {
 
     @Test
     fun `container rejects a fluid that does not match what it holds`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         container.restoreState(FluidType.WATER, 1)
@@ -341,7 +341,7 @@ class FluidContainerTest {
 
     @Test
     fun `a run offers what a container is giving through its front`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val container = FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))
         container.restoreState(FluidType.WATER, 1)
@@ -357,7 +357,7 @@ class FluidContainerTest {
 
     @Test
     fun `pipe cannot pull from container non-front face`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val container =
             FluidContainer(TestHelper.createLocation(0.0, 64.0, 0.0))

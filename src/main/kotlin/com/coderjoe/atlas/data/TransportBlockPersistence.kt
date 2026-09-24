@@ -5,16 +5,17 @@ import com.coderjoe.atlas.block.transport.TransportBlock
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
 import org.bukkit.plugin.java.JavaPlugin
 
-class TransportBlockPersistence(plugin: JavaPlugin) : BlockPersister<TransportBlock> {
+class TransportBlockPersistence(plugin: JavaPlugin) : BlockPersister {
     private val persistence =
-        BlockPersistence<TransportBlock>(
+        BlockPersistence(
             plugin = plugin,
             fileName = "transport_blocks.yml",
             yamlKey = "transport_blocks",
             factory = TransportBlockFactory,
+            owns = { it is TransportBlock },
         )
 
-    override fun save(registry: BlockRegistry<TransportBlock>) = persistence.save(registry)
+    override fun save(registry: BlockRegistry) = persistence.save(registry)
 
-    override fun load(registry: BlockRegistry<TransportBlock>) = persistence.load(registry)
+    override fun load(registry: BlockRegistry) = persistence.load(registry)
 }

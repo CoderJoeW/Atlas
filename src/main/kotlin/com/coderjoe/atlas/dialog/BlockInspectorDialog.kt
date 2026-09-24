@@ -17,7 +17,7 @@ object BlockInspectorDialog {
     fun show(
         player: Player,
         block: AtlasBlock,
-        registry: BlockRegistry<*>,
+        registry: BlockRegistry,
         catalog: BlockCatalog,
     ) {
         AtlasBlockDialog.showDialog(player, block, registry) { viewer, live, onClose ->
