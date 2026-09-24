@@ -14,7 +14,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>2.4.10</kotlin.version>
         <java.version>25</java.version>
-        <jacoco.version>0.8.14</jacoco.version>
+        <jacoco.version>0.8.15</jacoco.version>
         <!-- Filled in by jacoco:prepare-agent and consumed by surefire's argLine below.
              Declared empty here so a build that skips prepare-agent still substitutes. -->
         <jacocoArgLine/>
