@@ -29,7 +29,7 @@
         <craft-engine.version>26.9.1</craft-engine.version>
         <junit-jupiter.version>6.1.3</junit-jupiter.version>
         <mockk.version>1.14.11</mockk.version>
-        <byte-buddy.version>1.18.12</byte-buddy.version>
+        <byte-buddy.version>1.18.14</byte-buddy.version>
         <archunit.version>1.4.2</archunit.version>
     </properties>
 
