@@ -12,8 +12,6 @@ import com.coderjoe.atlas.block.BlockRegistry
  */
 object PowerNetworks {
     fun networkFor(start: PowerCable): PowerNetwork {
-        val registry = BlockRegistry.active ?: return PowerNetwork(listOf(start))
-
         val found = LinkedHashMap<String, PowerCable>()
         val queue = ArrayDeque<PowerCable>()
         found[BlockRegistry.locationKey(start.location)] = start
@@ -22,7 +20,7 @@ object PowerNetworks {
         while (queue.isNotEmpty()) {
             val cable = queue.removeFirst()
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.getAdjacentBlock(cable.location, face)
+                val neighbor = cable.neighbor(face)
                 if (neighbor !is PowerCable) continue
                 val key = BlockRegistry.locationKey(neighbor.location)
                 if (found.putIfAbsent(key, neighbor) == null) {

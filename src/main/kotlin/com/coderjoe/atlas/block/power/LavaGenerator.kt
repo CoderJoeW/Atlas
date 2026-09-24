@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.BlockDescriptor
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
@@ -104,7 +103,7 @@ class LavaGenerator(location: Location) : PowerBlock(location, maxStorage = 20),
                 startIndex = nextOutputIndex,
                 // Every Atlas block, not just power blocks: a fluid pump takes power too, and
                 // isCandidate below has to be free to accept it.
-                getAdjacent = { face -> BlockRegistry.active?.getAdjacentBlock(location, face) },
+                getAdjacent = { face -> neighbor(face) },
                 hasResource = { hasPower() },
                 isCandidate = { target ->
                     (target as? PowerBlock)?.canAcceptPower() == true ||

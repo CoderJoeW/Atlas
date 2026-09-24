@@ -1,6 +1,5 @@
 package com.coderjoe.atlas.block.power.mine
 
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.ItemInlet
 import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.pushRoundRobinTo
@@ -15,20 +14,20 @@ import org.bukkit.inventory.ItemStack
 /**
  * A mine: a timbered shaft mouth that turns stored power straight into ore.
  *
- * Every mine works the same way and differs only in what it digs, how much power a haul costs and
- * how long the bore takes: the rarer the ore, the slower and thirstier the rig. The machine does
- * not touch the world around it - the shaft is fiction - so a mine can be built anywhere a cable
- * reaches and never runs a deposit dry.
+ * Every mine works the same way and differs only in its [MineTier]: what it digs, how much power a
+ * haul costs and how long the bore takes - the rarer the ore, the slower and thirstier the rig. The
+ * machine does not touch the world around it - the shaft is fiction - so a mine can be built
+ * anywhere a cable reaches and never runs a deposit dry.
  *
  * Idle and digging are one block definition with a `stage` property rather than two blocks, the
  * shape the factories use for `powered` - but an int rather than a boolean, because a bore takes
  * between 200 and 1000 ticks and has to read as progress rather than as a light switch.
  */
-abstract class Mine(
+class Mine(
     location: Location,
-    maxStorage: Int,
+    val tier: MineTier,
     facing: BlockFace = BlockFace.NORTH,
-) : PowerBlock(location, maxStorage) {
+) : PowerBlock(location, tier.maxStorage) {
     override val canReceivePower: Boolean = true
 
     /**
@@ -64,8 +63,9 @@ abstract class Mine(
     var drillStage: Int = IDLE_STAGE
         private set
 
-    /** Power drawn per haul. Charged the moment a haul is committed, not when it completes. */
-    abstract val powerPerHaul: Int
+    override val baseBlockId: String get() = tier.blockId
+
+    val powerPerHaul: Int get() = tier.powerPerHaul
 
     /**
      * How long a committed haul takes to finish, no matter how much power is banked.
@@ -75,10 +75,9 @@ abstract class Mine(
      * have nothing left to gate it - the whole reason a second mine of the same tier is worth
      * building is that a single one cannot drill faster than this, however much power it is fed.
      */
-    abstract val cycleTicks: Long
+    val cycleTicks: Long get() = tier.cycleTicks
 
-    /** What a completed bore drops. */
-    abstract val output: Material
+    val output: Material get() = tier.output
 
     /** Round-robins hauls across every attached conveyor belt, so several belts share the output. */
     private var nextBeltIndex: Int = 0
@@ -122,7 +121,7 @@ abstract class Mine(
             pushRoundRobinTo(
                 outputFaces = ADJACENT_FACES,
                 startIndex = nextBeltIndex,
-                getAdjacent = { face -> BlockRegistry.active?.getAdjacentBlock(location, face) },
+                getAdjacent = { face -> neighbor(face) },
                 hasResource = { true },
                 isCandidate = { target -> target is ItemInlet },
                 tryPush = { target, _ ->
@@ -188,7 +187,7 @@ abstract class Mine(
         if (completedHaul) {
             world.dropItem(haulDestination(), ItemStack(output))
             plugin.logger.atlasInfo(
-                "${this::class.simpleName} at ${location.coordinates} " +
+                "${tier.displayName} at ${location.coordinates} " +
                     "produced 1 ${output.name.lowercase()}",
             )
         }

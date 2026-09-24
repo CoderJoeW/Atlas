@@ -3,8 +3,8 @@ package com.coderjoe.atlas.listener
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
-import com.coderjoe.atlas.block.fluid.block.FluidPump
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.block.fluid.FluidPump
+import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -26,8 +26,8 @@ class FluidBlockListenerTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        registry = BlockRegistry(TestHelper.mockPlugin)
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
         val system =
             BlockSystem(
                 name = "fluid",
@@ -35,17 +35,17 @@ class FluidBlockListenerTest {
                 factory = FluidBlockFactory,
                 descriptors = emptyMap(),
             )
-        listener = AtlasBlockListener(TestHelper.mockPlugin, registry, listOf(system)) { _, _ -> }
+        listener = AtlasBlockListener(MockServer.plugin, registry, listOf(system)) { _, _ -> }
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `onBlockPlace skips when in updatingLocations`() {
-        val loc = TestHelper.createLocation()
+        val loc = MockServer.createLocation()
         val key = BlockRegistry.locationKey(loc)
         registry.updatingLocations.add(key)
 
@@ -60,7 +60,7 @@ class FluidBlockListenerTest {
 
     @Test
     fun `onBlockBreak skips when in updatingLocations`() {
-        val loc = TestHelper.createLocation()
+        val loc = MockServer.createLocation()
         val key = BlockRegistry.locationKey(loc)
         registry.updatingLocations.add(key)
 
@@ -74,13 +74,13 @@ class FluidBlockListenerTest {
 
     @Test
     fun `onBlockBreak unregisters fluid block`() {
-        val loc = TestHelper.createLocation()
+        val loc = MockServer.createLocation()
         val pump = FluidPump(loc)
-        TestHelper.addToRegistry(registry, pump, "atlas:fluid_pump")
+        registry.track(pump, "atlas:fluid_pump")
 
         val block = mockk<Block>(relaxed = true)
         every { block.location } returns loc
-        every { block.world } returns TestHelper.mockWorld
+        every { block.world } returns MockServer.world
         val event = mockk<BlockBreakEvent>(relaxed = true)
         every { event.block } returns block
 
@@ -97,7 +97,7 @@ class FluidBlockListenerTest {
     fun `onPlayerInteract only RIGHT_CLICK_BLOCK triggers`() {
         val player = mockk<Player>(relaxed = true)
         val block = mockk<Block>(relaxed = true)
-        every { block.location } returns TestHelper.createLocation()
+        every { block.location } returns MockServer.createLocation()
 
         val event = mockk<PlayerInteractEvent>(relaxed = true)
         every { event.action } returns Action.LEFT_CLICK_BLOCK
@@ -113,7 +113,7 @@ class FluidBlockListenerTest {
         val player = mockk<Player>(relaxed = true)
         every { player.isSneaking } returns true
         val block = mockk<Block>(relaxed = true)
-        every { block.location } returns TestHelper.createLocation()
+        every { block.location } returns MockServer.createLocation()
 
         val event = mockk<PlayerInteractEvent>(relaxed = true)
         every { event.action } returns Action.RIGHT_CLICK_BLOCK
@@ -129,7 +129,7 @@ class FluidBlockListenerTest {
         val player = mockk<Player>(relaxed = true)
         every { player.isSneaking } returns false
         val block = mockk<Block>(relaxed = true)
-        every { block.location } returns TestHelper.createLocation(99.0, 99.0, 99.0)
+        every { block.location } returns MockServer.createLocation(99.0, 99.0, 99.0)
 
         val event = mockk<PlayerInteractEvent>(relaxed = true)
         every { event.action } returns Action.RIGHT_CLICK_BLOCK

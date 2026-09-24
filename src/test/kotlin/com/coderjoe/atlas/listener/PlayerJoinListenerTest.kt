@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.listener
 
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.entity.Player
@@ -13,19 +13,19 @@ import org.junit.jupiter.api.Test
 class PlayerJoinListenerTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `onPlayerJoin does not throw`() {
         val listener = PlayerJoinListener()
         val player = mockk<Player>(relaxed = true)
-        every { player.server } returns TestHelper.mockServer
+        every { player.server } returns MockServer.server
         val event = mockk<PlayerJoinEvent>(relaxed = true)
         every { event.player } returns player
 

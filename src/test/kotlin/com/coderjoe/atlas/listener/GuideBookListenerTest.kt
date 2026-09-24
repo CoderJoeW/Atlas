@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.listener
 
 import com.coderjoe.atlas.item.GuideBook
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.MockServer
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -19,7 +19,7 @@ import java.util.UUID
 class GuideBookListenerTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
         mockkObject(GuideBook)
         every { GuideBook.giveToPlayer(any()) } just Runs
     }
@@ -27,12 +27,12 @@ class GuideBookListenerTest {
     @AfterEach
     fun teardown() {
         unmockkObject(GuideBook)
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `first join gives book`() {
-        val listener = GuideBookListener(TestHelper.mockPlugin)
+        val listener = GuideBookListener(MockServer.plugin)
 
         val player = mockk<Player>(relaxed = true)
         every { player.uniqueId } returns UUID.randomUUID()
@@ -47,7 +47,7 @@ class GuideBookListenerTest {
 
     @Test
     fun `repeat join does not give duplicate`() {
-        val listener = GuideBookListener(TestHelper.mockPlugin)
+        val listener = GuideBookListener(MockServer.plugin)
         val uuid = UUID.randomUUID()
 
         val player = mockk<Player>(relaxed = true)

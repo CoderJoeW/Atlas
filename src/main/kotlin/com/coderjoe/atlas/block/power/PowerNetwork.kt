@@ -54,13 +54,12 @@ class PowerNetwork(val cables: List<PowerCable>) {
     private var nextSourceIndex: Int = 0
 
     fun terminals(): Pair<List<Terminal>, List<Terminal>> {
-        val registry = BlockRegistry.active ?: return emptyList<Terminal>() to emptyList()
         val sources = LinkedHashMap<String, Terminal>()
         val sinks = LinkedHashMap<String, Terminal>()
 
         for (cable in cables) {
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.adjacentOf<PowerBlock>(cable.location, face) ?: continue
+                val neighbor = cable.neighbor(face) as? PowerBlock ?: continue
                 if (neighbor is PowerCable) continue
 
                 val back = face.oppositeFace
@@ -79,11 +78,10 @@ class PowerNetwork(val cables: List<PowerCable>) {
 
     /** The blocks on this run's edge that take power but are not power blocks themselves. */
     fun consumers(): List<ConsumerTerminal> {
-        val registry = BlockRegistry.active ?: return emptyList()
         val found = LinkedHashMap<String, ConsumerTerminal>()
         for (cable in cables) {
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.getAdjacentBlock(cable.location, face) ?: continue
+                val neighbor = cable.neighbor(face) ?: continue
                 if (neighbor is PowerBlock) continue
                 val consumer = neighbor as? PowerConsumer ?: continue
 

@@ -4,7 +4,7 @@ import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -24,8 +24,8 @@ class PowerNetworkReportTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        registry = BlockRegistry(TestHelper.mockPlugin)
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
         player = mockk(relaxed = true)
         messages = mutableListOf()
         val captured = slot<Component>()
@@ -34,7 +34,7 @@ class PowerNetworkReportTest {
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     /** Every line the readout produced, flattened so assertions can look for wording. */
@@ -42,9 +42,9 @@ class PowerNetworkReportTest {
 
     @Test
     fun `a block with no cable reports as standalone`() {
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 64.0, 0.0))
+        val battery = SmallBattery(MockServer.createLocation(0.0, 64.0, 0.0))
         battery.currentPower = 7
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        registry.track(battery, "atlas:small_battery")
 
         PowerNetworkReport.report(player, battery)
 
@@ -54,15 +54,15 @@ class PowerNetworkReportTest {
 
     @Test
     fun `a run with a producer and a consumer reports as flowing`() {
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(cable, "atlas:power_cable")
 
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 65.0, 0.0))
         panel.currentPower = 3
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0))
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        val battery = SmallBattery(MockServer.createLocation(0.0, 63.0, 0.0))
+        registry.track(battery, "atlas:small_battery")
 
         PowerNetworkReport.report(player, cable)
 
@@ -71,11 +71,11 @@ class PowerNetworkReportTest {
 
     @Test
     fun `a run with no generator says so`() {
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(cable, "atlas:power_cable")
 
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0))
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        val battery = SmallBattery(MockServer.createLocation(0.0, 63.0, 0.0))
+        registry.track(battery, "atlas:small_battery")
 
         PowerNetworkReport.report(player, cable)
 
@@ -84,12 +84,12 @@ class PowerNetworkReportTest {
 
     @Test
     fun `a run with nothing that can take power says so`() {
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(cable, "atlas:power_cable")
 
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 65.0, 0.0))
         panel.currentPower = 3
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
         PowerNetworkReport.report(player, cable)
 
@@ -98,8 +98,8 @@ class PowerNetworkReportTest {
 
     @Test
     fun `an empty run says nothing is attached`() {
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(cable, "atlas:power_cable")
 
         PowerNetworkReport.report(player, cable)
 
@@ -108,14 +108,14 @@ class PowerNetworkReportTest {
 
     @Test
     fun `reporting on a block beside the run finds that run`() {
-        val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
-        val second = PowerCable(TestHelper.createLocation(0.0, 63.0, 0.0))
-        TestHelper.addToRegistry(registry, second, "atlas:power_cable")
+        val cable = PowerCable(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(cable, "atlas:power_cable")
+        val second = PowerCable(MockServer.createLocation(0.0, 63.0, 0.0))
+        registry.track(second, "atlas:power_cable")
 
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 65.0, 0.0))
         panel.currentPower = 1
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
         // asked about the panel, not the cable, and still reports the run it feeds
         PowerNetworkReport.report(player, panel)

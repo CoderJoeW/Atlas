@@ -1,6 +1,5 @@
 package com.coderjoe.atlas.block.power.factory
 
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.capability.ItemInlet
@@ -121,7 +120,7 @@ abstract class MaterialFactory(
             pushRoundRobinTo(
                 outputFaces = ADJACENT_FACES,
                 startIndex = nextBeltIndex,
-                getAdjacent = { face -> BlockRegistry.active?.getAdjacentBlock(location, face) },
+                getAdjacent = { face -> neighbor(face) },
                 hasResource = { true },
                 isCandidate = { target -> target is ItemInlet },
                 tryPush = { target, _ ->

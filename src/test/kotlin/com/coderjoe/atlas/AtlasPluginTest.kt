@@ -4,64 +4,56 @@ import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
 import com.coderjoe.atlas.block.power.PowerBlockFactory
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
-import com.coderjoe.atlas.dialog.AtlasBlockDialog
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.dialog.BlockInspectorDialog
+import com.coderjoe.atlas.testing.Blocks
+import com.coderjoe.atlas.testing.MockServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class AtlasPluginTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        AtlasBlockDialog.init(TestHelper.mockPlugin)
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `power system initializes with 19 block types`() {
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
         assertEquals(19, PowerBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test
     fun `fluid system initializes with 3 block types`() {
-        TestHelper.initFluidFactory()
+        Blocks.initFluidFactory()
         assertEquals(3, FluidBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test
     fun `transport system initializes with 1 block type`() {
-        TestHelper.initTransportFactory()
+        Blocks.initTransportFactory()
         assertEquals(1, TransportBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test
-    fun `the registry is discoverable after creation`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
-
-        assertNotNull(BlockRegistry.active)
-        assertSame(registry, BlockRegistry.active)
-    }
-
-    @Test
     fun `dialog cleanup does not throw`() {
+        val dialog = BlockInspectorDialog(MockServer.plugin, BlockRegistry(MockServer.plugin), AtlasBlockTypes.catalog)
+
         assertDoesNotThrow {
-            AtlasBlockDialog.cleanup()
+            dialog.cleanup()
         }
     }
 
     @Test
     fun `stopAll clears the registry`() {
-        val registry = BlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(MockServer.plugin)
 
         registry.stopAll()
 

@@ -4,7 +4,7 @@ import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.power.PowerBlockFactory
 import com.coderjoe.atlas.block.power.SmallSolarPanel
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -25,8 +25,8 @@ class PowerBlockListenerTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        registry = BlockRegistry(TestHelper.mockPlugin)
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
         val system =
             BlockSystem(
                 name = "power",
@@ -35,17 +35,17 @@ class PowerBlockListenerTest {
                 descriptors = emptyMap(),
             )
         listener =
-            AtlasBlockListener(TestHelper.mockPlugin, registry, listOf(system)) { _, _ -> }
+            AtlasBlockListener(MockServer.plugin, registry, listOf(system)) { _, _ -> }
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `onBlockPlace skips when location in updatingLocations`() {
-        val loc = TestHelper.createLocation()
+        val loc = MockServer.createLocation()
         val key = BlockRegistry.locationKey(loc)
         registry.updatingLocations.add(key)
 
@@ -60,7 +60,7 @@ class PowerBlockListenerTest {
 
     @Test
     fun `onBlockBreak skips when in updatingLocations`() {
-        val loc = TestHelper.createLocation()
+        val loc = MockServer.createLocation()
         val key = BlockRegistry.locationKey(loc)
         registry.updatingLocations.add(key)
 
@@ -74,17 +74,16 @@ class PowerBlockListenerTest {
 
     @Test
     fun `onBlockBreak unregisters power block`() {
-        val loc = TestHelper.createLocation()
+        val loc = MockServer.createLocation()
         val panel = SmallSolarPanel(loc)
-        TestHelper.addToRegistry(
-            registry,
+        registry.track(
             panel,
             "atlas:small_solar_panel",
         )
 
         val block = mockk<Block>(relaxed = true)
         every { block.location } returns loc
-        every { block.world } returns TestHelper.mockWorld
+        every { block.world } returns MockServer.world
         val event = mockk<BlockBreakEvent>(relaxed = true)
         every { event.block } returns block
 
@@ -101,7 +100,7 @@ class PowerBlockListenerTest {
     fun `onPlayerInteract only triggers on RIGHT_CLICK_BLOCK`() {
         val player = mockk<Player>(relaxed = true)
         val block = mockk<Block>(relaxed = true)
-        every { block.location } returns TestHelper.createLocation()
+        every { block.location } returns MockServer.createLocation()
 
         val event = mockk<PlayerInteractEvent>(relaxed = true)
         every { event.action } returns Action.LEFT_CLICK_BLOCK
@@ -117,7 +116,7 @@ class PowerBlockListenerTest {
         val player = mockk<Player>(relaxed = true)
         every { player.isSneaking } returns true
         val block = mockk<Block>(relaxed = true)
-        every { block.location } returns TestHelper.createLocation()
+        every { block.location } returns MockServer.createLocation()
 
         val event = mockk<PlayerInteractEvent>(relaxed = true)
         every { event.action } returns Action.RIGHT_CLICK_BLOCK
@@ -134,7 +133,7 @@ class PowerBlockListenerTest {
         every { player.isSneaking } returns false
         val block = mockk<Block>(relaxed = true)
         every { block.location } returns
-            TestHelper.createLocation(
+            MockServer.createLocation(
                 99.0, 99.0, 99.0,
             )
 

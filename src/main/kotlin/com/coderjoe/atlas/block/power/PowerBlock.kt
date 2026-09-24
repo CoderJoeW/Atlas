@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.Gauge
 import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.capability.PowerConsumer
@@ -112,7 +111,7 @@ abstract class PowerBlock(
         amount: Int = currentPower,
     ): Int {
         if (amount <= 0) return 0
-        val neighbor = BlockRegistry.active?.getAdjacentBlock(location, face) ?: return 0
+        val neighbor = neighbor(face) ?: return 0
 
         if (neighbor is PowerBlock) {
             if (!neighbor.canAcceptPower()) return 0
@@ -137,10 +136,9 @@ abstract class PowerBlock(
 
     protected fun pullPowerFromNeighbors() {
         if (!canAcceptPower()) return
-        val registry = BlockRegistry.active ?: return
         for (face in ADJACENT_FACES) {
             if (!canAcceptPower()) break
-            val neighbor = registry.adjacentOf<PowerBlock>(location, face) ?: continue
+            val neighbor = neighbor(face) as? PowerBlock ?: continue
             if (neighbor.hasPower()) {
                 val pulled = neighbor.removePowerToward(face.oppositeFace, 1)
                 if (pulled > 0) {
@@ -154,7 +152,7 @@ abstract class PowerBlock(
         CraftEngineHelper.setBooleanProperty(location, "powered", hasPower())
     }
 
-    protected abstract fun powerUpdate()
+    internal abstract fun powerUpdate()
 
     override fun writeSaveData(data: MutableMap<String, Any>) {
         data["currentPower"] = currentPower

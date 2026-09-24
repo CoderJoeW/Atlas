@@ -1,13 +1,12 @@
 package com.coderjoe.atlas
 
-import com.coderjoe.atlas.block.AtlasSubsystem
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
-import com.coderjoe.atlas.block.fluid.block.FluidContainer
-import com.coderjoe.atlas.block.fluid.block.FluidPipe
-import com.coderjoe.atlas.block.fluid.block.FluidPump
+import com.coderjoe.atlas.block.fluid.FluidContainer
+import com.coderjoe.atlas.block.fluid.FluidPipe
+import com.coderjoe.atlas.block.fluid.FluidPump
 import com.coderjoe.atlas.block.power.LavaGenerator
 import com.coderjoe.atlas.block.power.PowerBlockFactory
 import com.coderjoe.atlas.block.power.PowerCable
@@ -15,20 +14,14 @@ import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.block.power.factory.CobblestoneFactory
 import com.coderjoe.atlas.block.power.factory.ObsidianFactory
-import com.coderjoe.atlas.block.power.mine.CoalMine
-import com.coderjoe.atlas.block.power.mine.DiamondMine
-import com.coderjoe.atlas.block.power.mine.EmeraldMine
-import com.coderjoe.atlas.block.power.mine.GoldMine
-import com.coderjoe.atlas.block.power.mine.IronMine
-import com.coderjoe.atlas.block.power.mine.NetheriteMine
-import com.coderjoe.atlas.block.power.mine.RedstoneMine
+import com.coderjoe.atlas.block.power.mine.MineTier
+import com.coderjoe.atlas.block.transport.ConveyorBelt
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
-import com.coderjoe.atlas.block.transport.block.ConveyorBelt
 import com.coderjoe.atlas.craftengine.CraftEngineIntegration
+import com.coderjoe.atlas.data.AtlasSubsystem
 import com.coderjoe.atlas.data.FluidBlockPersistence
 import com.coderjoe.atlas.data.PowerBlockPersistence
 import com.coderjoe.atlas.data.TransportBlockPersistence
-import com.coderjoe.atlas.dialog.AtlasBlockDialog
 import com.coderjoe.atlas.dialog.BlockInspectorDialog
 import com.coderjoe.atlas.item.AtlasWrench
 import com.coderjoe.atlas.item.GuideBook
@@ -46,6 +39,7 @@ class Atlas : JavaPlugin() {
     private lateinit var powerSubsystem: AtlasSubsystem
     private lateinit var fluidSubsystem: AtlasSubsystem
     private lateinit var transportSubsystem: AtlasSubsystem
+    private var inspectorDialog: BlockInspectorDialog? = null
     private var autoSaveTask: BukkitTask? = null
 
     private val subsystems: List<AtlasSubsystem>
@@ -62,8 +56,6 @@ class Atlas : JavaPlugin() {
         craftEngineIntegration.initialize()
 
         server.pluginManager.registerEvents(PlayerJoinListener(), this)
-
-        AtlasBlockDialog.init(this)
 
         // One index for every block, whatever system it belongs to, so a lookup can no longer miss
         // a neighbour because it was filed somewhere else. The three subsystems still own a save
@@ -124,10 +116,10 @@ class Atlas : JavaPlugin() {
                 descriptors = transportSubsystem.descriptors,
             )
 
+        val dialog = BlockInspectorDialog(this, registry, AtlasBlockTypes.catalog)
+        inspectorDialog = dialog
         server.pluginManager.registerEvents(
-            AtlasBlockListener(this, registry, listOf(powerSystem, fluidSystem, transportSystem)) { player, block ->
-                BlockInspectorDialog.show(player, block, registry, AtlasBlockTypes.catalog)
-            },
+            AtlasBlockListener(this, registry, listOf(powerSystem, fluidSystem, transportSystem), dialog::show),
             this,
         )
 
@@ -152,7 +144,7 @@ class Atlas : JavaPlugin() {
 
         initializedSubsystems().forEach { it.save() }
 
-        AtlasBlockDialog.cleanup()
+        inspectorDialog?.cleanup()
 
         initializedSubsystems().forEach { it.stop() }
 
@@ -181,13 +173,7 @@ class Atlas : JavaPlugin() {
             LavaGenerator.descriptor,
             CobblestoneFactory.descriptor,
             ObsidianFactory.descriptor,
-            CoalMine.descriptor,
-            IronMine.descriptor,
-            RedstoneMine.descriptor,
-            GoldMine.descriptor,
-            EmeraldMine.descriptor,
-            DiamondMine.descriptor,
-            NetheriteMine.descriptor,
+            *MineTier.entries.map { it.descriptor }.toTypedArray(),
         ).associateBy { it.baseBlockId }
     }
 

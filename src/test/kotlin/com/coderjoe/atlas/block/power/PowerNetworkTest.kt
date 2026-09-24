@@ -1,8 +1,7 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.testing.TestHelper
-import com.coderjoe.atlas.testing.TestHelper.callPowerUpdate
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,13 +15,13 @@ class PowerNetworkTest {
 
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
-        registry = BlockRegistry(TestHelper.mockPlugin)
+        MockServer.setup()
+        registry = BlockRegistry(MockServer.plugin)
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     private fun cable(
@@ -30,8 +29,8 @@ class PowerNetworkTest {
         y: Double,
         z: Double,
     ): PowerCable =
-        PowerCable(TestHelper.createLocation(x, y, z)).also {
-            TestHelper.addToRegistry(registry, it, "atlas:power_cable")
+        PowerCable(MockServer.createLocation(x, y, z)).also {
+            registry.track(it, "atlas:power_cable")
         }
 
     @Test
@@ -54,8 +53,8 @@ class PowerNetworkTest {
 
     @Test
     fun `a cable joins a solar panel only from below its output face`() {
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(panel, "atlas:small_solar_panel")
 
         val beneath = cable(0.0, 63.0, 0.0)
         val beside = cable(0.0, 64.0, 1.0)
@@ -67,8 +66,8 @@ class PowerNetworkTest {
 
     @Test
     fun `a cable joins a battery on every side`() {
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 64.0, 0.0))
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        val battery = SmallBattery(MockServer.createLocation(0.0, 64.0, 0.0))
+        registry.track(battery, "atlas:small_battery")
 
         assertTrue(BlockFace.UP in cable(0.0, 63.0, 0.0).connections())
         assertTrue(BlockFace.DOWN in cable(0.0, 65.0, 0.0).connections())
@@ -77,9 +76,9 @@ class PowerNetworkTest {
 
     @Test
     fun `a full battery still shows its connection`() {
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 64.0, 0.0))
+        val battery = SmallBattery(MockServer.createLocation(0.0, 64.0, 0.0))
         battery.currentPower = battery.maxStorage
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        registry.track(battery, "atlas:small_battery")
 
         // connections describe the port, not the moment - a battery that fills up must not
         // appear to unplug itself
@@ -90,12 +89,12 @@ class PowerNetworkTest {
     fun `a block touching the run is sorted into producers and consumers`() {
         val run = cable(0.0, 64.0, 0.0)
 
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 65.0, 0.0))
         panel.currentPower = 3
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0))
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        val battery = SmallBattery(MockServer.createLocation(0.0, 63.0, 0.0))
+        registry.track(battery, "atlas:small_battery")
 
         val (sources, sinks) = PowerNetworks.networkFor(run).terminals()
 
@@ -112,9 +111,9 @@ class PowerNetworkTest {
         val run = cable(0.0, 64.0, 0.0)
 
         // panel beside the run: its only output face is its base, which points at nothing
-        val panel = SmallSolarPanel(TestHelper.createLocation(1.0, 64.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(1.0, 64.0, 0.0))
         panel.currentPower = 3
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
         val (sources, _) = PowerNetworks.networkFor(run).terminals()
         assertTrue(sources.isEmpty())
@@ -124,14 +123,14 @@ class PowerNetworkTest {
     fun `transfer shares power evenly between consumers`() {
         val run = cable(0.0, 64.0, 0.0)
 
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 65.0, 0.0))
         panel.currentPower = 4
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
-        val north = SmallBattery(TestHelper.createLocation(0.0, 64.0, -1.0))
-        val south = SmallBattery(TestHelper.createLocation(0.0, 64.0, 1.0))
+        val north = SmallBattery(MockServer.createLocation(0.0, 64.0, -1.0))
+        val south = SmallBattery(MockServer.createLocation(0.0, 64.0, 1.0))
         for (battery in listOf(north, south)) {
-            TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+            registry.track(battery, "atlas:small_battery")
         }
 
         val moved = PowerNetworks.networkFor(run).transfer()
@@ -145,8 +144,8 @@ class PowerNetworkTest {
     @Test
     fun `transfer does nothing without a producer`() {
         val run = cable(0.0, 64.0, 0.0)
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0))
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        val battery = SmallBattery(MockServer.createLocation(0.0, 63.0, 0.0))
+        registry.track(battery, "atlas:small_battery")
 
         assertEquals(0, PowerNetworks.networkFor(run).transfer())
         assertEquals(0, battery.currentPower)
@@ -156,9 +155,9 @@ class PowerNetworkTest {
     fun `a battery on the run is never made to feed itself`() {
         val run = cable(0.0, 64.0, 0.0)
 
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0))
+        val battery = SmallBattery(MockServer.createLocation(0.0, 63.0, 0.0))
         battery.currentPower = 5
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        registry.track(battery, "atlas:small_battery")
 
         // it is the only block on the run, so it is both the sole producer and the sole consumer
         assertEquals(0, PowerNetworks.networkFor(run).transfer())
@@ -170,26 +169,26 @@ class PowerNetworkTest {
         val run = cable(0.0, 64.0, 0.0)
 
         // a panel sitting on the cable with no consumer anywhere on the run
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 65.0, 0.0))
         panel.currentPower = 2
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
         val network = PowerNetworks.networkFor(run)
         assertEquals(0, network.transfer(), "nothing to draw the power, so none moves")
         assertTrue(network.hasSupply(), "but the run is still fed and must read as live")
 
-        run.callPowerUpdate()
+        run.powerUpdate()
         assertTrue(run.carrying, "the cable should render lit, not dead")
     }
 
     @Test
     fun `a run with no generator stays dark`() {
         val run = cable(0.0, 64.0, 0.0)
-        val battery = SmallBattery(TestHelper.createLocation(0.0, 63.0, 0.0))
-        TestHelper.addToRegistry(registry, battery, "atlas:small_battery")
+        val battery = SmallBattery(MockServer.createLocation(0.0, 63.0, 0.0))
+        registry.track(battery, "atlas:small_battery")
 
         assertFalse(PowerNetworks.networkFor(run).hasSupply())
-        run.callPowerUpdate()
+        run.powerUpdate()
         assertFalse(run.carrying)
     }
 
@@ -198,9 +197,9 @@ class PowerNetworkTest {
         val run = cable(0.0, 64.0, 0.0)
         assertFalse(run.canSupplyPower())
 
-        val panel = SmallSolarPanel(TestHelper.createLocation(0.0, 65.0, 0.0))
+        val panel = SmallSolarPanel(MockServer.createLocation(0.0, 65.0, 0.0))
         panel.currentPower = 2
-        TestHelper.addToRegistry(registry, panel, "atlas:small_solar_panel")
+        registry.track(panel, "atlas:small_solar_panel")
 
         assertTrue(run.canSupplyPower())
         // and a consumer drawing on the cable really draws off the producer

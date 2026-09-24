@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.block.power
 
-import com.coderjoe.atlas.testing.TestHelper
+import com.coderjoe.atlas.testing.Blocks
+import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,17 +12,17 @@ import org.junit.jupiter.api.Test
 class PowerBlockInitializerTest {
     @BeforeEach
     fun setup() {
-        TestHelper.setup()
+        MockServer.setup()
     }
 
     @AfterEach
     fun teardown() {
-        TestHelper.teardown()
+        MockServer.teardown()
     }
 
     @Test
     fun `initialize registers all expected IDs`() {
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
         val ids = PowerBlockFactory.getRegisteredBlockIds()
 
         // SmallSolarPanel: 2 (base + active)
@@ -37,7 +38,7 @@ class PowerBlockInitializerTest {
 
     @Test
     fun `solar panel ID is registered`() {
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
         assertTrue(
             PowerBlockFactory.isRegistered("atlas:small_solar_panel"),
         )
@@ -45,7 +46,7 @@ class PowerBlockInitializerTest {
 
     @Test
     fun `battery base and variant IDs are registered`() {
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
         assertTrue(
             PowerBlockFactory.isRegistered("atlas:small_battery"),
         )
@@ -64,7 +65,7 @@ class PowerBlockInitializerTest {
 
     @Test
     fun `cable base ID is registered`() {
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
         assertTrue(
             PowerBlockFactory.isRegistered("atlas:power_cable"),
         )
@@ -72,22 +73,22 @@ class PowerBlockInitializerTest {
 
     @Test
     fun `solar panel ID creates SmallSolarPanel`() {
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
         val block =
             PowerBlockFactory.create(
                 "atlas:small_solar_panel",
-                TestHelper.createLocation(),
+                MockServer.createLocation(),
             )
         assertTrue(block is SmallSolarPanel)
     }
 
     @Test
     fun `battery ID creates SmallBattery`() {
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
         val block =
             PowerBlockFactory.create(
                 "atlas:small_battery",
-                TestHelper.createLocation(),
+                MockServer.createLocation(),
                 BlockFace.DOWN,
             )
         assertTrue(block is SmallBattery)
@@ -95,11 +96,11 @@ class PowerBlockInitializerTest {
 
     @Test
     fun `cable ID creates PowerCable`() {
-        TestHelper.initPowerFactory()
+        Blocks.initPowerFactory()
         val block =
             PowerBlockFactory.create(
                 "atlas:power_cable",
-                TestHelper.createLocation(),
+                MockServer.createLocation(),
                 BlockFace.NORTH,
             )
         assertTrue(block is PowerCable)

@@ -55,7 +55,7 @@ abstract class FluidBlock(
         return fluid
     }
 
-    protected abstract fun fluidUpdate()
+    internal abstract fun fluidUpdate()
 
     override fun writeSaveData(data: MutableMap<String, Any>) {
         data["fluidType"] = storedFluid.name
