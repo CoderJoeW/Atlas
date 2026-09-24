@@ -1,6 +1,6 @@
 package com.coderjoe.atlas.block.power
 
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
 import com.coderjoe.atlas.testing.TestHelper
@@ -254,7 +254,7 @@ class PowerBlockLogicTest {
 
     @Test
     fun `battery does not pull from a neighbouring generator`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         val batteryLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val battery = SmallBattery(batteryLoc)
 
@@ -282,7 +282,7 @@ class PowerBlockLogicTest {
 
     @Test
     fun `battery does not pull when already full`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         val battery =
             SmallBattery(TestHelper.createLocation())
         battery.currentPower = 10
@@ -312,7 +312,7 @@ class PowerBlockLogicTest {
 
     @Test
     fun `cable connects to a power block on any face`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
         TestHelper.addToRegistry(registry, cable, "atlas:power_cable")
 
@@ -328,8 +328,8 @@ class PowerBlockLogicTest {
 
     @Test
     fun `cable connects to a fluid pump, which spends power from another registry`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
         val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
         TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
 
@@ -341,8 +341,8 @@ class PowerBlockLogicTest {
 
     @Test
     fun `cable ignores a neighbour that neither carries nor spends power`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
         val cable = PowerCable(TestHelper.createLocation(0.0, 64.0, 0.0))
         TestHelper.addToRegistry(powerRegistry, cable, "atlas:power_cable")
 
@@ -390,7 +390,7 @@ class PowerBlockLogicTest {
 
     @Test
     fun `battery powerUpdate when source has no power`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         val batteryLoc = TestHelper.createLocation(0.0, 64.0, 0.0)
         val battery = SmallBattery(batteryLoc)
 
@@ -415,7 +415,7 @@ class PowerBlockLogicTest {
 
     @Test
     fun `battery powerUpdate when no block behind it`() {
-        val registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         val battery =
             SmallBattery(TestHelper.createLocation())
         TestHelper.addToRegistry(

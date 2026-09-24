@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.block.transport.block
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
-import com.coderjoe.atlas.block.transport.TransportBlockRegistry
 import com.coderjoe.atlas.testing.TestHelper
 import com.coderjoe.atlas.testing.TestHelper.callTransportUpdate
 import io.mockk.every
@@ -18,6 +18,7 @@ import org.bukkit.util.Vector
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -85,13 +86,13 @@ class ConveyorBeltTest {
     fun `factory creates ConveyorBelt from base ID`() {
         TestHelper.initTransportFactory()
         val block =
-            TransportBlockFactory.createTransportBlock(
+            TransportBlockFactory.create(
                 "atlas:conveyor_belt",
                 TestHelper.createLocation(),
                 BlockFace.NORTH,
             )
-        assertTrue(block is ConveyorBelt)
-        assertEquals(BlockFace.NORTH, block!!.facing)
+        val belt = assertInstanceOf(ConveyorBelt::class.java, block)
+        assertEquals(BlockFace.NORTH, belt.facing)
     }
 
     /** A dropped item sitting at the given spot, optionally still falling. */
@@ -109,7 +110,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update does not throw with no nearby entities`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt =
             ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
 
@@ -126,7 +127,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update drives an item along its facing`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val item = itemAt(0.5, 64.375, 0.5)
@@ -140,7 +141,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update drives an item east`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.EAST)
 
         val item = itemAt(0.5, 64.375, 0.5)
@@ -153,7 +154,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update steers a drifting item back to the centre line`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         // sitting off to the west of the belt's centre line
@@ -168,7 +169,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update leaves vertical motion alone`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val item = itemAt(0.5, 64.375, 0.5, fallSpeed = -0.4)
@@ -182,7 +183,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update drives every item on the belt`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val first = itemAt(0.5, 64.375, 0.5)
@@ -198,7 +199,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `transport update ignores non-item entities`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt =
             ConveyorBelt(TestHelper.createLocation(), BlockFace.NORTH)
 
@@ -236,7 +237,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `belt deposits into a container it points at`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val stack = stackOf(4)
@@ -257,7 +258,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `a full container leaves the item on the belt`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val stack = stackOf(4)
@@ -280,7 +281,7 @@ class ConveyorBeltTest {
 
     @Test
     fun `a partial deposit leaves the remainder on the belt`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 64.0, 0.0), BlockFace.NORTH)
 
         val stack = stackOf(4)

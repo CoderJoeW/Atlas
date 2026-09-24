@@ -3,12 +3,12 @@ package com.coderjoe.atlas.block
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 
-open class BlockFactory<T : AtlasBlock> {
-    private val blockConstructors = mutableMapOf<String, (Location, BlockFace) -> T>()
+open class BlockFactory {
+    private val blockConstructors = mutableMapOf<String, (Location, BlockFace) -> AtlasBlock>()
 
     fun register(
         blockId: String,
-        constructor: (Location, BlockFace) -> T,
+        constructor: (Location, BlockFace) -> AtlasBlock,
     ) {
         blockConstructors[blockId] = constructor
     }
@@ -17,7 +17,7 @@ open class BlockFactory<T : AtlasBlock> {
         blockId: String,
         location: Location,
         facing: BlockFace = BlockFace.SELF,
-    ): T? {
+    ): AtlasBlock? {
         return blockConstructors[blockId]?.invoke(location, facing)
     }
 
@@ -29,12 +29,11 @@ open class BlockFactory<T : AtlasBlock> {
         return blockConstructors.keys
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun registerFromDescriptors(descriptors: Collection<BlockDescriptor>) {
         for (desc in descriptors) {
-            register(desc.baseBlockId, desc.constructor as (Location, BlockFace) -> T)
+            register(desc.baseBlockId, desc.constructor)
             for (id in desc.additionalBlockIds) {
-                register(id, desc.constructor as (Location, BlockFace) -> T)
+                register(id, desc.constructor)
             }
         }
     }

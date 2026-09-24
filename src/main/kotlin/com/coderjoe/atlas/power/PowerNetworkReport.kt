@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.power
 
 import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.power.PowerBlock
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.PowerNetworks
 import net.kyori.adventure.text.Component
@@ -57,7 +57,7 @@ object PowerNetworkReport {
     /** The block itself if it is cable, otherwise any cable touching it. */
     private fun nearestCable(block: PowerBlock): PowerCable? {
         if (block is PowerCable) return block
-        val registry = PowerBlockRegistry.instance ?: return null
+        val registry = BlockRegistry.active ?: return null
         return block.let { origin ->
             AtlasBlock.ADJACENT_FACES
                 .asSequence()

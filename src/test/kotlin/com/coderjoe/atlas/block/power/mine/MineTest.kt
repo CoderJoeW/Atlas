@@ -1,10 +1,9 @@
 package com.coderjoe.atlas.block.power.mine
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.power.PowerBlockFactory
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.SmallBattery
-import com.coderjoe.atlas.block.transport.TransportBlockRegistry
 import com.coderjoe.atlas.block.transport.block.ConveyorBelt
 import com.coderjoe.atlas.testing.AtlasPaths.BLOCK_MODEL_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.config
@@ -173,7 +172,7 @@ class MineTest {
 
     @Test
     fun `a mine keeps pulling power while mid-drill, banking it for the next haul`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
         mine.currentPower = CoalMine.POWER_PER_HAUL
 
@@ -267,7 +266,7 @@ class MineTest {
 
     @Test
     fun `haul destination falls back to the loose drop when nothing is attached`() {
-        TransportBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val mine = CoalMine(TestHelper.createLocation())
 
         assertEquals(mine.dropLocation(), mine.haulDestination())
@@ -275,7 +274,7 @@ class MineTest {
 
     @Test
     fun `haul destination lands directly on an attached conveyor belt`() {
-        val registry = TransportBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val belt = ConveyorBelt(TestHelper.createLocation(0.0, 65.0, 0.0), BlockFace.NORTH)
@@ -290,7 +289,7 @@ class MineTest {
 
     @Test
     fun `haul destination round-robins across every attached conveyor belt`() {
-        val registry = TransportBlockRegistry(TestHelper.mockPlugin)
+        val registry = BlockRegistry(TestHelper.mockPlugin)
         val mine = CoalMine(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         // one belt to the north, one to the south - neither is the vertical drop spot

@@ -1,11 +1,11 @@
 package com.coderjoe.atlas.block.power.factory
 
-import com.coderjoe.atlas.block.AtlasBlocks
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
+import com.coderjoe.atlas.block.capability.ItemInlet
 import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.pushRoundRobinTo
-import com.coderjoe.atlas.block.transport.block.ConveyorBelt
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
@@ -54,6 +54,18 @@ abstract class MaterialFactory(
             FluidType.NONE -> false
         }
 
+    override fun writeSaveData(data: MutableMap<String, Any>) {
+        super.writeSaveData(data)
+        data["hasWater"] = hasWater
+        data["hasLava"] = hasLava
+    }
+
+    override fun readSaveData(data: Map<String, Any?>) {
+        super.readSaveData(data)
+        hasWater = data["hasWater"] as? Boolean ?: false
+        hasLava = data["hasLava"] as? Boolean ?: false
+    }
+
     /**
      * Banks a pushed unit until both fluids are on hand - fluid arrives whenever a pipe network's
      * own tick pushes it, not in step with this factory's tick, so it has to be held rather than
@@ -80,24 +92,11 @@ abstract class MaterialFactory(
         return true
     }
 
-    /**
-     * The banked fluids, readable so the two portholes can report them and so a restart can put
-     * back what the factory was holding - see [com.coderjoe.atlas.data.PowerBlockPersistence].
-     */
     var hasWater: Boolean = false
         private set
 
     var hasLava: Boolean = false
         private set
-
-    /** Puts back what was banked before a restart. */
-    fun restoreFluids(
-        water: Boolean,
-        lava: Boolean,
-    ) {
-        hasWater = water
-        hasLava = lava
-    }
 
     override fun getVisualStateBlockId(): String = baseBlockId
 
@@ -122,11 +121,11 @@ abstract class MaterialFactory(
             pushRoundRobinTo(
                 outputFaces = ADJACENT_FACES,
                 startIndex = nextBeltIndex,
-                getAdjacent = { face -> AtlasBlocks.adjacent(location, face) },
+                getAdjacent = { face -> BlockRegistry.active?.getAdjacentBlock(location, face) },
                 hasResource = { true },
-                isCandidate = { target -> target is ConveyorBelt },
+                isCandidate = { target -> target is ItemInlet },
                 tryPush = { target, _ ->
-                    destination = (target as ConveyorBelt).location.clone().add(0.5, 0.75, 0.5)
+                    destination = (target as ItemInlet).itemDropLocation()
                     true
                 },
                 stopAfterFirstCandidate = true,

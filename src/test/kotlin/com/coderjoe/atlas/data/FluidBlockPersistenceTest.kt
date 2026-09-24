@@ -1,25 +1,29 @@
 package com.coderjoe.atlas.data
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
+import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.testing.TestHelper
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class FluidBlockPersistenceTest {
-    private lateinit var registry: FluidBlockRegistry
+    private lateinit var registry: BlockRegistry
     private lateinit var persistence: FluidBlockPersistence
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        registry = FluidBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
         persistence = FluidBlockPersistence(TestHelper.mockPlugin)
         TestHelper.initFluidFactory()
     }
@@ -37,18 +41,18 @@ class FluidBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocksWithIds()
         assertEquals(1, loaded.size)
         assertEquals("atlas:fluid_pump", loaded[0].second)
-        assertEquals(FluidType.WATER, loaded[0].first.storedFluid)
+        assertEquals(FluidType.WATER, assertInstanceOf(FluidPump::class.java, loaded[0].first).storedFluid)
     }
 
     @Test
     fun `load from missing file does not error`() {
-        val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         assertDoesNotThrow { persistence.load(loadRegistry) }
         assertEquals(0, loadRegistry.getAllBlocksWithIds().size)
     }
@@ -61,10 +65,11 @@ class FluidBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        assertEquals(FluidType.LAVA, loadRegistry.getAllBlocksWithIds().first().first.storedFluid)
+        val loadedLava = assertInstanceOf(FluidPump::class.java, loadRegistry.getAllBlocksWithIds().first().first)
+        assertEquals(FluidType.LAVA, loadedLava.storedFluid)
     }
 
     @Test
@@ -75,10 +80,11 @@ class FluidBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
-        assertEquals(FluidType.NONE, loadRegistry.getAllBlocksWithIds().first().first.storedFluid)
+        val loadedNone = assertInstanceOf(FluidPump::class.java, loadRegistry.getAllBlocksWithIds().first().first)
+        assertEquals(FluidType.NONE, loadedNone.storedFluid)
     }
 
     @Test
@@ -88,7 +94,7 @@ class FluidBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocksWithIds().first().first
@@ -107,10 +113,23 @@ class FluidBlockPersistenceTest {
 
         persistence.save(registry)
 
-        val loadRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val loadRegistry = BlockRegistry(TestHelper.mockPlugin)
         persistence.load(loadRegistry)
 
         val loaded = loadRegistry.getAllBlocksWithIds()
         assertEquals(2, loaded.size)
+    }
+
+    /** The mirror of the power case: the shared index must not spill a battery into this file. */
+    @Test
+    fun `fluid_blocks yml holds only fluid blocks when the registry also holds a battery`() {
+        TestHelper.addToRegistry(registry, FluidPipe(TestHelper.createLocation()), FluidPipe.BLOCK_ID)
+        TestHelper.addToRegistry(registry, SmallBattery(TestHelper.createLocation(x = 1.0)), SmallBattery.BLOCK_ID)
+
+        persistence.save(registry)
+
+        val saved = File(TestHelper.dataFolder, "fluid_blocks.yml").readText()
+        assertTrue("atlas:fluid_pipe" in saved, saved)
+        assertFalse("atlas:small_battery" in saved, saved)
     }
 }

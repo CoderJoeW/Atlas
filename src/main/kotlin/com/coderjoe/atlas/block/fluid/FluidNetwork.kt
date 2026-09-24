@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.block.fluid
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
@@ -49,13 +48,13 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
 
     /** The blocks touching this run that can hand fluid in, and those that will take it out. */
     fun terminals(): Pair<List<Terminal>, List<Terminal>> {
-        val registry = FluidBlockRegistry.instance ?: return emptyList<Terminal>() to emptyList()
+        val registry = BlockRegistry.active ?: return emptyList<Terminal>() to emptyList()
         val providers = LinkedHashMap<String, Terminal>()
         val acceptors = LinkedHashMap<String, Terminal>()
 
         for (pipe in pipes) {
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = registry.getAdjacentBlock(pipe.location, face) ?: continue
+                val neighbor = registry.adjacentOf<FluidBlock>(pipe.location, face) ?: continue
                 if (neighbor is FluidPipe) continue
 
                 val back = face.oppositeFace
@@ -74,10 +73,11 @@ class FluidNetwork(val pipes: List<FluidPipe>) {
 
     /** The blocks on this run's edge that take fluid but are not fluid blocks themselves. */
     fun consumers(): List<ConsumerTerminal> {
+        val registry = BlockRegistry.active ?: return emptyList()
         val found = LinkedHashMap<String, ConsumerTerminal>()
         for (pipe in pipes) {
             for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = AtlasBlocks.adjacent(pipe.location, face) ?: continue
+                val neighbor = registry.getAdjacentBlock(pipe.location, face) ?: continue
                 if (neighbor is FluidBlock) continue
                 val consumer = neighbor as? FluidConsumer ?: continue
 

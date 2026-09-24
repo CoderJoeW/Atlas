@@ -1,10 +1,9 @@
 package com.coderjoe.atlas.block.fluid.block
 
 import com.coderjoe.atlas.block.AtlasBlock
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.power.LavaGenerator
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.testing.AtlasPaths.config
 import com.coderjoe.atlas.testing.TestHelper
 import com.coderjoe.atlas.testing.TestHelper.callFluidUpdate
@@ -24,12 +23,12 @@ import org.junit.jupiter.api.Test
  * gave it an output port that was invisible, unchosen, and liable to move on its own.
  */
 class FluidPumpTest {
-    private lateinit var registry: FluidBlockRegistry
+    private lateinit var registry: BlockRegistry
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        registry = FluidBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
     }
 
     @AfterEach
@@ -149,12 +148,11 @@ class FluidPumpTest {
 
     @Test
     fun `a pump never takes power from a generator beside it`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         val pump = pump()
 
         val generator = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         generator.currentPower = 5
-        TestHelper.addToRegistry(powerRegistry, generator, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, generator, "atlas:lava_generator")
 
         pump.callFluidUpdate()
 
@@ -164,12 +162,11 @@ class FluidPumpTest {
 
     @Test
     fun `a generator pushes power into the pump beside it`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
         val pump = pump()
 
         val generator = LavaGenerator(TestHelper.createLocation(1.0, 64.0, 0.0))
         generator.currentPower = 5
-        TestHelper.addToRegistry(powerRegistry, generator, "atlas:lava_generator")
+        TestHelper.addToRegistry(registry, generator, "atlas:lava_generator")
 
         generator.callPowerUpdate()
 

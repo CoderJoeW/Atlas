@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.block.power
 
-import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.capability.PowerConsumer
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
@@ -62,18 +62,19 @@ class PowerCable(location: Location) : PowerBlock(location, maxStorage = 0) {
      * dedicated port - a solar panel handing power out of its base only - is joined from that
      * side alone and left alone everywhere else.
      *
-     * Blocks that spend power without being power blocks are asked too. The fluid pump is one:
-     * it was drawing power from the run the whole time, but living in the fluid registry it was
-     * invisible here, so the cable feeding it drew no arm and looked disconnected.
+     * Blocks that spend power without being power blocks are asked too, through the second
+     * branch. The fluid pump is one: it draws power from the run without being a [PowerBlock],
+     * so without that branch the cable feeding it would draw no arm and look disconnected.
      */
     fun connections(): Set<BlockFace> {
-        val registry = PowerBlockRegistry.instance ?: return emptySet()
+        val registry = BlockRegistry.active ?: return emptySet()
         return ADJACENT_FACES.filter { face ->
             val back = face.oppositeFace
-            val neighbor = registry.getAdjacentBlock(location, face)
-            if (neighbor != null) return@filter neighbor.canConnectToward(back)
-            val consumer = AtlasBlocks.adjacent(location, face) as? PowerConsumer
-            consumer != null && consumer.drawsPowerFrom(back)
+            when (val neighbor = registry.getAdjacentBlock(location, face)) {
+                is PowerBlock -> neighbor.canConnectToward(back)
+                is PowerConsumer -> neighbor.drawsPowerFrom(back)
+                else -> false
+            }
         }.toSet()
     }
 

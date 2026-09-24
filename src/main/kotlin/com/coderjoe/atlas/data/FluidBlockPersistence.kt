@@ -1,58 +1,21 @@
 package com.coderjoe.atlas.data
 
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.fluid.FluidBlock
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
-import com.coderjoe.atlas.block.fluid.block.FluidContainer
-import com.coderjoe.atlas.block.fluid.block.FluidPump
 import org.bukkit.plugin.java.JavaPlugin
 
-class FluidBlockPersistence(plugin: JavaPlugin) : BlockPersister<FluidBlock> {
+class FluidBlockPersistence(plugin: JavaPlugin) : BlockPersister {
     private val persistence =
-        BlockPersistence<FluidBlock>(
+        BlockPersistence(
             plugin = plugin,
             fileName = "fluid_blocks.yml",
             yamlKey = "fluid_blocks",
             factory = FluidBlockFactory,
-            serialize = { block, _ ->
-                val map =
-                    mutableMapOf<String, Any>(
-                        "fluidType" to block.storedFluid.name,
-                    )
-                if (block is FluidContainer) {
-                    map["storedAmount"] = block.storedAmount
-                }
-                if (block is FluidPump) {
-                    map["storedPower"] = block.storedPower
-                }
-                map
-            },
-            restore = { block, data ->
-                val fluidTypeName = data["fluidType"] as? String ?: "NONE"
-                val fluidType =
-                    try {
-                        FluidType.valueOf(fluidTypeName)
-                    } catch (_: Exception) {
-                        FluidType.NONE
-                    }
-                if (block is FluidContainer) {
-                    val storedAmount = (data["storedAmount"] as? Number)?.toInt()
-                    if (storedAmount != null) {
-                        block.restoreState(fluidType, storedAmount)
-                    } else {
-                        block.storedFluid = fluidType
-                    }
-                } else {
-                    block.storedFluid = fluidType
-                }
-                if (block is FluidPump) {
-                    block.restorePower((data["storedPower"] as? Number)?.toInt() ?: 0)
-                }
-            },
+            owns = { it is FluidBlock },
         )
 
-    override fun save(registry: BlockRegistry<FluidBlock>) = persistence.save(registry)
+    override fun save(registry: BlockRegistry) = persistence.save(registry)
 
-    override fun load(registry: BlockRegistry<FluidBlock>) = persistence.load(registry)
+    override fun load(registry: BlockRegistry) = persistence.load(registry)
 }

@@ -2,19 +2,15 @@ package com.coderjoe.atlas.testing
 
 import com.coderjoe.atlas.Atlas
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.block.InstanceHolder
 import com.coderjoe.atlas.block.fluid.FluidBlock
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.block.fluid.block.FluidContainer
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
 import com.coderjoe.atlas.block.power.LavaGenerator
 import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.power.PowerBlockFactory
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
@@ -29,7 +25,6 @@ import com.coderjoe.atlas.block.power.mine.NetheriteMine
 import com.coderjoe.atlas.block.power.mine.RedstoneMine
 import com.coderjoe.atlas.block.transport.TransportBlock
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
-import com.coderjoe.atlas.block.transport.TransportBlockRegistry
 import com.coderjoe.atlas.block.transport.block.ConveyorBelt
 import io.mockk.every
 import io.mockk.mockk
@@ -76,16 +71,14 @@ object TestHelper {
         every { mockScheduler.runTask(any<JavaPlugin>(), any<Runnable>()) } returns mockTask
         every { mockScheduler.runTaskTimer(any<JavaPlugin>(), any<Runnable>(), any(), any()) } returns mockTask
 
-        clearRegistries()
-        AtlasBlocks.clear()
+        BlockRegistry.clearActive()
         clearFactories()
     }
 
     fun teardown() {
         unmockkAll()
         AtlasBlock.testPlugin = null
-        clearRegistries()
-        AtlasBlocks.clear()
+        BlockRegistry.clearActive()
         clearFactories()
         dataFolder.deleteRecursively()
     }
@@ -123,89 +116,30 @@ object TestHelper {
         method.invoke(this)
     }
 
-    fun addToRegistry(
-        registry: PowerBlockRegistry,
-        block: PowerBlock,
-        blockId: String,
-    ) {
-        val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
-        blocksField.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        val blocks = blocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, PowerBlock>
-
-        val blockIdsField = BlockRegistry::class.java.getDeclaredField("blockIds")
-        blockIdsField.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
-
-        val key = BlockRegistry.locationKey(block.location)
-        blocks[key] = block
-        blockIds[key] = blockId
-    }
-
-    fun addToRegistry(
-        registry: TransportBlockRegistry,
-        block: TransportBlock,
-        blockId: String,
-    ) {
-        val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
-        blocksField.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        val blocks = blocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, TransportBlock>
-
-        val blockIdsField = BlockRegistry::class.java.getDeclaredField("blockIds")
-        blockIdsField.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
-
-        val key = BlockRegistry.locationKey(block.location)
-        blocks[key] = block
-        blockIds[key] = blockId
-    }
-
-    fun addToRegistry(
-        registry: FluidBlockRegistry,
-        block: FluidBlock,
-        blockId: String,
-    ) {
-        val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
-        blocksField.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        val blocks = blocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, FluidBlock>
-
-        val blockIdsField = BlockRegistry::class.java.getDeclaredField("blockIds")
-        blockIdsField.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
-
-        val key = BlockRegistry.locationKey(block.location)
-        blocks[key] = block
-        blockIds[key] = blockId
-    }
-
-    private fun clearRegistries() {
-        clearInstance(PowerBlockRegistry.Companion)
-        clearInstance(FluidBlockRegistry.Companion)
-        clearInstance(TransportBlockRegistry.Companion)
-    }
-
     /**
-     * Nulls an [InstanceHolder] singleton. The `instance` field is declared on [InstanceHolder]
-     * itself rather than on the companion subclass, so the lookup has to walk up the hierarchy.
+     * Puts [block] straight into the index without starting it, so a test can lay out a
+     * neighbourhood without every block scheduling a task.
      */
-    private fun clearInstance(holder: InstanceHolder<*>) {
-        var cls: Class<*>? = holder::class.java
-        while (cls != null) {
-            try {
-                val field = cls.getDeclaredField("instance")
-                field.isAccessible = true
-                field.set(holder, null)
-                return
-            } catch (_: NoSuchFieldException) {
-                cls = cls.superclass
-            }
-        }
-        error("InstanceHolder.instance field not found on ${holder::class.java.name}")
+    fun addToRegistry(
+        registry: BlockRegistry,
+        block: AtlasBlock,
+        blockId: String,
+    ) {
+        val blocksField = BlockRegistry::class.java.getDeclaredField("blocks")
+        blocksField.isAccessible = true
+
+        @Suppress("UNCHECKED_CAST")
+        val blocks = blocksField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, AtlasBlock>
+
+        val blockIdsField = BlockRegistry::class.java.getDeclaredField("blockIds")
+        blockIdsField.isAccessible = true
+
+        @Suppress("UNCHECKED_CAST")
+        val blockIds = blockIdsField.get(registry) as java.util.concurrent.ConcurrentHashMap<String, String>
+
+        val key = BlockRegistry.locationKey(block.location)
+        blocks[key] = block
+        blockIds[key] = blockId
     }
 
     fun initPowerFactory() {

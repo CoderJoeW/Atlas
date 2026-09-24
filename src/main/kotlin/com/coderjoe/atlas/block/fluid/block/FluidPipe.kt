@@ -1,6 +1,5 @@
 package com.coderjoe.atlas.block.fluid.block
 
-import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
@@ -74,7 +73,7 @@ class FluidPipe(location: Location) : FluidBlock(location) {
         val run = FluidNetworks.networkFor(this).pipes.mapTo(HashSet()) { BlockRegistry.locationKey(it.location) }
         return ADJACENT_FACES.filter { face ->
             val back = face.oppositeFace
-            val neighbor = AtlasBlocks.adjacent(location, face)
+            val neighbor = BlockRegistry.active?.getAdjacentBlock(location, face)
 
             when {
                 neighbor is FluidPipe -> BlockRegistry.locationKey(neighbor.location) in run

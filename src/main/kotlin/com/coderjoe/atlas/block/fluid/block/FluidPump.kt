@@ -1,13 +1,15 @@
 package com.coderjoe.atlas.block.fluid.block
 
-import com.coderjoe.atlas.block.AtlasBlocks
 import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.PlacementType
+import com.coderjoe.atlas.block.StatusLine
+import com.coderjoe.atlas.block.Tone
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.capability.PowerConsumer
 import com.coderjoe.atlas.block.fluid.FluidBlock
-import com.coderjoe.atlas.block.fluid.FluidBlockRegistry
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
@@ -102,21 +104,33 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
         return taken
     }
 
-    /** Restores the buffer across a restart. */
-    fun restorePower(amount: Int) {
-        storedPower = amount.coerceIn(0, POWER_CAPACITY)
+    override fun writeSaveData(data: MutableMap<String, Any>) {
+        super.writeSaveData(data)
+        data["storedPower"] = storedPower
     }
 
-    /**
-     * The pump moves its own fluid out rather than waiting for a run to pull it.
-     *
-     * It is the only block in the system that lifts fluid out of the world, so it is the one that
-     * knows a unit exists; leaving the run to notice meant the pipe had to reach back into the
-     * pump on every tick to check.
-     */
+    override fun readSaveData(data: Map<String, Any?>) {
+        super.readSaveData(data)
+        storedPower = ((data["storedPower"] as? Number)?.toInt() ?: 0).coerceIn(0, POWER_CAPACITY)
+    }
+
+    override fun inspect(): Inspection {
+        val base = super.inspect()
+        val power = if (isPowered) StatusLine("Powered", Tone.GOOD) else StatusLine("No Power", Tone.FAULT)
+
+        val status =
+            when (pumpStatus) {
+                PumpStatus.IDLE -> StatusLine("Idle — holding fluid", Tone.WARNING)
+                PumpStatus.EXTRACTING -> StatusLine("Extracting from source", Tone.GOOD)
+                PumpStatus.NO_SOURCE -> StatusLine("No source nearby", Tone.FAULT)
+                PumpStatus.NO_POWER -> StatusLine("Waiting for power", Tone.FAULT)
+            }
+
+        return base.copy(lines = base.lines + power + status)
+    }
+
     override val pushesFluid: Boolean = true
 
-    /** A pump only ever sources - it fills itself from the world, never from a pipe run. */
     override fun canAcceptFluid(
         face: BlockFace,
         type: FluidType,
@@ -131,10 +145,11 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
      * even while it has nowhere to deliver yet, because it is still connected.
      */
     fun connections(): Set<BlockFace> {
+        val registry = BlockRegistry.active ?: return emptySet()
         return ADJACENT_FACES.filter { face ->
             val back = face.oppositeFace
 
-            when (val neighbor = AtlasBlocks.adjacent(location, face)) {
+            when (val neighbor = registry.getAdjacentBlock(location, face)) {
                 is FluidPipe -> true
                 is FluidBlock -> neighbor.canAcceptFluid(back)
                 // A machine from another system is fed straight off the pump when it sits against
@@ -186,31 +201,33 @@ class FluidPump(location: Location) : FluidBlock(location), PowerConsumer {
      * a tank sitting straight against the pump is fed directly. Returns whether the unit moved.
      */
     private fun pushFluid(): Boolean {
-        val registry = FluidBlockRegistry.instance ?: return false
+        val registry = BlockRegistry.active ?: return false
         val fluid = storedFluid
         if (fluid == FluidType.NONE) return false
 
         for (face in ADJACENT_FACES) {
-            val neighbor = registry.getAdjacentBlock(location, face)
-            if (neighbor != null) {
-                if (!neighbor.canAcceptFluid(face.oppositeFace, fluid)) continue
-                if (neighbor.storeFluid(fluid)) {
-                    removeFluid()
-                    return true
-                }
-                continue
-            }
-
-            // Nothing in the fluid registry, but a block from another system may still be a
-            // consumer - a material factory is one - and it has to be pushed to like anything
-            // else rather than left to reach back for what it needs. The same fallback
-            // PowerBlock.pushPowerToward makes for a pump on the power side.
-            val consumer = AtlasBlocks.adjacent(location, face) as? FluidConsumer ?: continue
             val back = face.oppositeFace
-            if (!consumer.drawsFluidFrom(back) || !consumer.wantsFluid(fluid)) continue
-            if (consumer.acceptFluid(back, fluid)) {
-                removeFluid()
-                return true
+            when (val neighbor = registry.getAdjacentBlock(location, face)) {
+                is FluidBlock -> {
+                    if (!neighbor.canAcceptFluid(back, fluid)) continue
+                    if (neighbor.storeFluid(fluid)) {
+                        removeFluid()
+                        return true
+                    }
+                }
+
+                // A block that takes fluid without being a fluid block - a material factory is
+                // one - is pushed to like anything else rather than left to reach back for what
+                // it needs. The same fold PowerBlock.pushPowerToward makes on the power side.
+                is FluidConsumer -> {
+                    if (!neighbor.drawsFluidFrom(back) || !neighbor.wantsFluid(fluid)) continue
+                    if (neighbor.acceptFluid(back, fluid)) {
+                        removeFluid()
+                        return true
+                    }
+                }
+
+                else -> continue
             }
         }
         return false

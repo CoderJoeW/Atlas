@@ -12,7 +12,7 @@ import com.coderjoe.atlas.block.BlockRegistry
  */
 object PowerNetworks {
     fun networkFor(start: PowerCable): PowerNetwork {
-        val registry = PowerBlockRegistry.instance ?: return PowerNetwork(listOf(start))
+        val registry = BlockRegistry.active ?: return PowerNetwork(listOf(start))
 
         val found = LinkedHashMap<String, PowerCable>()
         val queue = ArrayDeque<PowerCable>()

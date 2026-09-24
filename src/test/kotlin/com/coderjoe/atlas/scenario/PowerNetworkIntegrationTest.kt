@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.scenario
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.power.LavaGenerator
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.PowerCable
 import com.coderjoe.atlas.block.power.PowerNetworks
 import com.coderjoe.atlas.block.power.SmallBattery
@@ -16,12 +16,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class PowerNetworkIntegrationTest {
-    private lateinit var registry: PowerBlockRegistry
+    private lateinit var registry: BlockRegistry
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
     }
 
     @AfterEach

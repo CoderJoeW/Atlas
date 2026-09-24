@@ -2,9 +2,7 @@ package com.coderjoe.atlas.listener
 
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
-import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.power.PowerBlockFactory
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.testing.TestHelper
 import io.mockk.every
@@ -22,23 +20,22 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class PowerBlockListenerTest {
-    private lateinit var registry: PowerBlockRegistry
+    private lateinit var registry: BlockRegistry
     private lateinit var listener: AtlasBlockListener
 
     @BeforeEach
     fun setup() {
         TestHelper.setup()
-        registry = PowerBlockRegistry(TestHelper.mockPlugin)
+        registry = BlockRegistry(TestHelper.mockPlugin)
         val system =
-            BlockSystem<PowerBlock>(
+            BlockSystem(
                 name = "power",
                 registry = registry,
                 factory = PowerBlockFactory,
                 descriptors = emptyMap(),
-                showDialog = { _, _ -> },
             )
         listener =
-            AtlasBlockListener(TestHelper.mockPlugin, listOf(system))
+            AtlasBlockListener(TestHelper.mockPlugin, registry, listOf(system)) { _, _ -> }
     }
 
     @AfterEach

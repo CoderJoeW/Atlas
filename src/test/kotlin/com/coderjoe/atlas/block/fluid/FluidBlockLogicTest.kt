@@ -1,10 +1,10 @@
 package com.coderjoe.atlas.block.fluid
 
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.fluid.block.FluidPipe
 import com.coderjoe.atlas.block.fluid.block.FluidPump
 import com.coderjoe.atlas.block.power.LavaGenerator
-import com.coderjoe.atlas.block.power.PowerBlockRegistry
 import com.coderjoe.atlas.testing.TestHelper
 import com.coderjoe.atlas.testing.TestHelper.callFluidUpdate
 import io.mockk.every
@@ -93,7 +93,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump fluidUpdate when holding fluid sets IDLE`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation())
         pump.storeFluid(FluidType.WATER)
 
@@ -103,7 +103,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump fluidUpdate with no adjacent cauldron sets NO_SOURCE`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         for (face in listOf(
@@ -130,7 +130,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump fluidUpdate with cauldron but no power sets NO_POWER`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val cauldronBlock = mockk<Block>(relaxed = true)
@@ -162,7 +162,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump fluidUpdate with water cauldron and power extracts water`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val levelled = mockk<Levelled>(relaxed = true)
@@ -202,7 +202,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump fluidUpdate with lava cauldron and power stores LAVA`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val cauldronBlock = mockk<Block>(relaxed = true)
@@ -252,7 +252,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump reports powered once a run has pushed power into it`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
         pump.storeFluid(FluidType.WATER)
 
@@ -265,7 +265,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump reports unpowered while its buffer is empty`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
         pump.storeFluid(FluidType.WATER)
 
@@ -275,7 +275,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump water cauldron level 1 empties to CAULDRON`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val levelled = mockk<Levelled>(relaxed = true)
@@ -316,7 +316,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump water cauldron level 3 decrements to level 2`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val levelled = mockk<Levelled>(relaxed = true)
@@ -355,7 +355,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump lava cauldron fully consumed`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val cauldronBlock = mockk<Block>(relaxed = true)
@@ -393,7 +393,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump extracts water from source block`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val waterBlock = mockk<Block>(relaxed = true)
@@ -433,7 +433,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump extracts lava from source block`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val lavaBlock = mockk<Block>(relaxed = true)
@@ -473,7 +473,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pump ignores flowing water (non-source block)`() {
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, 0.0))
 
         val flowingBlock = mockk<Block>(relaxed = true)
@@ -530,7 +530,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pipe never stores fluid of its own`() {
-        FluidBlockRegistry(TestHelper.mockPlugin)
+        BlockRegistry(TestHelper.mockPlugin)
         val pipe = FluidPipe(TestHelper.createLocation())
 
         // storeFluid on a pipe is a request to hand the unit to the run, and an isolated run has
@@ -541,7 +541,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pipe offers what the pump on its run is holding`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
         val pump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
@@ -561,7 +561,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `two joined pipes are one run and neither holds anything`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val pipe1 = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
         val pipe2 = FluidPipe(TestHelper.createLocation(0.0, 64.0, -1.0))
@@ -578,8 +578,8 @@ class FluidBlockLogicTest {
 
     @Test
     fun `a pipe grows an arm toward a lava generator, a consumer from another registry`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
-        val powerRegistry = PowerBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
+        val powerRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val pipe = FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
         TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
@@ -593,7 +593,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `a lava run and a water run that meet stay separate networks`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         // lava pump - pipe - pipe | pipe - pipe - water pump, laid out along the Z axis
         val lavaPump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
@@ -619,7 +619,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pipe arms stop where a lava run meets a water run`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val lavaPump = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
         lavaPump.storeFluid(FluidType.LAVA)
@@ -639,7 +639,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `an unfed run is still one network`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val pipes = (0..3).map { FluidPipe(TestHelper.createLocation(0.0, 64.0, it.toDouble())) }
         for (pipe in pipes) TestHelper.addToRegistry(fluidRegistry, pipe, "atlas:fluid_pipe")
@@ -650,7 +650,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `two runs on the same fluid still join`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val left = FluidPump(TestHelper.createLocation(0.0, 64.0, -1.0))
         left.storeFluid(FluidType.WATER)
@@ -667,7 +667,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pipe does nothing when source has no fluid`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val pipe =
             FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))
@@ -691,7 +691,7 @@ class FluidBlockLogicTest {
 
     @Test
     fun `pipe does nothing when no fluid block behind it`() {
-        val fluidRegistry = FluidBlockRegistry(TestHelper.mockPlugin)
+        val fluidRegistry = BlockRegistry(TestHelper.mockPlugin)
 
         val pipe =
             FluidPipe(TestHelper.createLocation(0.0, 64.0, 0.0))

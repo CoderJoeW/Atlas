@@ -1,6 +1,8 @@
 package com.coderjoe.atlas.block.fluid.block
 
 import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.Gauge
+import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.fluid.FluidBlock
@@ -90,6 +92,25 @@ class FluidContainer(location: Location) : FluidBlock(location) {
     override fun fluidUpdate() {
         updateFluidState()
         CraftEngineHelper.setIntProperty(location, "fill_level", getFillLevel())
+    }
+
+    override fun writeSaveData(data: MutableMap<String, Any>) {
+        super.writeSaveData(data)
+        data["storedAmount"] = storedAmount
+    }
+
+    override fun readSaveData(data: Map<String, Any?>) {
+        super.readSaveData(data)
+        restoreState(storedFluid, (data["storedAmount"] as? Number)?.toInt() ?: 0)
+    }
+
+    override fun inspect(): Inspection {
+        return super.inspect().copy(
+            gauges =
+                listOf(
+                    Gauge("Level", storedAmount, MAX_CAPACITY),
+                ),
+        )
     }
 
     fun restoreState(

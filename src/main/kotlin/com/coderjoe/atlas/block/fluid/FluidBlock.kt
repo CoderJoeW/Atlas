@@ -1,7 +1,9 @@
 package com.coderjoe.atlas.block.fluid
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.Inspection
+import com.coderjoe.atlas.block.StatusLine
+import com.coderjoe.atlas.block.Tone
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import org.bukkit.Location
@@ -55,11 +57,29 @@ abstract class FluidBlock(
 
     protected abstract fun fluidUpdate()
 
-    override fun blockUpdate() {
-        fluidUpdate()
+    override fun writeSaveData(data: MutableMap<String, Any>) {
+        data["fluidType"] = storedFluid.name
     }
 
-    override fun getRegistry(): BlockRegistry<*> {
-        return FluidBlockRegistry.instance ?: throw IllegalStateException("FluidBlockRegistry not initialized")
+    override fun readSaveData(data: Map<String, Any?>) {
+        val name = data["fluidType"] as? String
+        storedFluid = FluidType.entries.firstOrNull { it.name == name } ?: FluidType.NONE
+    }
+
+    override fun inspect(): Inspection {
+        return Inspection(
+            lines =
+                listOf(
+                    when (storedFluid) {
+                        FluidType.WATER -> StatusLine("Fluid: Water", Tone.GOOD)
+                        FluidType.LAVA -> StatusLine("Fluid: Lava", Tone.GOOD)
+                        FluidType.NONE -> StatusLine("Fluid: Empty", Tone.NEUTRAL)
+                    },
+                ),
+        )
+    }
+
+    override fun blockUpdate() {
+        fluidUpdate()
     }
 }
