@@ -22,12 +22,13 @@ import org.bukkit.plugin.java.JavaPlugin
  * is looking at. Nothing needs clicking, so a whole factory can be read by walking through it,
  * and taking the goggles off - or wearing real armour instead - clears the view entirely.
  *
- * The icon is borrowed from the spyglass until the goggles have art of their own.
+ * [MODEL] names the item definition shipped in the Atlas resource pack
+ * (`assets/atlas/items/atlas_goggles.json`), which draws the goggles' own icon.
  */
 object AtlasGoggles {
     const val ITEM_NAME = "Atlas Goggles"
     private const val TAG = "atlas_goggles"
-    private val PLACEHOLDER_MODEL = Key.key("minecraft", "spyglass")
+    private val MODEL = Key.key("atlas", "atlas_goggles")
 
     private fun key(plugin: JavaPlugin) = NamespacedKey(plugin, TAG)
 
@@ -44,7 +45,7 @@ object AtlasGoggles {
         item.itemMeta = meta
 
         item.setData(DataComponentTypes.EQUIPPABLE, Equippable.equippable(EquipmentSlot.HEAD).build())
-        item.setData(DataComponentTypes.ITEM_MODEL, PLACEHOLDER_MODEL)
+        item.setData(DataComponentTypes.ITEM_MODEL, MODEL)
         item.setData(DataComponentTypes.MAX_STACK_SIZE, 1)
         return item
     }
