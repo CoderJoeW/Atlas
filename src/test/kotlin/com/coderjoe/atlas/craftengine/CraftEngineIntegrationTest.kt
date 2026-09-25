@@ -89,6 +89,26 @@ class CraftEngineIntegrationTest {
         assertEquals("resourcepack/assets/minecraft/textures/block/custom", CraftEngineIntegration.TEXTURES_PATH)
     }
 
+    /**
+     * The copy step deploys only the folders in [CraftEngineIntegration.ASSETS], so a file anywhere
+     * else in the pack is silently left out. The goggles' item definition was, and the item drew
+     * as the missing-model cube.
+     */
+    @Test
+    fun `every file in the resource pack is deployed`() {
+        val pack = File(RESOURCES, "resourcepack")
+        val missed =
+            pack.walkTopDown()
+                .filter { it.isFile && it.name != ".DS_Store" }
+                .map { "resourcepack/" + it.relativeTo(pack).invariantSeparatorsPath }
+                .filterNot { path ->
+                    CraftEngineIntegration.ASSETS.any { (folder, suffix) -> path.startsWith("$folder/") && path.endsWith(suffix) }
+                }
+                .toList()
+
+        assertEquals(emptyList<String>(), missed)
+    }
+
     @Test
     fun `configs in subfolders are discovered`() {
         val discovered = CraftEngineIntegration.discoverResources("atlas/configuration/", ".yml").sorted()

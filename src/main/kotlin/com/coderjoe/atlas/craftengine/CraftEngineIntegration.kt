@@ -15,6 +15,28 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
         const val ITEM_TEXTURES_PATH = "resourcepack/assets/minecraft/textures/item/custom"
         const val ITEM_MODELS_PATH = "resourcepack/assets/minecraft/models/item/custom"
 
+        /** Item definitions for Atlas's plain Paper items, such as the goggles, which CraftEngine does not generate. */
+        const val ITEM_DEFINITIONS_PATH = "resourcepack/assets/atlas/items"
+
+        /**
+         * Every asset folder deployed to CraftEngine, with the file suffix copied from it. A file in
+         * the pack outside this list never reaches players.
+         *
+         * An animated texture is a strip of frames plus a .mcmeta naming the frame rate. Without the
+         * .mcmeta the client has no reason to think the file is animated and draws the whole strip
+         * squashed onto one face, so it has to ship alongside the png.
+         */
+        val ASSETS: List<Pair<String, String>> =
+            listOf(
+                TEXTURES_PATH to ".png",
+                TEXTURES_PATH to ".png.mcmeta",
+                MODELS_PATH to ".json",
+                ITEM_TEXTURES_PATH to ".png",
+                ITEM_TEXTURES_PATH to ".png.mcmeta",
+                ITEM_MODELS_PATH to ".json",
+                ITEM_DEFINITIONS_PATH to ".json",
+            )
+
         /**
          * Fails if two resources in different folders share a file name.
          *
@@ -69,15 +91,7 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
     fun initialize() {
         copyPackYml()
         copyConfigurations()
-        copyAssets(TEXTURES_PATH, ".png")
-        // An animated texture is a strip of frames plus a .mcmeta naming the frame rate. Without
-        // the .mcmeta the client has no reason to think the file is animated and draws the whole
-        // strip squashed onto one face, so it has to ship alongside the png.
-        copyAssets(TEXTURES_PATH, ".png.mcmeta")
-        copyAssets(MODELS_PATH, ".json")
-        copyAssets(ITEM_TEXTURES_PATH, ".png")
-        copyAssets(ITEM_TEXTURES_PATH, ".png.mcmeta")
-        copyAssets(ITEM_MODELS_PATH, ".json")
+        ASSETS.forEach { (path, suffix) -> copyAssets(path, suffix) }
         pruneStaleFiles()
         writeManifest()
         plugin.logger.atlasInfo("Atlas CraftEngine integration initialized")
