@@ -5,12 +5,8 @@ import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.PlacementType
-import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.item.AtlasWrench
-import com.coderjoe.atlas.power.PowerNetworkReport
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
@@ -153,25 +149,7 @@ class AtlasBlockListener(
         val location = clickedBlock.location
 
         val block = registry.getBlock(location) ?: return
-        if (event.player.isSneaking) {
-            sneakAction(event.player, block)
-        } else {
-            showDialog(event.player, block)
-        }
+        showDialog(event.player, block)
         event.isCancelled = true
-    }
-
-    /** Sneaking with the wrench reads a power block's network instead of opening its dialog. */
-    private fun sneakAction(
-        player: Player,
-        block: AtlasBlock,
-    ) {
-        if (block is PowerBlock) {
-            PowerNetworkReport.report(player, block)
-        } else {
-            player.sendMessage(
-                Component.text("Nothing to read on this block.").color(NamedTextColor.GRAY),
-            )
-        }
     }
 }

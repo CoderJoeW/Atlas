@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
  *
  * Without it, right-clicking a machine does nothing special, so Atlas blocks behave like ordinary
  * blocks and never interrupt building. Inspecting a block is then a deliberate act: hold the
- * wrench and right-click. Sneak-right-clicking a power block reads its network instead.
+ * wrench and right-click.
  */
 object AtlasWrench {
     const val ITEM_NAME = "Atlas Wrench"
@@ -34,7 +34,6 @@ object AtlasWrench {
         meta.lore(
             listOf(
                 lore("Right-click an Atlas block to inspect it"),
-                lore("Sneak + right-click a power block to read its network"),
             ),
         )
         meta.persistentDataContainer.set(key(plugin), PersistentDataType.BYTE, 1)

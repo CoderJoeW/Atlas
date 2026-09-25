@@ -1,6 +1,7 @@
 package com.coderjoe.atlas.dialog
 
 import com.coderjoe.atlas.AtlasBlockTypes
+import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.fluid.FluidContainer
 import com.coderjoe.atlas.block.fluid.FluidPump
@@ -119,12 +120,16 @@ class BlockInspectorDialogTest {
         assertEquals("Conveyor Belt (North)", title)
     }
 
-    /** Every block in the catalog renders, so no block can reach players with a broken dialog. */
+    /**
+     * Every block in the catalog renders, so no block can reach players with a broken dialog.
+     * Each is registered first, as it is in play, because a cable reads its run from the registry.
+     */
     @Test
     fun `every catalog block renders a body and a title`() {
         for (id in catalog.blockIds.sorted()) {
             val descriptor = catalog.find(id)!!
             val block = catalog.create(id, MockServer.createLocation(), BlockFace.NORTH)!!
+            BlockRegistry(MockServer.plugin).track(block, id)
 
             assertDoesNotThrow("$id failed to render") {
                 BlockInspectorDialog.body(block, descriptor.description)
