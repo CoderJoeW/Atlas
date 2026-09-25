@@ -9,6 +9,7 @@ object AtlasPaths {
     val ITEM_MODEL_DIR = File(RESOURCES, "resourcepack/assets/minecraft/models/item/custom")
     val BLOCK_TEXTURE_DIR = File(RESOURCES, "resourcepack/assets/minecraft/textures/block/custom")
     val ITEM_TEXTURE_DIR = File(RESOURCES, "resourcepack/assets/minecraft/textures/item/custom")
+    val ITEM_DEFINITION_DIR = File(RESOURCES, "resourcepack/assets/atlas/items")
 
     fun configFiles(): List<File> {
         val files = CONFIG_DIR.walkTopDown().filter { it.isFile && it.extension == "yml" }.toList()

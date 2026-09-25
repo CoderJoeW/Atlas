@@ -9,6 +9,7 @@ import com.coderjoe.atlas.block.StatusLine
 import com.coderjoe.atlas.block.Tone
 import com.coderjoe.atlas.util.displayName
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Color
@@ -187,18 +188,14 @@ class HologramInspector(
             descriptor: BlockDescriptor?,
         ): Component {
             val inspection = block.inspect()
-            val parts = mutableListOf<Component>()
-            parts += Component.text(title(descriptor, block.facing)).color(NamedTextColor.WHITE).decorate(TextDecoration.BOLD)
-            inspection.gauges.forEach { parts += gauge(it) }
-            inspection.lines.forEach { parts += line(it) }
-            descriptor?.description?.let { parts += Component.text(it).color(NamedTextColor.GRAY) }
-
-            var text = Component.empty()
-            parts.forEachIndexed { index, part ->
-                if (index > 0) text = text.append(Component.newline())
-                text = text.append(part)
-            }
-            return text
+            val parts =
+                buildList {
+                    add(Component.text(title(descriptor, block.facing)).color(NamedTextColor.WHITE).decorate(TextDecoration.BOLD))
+                    inspection.gauges.forEach { add(gauge(it)) }
+                    inspection.lines.forEach { add(line(it)) }
+                    descriptor?.description?.let { add(Component.text(it).color(NamedTextColor.GRAY)) }
+                }
+            return Component.join(JoinConfiguration.newlines(), parts)
         }
 
         private fun gauge(gauge: Gauge): Component {

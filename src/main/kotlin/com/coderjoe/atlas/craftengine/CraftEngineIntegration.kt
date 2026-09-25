@@ -10,32 +10,15 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
     companion object {
         /** Records what Atlas deployed, so a later run can tell its own files from everyone else's. */
         const val MANIFEST_NAME = ".atlas-deployed"
-        const val TEXTURES_PATH = "resourcepack/assets/minecraft/textures/block/custom"
-        const val MODELS_PATH = "resourcepack/assets/minecraft/models/block/custom"
-        const val ITEM_TEXTURES_PATH = "resourcepack/assets/minecraft/textures/item/custom"
-        const val ITEM_MODELS_PATH = "resourcepack/assets/minecraft/models/item/custom"
-
-        /** Item definitions for Atlas's plain Paper items, such as the goggles, which CraftEngine does not generate. */
-        const val ITEM_DEFINITIONS_PATH = "resourcepack/assets/atlas/items"
 
         /**
-         * Every asset folder deployed to CraftEngine, with the file suffix copied from it. A file in
-         * the pack outside this list never reaches players.
-         *
-         * An animated texture is a strip of frames plus a .mcmeta naming the frame rate. Without the
-         * .mcmeta the client has no reason to think the file is animated and draws the whole strip
-         * squashed onto one face, so it has to ship alongside the png.
+         * The resource pack, deployed whole with its folder layout intact, so a file added anywhere
+         * in it reaches players without touching this class.
          */
-        val ASSETS: List<Pair<String, String>> =
-            listOf(
-                TEXTURES_PATH to ".png",
-                TEXTURES_PATH to ".png.mcmeta",
-                MODELS_PATH to ".json",
-                ITEM_TEXTURES_PATH to ".png",
-                ITEM_TEXTURES_PATH to ".png.mcmeta",
-                ITEM_MODELS_PATH to ".json",
-                ITEM_DEFINITIONS_PATH to ".json",
-            )
+        const val RESOURCE_PACK_PATH = "resourcepack"
+
+        /** Finder litter that a macOS checkout can leave in the resource folders. */
+        private const val FINDER_METADATA = ".DS_Store"
 
         /**
          * Fails if two resources in different folders share a file name.
@@ -91,7 +74,7 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
     fun initialize() {
         copyPackYml()
         copyConfigurations()
-        ASSETS.forEach { (path, suffix) -> copyAssets(path, suffix) }
+        copyResourcePack()
         pruneStaleFiles()
         writeManifest()
         plugin.logger.atlasInfo("Atlas CraftEngine integration initialized")
@@ -173,31 +156,21 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
     }
 
     /**
-     * Copies every [suffix] file the jar ships under [assetPath] into CraftEngine's resources.
-     *
-     * [assetPath] is relative to both the plugin's `atlas/` resource root and the CraftEngine
-     * folder, so the same value names the source and the destination.
+     * Copies every file the jar ships under [RESOURCE_PACK_PATH] into CraftEngine's resources,
+     * keeping each file's path relative to Atlas's `atlas/` resource root.
      */
-    private fun copyAssets(
-        assetPath: String,
-        suffix: String,
-    ) {
-        val targetFolder = File(craftEngineFolder, assetPath)
-        if (!targetFolder.exists()) {
-            targetFolder.mkdirs()
-        }
-
-        val prefix = "atlas/$assetPath/"
-
-        for (resourcePath in discoverResources(prefix, suffix)) {
-            val fileName = resourcePath.substringAfterLast("/")
-            val targetFile = File(targetFolder, fileName)
+    private fun copyResourcePack() {
+        for (resourcePath in discoverResources("atlas/$RESOURCE_PACK_PATH/", "")) {
+            if (resourcePath.substringAfterLast("/") == FINDER_METADATA) continue
+            val relativePath = resourcePath.removePrefix("atlas/")
+            val targetFile = File(craftEngineFolder, relativePath)
+            targetFile.parentFile.mkdirs()
             plugin.saveResource(resourcePath, true)
             val sourceFile = File(plugin.dataFolder, resourcePath)
             if (sourceFile.exists()) {
                 sourceFile.copyTo(targetFile, overwrite = true)
                 sourceFile.delete()
-                deployed.add("$assetPath/$fileName")
+                deployed.add(relativePath)
             }
         }
     }

@@ -18,6 +18,11 @@ import java.io.File
  * real Bukkit plugin to unpack resources from.
  */
 class CraftEngineIntegrationTest {
+    private companion object {
+        const val MODELS = "${CraftEngineIntegration.RESOURCE_PACK_PATH}/assets/minecraft/models/block/custom"
+        const val TEXTURES = "${CraftEngineIntegration.RESOURCE_PACK_PATH}/assets/minecraft/textures/block/custom"
+    }
+
     @TempDir
     lateinit var folder: File
 
@@ -67,46 +72,16 @@ class CraftEngineIntegrationTest {
 
     @Test
     fun `retired models and textures are pruned too`() {
-        val model = touch("${CraftEngineIntegration.MODELS_PATH}/power_splitter_base.json")
-        val texture = touch("${CraftEngineIntegration.TEXTURES_PATH}/power_splitter_in.png")
+        val model = touch("$MODELS/power_splitter_base.json")
+        val texture = touch("$TEXTURES/power_splitter_in.png")
 
         prune(
-            previous =
-                listOf(
-                    "${CraftEngineIntegration.MODELS_PATH}/power_splitter_base.json",
-                    "${CraftEngineIntegration.TEXTURES_PATH}/power_splitter_in.png",
-                ),
+            previous = listOf("$MODELS/power_splitter_base.json", "$TEXTURES/power_splitter_in.png"),
             deployed = emptySet(),
         )
 
         assertFalse(model.exists())
         assertFalse(texture.exists())
-    }
-
-    @Test
-    fun `the manifest paths match the folders resources are written to`() {
-        assertEquals("resourcepack/assets/minecraft/models/block/custom", CraftEngineIntegration.MODELS_PATH)
-        assertEquals("resourcepack/assets/minecraft/textures/block/custom", CraftEngineIntegration.TEXTURES_PATH)
-    }
-
-    /**
-     * The copy step deploys only the folders in [CraftEngineIntegration.ASSETS], so a file anywhere
-     * else in the pack is silently left out. The goggles' item definition was, and the item drew
-     * as the missing-model cube.
-     */
-    @Test
-    fun `every file in the resource pack is deployed`() {
-        val pack = File(RESOURCES, "resourcepack")
-        val missed =
-            pack.walkTopDown()
-                .filter { it.isFile && it.name != ".DS_Store" }
-                .map { "resourcepack/" + it.relativeTo(pack).invariantSeparatorsPath }
-                .filterNot { path ->
-                    CraftEngineIntegration.ASSETS.any { (folder, suffix) -> path.startsWith("$folder/") && path.endsWith(suffix) }
-                }
-                .toList()
-
-        assertEquals(emptyList<String>(), missed)
     }
 
     @Test

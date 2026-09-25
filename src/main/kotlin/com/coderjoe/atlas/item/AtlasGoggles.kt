@@ -26,7 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin
  * (`assets/atlas/items/atlas_goggles.json`), which draws the goggles' own icon.
  */
 object AtlasGoggles {
-    const val ITEM_NAME = "Atlas Goggles"
+    private const val ITEM_NAME = "Atlas Goggles"
     private const val TAG = "atlas_goggles"
     private val MODEL = Key.key("atlas", "atlas_goggles")
 
@@ -40,7 +40,13 @@ object AtlasGoggles {
                 .color(NamedTextColor.GOLD)
                 .decoration(TextDecoration.ITALIC, false),
         )
-        meta.lore(listOf(lore("Wear to see a readout of the Atlas block you look at")))
+        meta.lore(
+            listOf(
+                Component.text("Wear to see a readout of the Atlas block you look at")
+                    .color(NamedTextColor.GRAY)
+                    .decoration(TextDecoration.ITALIC, false),
+            ),
+        )
         meta.persistentDataContainer.set(key(plugin), PersistentDataType.BYTE, 1)
         item.itemMeta = meta
 
@@ -50,17 +56,16 @@ object AtlasGoggles {
         return item
     }
 
-    private fun lore(text: String): Component =
-        Component.text(text)
-            .color(NamedTextColor.GRAY)
-            .decoration(TextDecoration.ITALIC, false)
-
+    /**
+     * Runs for every online player several times a second, so it reads the item's data through the
+     * read-only view rather than `itemMeta`, which copies the whole meta on each call.
+     */
     fun isGoggles(
         item: ItemStack?,
         plugin: JavaPlugin,
     ): Boolean {
-        val meta = item?.itemMeta ?: return false
-        return meta.persistentDataContainer.has(key(plugin), PersistentDataType.BYTE)
+        if (item?.type != Material.PAPER) return false
+        return item.persistentDataContainer.has(key(plugin), PersistentDataType.BYTE)
     }
 
     /** Only the helmet slot counts: goggles held in a hand or carried in the inventory show nothing. */

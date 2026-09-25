@@ -8,25 +8,25 @@ pixel, and is shaded the way Minecraft shades faces (up 1.0, north/south 0.8, ea
 is for checking fit and silhouette, not a substitute for looking at it in game.
 """
 
+import functools
 import json
 import math
 import sys
-from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
 
-ROOT = Path("src/main/resources/atlas/resourcepack/assets/minecraft")
-MODEL = ROOT / "models/item/custom/atlas_goggles_worn.json"
+from build_model import EYE_Y, HEAD_HI, HEAD_LO, LEFT_EYE_X, MODEL, PACK, RIGHT_EYE_X
+
+TEXTURES = PACK / "minecraft/textures"
+STEVE_EYE_W, STEVE_EYE_H = 3.2, 1.6  # two head pixels by one
 SHADE = {"up": 1.0, "down": 0.5, "north": 0.8, "south": 0.8, "east": 0.6, "west": 0.6}
 PX_PER_UV = 32  # 512px textures across 16 UV units
 
 
-def texture(ref, cache={}):
-    if ref not in cache:
-        path = ROOT / "textures" / (ref.split(":")[1] + ".png")
-        cache[ref] = Image.open(path).convert("RGBA")
-    return cache[ref]
+@functools.cache
+def texture(ref):
+    return Image.open(TEXTURES / (ref.split(":")[1] + ".png")).convert("RGBA")
 
 
 def corners(face, f, t):
@@ -52,7 +52,11 @@ class Camera:
         self.yaw, self.pitch, self.scale, self.size = math.radians(yaw), math.radians(pitch), scale, size
 
     def rotate(self, p):
-        x, y, z = (p[0] - 8, p[1] - 8, p[2] - 8)
+        """A model-space point, turned about the model's centre."""
+        return self.rotate_vector(tuple(v - 8 for v in p))
+
+    def rotate_vector(self, v):
+        x, y, z = v
         cy, sy = math.cos(self.yaw), math.sin(self.yaw)
         x, z = x * cy - z * sy, x * sy + z * cy
         cp, sp = math.cos(self.pitch), math.sin(self.pitch)
@@ -71,12 +75,14 @@ def faces_of(elements, head):
         for name, face in e["faces"].items():
             out.append((e["from"], e["to"], name, face))
     if head:
-        f, t = [1.6] * 3, [14.4] * 3
+        f, t = [HEAD_LO] * 3, [HEAD_HI] * 3
         for name in NORMALS:
             out.append((f, t, name, {"colour": (168, 125, 98)}))
         # Steve's eyes, on the front of the head, a hair in front of it
-        for x0 in (3.2, 9.6):
-            out.append(([x0, 6.4, 1.59], [x0 + 3.2, 8.0, 1.59], "north", {"colour": (60, 60, 150)}))
+        y0, y1, z = EYE_Y - STEVE_EYE_H / 2, EYE_Y + STEVE_EYE_H / 2, HEAD_LO - 0.01
+        for cx in (LEFT_EYE_X, RIGHT_EYE_X):
+            x0 = cx - STEVE_EYE_W / 2
+            out.append(([x0, y0, z], [x0 + STEVE_EYE_W, y1, z], "north", {"colour": (60, 60, 150)}))
     return out
 
 
@@ -87,15 +93,14 @@ def render(elements, cam, head=True):
     zbuf = np.full((size, size), np.inf)
     ys, xs = np.mgrid[0:size, 0:size] + 0.5
     for f, t, name, face in faces_of(elements, head):
-        n = cam.rotate(tuple(8 + v for v in NORMALS[name]))
+        n = cam.rotate_vector(NORMALS[name])
         if n[2] >= -1e-6:  # facing away from the camera
             continue
         tl, tr, bl = corners(name, f, t)
         (ptl, dtl), (ptr, dtr), (pbl, dbl) = (cam.screen(p) for p in (tl, tr, bl))
 
         if "colour" in face:
-            rgba = np.array([c * SHADE[name] for c in face["colour"]] + [255.0])
-            crop = Image.new("RGBA", (1, 1), tuple(int(c) for c in rgba))
+            crop = Image.new("RGBA", (1, 1), face["colour"] + (255,))
         else:
             tex = texture(face["texture_ref"])
             u0, v0, u1, v1 = (v * PX_PER_UV for v in face["uv"])
@@ -121,8 +126,7 @@ def render(elements, cam, head=True):
         si = np.clip(s_.astype(int), 0, w - 1)
         ti = np.clip(t_.astype(int), 0, h - 1)
         sample = texels[ti, si]
-        if "colour" not in face:
-            sample[..., :3] *= SHADE[name]
+        sample[..., :3] *= SHADE[name]
         win = inside & (sample[..., 3] >= 128) & (depth < zbuf - 1e-4)
         colour[win] = sample[win]
         colour[win, 3] = 255

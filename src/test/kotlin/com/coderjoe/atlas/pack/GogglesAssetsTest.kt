@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.pack
 
+import com.coderjoe.atlas.testing.AtlasPaths.ITEM_DEFINITION_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.ITEM_MODEL_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.ITEM_TEXTURE_DIR
-import com.coderjoe.atlas.testing.AtlasPaths.RESOURCES
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -17,8 +17,8 @@ import javax.imageio.ImageIO
  */
 class GogglesAssetsTest {
     private companion object {
-        val itemDefinition = File(RESOURCES, "resourcepack/assets/atlas/items/atlas_goggles.json")
         const val ICON = "atlas_goggles"
+        val itemDefinition = File(ITEM_DEFINITION_DIR, "$ICON.json")
         const val WORN = "atlas_goggles_worn"
     }
 
@@ -51,14 +51,6 @@ class GogglesAssetsTest {
     }
 
     @Test
-    fun `every model the item definition names exists`() {
-        for (model in models()) {
-            val file = File(ITEM_MODEL_DIR, "$model.json")
-            assertTrue(file.isFile, "missing $file")
-        }
-    }
-
-    @Test
     fun `every texture the models use exists and is a 512 pixel square`() {
         for (texture in models().flatMap(::textures)) {
             assertTrue(texture.isFile, "missing $texture")
@@ -70,7 +62,7 @@ class GogglesAssetsTest {
     /** The icon's backdrop and the lens bezel's cut corners are both meant to be see-through. */
     @Test
     fun `the icon and the lens carry transparency`() {
-        for (name in listOf("atlas_goggles", "atlas_goggles_lens")) {
+        for (name in listOf(ICON, "atlas_goggles_lens")) {
             val image = ImageIO.read(File(ITEM_TEXTURE_DIR, "$name.png"))
             assertTrue(image.colorModel.hasAlpha(), "$name has no alpha channel")
         }

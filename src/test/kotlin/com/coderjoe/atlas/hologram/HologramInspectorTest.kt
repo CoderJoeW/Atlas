@@ -8,12 +8,13 @@ import com.coderjoe.atlas.block.fluid.FluidContainer
 import com.coderjoe.atlas.block.fluid.FluidPump
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.transport.ConveyorBelt
+import com.coderjoe.atlas.testing.Blocks.placedIn
 import com.coderjoe.atlas.testing.MockServer
+import io.mockk.MockKMatcherScope
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -53,9 +54,7 @@ class HologramInspectorTest {
         display = mockk(relaxed = true)
         every { display.isValid } returns true
         every { display.world } returns MockServer.world
-        every {
-            MockServer.world.spawn(any<Location>(), TextDisplay::class.java, any<Consumer<in TextDisplay>>())
-        } answers {
+        every { spawnCall() } answers {
             thirdArg<Consumer<in TextDisplay>>().accept(display)
             display
         }
@@ -74,16 +73,17 @@ class HologramInspectorTest {
         every { player.getTargetBlockExact(any()) } returns target
     }
 
-    private fun battery(): SmallBattery = SmallBattery(MockServer.createLocation()).also { registry.track(it, SmallBattery.BLOCK_ID) }
+    private fun MockKMatcherScope.spawnCall() =
+        MockServer.world.spawn(
+            any<Location>(),
+            TextDisplay::class.java,
+            any<Consumer<in TextDisplay>>(),
+        )
 
-    private fun panelText(block: AtlasBlock): String = flatten(HologramInspector.panelText(block, catalog.find(block.baseBlockId)))
+    private fun battery(): SmallBattery = SmallBattery(MockServer.createLocation()).placedIn(registry)
 
-    private fun flatten(component: Component): String {
-        val sb = StringBuilder()
-        if (component is TextComponent) sb.append(component.content())
-        component.children().forEach { sb.append(flatten(it)) }
-        return sb.toString()
-    }
+    private fun panelText(block: AtlasBlock): String =
+        PlainTextComponentSerializer.plainText().serialize(HologramInspector.panelText(block, catalog.find(block.baseBlockId)))
 
     @Test
     fun `a wearer looking at a machine gets a panel only they can see`() {
@@ -103,7 +103,7 @@ class HologramInspectorTest {
 
         inspector().refresh()
 
-        verify(exactly = 0) { MockServer.world.spawn(any<Location>(), TextDisplay::class.java, any<Consumer<in TextDisplay>>()) }
+        verify(exactly = 0) { spawnCall() }
     }
 
     @Test
@@ -134,8 +134,7 @@ class HologramInspectorTest {
     @Test
     fun `looking at another machine moves the same panel`() {
         val first = battery()
-        val second = SmallBattery(MockServer.createLocation(0.0, 64.0, 3.0))
-        registry.track(second, SmallBattery.BLOCK_ID)
+        val second = SmallBattery(MockServer.createLocation(0.0, 64.0, 3.0)).placedIn(registry)
         val inspector = inspector()
 
         lookAt(first)
@@ -143,7 +142,7 @@ class HologramInspectorTest {
         lookAt(second)
         inspector.refresh()
 
-        verify(exactly = 1) { MockServer.world.spawn(any<Location>(), TextDisplay::class.java, any<Consumer<in TextDisplay>>()) }
+        verify(exactly = 1) { spawnCall() }
         verify { display.teleport(any<Location>()) }
     }
 

@@ -21,6 +21,7 @@ ITEM = PACK / "atlas/items/atlas_goggles.json"
 
 HEAD_LO, HEAD_HI = 1.6, 14.4
 EYE_Y = 7.2
+LEFT_EYE_X, RIGHT_EYE_X = 4.8, 11.2
 LENS = 5.0          # housing width and height
 DEPTH = 2.0         # housing depth, out from the face
 PLATE = 0.25        # lens plate thickness
@@ -72,17 +73,17 @@ def lens_housing(cx):
     return [cup, plate]
 
 
-def strap_run(frm, to, long_axis_len, faces_long, faces_edge):
-    faces = {f: strap(long_axis_len) for f in faces_long}
-    faces.update({f: strap(long_axis_len, STRAP_T) for f in faces_edge})
+def strap_run(frm, to, faces_long, faces_edge):
+    length = max(t - f for f, t in zip(frm, to))
+    faces = {f: strap(length) for f in faces_long}
+    faces.update({f: strap(length, STRAP_T) for f in faces_edge})
     return box(frm, to, faces)
 
 
 def elements():
-    left_cx, right_cx = 4.8, 11.2
-    out = lens_housing(left_cx) + lens_housing(right_cx)
-    inner_l, inner_r = left_cx + LENS / 2, right_cx - LENS / 2
-    outer_l, outer_r = left_cx - LENS / 2, right_cx + LENS / 2
+    out = lens_housing(LEFT_EYE_X) + lens_housing(RIGHT_EYE_X)
+    inner_l, inner_r = LEFT_EYE_X + LENS / 2, RIGHT_EYE_X - LENS / 2
+    outer_l, outer_r = LEFT_EYE_X - LENS / 2, RIGHT_EYE_X + LENS / 2
 
     # bridge over the nose
     out.append(solid([inner_l, EYE_Y - 0.5, 0.0], [inner_r, EYE_Y + 0.5, 1.2], 4, 12))
@@ -93,14 +94,12 @@ def elements():
         out.append(solid([x0, sy0 - 0.3, -0.1], [x1, sy1 + 0.3, 1.4], 2, 3))
 
     # strap: both sides and the back, just outside the head
-    side_len = HEAD_HI + STRAP_T - 1.4
     out.append(strap_run([HEAD_LO - STRAP_T, sy0, 1.4], [HEAD_LO, sy1, HEAD_HI + STRAP_T],
-                         side_len, ("west", "east"), ("up", "down")))
+                         ("west", "east"), ("up", "down")))
     out.append(strap_run([HEAD_HI, sy0, 1.4], [HEAD_HI + STRAP_T, sy1, HEAD_HI + STRAP_T],
-                         side_len, ("east", "west"), ("up", "down")))
-    back_len = HEAD_HI - HEAD_LO
+                         ("east", "west"), ("up", "down")))
     out.append(strap_run([HEAD_LO, sy0, HEAD_HI], [HEAD_HI, sy1, HEAD_HI + STRAP_T],
-                         back_len, ("south", "north"), ("up", "down")))
+                         ("south", "north"), ("up", "down")))
     return out
 
 
@@ -151,6 +150,7 @@ def item_definition():
 
 
 if __name__ == "__main__":
-    MODEL.write_text(json.dumps(model(), indent=2) + "\n")
+    worn = model()
+    MODEL.write_text(json.dumps(worn, indent=2) + "\n")
     ITEM.write_text(json.dumps(item_definition(), indent=2) + "\n")
-    print(f"wrote {MODEL} ({len(model()['elements'])} elements) and {ITEM}")
+    print(f"wrote {MODEL} ({len(worn['elements'])} elements) and {ITEM}")
