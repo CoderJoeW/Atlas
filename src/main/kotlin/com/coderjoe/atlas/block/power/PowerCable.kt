@@ -101,6 +101,8 @@ class PowerCable(location: Location) : PowerBlock(location, maxStorage = 0) {
     override fun inspect(): Inspection {
         val network = PowerNetworks.networkFor(this)
         val (sources, sinks) = network.terminals()
+        // a machine from another system, like the fluid pump, draws from the run without being a power block
+        val drawing = sinks.size + network.consumers().count { it.consumer.wantsPower() }
         val terminals = (sources + sinks).map { it.block }.distinctBy { it.location }
         val stored = terminals.sumOf { it.currentPower }
         val capacity = terminals.sumOf { it.maxStorage }
@@ -111,8 +113,8 @@ class PowerCable(location: Location) : PowerBlock(location, maxStorage = 0) {
                 listOf(
                     StatusLine("Cable: ${blocks(network.cables.size)}"),
                     StatusLine("Producing: ${blocks(sources.size)} with power to give"),
-                    StatusLine("Drawing: ${blocks(sinks.size)} with room to take"),
-                    diagnosis(sources.size, sinks.size),
+                    StatusLine("Drawing: ${blocks(drawing)} with room to take"),
+                    diagnosis(sources.size, drawing),
                 ),
         )
     }

@@ -5,6 +5,7 @@ import com.coderjoe.atlas.block.Gauge
 import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.StatusLine
 import com.coderjoe.atlas.block.Tone
+import com.coderjoe.atlas.block.fluid.FluidPump
 import com.coderjoe.atlas.testing.Blocks.placedIn
 import com.coderjoe.atlas.testing.MockServer
 import org.junit.jupiter.api.AfterEach
@@ -65,6 +66,19 @@ class PowerCableInspectionTest {
         producer()
 
         assertEquals(StatusLine("Nothing on this run can take power", Tone.FAULT), cable.inspect().diagnosis())
+    }
+
+    /** The pump is not a power block, but the run feeds it all the same. */
+    @Test
+    fun `a run feeding only a fluid pump reports as flowing`() {
+        val cable = cable(64.0)
+        producer()
+        FluidPump(MockServer.createLocation(0.0, 63.0, 0.0)).placedIn(registry)
+
+        val inspection = cable.inspect()
+
+        assertEquals(StatusLine("Drawing: 1 block with room to take"), inspection.lines[2])
+        assertEquals(StatusLine("Power is flowing", Tone.GOOD), inspection.diagnosis())
     }
 
     /** No terminals means no capacity, and a 0/0 gauge would only read as an empty red bar. */

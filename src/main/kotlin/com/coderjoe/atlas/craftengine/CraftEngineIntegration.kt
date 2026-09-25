@@ -17,9 +17,6 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
          */
         const val RESOURCE_PACK_PATH = "resourcepack"
 
-        /** Finder litter that a macOS checkout can leave in the resource folders. */
-        private const val FINDER_METADATA = ".DS_Store"
-
         /**
          * Fails if two resources in different folders share a file name.
          *
@@ -119,39 +116,17 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
     }
 
     private fun copyPackYml() {
-        val targetFile = File(craftEngineFolder, "pack.yml")
-        if (!targetFile.parentFile.exists()) {
-            targetFile.parentFile.mkdirs()
-        }
-        plugin.saveResource("atlas/pack.yml", true)
-        val sourceFile = File(plugin.dataFolder, "atlas/pack.yml")
-        if (sourceFile.exists()) {
-            sourceFile.copyTo(targetFile, overwrite = true)
-            sourceFile.delete()
-        }
+        deploy("atlas/pack.yml", "pack.yml")
     }
 
     private fun copyConfigurations() {
-        val configFolder = File(craftEngineFolder, "configuration")
-        if (!configFolder.exists()) {
-            configFolder.mkdirs()
-        }
-
-        val prefix = "atlas/configuration/"
-        val configPaths = discoverResources(prefix, ".yml")
+        val configPaths = discoverResources("atlas/configuration/", ".yml")
 
         requireUniqueFileNames(configPaths)
 
         for (resourcePath in configPaths) {
-            val fileName = resourcePath.substringAfterLast("/")
-            val targetFile = File(configFolder, fileName)
-            plugin.saveResource(resourcePath, true)
-            val sourceFile = File(plugin.dataFolder, resourcePath)
-            if (sourceFile.exists()) {
-                sourceFile.copyTo(targetFile, overwrite = true)
-                sourceFile.delete()
-                deployed.add("configuration/$fileName")
-            }
+            val relativePath = "configuration/${resourcePath.substringAfterLast("/")}"
+            if (deploy(resourcePath, relativePath)) deployed.add(relativePath)
         }
     }
 
@@ -161,17 +136,23 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
      */
     private fun copyResourcePack() {
         for (resourcePath in discoverResources("atlas/$RESOURCE_PACK_PATH/", "")) {
-            if (resourcePath.substringAfterLast("/") == FINDER_METADATA) continue
             val relativePath = resourcePath.removePrefix("atlas/")
-            val targetFile = File(craftEngineFolder, relativePath)
-            targetFile.parentFile.mkdirs()
-            plugin.saveResource(resourcePath, true)
-            val sourceFile = File(plugin.dataFolder, resourcePath)
-            if (sourceFile.exists()) {
-                sourceFile.copyTo(targetFile, overwrite = true)
-                sourceFile.delete()
-                deployed.add(relativePath)
-            }
+            if (deploy(resourcePath, relativePath)) deployed.add(relativePath)
         }
+    }
+
+    /**
+     * Streams the jar resource [resourcePath] to [relativePath] under CraftEngine's folder, and
+     * reports whether the jar had it.
+     */
+    private fun deploy(
+        resourcePath: String,
+        relativePath: String,
+    ): Boolean {
+        val source = plugin.getResource(resourcePath) ?: return false
+        val target = File(craftEngineFolder, relativePath)
+        target.parentFile.mkdirs()
+        source.use { input -> target.outputStream().use { input.copyTo(it) } }
+        return true
     }
 }

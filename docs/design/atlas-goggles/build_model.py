@@ -1,4 +1,4 @@
-"""Writes the Atlas Goggles' worn model and item definition into the resource pack.
+"""Writes the Atlas Goggles' worn model into the resource pack.
 
 usage: python3 docs/design/atlas-goggles/build_model.py
 
@@ -17,7 +17,6 @@ from pathlib import Path
 
 PACK = Path("src/main/resources/atlas/resourcepack/assets")
 MODEL = PACK / "minecraft/models/item/custom/atlas_goggles_worn.json"
-ITEM = PACK / "atlas/items/atlas_goggles.json"
 
 HEAD_LO, HEAD_HI = 1.6, 14.4
 EYE_Y = 7.2
@@ -29,7 +28,7 @@ STRAP_H, STRAP_T = 2.0, 0.5
 RIVET_V = 2.38
 
 
-def housing(w, h, du=0.0, dv=0.0):
+def housing(w, h, du, dv):
     return {"texture": "#housing", "uv": [du, dv, du + w, dv + h]}
 
 
@@ -42,7 +41,7 @@ def box(frm, to, faces):
     return {"from": frm, "to": to, "faces": faces}
 
 
-def solid(frm, to, du=0.0, dv=0.0):
+def solid(frm, to, du, dv):
     """A box of housing material with all six faces, each sampling a patch its own size."""
     w, h, d = (to[i] - frm[i] for i in range(3))
     return box(frm, to, {
@@ -114,6 +113,10 @@ def rounded(elems):
     return elems
 
 
+def held(yaw, translation):
+    return {"rotation": [0, yaw, 0], "translation": translation, "scale": [0.45] * 3}
+
+
 def model():
     return {
         "textures": {
@@ -125,32 +128,17 @@ def model():
         "elements": rounded(elements()),
         "display": {
             "head": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
-            "thirdperson_righthand": {"rotation": [0, 180, 0], "translation": [0, 1, -2], "scale": [0.45, 0.45, 0.45]},
-            "thirdperson_lefthand": {"rotation": [0, 180, 0], "translation": [0, 1, -2], "scale": [0.45, 0.45, 0.45]},
-            "firstperson_righthand": {"rotation": [0, 160, 0], "translation": [1, 3, 0], "scale": [0.45, 0.45, 0.45]},
-            "firstperson_lefthand": {"rotation": [0, 200, 0], "translation": [-1, 3, 0], "scale": [0.45, 0.45, 0.45]},
+            "thirdperson_righthand": held(180, [0, 1, -2]),
+            "thirdperson_lefthand": held(180, [0, 1, -2]),
+            "firstperson_righthand": held(160, [1, 3, 0]),
+            "firstperson_lefthand": held(200, [-1, 3, 0]),
             "ground": {"rotation": [0, 0, 0], "translation": [0, 2, 0], "scale": [0.4, 0.4, 0.4]},
             "fixed": {"rotation": [0, 180, 0], "translation": [0, 0, 0], "scale": [0.6, 0.6, 0.6]},
         },
     }
 
 
-def item_definition():
-    """The flat icon in inventories, the 3D model everywhere else - on the head above all."""
-    return {
-        "model": {
-            "type": "minecraft:select",
-            "property": "minecraft:display_context",
-            "cases": [
-                {"when": "gui", "model": {"type": "minecraft:model", "model": "minecraft:item/custom/atlas_goggles"}},
-            ],
-            "fallback": {"type": "minecraft:model", "model": "minecraft:item/custom/atlas_goggles_worn"},
-        }
-    }
-
-
 if __name__ == "__main__":
     worn = model()
     MODEL.write_text(json.dumps(worn, indent=2) + "\n")
-    ITEM.write_text(json.dumps(item_definition(), indent=2) + "\n")
-    print(f"wrote {MODEL} ({len(worn['elements'])} elements) and {ITEM}")
+    print(f"wrote {MODEL} ({len(worn['elements'])} elements)")

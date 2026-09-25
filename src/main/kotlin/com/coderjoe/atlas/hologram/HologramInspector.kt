@@ -175,7 +175,7 @@ class HologramInspector(
             }
         }
 
-        internal fun title(
+        private fun title(
             descriptor: BlockDescriptor?,
             facing: BlockFace,
         ): String {

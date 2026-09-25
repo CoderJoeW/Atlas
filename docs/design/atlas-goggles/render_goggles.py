@@ -110,7 +110,7 @@ def render(elements, cam, head=True):
             if v1 < v0:
                 crop = crop.transpose(Image.FLIP_TOP_BOTTOM)
         w, h = max(crop.width, 1), max(crop.height, 1)
-        texels = np.asarray(crop.convert("RGBA")).astype(float)
+        texels = np.asarray(crop).astype(float)
 
         # screen = tl + s * (tr - tl) / w + t * (bl - tl) / h, solved for (s, t) at every pixel
         a = np.array([[(ptr[0] - ptl[0]) / w, (pbl[0] - ptl[0]) / h],
@@ -147,16 +147,16 @@ if __name__ == "__main__":
     elements = load()
     size = 420
     views = [
-        ("front three-quarter", Camera(-35, -20, 18, size), True),
-        ("front", Camera(0, 0, 18, size), True),
-        ("side", Camera(-90, -10, 18, size), True),
-        ("rear three-quarter", Camera(-150, -25, 18, size), True),
-        ("goggles alone", Camera(-35, -20, 18, size), False),
+        ("front three-quarter", -35, -20, True),
+        ("front", 0, 0, True),
+        ("side", -90, -10, True),
+        ("rear three-quarter", -150, -25, True),
+        ("goggles alone", -35, -20, False),
     ]
     sheet = Image.new("RGBA", (size * len(views), size + 30), (150, 160, 170, 255))
     draw = ImageDraw.Draw(sheet)
-    for i, (label, cam, head) in enumerate(views):
-        sheet.alpha_composite(render(elements, cam, head), (i * size, 30))
+    for i, (label, yaw, pitch, head) in enumerate(views):
+        sheet.alpha_composite(render(elements, Camera(yaw, pitch, 18, size), head), (i * size, 30))
         draw.text((i * size + 10, 8), label, fill=(20, 20, 20, 255))
     sheet.save(sys.argv[1])
     print("wrote", sys.argv[1])

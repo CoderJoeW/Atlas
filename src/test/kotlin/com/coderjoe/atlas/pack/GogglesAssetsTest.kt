@@ -3,6 +3,8 @@ package com.coderjoe.atlas.pack
 import com.coderjoe.atlas.testing.AtlasPaths.ITEM_DEFINITION_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.ITEM_MODEL_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.ITEM_TEXTURE_DIR
+import com.coderjoe.atlas.testing.ItemModels.leaf
+import com.coderjoe.atlas.testing.ItemModels.resolve
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -26,23 +28,12 @@ class GogglesAssetsTest {
     @Suppress("UNCHECKED_CAST")
     private fun read(file: File): Map<String, Any?> = Yaml().load(file.readText()) as Map<String, Any?>
 
-    /** Every `model` reference in a definition, through any `select` cases and fallback. */
-    private fun modelReferences(node: Any?): List<String> =
-        when (node) {
-            is Map<*, *> -> {
-                val self = (node["model"] as? String)?.let { listOf(it) }.orEmpty()
-                self + node.values.flatMap(::modelReferences)
-            }
-            is List<*> -> node.flatMap(::modelReferences)
-            else -> emptyList()
-        }
-
-    private fun models(): List<String> = modelReferences(read(itemDefinition)).map { it.substringAfterLast("/") }
+    private fun models(): List<String> = resolve(read(itemDefinition)["model"]).map { leaf(it["path"] as String) }
 
     @Suppress("UNCHECKED_CAST")
     private fun textures(model: String): List<File> {
         val refs = read(File(ITEM_MODEL_DIR, "$model.json"))["textures"] as Map<String, String>
-        return refs.values.filterNot { it.startsWith("#") }.distinct().map { File(ITEM_TEXTURE_DIR, "${it.substringAfterLast("/")}.png") }
+        return refs.values.filterNot { it.startsWith("#") }.distinct().map { File(ITEM_TEXTURE_DIR, "${leaf(it)}.png") }
     }
 
     @Test

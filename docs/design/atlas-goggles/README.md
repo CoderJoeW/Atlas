@@ -46,8 +46,8 @@ amber). It already sat at the target brightness (mean 55), so the gain was only 
 
 ## Model
 
-`build_model.py` writes the worn model and the item definition, and `render_goggles.py` renders the
-model textured on a stand-in Steve head (`renders/worn.png`).
+`build_model.py` writes the worn model, and `render_goggles.py` renders it textured on a stand-in Steve
+head (`renders/worn.png`).
 
 A head-slot item with no equipment asset draws its own item model on the head, so the one blocky model
 serves the head, the hand, the ground and item frames. The item definition selects on
