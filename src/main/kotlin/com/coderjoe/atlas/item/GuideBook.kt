@@ -85,8 +85,8 @@ object GuideBook {
                 .append(
                     Component.text(
                         "\nGenerators produce\npower. Cables transfer\nit. Batteries store it.\n" +
-                            "Machines consume it.\n\nHold an Atlas Wrench\n" +
-                            "and right-click a block\nto inspect it.\n\n",
+                            "Machines consume it.\n\nWear Atlas Goggles\n" +
+                            "and look at a block\nto read it.\n\n",
                         darkGray,
                     ),
                 )

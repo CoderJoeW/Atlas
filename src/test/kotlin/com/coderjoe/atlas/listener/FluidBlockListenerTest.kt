@@ -7,13 +7,9 @@ import com.coderjoe.atlas.block.fluid.FluidPump
 import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import org.bukkit.block.Block
-import org.bukkit.entity.Player
-import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
-import org.bukkit.event.player.PlayerInteractEvent
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertNull
@@ -35,7 +31,7 @@ class FluidBlockListenerTest {
                 factory = FluidBlockFactory,
                 descriptors = emptyMap(),
             )
-        listener = AtlasBlockListener(MockServer.plugin, registry, listOf(system)) { _, _ -> }
+        listener = AtlasBlockListener(MockServer.plugin, registry, listOf(system))
     }
 
     @AfterEach
@@ -91,52 +87,5 @@ class FluidBlockListenerTest {
         }
 
         assertNull(registry.getBlock(loc))
-    }
-
-    @Test
-    fun `onPlayerInteract only RIGHT_CLICK_BLOCK triggers`() {
-        val player = mockk<Player>(relaxed = true)
-        val block = mockk<Block>(relaxed = true)
-        every { block.location } returns MockServer.createLocation()
-
-        val event = mockk<PlayerInteractEvent>(relaxed = true)
-        every { event.action } returns Action.LEFT_CLICK_BLOCK
-        every { event.player } returns player
-        every { event.clickedBlock } returns block
-
-        listener.onPlayerInteract(event)
-        verify(exactly = 0) { event.isCancelled = true }
-    }
-
-    @Test
-    fun `onPlayerInteract sneaking does not trigger`() {
-        val player = mockk<Player>(relaxed = true)
-        every { player.isSneaking } returns true
-        val block = mockk<Block>(relaxed = true)
-        every { block.location } returns MockServer.createLocation()
-
-        val event = mockk<PlayerInteractEvent>(relaxed = true)
-        every { event.action } returns Action.RIGHT_CLICK_BLOCK
-        every { event.player } returns player
-        every { event.clickedBlock } returns block
-
-        listener.onPlayerInteract(event)
-        verify(exactly = 0) { event.isCancelled = true }
-    }
-
-    @Test
-    fun `onPlayerInteract ignores non-fluid-block location`() {
-        val player = mockk<Player>(relaxed = true)
-        every { player.isSneaking } returns false
-        val block = mockk<Block>(relaxed = true)
-        every { block.location } returns MockServer.createLocation(99.0, 99.0, 99.0)
-
-        val event = mockk<PlayerInteractEvent>(relaxed = true)
-        every { event.action } returns Action.RIGHT_CLICK_BLOCK
-        every { event.player } returns player
-        every { event.clickedBlock } returns block
-
-        listener.onPlayerInteract(event)
-        verify(exactly = 0) { event.isCancelled = true }
     }
 }

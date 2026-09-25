@@ -49,7 +49,7 @@ class ArchitectureTest {
             .layer("Plugin").definedBy("com.coderjoe.atlas")
             .layer("Edges").definedBy(
                 "com.coderjoe.atlas.listener..",
-                "com.coderjoe.atlas.dialog..",
+                "com.coderjoe.atlas.hologram..",
                 "com.coderjoe.atlas.item..",
             )
             .layer("Data").definedBy("com.coderjoe.atlas.data..")

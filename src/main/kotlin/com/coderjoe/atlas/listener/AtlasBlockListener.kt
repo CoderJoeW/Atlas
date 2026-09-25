@@ -1,28 +1,22 @@
 package com.coderjoe.atlas.listener
 
-import com.coderjoe.atlas.block.AtlasBlock
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
-import com.coderjoe.atlas.item.AtlasWrench
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
-import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 class AtlasBlockListener(
     private val plugin: JavaPlugin,
     private val registry: BlockRegistry,
     private val systems: List<BlockSystem>,
-    private val showDialog: (Player, AtlasBlock) -> Unit,
 ) : Listener {
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
@@ -131,25 +125,5 @@ class AtlasBlockListener(
                 else -> event.player.facing
             }
         }
-    }
-
-    /**
-     * Atlas blocks only open their dialog for a player holding the [com.coderjoe.atlas.item.AtlasWrench].
-     *
-     * A bare-handed right-click is left entirely alone, so machines can be built around and walked
-     * past without a dialog interrupting, and inspecting one stays a deliberate act.
-     */
-    @EventHandler
-    fun onPlayerInteract(event: PlayerInteractEvent) {
-        if (event.action != Action.RIGHT_CLICK_BLOCK) return
-        if (event.isCancelled) return
-        if (!AtlasWrench.isWrench(event.item, plugin)) return
-
-        val clickedBlock = event.clickedBlock ?: return
-        val location = clickedBlock.location
-
-        val block = registry.getBlock(location) ?: return
-        showDialog(event.player, block)
-        event.isCancelled = true
     }
 }
