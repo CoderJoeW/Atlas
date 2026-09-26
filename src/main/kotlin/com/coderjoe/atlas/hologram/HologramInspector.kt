@@ -6,7 +6,6 @@ import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.Gauge
 import com.coderjoe.atlas.block.StatusLine
-import com.coderjoe.atlas.block.Tone
 import com.coderjoe.atlas.util.displayName
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
@@ -118,6 +117,7 @@ class HologramInspector(
                 panel.brightness = Display.Brightness(FULL_BRIGHT, FULL_BRIGHT)
                 panel.backgroundColor = BACKGROUND
                 panel.isShadowed = true
+                panel.isSeeThrough = true
                 panel.teleportDuration = GLIDE_TICKS
                 panel.transformation =
                     Transformation(Vector3f(), Quaternionf(), Vector3f(SCALE, SCALE, SCALE), Quaternionf())
@@ -222,14 +222,6 @@ class HologramInspector(
                 .append(bar)
         }
 
-        private fun line(line: StatusLine): Component =
-            Component.text(line.text).color(
-                when (line.tone) {
-                    Tone.NEUTRAL -> NamedTextColor.GRAY
-                    Tone.GOOD -> NamedTextColor.GREEN
-                    Tone.WARNING -> NamedTextColor.YELLOW
-                    Tone.FAULT -> NamedTextColor.RED
-                },
-            )
+        private fun line(line: StatusLine): Component = Component.text(line.text).color(line.tone.color)
     }
 }

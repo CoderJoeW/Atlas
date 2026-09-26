@@ -1,11 +1,14 @@
 package com.coderjoe.atlas.item
 
+import com.coderjoe.atlas.block.deposit.Purity
+import com.coderjoe.atlas.block.power.mine.MineTier
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.World.Environment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
@@ -57,6 +60,16 @@ object GuideBook {
         recipe.addIngredient(Material.BOOK)
         return recipe
     }
+
+    private fun purityRates(): String =
+        Purity.entries.chunked(2).joinToString("\n") { row ->
+            row.joinToString("  ") { "${it.displayName} ${it.rateLabel}" }
+        }
+
+    private fun mineRates(dimension: Environment): String =
+        MineTier.entries
+            .filter { it.ore.dimension == dimension }
+            .joinToString("\n") { "${it.displayName.removeSuffix(" Mine")} ${it.powerPerHaul} / ${it.cycleSeconds}s" }
 
     internal fun buildPages(): List<Component> {
         val bold = Style.style(TextDecoration.BOLD)
@@ -200,27 +213,40 @@ object GuideBook {
                 .append(Component.text("Mining System\n", Style.style(TextDecoration.BOLD).color(gold)))
                 .append(
                     Component.text(
-                        "\nA mine is a derrick that\nturns power straight\ninto ore. It needs no\n" +
-                            "deposit underneath and\nnever runs dry.\n\n",
+                        "\nA mine is a derrick that\nturns power into the\nore of the chunk it\n" +
+                            "stands on. It never\nruns dry.\n\n",
                         darkGray,
                     ),
                 )
                 .append(Component.text("Output: ", bold))
                 .append(Component.text("hands each haul to an\nattached conveyor belt,\nor drops it loose above.", darkGray))
                 .build(),
-            // Page 13: The seven mines
+            // Page 13: Ore deposits
             Component.text()
-                .append(Component.text("The Seven Mines\n", Style.style(TextDecoration.BOLD).color(gold)))
-                .append(Component.text("\nPower per haul, and\nhow long drilling takes:\n\n", darkGray))
+                .append(Component.text("Ore Deposits\n", Style.style(TextDecoration.BOLD).color(gold)))
                 .append(
                     Component.text(
-                        "Coal 2 / 10s\nIron 5 / 15s\nRedstone 5 / 15s\nGold 8 / 20s\n" +
-                            "Emerald 14 / 30s\nDiamond 18 / 40s\nNetherite 30 / 50s",
+                        "\nEvery chunk holds each\nore at a purity, which\nsets how fast a mine\ndrills it:\n\n",
                         darkGray,
                     ),
                 )
+                .append(Component.text(purityRates() + "\n\n", darkGray))
+                .append(Component.text("Goggles: ", bold))
+                .append(Component.text("show the\ndeposits where you\nstand.", darkGray))
                 .build(),
-            // Page 14: Tips
+            // Page 14: Overworld mines
+            Component.text()
+                .append(Component.text("Overworld Mines\n", Style.style(TextDecoration.BOLD).color(gold)))
+                .append(Component.text("\nPower per haul and bore\ntime, Normal deposit:\n\n", darkGray))
+                .append(Component.text(mineRates(Environment.NORMAL), darkGray))
+                .build(),
+            // Page 15: Nether mines
+            Component.text()
+                .append(Component.text("Nether Mines\n", Style.style(TextDecoration.BOLD).color(gold)))
+                .append(Component.text("\nOnly the Nether holds\nthese deposits:\n\n", darkGray))
+                .append(Component.text(mineRates(Environment.NETHER), darkGray))
+                .build(),
+            // Page 16: Tips
             Component.text()
                 .append(Component.text("Tips & Tricks\n", Style.style(TextDecoration.BOLD).color(darkRed)))
                 .append(Component.text("\n"))

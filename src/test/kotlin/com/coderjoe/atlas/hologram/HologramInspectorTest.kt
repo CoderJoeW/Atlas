@@ -97,6 +97,15 @@ class HologramInspectorTest {
     }
 
     @Test
+    fun `the panel draws over the blocks around it`() {
+        lookAt(battery())
+
+        inspector().refresh()
+
+        verify { display.isSeeThrough = true }
+    }
+
+    @Test
     fun `a player without goggles gets no panel`() {
         wearing = false
         lookAt(battery())

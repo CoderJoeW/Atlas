@@ -1,8 +1,12 @@
 package com.coderjoe.atlas.block.power.mine
 
+import com.coderjoe.atlas.block.Inspection
+import com.coderjoe.atlas.block.StatusLine
 import com.coderjoe.atlas.block.capability.ItemInlet
+import com.coderjoe.atlas.block.deposit.Purity
 import com.coderjoe.atlas.block.power.PowerBlock
 import com.coderjoe.atlas.block.pushRoundRobinTo
+import com.coderjoe.atlas.block.tone
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
@@ -16,8 +20,9 @@ import org.bukkit.inventory.ItemStack
  *
  * Every mine works the same way and differs only in its [MineTier]: what it digs, how much power a
  * haul costs and how long the bore takes - the rarer the ore, the slower and thirstier the rig. The
- * machine does not touch the world around it - the shaft is fiction - so a mine can be built
- * anywhere a cable reaches and never runs a deposit dry.
+ * machine never breaks a block, but it works the deposit in the chunk it stands on: the chunk's
+ * [Purity] of its ore sets how fast it bores, and on a barren chunk it never starts. Deposits never
+ * run dry, since purity is read from what the chunk held when it was generated.
  *
  * Idle and digging are one block definition with a `stage` property rather than two blocks, the
  * shape the factories use for `powered` - but an int rather than a boolean, because a bore takes
@@ -77,13 +82,26 @@ class Mine(
      */
     val cycleTicks: Long get() = tier.cycleTicks
 
+    /**
+     * The purity of this mine's ore in its chunk, or null until the chunk's survey lands.
+     *
+     * Remembered once known, since a chunk's record never changes and reading it can load the chunk.
+     */
+    private val deposit: Purity?
+        get() = knownDeposit ?: deposits.purityAt(location, tier.ore).also { knownDeposit = it }
+
+    private var knownDeposit: Purity? = null
+
     val output: Material get() = tier.output
 
     /** Round-robins hauls across every attached conveyor belt, so several belts share the output. */
     private var nextBeltIndex: Int = 0
 
-    /** Ticks left on the haul in progress. Zero means the mine is idle, waiting on power. */
-    private var drillTicksRemaining: Long = 0L
+    /**
+     * Work left on the haul in progress, in ticks of a Normal deposit: a richer one works it off
+     * faster. Zero means the mine is idle, waiting on power.
+     */
+    private var drillTicksRemaining: Double = 0.0
 
     companion object {
         /** The faces a shaft mouth can open toward. The model has no up or down variant. */
@@ -96,7 +114,7 @@ class Mine(
          * How many steps a bore is shown in, counting up from [IDLE_STAGE] + 1.
          *
          * Every mine config declares `stage` as `range: 1~5` and gives each step its own
-         * appearance per facing, so changing this means regenerating all seven. Nothing throws if
+         * appearance per facing, so changing this means regenerating every one. Nothing throws if
          * they drift - the mine just freezes on one appearance - so `MineTest` pins them together.
          */
         const val DIGGING_STAGES = 4
@@ -158,26 +176,26 @@ class Mine(
             return
         }
 
+        val rate = deposit?.rate ?: 0.0
         var completedHaul = false
         if (drillTicksRemaining > 0) {
-            drillTicksRemaining -= updateIntervalTicks
-            if (drillTicksRemaining <= 0) {
-                drillTicksRemaining = 0
-                completedHaul = true
-            }
+            drillTicksRemaining -= updateIntervalTicks * rate
+            completedHaul = drillTicksRemaining <= 0
         }
 
         // Falls through from a haul that just finished this same tick, so a fully powered mine
-        // starts its next drill immediately instead of idling for one tick between hauls.
+        // starts its next drill immediately instead of idling for one tick between hauls. A bore
+        // that ended partway through a tick hands its overshoot to the next one, so a Rich bore
+        // averages exactly its 133.3 ticks rather than rounding up to whole ticks.
         if (drillTicksRemaining <= 0) {
-            isCutting =
-                if (currentPower >= powerPerHaul) {
-                    removePower(powerPerHaul)
-                    drillTicksRemaining = cycleTicks
-                    true
-                } else {
-                    false
-                }
+            if (rate > 0.0 && currentPower >= powerPerHaul) {
+                removePower(powerPerHaul)
+                drillTicksRemaining += cycleTicks
+                isCutting = true
+            } else {
+                drillTicksRemaining = 0.0
+                isCutting = false
+            }
         }
 
         showDrillStage(drillStageFor(drillTicksRemaining))
@@ -205,10 +223,22 @@ class Mine(
      * The digging steps divide the cycle evenly, so a bore first shows whole-but-lit, then loses a
      * quarter of the ore at each of 25%, 50% and 75%.
      */
-    private fun drillStageFor(ticksRemaining: Long): Int {
+    private fun drillStageFor(ticksRemaining: Double): Int {
         if (!isCutting) return IDLE_STAGE
         val step = ((cycleTicks - ticksRemaining) * DIGGING_STAGES / cycleTicks).toInt()
         return IDLE_STAGE + 1 + step.coerceIn(0, DIGGING_STAGES - 1)
+    }
+
+    override fun inspect(): Inspection {
+        val power = super.inspect()
+        return power.copy(lines = power.lines + depositLine())
+    }
+
+    private fun depositLine(): StatusLine {
+        val ore = tier.ore.displayName.lowercase()
+        val purity = deposit ?: return StatusLine("Surveying $ore deposit...")
+        if (purity == Purity.BARREN) return StatusLine("No $ore here - nothing to mine", purity.tone)
+        return StatusLine("${purity.displayName} $ore deposit - ${purity.rateLabel} speed", purity.tone)
     }
 
     /**

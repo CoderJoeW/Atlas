@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.block
 
+import com.coderjoe.atlas.block.deposit.DepositMap
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
@@ -15,6 +16,7 @@ abstract class AtlasBlock(
     private var effectTask: BukkitTask? = null
     private var context: BlockContext? = null
     protected val plugin: JavaPlugin get() = requireContext().plugin
+    protected val deposits: DepositMap get() = requireContext().deposits
     protected open val updateIntervalTicks: Long = 20L
 
     /** Tick interval for [spawnEffects]. Zero disables the ambient effect task entirely. */

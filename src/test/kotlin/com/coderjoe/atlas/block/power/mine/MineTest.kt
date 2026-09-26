@@ -2,6 +2,9 @@ package com.coderjoe.atlas.block.power.mine
 
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
+import com.coderjoe.atlas.block.StatusLine
+import com.coderjoe.atlas.block.Tone
+import com.coderjoe.atlas.block.deposit.Purity
 import com.coderjoe.atlas.block.power.PowerBlockFactory
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.transport.ConveyorBelt
@@ -59,31 +62,58 @@ class MineTest {
     /**
      * Runs [body], tolerating only the failure a mine legitimately hits in a unit test: building
      * an [org.bukkit.inventory.ItemStack] needs Bukkit's registry, which no test server provides.
-     * Anything else is a real bug and is rethrown.
+     * Anything else is a real bug and is rethrown. Answers whether that failure happened, which
+     * only a finished haul reaches - so it doubles as "did this tick drop ore".
      */
-    private fun expectingRegistryFailure(body: () -> Unit) {
+    private fun expectingRegistryFailure(body: () -> Unit): Boolean {
         try {
             body()
+            return false
         } catch (e: Throwable) {
             val cause = generateSequence(e) { it.cause }.last()
             val registryFailure =
                 cause is NoClassDefFoundError || cause is ExceptionInInitializerError ||
                     cause.message?.contains("Registry") == true
             if (!registryFailure) throw e
+            return true
         }
     }
 
+    /** A coal mine standing on a chunk whose survey answers [purity]. */
+    private fun coalMineOn(purity: () -> Purity?): Mine {
+        val registry = BlockRegistry(MockServer.plugin) { _, _ -> purity() }
+        return Mine(MockServer.createLocation(0.0, 64.0, 0.0), MineTier.COAL).placedIn(registry)
+    }
+
+    /** Ticks [mine] [updates] times with a full buffer every tick and counts the hauls it drops. */
+    private fun haulsIn(
+        mine: Mine,
+        updates: Int,
+    ): Int =
+        (1..updates).count {
+            mine.currentPower = mine.maxStorage
+            expectingRegistryFailure { mine.powerUpdate() }
+        }
+
+    /** What each tier should drop, written out by hand so a changed output fails instead of agreeing with itself. */
+    private val expectedOutput =
+        mapOf(
+            MineTier.COAL to Material.COAL,
+            MineTier.COPPER to Material.RAW_COPPER,
+            MineTier.IRON to Material.RAW_IRON,
+            MineTier.REDSTONE to Material.REDSTONE,
+            MineTier.LAPIS to Material.LAPIS_LAZULI,
+            MineTier.AMETHYST to Material.AMETHYST_SHARD,
+            MineTier.GOLD to Material.RAW_GOLD,
+            MineTier.QUARTZ to Material.QUARTZ,
+            MineTier.EMERALD to Material.EMERALD,
+            MineTier.DIAMOND to Material.DIAMOND,
+            MineTier.NETHERITE to Material.ANCIENT_DEBRIS,
+        )
+
     /** Every mine, paired with the ore it digs and what a haul costs. */
     private fun allMines(location: Location): List<Triple<Mine, Material, Int>> =
-        listOf(
-            Triple(Mine(location, MineTier.COAL), Material.COAL, MineTier.COAL.powerPerHaul),
-            Triple(Mine(location, MineTier.IRON), Material.RAW_IRON, MineTier.IRON.powerPerHaul),
-            Triple(Mine(location, MineTier.REDSTONE), Material.REDSTONE, MineTier.REDSTONE.powerPerHaul),
-            Triple(Mine(location, MineTier.GOLD), Material.RAW_GOLD, MineTier.GOLD.powerPerHaul),
-            Triple(Mine(location, MineTier.EMERALD), Material.EMERALD, MineTier.EMERALD.powerPerHaul),
-            Triple(Mine(location, MineTier.DIAMOND), Material.DIAMOND, MineTier.DIAMOND.powerPerHaul),
-            Triple(Mine(location, MineTier.NETHERITE), Material.ANCIENT_DEBRIS, MineTier.NETHERITE.powerPerHaul),
-        )
+        MineTier.entries.map { tier -> Triple(Mine(location, tier), expectedOutput.getValue(tier), tier.powerPerHaul) }
 
     @Test
     fun `each mine digs its own ore for its own price`() {
@@ -172,6 +202,81 @@ class MineTest {
 
         assertTrue(mine.isCutting, "haul 2 should already be drilling")
         assertEquals(0, mine.currentPower, "both hauls' cost has now been committed")
+    }
+
+    @Test
+    fun `a mine on a barren chunk never starts a bore and keeps its power`() {
+        val mine = coalMineOn { Purity.BARREN }
+
+        assertEquals(0, haulsIn(mine, 30))
+        assertFalse(mine.isCutting)
+        assertEquals(mine.maxStorage, mine.currentPower, "no bore was ever paid for")
+    }
+
+    @Test
+    fun `a mine waits for its chunk's survey before starting a bore`() {
+        var surveyed: Purity? = null
+        val mine = coalMineOn { surveyed }
+        mine.currentPower = mine.maxStorage
+
+        mine.powerUpdate()
+        assertFalse(mine.isCutting, "nothing is known about the ground yet")
+
+        surveyed = Purity.NORMAL
+        mine.powerUpdate()
+        assertTrue(mine.isCutting)
+    }
+
+    @Test
+    fun `a mine reads its deposit once and remembers it`() {
+        var reads = 0
+        val mine = coalMineOn { Purity.RICH.also { reads++ } }
+
+        haulsIn(mine, 20)
+        mine.inspect()
+
+        assertEquals(1, reads)
+    }
+
+    /**
+     * Sixty ticks after the first commit is 1200 game ticks, six Normal coal bores. Rich bores run
+     * 133.3 ticks - not a whole number of 20-tick updates - so this also pins the overshoot carry:
+     * rounding each bore up to 140 would finish only eight.
+     */
+    @Test
+    fun `purity scales how fast a mine bores`() {
+        val window = 1200L
+        for (purity in Purity.entries.filter { it.rate > 0.0 }) {
+            val expected = (window * purity.rate / MineTier.COAL.cycleTicks).toInt()
+
+            assertEquals(expected, haulsIn(coalMineOn { purity }, (window / 20 + 1).toInt()), purity.name)
+        }
+    }
+
+    @Test
+    fun `a short pure bore still shows every digging step`() {
+        val mine = coalMineOn { Purity.PURE }
+        mine.currentPower = MineTier.COAL.powerPerHaul
+        val stages = mutableSetOf<Int>()
+
+        mine.powerUpdate()
+        while (mine.isCutting) {
+            stages.add(mine.drillStage)
+            expectingRegistryFailure { mine.powerUpdate() }
+        }
+
+        assertEquals((Mine.IDLE_STAGE + 1..Mine.IDLE_STAGE + Mine.DIGGING_STAGES).toSet(), stages)
+    }
+
+    @Test
+    fun `the goggles read the mine's deposit`() {
+        fun depositLine(purity: Purity?) = coalMineOn { purity }.inspect().lines.last()
+
+        assertEquals(StatusLine("Surveying coal deposit...", Tone.NEUTRAL), depositLine(null))
+        assertEquals(StatusLine("No coal here - nothing to mine", Tone.FAULT), depositLine(Purity.BARREN))
+        assertEquals(StatusLine("Poor coal deposit - 0.5x speed", Tone.WARNING), depositLine(Purity.POOR))
+        assertEquals(StatusLine("Normal coal deposit - 1x speed", Tone.NEUTRAL), depositLine(Purity.NORMAL))
+        assertEquals(StatusLine("Rich coal deposit - 1.5x speed", Tone.GOOD), depositLine(Purity.RICH))
     }
 
     @Test
@@ -318,6 +423,7 @@ class MineTest {
         val ordered =
             listOf(
                 Mine(location, MineTier.COAL),
+                Mine(location, MineTier.COPPER),
                 Mine(location, MineTier.IRON),
                 Mine(location, MineTier.GOLD),
                 Mine(location, MineTier.EMERALD),
@@ -336,7 +442,7 @@ class MineTest {
     fun `every mine descriptor faces the player and registers its own ID`() {
         Blocks.initPowerFactory()
         val descriptors = MineTier.entries.map { it.descriptor }
-        assertEquals(7, descriptors.map { it.baseBlockId }.toSet().size)
+        assertEquals(descriptors.size, descriptors.map { it.baseBlockId }.toSet().size)
         for (descriptor in descriptors) {
             // The shaft mouth is turned back toward whoever placed it.
             assertEquals(PlacementType.DIRECTIONAL_OPPOSITE, descriptor.placementType, descriptor.baseBlockId)
@@ -354,14 +460,28 @@ class MineTest {
     fun `every tier keeps the id, storage and description its class had`() {
         val expected =
             mapOf(
-                MineTier.COAL to Triple("atlas:coal_mine", 10, "Mine - consumes 2 power every 10s \u2192 1 coal"),
-                MineTier.IRON to Triple("atlas:iron_mine", 20, "Mine - consumes 5 power every 15s \u2192 1 raw iron"),
-                MineTier.REDSTONE to Triple("atlas:redstone_mine", 20, "Mine - consumes 5 power every 15s \u2192 1 redstone"),
-                MineTier.GOLD to Triple("atlas:gold_mine", 30, "Mine - consumes 8 power every 20s \u2192 1 raw gold"),
-                MineTier.EMERALD to Triple("atlas:emerald_mine", 50, "Mine - consumes 14 power every 30s \u2192 1 emerald"),
-                MineTier.DIAMOND to Triple("atlas:diamond_mine", 60, "Mine - consumes 18 power every 40s \u2192 1 diamond"),
+                MineTier.COAL to
+                    Triple("atlas:coal_mine", 10, "Mine - consumes 2 power every 10s on a Normal deposit \u2192 1 coal"),
+                MineTier.COPPER to
+                    Triple("atlas:copper_mine", 15, "Mine - consumes 3 power every 10s on a Normal deposit \u2192 1 raw copper"),
+                MineTier.IRON to
+                    Triple("atlas:iron_mine", 20, "Mine - consumes 5 power every 15s on a Normal deposit \u2192 1 raw iron"),
+                MineTier.REDSTONE to
+                    Triple("atlas:redstone_mine", 20, "Mine - consumes 5 power every 15s on a Normal deposit \u2192 1 redstone"),
+                MineTier.LAPIS to
+                    Triple("atlas:lapis_mine", 20, "Mine - consumes 5 power every 15s on a Normal deposit \u2192 1 lapis lazuli"),
+                MineTier.AMETHYST to
+                    Triple("atlas:amethyst_mine", 20, "Mine - consumes 5 power every 15s on a Normal deposit \u2192 1 amethyst shard"),
+                MineTier.GOLD to
+                    Triple("atlas:gold_mine", 30, "Mine - consumes 8 power every 20s on a Normal deposit \u2192 1 raw gold"),
+                MineTier.QUARTZ to
+                    Triple("atlas:quartz_mine", 25, "Mine - consumes 6 power every 15s on a Normal deposit \u2192 1 quartz"),
+                MineTier.EMERALD to
+                    Triple("atlas:emerald_mine", 50, "Mine - consumes 14 power every 30s on a Normal deposit \u2192 1 emerald"),
+                MineTier.DIAMOND to
+                    Triple("atlas:diamond_mine", 60, "Mine - consumes 18 power every 40s on a Normal deposit \u2192 1 diamond"),
                 MineTier.NETHERITE to
-                    Triple("atlas:netherite_mine", 100, "Mine - consumes 30 power every 50s \u2192 1 ancient debris"),
+                    Triple("atlas:netherite_mine", 100, "Mine - consumes 30 power every 50s on a Normal deposit \u2192 1 ancient debris"),
             )
         assertEquals(MineTier.entries.toSet(), expected.keys)
         for ((tier, values) in expected) {
@@ -497,7 +617,7 @@ class MineTest {
 
     /**
      * Each tier holds, in its jaws, the ore block that yields the material it drops. That block is
-     * the whole answer to "what is this mine mining" - the hardware is identical across all seven.
+     * the whole answer to "what is this mine mining" - the hardware is identical across every mine.
      *
      * The expectation is derived from each block class's own [Mine.output], so changing a mine's
      * output material without changing its config fails here. A literal map of block id to ore
@@ -509,16 +629,19 @@ class MineTest {
         val oreBlockFor =
             mapOf(
                 Material.COAL to "minecraft:coal_ore",
+                Material.RAW_COPPER to "minecraft:copper_ore",
                 Material.RAW_IRON to "minecraft:iron_ore",
                 Material.REDSTONE to "minecraft:redstone_ore",
+                Material.LAPIS_LAZULI to "minecraft:lapis_ore",
+                Material.AMETHYST_SHARD to "minecraft:budding_amethyst",
                 Material.RAW_GOLD to "minecraft:gold_ore",
+                Material.QUARTZ to "minecraft:nether_quartz_ore",
                 Material.EMERALD to "minecraft:emerald_ore",
                 Material.DIAMOND to "minecraft:diamond_ore",
                 Material.ANCIENT_DEBRIS to "minecraft:ancient_debris",
             )
 
         val mines = allMines(MockServer.createLocation())
-        assertEquals(7, mines.size)
 
         for ((mine, _, _) in mines) {
             val blockId = mine.baseBlockId.removePrefix("atlas:")

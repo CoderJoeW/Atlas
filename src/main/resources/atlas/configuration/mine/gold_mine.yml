@@ -3,7 +3,7 @@ items:
     material: paper
     data:
       item-name: "<!i><gradient:#8A6508:#FFD700>Gold Mine"
-    # The hardware is shared across all seven mines - the design chart draws every rig in the same
+    # The hardware is shared across every mine - the design chart draws every rig in the same
     # charcoal, and only the digging state carries the per-ore glow. What tells one mine from
     # another is the ore block in its jaws, rendered by the entity_renderer below.
     model:
@@ -60,7 +60,7 @@ items:
           #
           # Each is the shared charcoal hardware plus the ore being cut, as a real block in
           # the pit - that second element is what says both "I am mining" and "I am mining
-          # THIS", the hardware being identical across all seven. Across the digging steps
+          # THIS", the hardware being identical across every mine. Across the digging steps
           # the ore is eaten from half a cell down to an eighth, staying centred on the pit
           # floor, then snaps back to whole when the haul drops.
           appearances:

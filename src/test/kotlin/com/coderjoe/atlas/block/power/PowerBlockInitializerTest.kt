@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.block.power
 
+import com.coderjoe.atlas.block.power.mine.MineTier
 import com.coderjoe.atlas.testing.Blocks
 import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.block.BlockFace
@@ -31,9 +32,8 @@ class PowerBlockInitializerTest {
         // LavaGenerator: 2 (base + active)
         // CobblestoneFactory: 1
         // ObsidianFactory: 1
-        // Mines: 7 (coal, iron, redstone, gold, emerald, diamond, netherite)
-        // Total: 19
-        assertEquals(19, ids.size)
+        // Mines: one per MineTier
+        assertEquals(12 + MineTier.entries.size, ids.size)
     }
 
     @Test
