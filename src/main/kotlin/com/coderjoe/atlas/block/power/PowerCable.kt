@@ -1,7 +1,11 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.BlockDescriptor
+import com.coderjoe.atlas.block.Gauge
+import com.coderjoe.atlas.block.Inspection
 import com.coderjoe.atlas.block.PlacementType
+import com.coderjoe.atlas.block.StatusLine
+import com.coderjoe.atlas.block.Tone
 import com.coderjoe.atlas.block.capability.PowerConsumer
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import org.bukkit.Location
@@ -87,6 +91,46 @@ class PowerCable(location: Location) : PowerBlock(location, maxStorage = 0) {
 
     /** A cable is "live" when the run it belongs to has a producer with something to give. */
     override fun canSupplyPower(): Boolean = PowerNetworks.networkFor(this).terminals().first.isNotEmpty()
+
+    /**
+     * A cable stores nothing, so its own gauge would always read 0/0. It reports the run it
+     * belongs to instead: how many producers and consumers sit on it, how much charge they hold,
+     * and how much cable ties them together. Without this a player has no way to tell a network
+     * that is starved from one that is simply idle.
+     */
+    override fun inspect(): Inspection {
+        val network = PowerNetworks.networkFor(this)
+        val (sources, sinks) = network.terminals()
+        // a machine from another system, like the fluid pump, draws from the run without being a power block
+        val drawing = sinks.size + network.consumers().count { it.consumer.wantsPower() }
+        val terminals = (sources + sinks).map { it.block }.distinctBy { it.location }
+        val stored = terminals.sumOf { it.currentPower }
+        val capacity = terminals.sumOf { it.maxStorage }
+
+        return Inspection(
+            gauges = if (capacity > 0) listOf(Gauge("Stored", stored, capacity)) else emptyList(),
+            lines =
+                listOf(
+                    StatusLine("Cable: ${blocks(network.cables.size)}"),
+                    StatusLine("Producing: ${blocks(sources.size)} with power to give"),
+                    StatusLine("Drawing: ${blocks(drawing)} with room to take"),
+                    diagnosis(sources.size, drawing),
+                ),
+        )
+    }
+
+    private fun blocks(count: Int) = if (count == 1) "1 block" else "$count blocks"
+
+    private fun diagnosis(
+        sources: Int,
+        sinks: Int,
+    ): StatusLine =
+        when {
+            sources == 0 && sinks == 0 -> StatusLine("Nothing is attached to this run yet", Tone.WARNING)
+            sources == 0 -> StatusLine("No generator is feeding this run", Tone.FAULT)
+            sinks == 0 -> StatusLine("Nothing on this run can take power", Tone.FAULT)
+            else -> StatusLine("Power is flowing", Tone.GOOD)
+        }
 
     override fun powerUpdate() {
         val network = PowerNetworks.networkFor(this)

@@ -10,10 +10,12 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
     companion object {
         /** Records what Atlas deployed, so a later run can tell its own files from everyone else's. */
         const val MANIFEST_NAME = ".atlas-deployed"
-        const val TEXTURES_PATH = "resourcepack/assets/minecraft/textures/block/custom"
-        const val MODELS_PATH = "resourcepack/assets/minecraft/models/block/custom"
-        const val ITEM_TEXTURES_PATH = "resourcepack/assets/minecraft/textures/item/custom"
-        const val ITEM_MODELS_PATH = "resourcepack/assets/minecraft/models/item/custom"
+
+        /**
+         * The resource pack, deployed whole with its folder layout intact, so a file added anywhere
+         * in it reaches players without touching this class.
+         */
+        const val RESOURCE_PACK_PATH = "resourcepack"
 
         /**
          * Fails if two resources in different folders share a file name.
@@ -69,15 +71,7 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
     fun initialize() {
         copyPackYml()
         copyConfigurations()
-        copyAssets(TEXTURES_PATH, ".png")
-        // An animated texture is a strip of frames plus a .mcmeta naming the frame rate. Without
-        // the .mcmeta the client has no reason to think the file is animated and draws the whole
-        // strip squashed onto one face, so it has to ship alongside the png.
-        copyAssets(TEXTURES_PATH, ".png.mcmeta")
-        copyAssets(MODELS_PATH, ".json")
-        copyAssets(ITEM_TEXTURES_PATH, ".png")
-        copyAssets(ITEM_TEXTURES_PATH, ".png.mcmeta")
-        copyAssets(ITEM_MODELS_PATH, ".json")
+        copyResourcePack()
         pruneStaleFiles()
         writeManifest()
         plugin.logger.atlasInfo("Atlas CraftEngine integration initialized")
@@ -122,69 +116,43 @@ class CraftEngineIntegration(private val plugin: JavaPlugin) {
     }
 
     private fun copyPackYml() {
-        val targetFile = File(craftEngineFolder, "pack.yml")
-        if (!targetFile.parentFile.exists()) {
-            targetFile.parentFile.mkdirs()
-        }
-        plugin.saveResource("atlas/pack.yml", true)
-        val sourceFile = File(plugin.dataFolder, "atlas/pack.yml")
-        if (sourceFile.exists()) {
-            sourceFile.copyTo(targetFile, overwrite = true)
-            sourceFile.delete()
-        }
+        deploy("atlas/pack.yml", "pack.yml")
     }
 
     private fun copyConfigurations() {
-        val configFolder = File(craftEngineFolder, "configuration")
-        if (!configFolder.exists()) {
-            configFolder.mkdirs()
-        }
-
-        val prefix = "atlas/configuration/"
-        val configPaths = discoverResources(prefix, ".yml")
+        val configPaths = discoverResources("atlas/configuration/", ".yml")
 
         requireUniqueFileNames(configPaths)
 
         for (resourcePath in configPaths) {
-            val fileName = resourcePath.substringAfterLast("/")
-            val targetFile = File(configFolder, fileName)
-            plugin.saveResource(resourcePath, true)
-            val sourceFile = File(plugin.dataFolder, resourcePath)
-            if (sourceFile.exists()) {
-                sourceFile.copyTo(targetFile, overwrite = true)
-                sourceFile.delete()
-                deployed.add("configuration/$fileName")
-            }
+            val relativePath = "configuration/${resourcePath.substringAfterLast("/")}"
+            if (deploy(resourcePath, relativePath)) deployed.add(relativePath)
         }
     }
 
     /**
-     * Copies every [suffix] file the jar ships under [assetPath] into CraftEngine's resources.
-     *
-     * [assetPath] is relative to both the plugin's `atlas/` resource root and the CraftEngine
-     * folder, so the same value names the source and the destination.
+     * Copies every file the jar ships under [RESOURCE_PACK_PATH] into CraftEngine's resources,
+     * keeping each file's path relative to Atlas's `atlas/` resource root.
      */
-    private fun copyAssets(
-        assetPath: String,
-        suffix: String,
-    ) {
-        val targetFolder = File(craftEngineFolder, assetPath)
-        if (!targetFolder.exists()) {
-            targetFolder.mkdirs()
+    private fun copyResourcePack() {
+        for (resourcePath in discoverResources("atlas/$RESOURCE_PACK_PATH/", "")) {
+            val relativePath = resourcePath.removePrefix("atlas/")
+            if (deploy(resourcePath, relativePath)) deployed.add(relativePath)
         }
+    }
 
-        val prefix = "atlas/$assetPath/"
-
-        for (resourcePath in discoverResources(prefix, suffix)) {
-            val fileName = resourcePath.substringAfterLast("/")
-            val targetFile = File(targetFolder, fileName)
-            plugin.saveResource(resourcePath, true)
-            val sourceFile = File(plugin.dataFolder, resourcePath)
-            if (sourceFile.exists()) {
-                sourceFile.copyTo(targetFile, overwrite = true)
-                sourceFile.delete()
-                deployed.add("$assetPath/$fileName")
-            }
-        }
+    /**
+     * Streams the jar resource [resourcePath] to [relativePath] under CraftEngine's folder, and
+     * reports whether the jar had it.
+     */
+    private fun deploy(
+        resourcePath: String,
+        relativePath: String,
+    ): Boolean {
+        val source = plugin.getResource(resourcePath) ?: return false
+        val target = File(craftEngineFolder, relativePath)
+        target.parentFile.mkdirs()
+        source.use { input -> target.outputStream().use { input.copyTo(it) } }
+        return true
     }
 }

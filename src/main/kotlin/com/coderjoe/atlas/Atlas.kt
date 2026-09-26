@@ -22,8 +22,8 @@ import com.coderjoe.atlas.data.AtlasSubsystem
 import com.coderjoe.atlas.data.FluidBlockPersistence
 import com.coderjoe.atlas.data.PowerBlockPersistence
 import com.coderjoe.atlas.data.TransportBlockPersistence
-import com.coderjoe.atlas.dialog.BlockInspectorDialog
-import com.coderjoe.atlas.item.AtlasWrench
+import com.coderjoe.atlas.hologram.HologramInspector
+import com.coderjoe.atlas.item.AtlasGoggles
 import com.coderjoe.atlas.item.GuideBook
 import com.coderjoe.atlas.listener.AtlasBlockListener
 import com.coderjoe.atlas.listener.GuideBookListener
@@ -39,7 +39,7 @@ class Atlas : JavaPlugin() {
     private lateinit var powerSubsystem: AtlasSubsystem
     private lateinit var fluidSubsystem: AtlasSubsystem
     private lateinit var transportSubsystem: AtlasSubsystem
-    private var inspectorDialog: BlockInspectorDialog? = null
+    private var hologramInspector: HologramInspector? = null
     private var autoSaveTask: BukkitTask? = null
 
     private val subsystems: List<AtlasSubsystem>
@@ -116,17 +116,18 @@ class Atlas : JavaPlugin() {
                 descriptors = transportSubsystem.descriptors,
             )
 
-        val dialog = BlockInspectorDialog(this, registry, AtlasBlockTypes.catalog)
-        inspectorDialog = dialog
         server.pluginManager.registerEvents(
-            AtlasBlockListener(this, registry, listOf(powerSystem, fluidSystem, transportSystem), dialog::show),
+            AtlasBlockListener(this, registry, listOf(powerSystem, fluidSystem, transportSystem)),
             this,
         )
+        hologramInspector =
+            HologramInspector(this, registry, AtlasBlockTypes.catalog) { AtlasGoggles.isWearing(it, this) }
+                .also { it.start() }
 
         val guideBookListener = GuideBookListener(this)
         server.pluginManager.registerEvents(guideBookListener, this)
         server.addRecipe(GuideBook.createRecipe(this))
-        server.addRecipe(AtlasWrench.createRecipe(this))
+        server.addRecipe(AtlasGoggles.createRecipe(this))
 
         // Auto-save every 5 minutes (6000 ticks)
         autoSaveTask =
@@ -144,7 +145,7 @@ class Atlas : JavaPlugin() {
 
         initializedSubsystems().forEach { it.save() }
 
-        inspectorDialog?.cleanup()
+        hologramInspector?.stop()
 
         initializedSubsystems().forEach { it.stop() }
 

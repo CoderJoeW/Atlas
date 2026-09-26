@@ -4,7 +4,7 @@ import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
 import com.coderjoe.atlas.block.power.PowerBlockFactory
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
-import com.coderjoe.atlas.dialog.BlockInspectorDialog
+import com.coderjoe.atlas.hologram.HologramInspector
 import com.coderjoe.atlas.testing.Blocks
 import com.coderjoe.atlas.testing.MockServer
 import org.junit.jupiter.api.AfterEach
@@ -43,11 +43,11 @@ class AtlasPluginTest {
     }
 
     @Test
-    fun `dialog cleanup does not throw`() {
-        val dialog = BlockInspectorDialog(MockServer.plugin, BlockRegistry(MockServer.plugin), AtlasBlockTypes.catalog)
+    fun `hologram inspector stop does not throw`() {
+        val inspector = HologramInspector(MockServer.plugin, BlockRegistry(MockServer.plugin), AtlasBlockTypes.catalog) { false }
 
         assertDoesNotThrow {
-            dialog.cleanup()
+            inspector.stop()
         }
     }
 

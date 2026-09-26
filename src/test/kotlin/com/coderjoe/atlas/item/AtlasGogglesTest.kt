@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class AtlasWrenchTest {
+class AtlasGogglesTest {
     @BeforeEach
     fun setup() {
         MockServer.setup()
@@ -18,8 +18,7 @@ class AtlasWrenchTest {
     }
 
     @Test
-    fun `an empty hand is not a wrench`() {
-        // the gate that keeps a bare-handed right-click from opening any dialog
-        assertFalse(AtlasWrench.isWrench(null, MockServer.plugin))
+    fun `an empty slot is not goggles`() {
+        assertFalse(AtlasGoggles.isGoggles(null, MockServer.plugin))
     }
 }
