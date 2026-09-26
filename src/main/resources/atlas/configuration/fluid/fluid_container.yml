@@ -35,6 +35,8 @@ items:
           can-occlude: false
           push-reaction: push_only
           tags: ["minecraft:mineable/pickaxe"]
+          destroy-stages:
+            template: internal:destroy_stages
           sounds:
             break: minecraft:block.metal.break
             step: minecraft:block.metal.step
