@@ -24,8 +24,8 @@ Purity changes how long a bore takes, not what it costs or yields: every complet
 exactly one ore for the same power, so a richer deposit means more ore per minute and a matching
 appetite for power. A bore that is not a whole number of 20-tick updates hands its overshoot to the
 next one, so a Rich coal mine really does average 133⅓ ticks a bore rather than rounding to 140.
-Wearing Atlas Goggles, the mine's panel names its deposit, and the action bar lists every deposit
-in the chunk underfoot so a site can be scouted before building.
+Wearing Atlas Goggles, the mine's panel names its deposit, and the sidebar stacks the purity of
+every ore in the chunk underfoot so a site can be scouted before building.
 
 A mine pulls power from its neighbours every tick (20t), and the instant it can afford a haul it
 spends the cost and starts **drilling** — a fixed `cycleTicks` duration that has to run its course

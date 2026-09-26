@@ -5,8 +5,8 @@ from that a **purity** per ore: Barren, Poor, Normal, Rich or Pure. A mine only 
 sits in, and bores at 0×, 0.5×, 1×, 1.5× or 2× its normal pace accordingly — see
 [Mines](../mines/README.md#what-a-mine-does).
 
-Atlas Goggles show it: the action bar lists every non-barren deposit in the chunk the wearer stands
-in, and a mine's panel names the purity of its own ore.
+Atlas Goggles show it: the sidebar on the right of the screen stacks every ore of the dimension with
+its purity in the chunk the wearer stands in, and a mine's panel names the purity of its own ore.
 
 ## What gets recorded
 
