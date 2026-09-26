@@ -338,7 +338,6 @@ recipes:
       - minecraft:redstone
       - minecraft:redstone_block
       - minecraft:redstone_block
-      - minecraft:redstone_block
     result:
       id: atlas:redstone_mine
       count: 1

@@ -332,12 +332,8 @@ recipes:
     ingredients:
       - minecraft:iron_ingot
       - minecraft:iron_ingot
-      - minecraft:iron_ingot
-      - minecraft:iron_ingot
       - minecraft:redstone
       - minecraft:redstone
-      - minecraft:iron_block
-      - minecraft:iron_block
       - minecraft:iron_block
     result:
       id: atlas:iron_mine

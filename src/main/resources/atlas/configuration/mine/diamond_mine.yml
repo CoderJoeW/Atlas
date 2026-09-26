@@ -336,8 +336,8 @@ recipes:
       - minecraft:iron_ingot
       - minecraft:redstone
       - minecraft:redstone
-      - minecraft:diamond_block
-      - minecraft:diamond_block
+      - minecraft:iron_block
+      - minecraft:redstone_block
       - minecraft:diamond_block
     result:
       id: atlas:diamond_mine
