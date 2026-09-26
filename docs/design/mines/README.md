@@ -1,14 +1,31 @@
 # Mines
 
-Seven mines — Coal, Iron, Redstone, Gold, Emerald, Diamond and Netherite — built from the
+Eleven mines — Coal, Copper, Iron, Redstone, Lapis, Amethyst, Gold, Quartz, Emerald, Diamond and
+Netherite — built from the
 reactive-states chart in [`references/mining-system-reactive-states.jpg`](references/mining-system-reactive-states.jpg).
 That chart is the authority for how the system looks.
 
 ## What a mine does
 
-A mine turns stored power straight into ore. It does not touch the world around it — the cut is
-fiction — so there is no deposit to find, nothing to deplete, and no terrain is broken. Build one
-anywhere a cable reaches and it works forever.
+A mine turns stored power straight into ore. It never breaks a block, but it works the deposit in
+the chunk it stands on: that chunk's [purity](../ore-purity/README.md) of the mine's ore sets how fast
+it bores. Deposits never run dry, because purity comes from what the chunk held when it was generated,
+not from what is left in it.
+
+| Purity | Bore speed |
+|:--|:--|
+| Barren | never starts — nothing to mine, and no power is spent |
+| Poor | 0.5× (each bore takes twice as long) |
+| Normal | 1× — the cycle lengths in the table below |
+| Rich | 1.5× |
+| Pure | 2× |
+
+Purity changes how long a bore takes, not what it costs or yields: every completed bore still drops
+exactly one ore for the same power, so a richer deposit means more ore per minute and a matching
+appetite for power. A bore that is not a whole number of 20-tick updates hands its overshoot to the
+next one, so a Rich coal mine really does average 133⅓ ticks a bore rather than rounding to 140.
+Wearing Atlas Goggles, the mine's panel names its deposit, and the action bar lists every deposit
+in the chunk underfoot so a site can be scouted before building.
 
 A mine pulls power from its neighbours every tick (20t), and the instant it can afford a haul it
 spends the cost and starts **drilling** — a fixed `cycleTicks` duration that has to run its course
@@ -31,14 +48,18 @@ A drill in progress **eats the ore block in the pit away**, a step at a time, so
 as work happening rather than as a silent countdown. See
 [Two states, and what "digging" means](#two-states-and-what-digging-means) for the stages.
 
-The tiers differ only in what they dig, what a haul costs and how long the cycle takes:
+The tiers differ only in what they dig, what a haul costs and how long the cycle takes on a Normal deposit:
 
 | Mine | Output | Storage | Power per haul | Cycle | Small Solar Panels for full-rate hauling |
 |:--|:--|--:|--:|--:|--:|
 | Coal | `COAL` | 10 | 2 | 200t (10s) | 60 |
+| Copper | `RAW_COPPER` | 15 | 3 | 200t (10s) | 90 |
 | Iron | `RAW_IRON` | 20 | 5 | 300t (15s) | 100 |
 | Redstone | `REDSTONE` | 20 | 5 | 300t (15s) | 100 |
+| Lapis | `LAPIS_LAZULI` | 20 | 5 | 300t (15s) | 100 |
+| Amethyst | `AMETHYST_SHARD` | 20 | 5 | 300t (15s) | 100 |
 | Gold | `RAW_GOLD` | 30 | 8 | 400t (20s) | 120 |
+| Quartz | `QUARTZ` | 25 | 6 | 300t (15s) | 120 |
 | Emerald | `EMERALD` | 50 | 14 | 600t (30s) | 140 |
 | Diamond | `DIAMOND` | 60 | 18 | 800t (40s) | 135 |
 | Netherite | `ANCIENT_DEBRIS` | 100 | 30 | 1000t (50s) | 180 |
@@ -53,7 +74,7 @@ Coal haul, roughly every 10 real-life minutes. That's the deliberate baseline: o
 trickle charge, not a power source for actually running a mine. Hauling any tier at its full cycle
 rate takes a large bank of panels (or a higher-tier generator, once one exists), not a handful.
 
-All seven share `Mine`, an abstract `PowerBlock` in `utility/block`. A subclass supplies only its
+All eleven share `Mine`, an abstract `PowerBlock` in `utility/block`. A subclass supplies only its
 block id, cycle length, haul cost and output material — there is no per-mine behaviour.
 
 A mine is a **sink only**: it overrides `canOutputToward` to refuse. Without that it would be
@@ -128,7 +149,7 @@ through. Nothing leaves the cell, so no `entity_culling` override is needed.
 
 ## Telling the mines apart
 
-The hardware is identical across all seven. What distinguishes them is the **ore block sitting in
+The hardware is identical across every mine. What distinguishes them is the **ore block sitting in
 the pit**: `entity_renderer` takes a *list* of elements, and one element type is
 `block_display`, so each mine renders a genuine `minecraft:iron_ore` / `diamond_ore` /
 `ancient_debris` — not painted art — at half scale, centred in the pit.
@@ -161,7 +182,7 @@ facing or it would be stranded inside the machine on three of the four rotations
 
 ## Art
 
-Idle art is **shared across all seven mines**: `mine_deck`, `mine_side`, `mine_bottom`. The chart
+Idle art is **shared across every mine**: `mine_deck`, `mine_side`, `mine_bottom`. The chart
 draws every idle rig in the same charcoal, and only the digging state carries colour.
 
 Digging art is per mine — `{id}_deck_digging` and `{id}_side_digging` — where the bore and the vent
@@ -170,9 +191,13 @@ row ignite in that ore's colour:
 | Mine | Glow |
 |:--|:--|
 | Coal | ember orange-red `255,107,44` |
+| Copper | verdigris teal `40,190,160` |
 | Iron | molten orange `255,154,46` |
 | Redstone | electric red `255,32,32` |
+| Lapis | royal blue `42,90,255` |
+| Amethyst | lavender `155,110,255` |
 | Gold | gold `255,215,0` |
+| Quartz | milky white `240,235,225` |
 | Emerald | green `44,255,140` |
 | Diamond | pale cyan `77,232,255` |
 | Netherite | magenta-violet `224,64,251` |
@@ -184,9 +209,10 @@ power (amber) and transport (green). The chart is explicit about this.
 variants glow out of that bore. It is mapped onto the excavation floor, so the cut under the ore is
 what lights up.
 
-All eighteen textures were generated with the Artlist MCP (Nano Banana Pro) at 2K and downscaled to
-512×512, deriving every face and state by image-to-image from the first deck so the set stays
-consistent.
+The original eighteen textures were generated with the Artlist MCP (Nano Banana Pro) at 2K and
+downscaled to 512×512, deriving every face and state by image-to-image from the first deck so the set
+stays consistent. The Lapis, Copper, Quartz and Amethyst digging pairs were made the same way by hand,
+each an image-to-image recolour of the Redstone pair; their 2K originals are kept in [`raw/`](raw/).
 
 **UV notes.** `mine_side` clads the rim and is composed of horizontal bands with no tall focal
 feature, so it survives being sampled at several different heights.
@@ -212,5 +238,5 @@ Judge a silhouette from a render, never from the JSON.
 ## No GUI icons
 
 The mines have no painted inventory icon — the model renders in the slot as it does for the
-factories. If the in-hand look reads badly, seven `item/custom/{id}` icons
+factories. If the in-hand look reads badly, per-mine `item/custom/{id}` icons
 wired through a `minecraft:select` on `display_context` are the fix.

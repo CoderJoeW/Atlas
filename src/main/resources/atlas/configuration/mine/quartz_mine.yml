@@ -1,14 +1,14 @@
 items:
-  atlas:netherite_mine:
+  atlas:quartz_mine:
     material: paper
     data:
-      item-name: "<!i><gradient:#3A2038:#E040FB>Netherite Mine"
+      item-name: "<!i><gradient:#6E6A63:#F4F0E8>Quartz Mine"
     # The hardware is shared across every mine - the design chart draws every rig in the same
     # charcoal, and only the digging state carries the per-ore glow. What tells one mine from
     # another is the ore block in its jaws, rendered by the entity_renderer below.
     model:
       type: minecraft:model
-      path: minecraft:block/custom/netherite_mine
+      path: minecraft:block/custom/quartz_mine
       generation:
         parent: minecraft:block/custom/mine_gantry
         textures:
@@ -67,39 +67,39 @@ items:
             idle_south:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine
-                - block: minecraft:ancient_debris
+                - item: atlas:quartz_mine
+                - block: minecraft:nether_quartz_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
             idle_north:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine
+                - item: atlas:quartz_mine
                   yaw: 180
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
             idle_east:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine
+                - item: atlas:quartz_mine
                   yaw: -90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
             idle_west:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine
+                - item: atlas:quartz_mine
                   yaw: 90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
             digging1_south:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
-                - block: minecraft:ancient_debris
+                - item: atlas:quartz_mine_digging
+                - block: minecraft:nether_quartz_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
                   brightness:
@@ -108,9 +108,9 @@ items:
             digging1_north:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: 180
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
                   brightness:
@@ -119,9 +119,9 @@ items:
             digging1_east:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: -90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
                   brightness:
@@ -130,9 +130,9 @@ items:
             digging1_west:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: 90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.25, 0.375, 0.25]
                   scale: [0.5, 0.5, 0.5]
                   brightness:
@@ -141,8 +141,8 @@ items:
             digging2_south:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
-                - block: minecraft:ancient_debris
+                - item: atlas:quartz_mine_digging
+                - block: minecraft:nether_quartz_ore
                   position: [0.3125, 0.375, 0.3125]
                   scale: [0.375, 0.375, 0.375]
                   brightness:
@@ -151,9 +151,9 @@ items:
             digging2_north:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: 180
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.3125, 0.375, 0.3125]
                   scale: [0.375, 0.375, 0.375]
                   brightness:
@@ -162,9 +162,9 @@ items:
             digging2_east:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: -90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.3125, 0.375, 0.3125]
                   scale: [0.375, 0.375, 0.375]
                   brightness:
@@ -173,9 +173,9 @@ items:
             digging2_west:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: 90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.3125, 0.375, 0.3125]
                   scale: [0.375, 0.375, 0.375]
                   brightness:
@@ -184,8 +184,8 @@ items:
             digging3_south:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
-                - block: minecraft:ancient_debris
+                - item: atlas:quartz_mine_digging
+                - block: minecraft:nether_quartz_ore
                   position: [0.375, 0.375, 0.375]
                   scale: [0.25, 0.25, 0.25]
                   brightness:
@@ -194,9 +194,9 @@ items:
             digging3_north:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: 180
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.375, 0.375, 0.375]
                   scale: [0.25, 0.25, 0.25]
                   brightness:
@@ -205,9 +205,9 @@ items:
             digging3_east:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: -90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.375, 0.375, 0.375]
                   scale: [0.25, 0.25, 0.25]
                   brightness:
@@ -216,9 +216,9 @@ items:
             digging3_west:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: 90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.375, 0.375, 0.375]
                   scale: [0.25, 0.25, 0.25]
                   brightness:
@@ -227,8 +227,8 @@ items:
             digging4_south:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
-                - block: minecraft:ancient_debris
+                - item: atlas:quartz_mine_digging
+                - block: minecraft:nether_quartz_ore
                   position: [0.4375, 0.375, 0.4375]
                   scale: [0.125, 0.125, 0.125]
                   brightness:
@@ -237,9 +237,9 @@ items:
             digging4_north:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: 180
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.4375, 0.375, 0.4375]
                   scale: [0.125, 0.125, 0.125]
                   brightness:
@@ -248,9 +248,9 @@ items:
             digging4_east:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: -90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.4375, 0.375, 0.4375]
                   scale: [0.125, 0.125, 0.125]
                   brightness:
@@ -259,9 +259,9 @@ items:
             digging4_west:
               state: barrier
               entity_renderer:
-                - item: atlas:netherite_mine_digging
+                - item: atlas:quartz_mine_digging
                   yaw: 90
-                - block: minecraft:ancient_debris
+                - block: minecraft:nether_quartz_ore
                   position: [0.4375, 0.375, 0.4375]
                   scale: [0.125, 0.125, 0.125]
                   brightness:
@@ -310,22 +310,22 @@ items:
               appearance: digging4_west
 
 items#1:
-  atlas:netherite_mine_digging:
+  atlas:quartz_mine_digging:
     material: paper
     data:
-      item-name: "<!i><gradient:#3A2038:#E040FB>Netherite Mine"
+      item-name: "<!i><gradient:#6E6A63:#F4F0E8>Quartz Mine"
     model:
       type: minecraft:model
-      path: minecraft:block/custom/netherite_mine_digging
+      path: minecraft:block/custom/quartz_mine_digging
       generation:
         parent: minecraft:block/custom/mine_gantry
         textures:
-          deck: minecraft:block/custom/netherite_mine_deck_digging
-          side: minecraft:block/custom/netherite_mine_side_digging
+          deck: minecraft:block/custom/quartz_mine_deck_digging
+          side: minecraft:block/custom/quartz_mine_side_digging
           bottom: minecraft:block/custom/mine_bottom
 
 recipes:
-  atlas:netherite_mine:
+  atlas:quartz_mine:
     type: shapeless
     category: misc
     unlock-on-ingredient-obtained: true
@@ -336,9 +336,8 @@ recipes:
       - minecraft:iron_ingot
       - minecraft:redstone
       - minecraft:redstone
-      - minecraft:netherite_ingot
-      - minecraft:diamond_block
-      - minecraft:diamond_block
+      - minecraft:quartz_block
+      - minecraft:quartz_block
     result:
-      id: atlas:netherite_mine
+      id: atlas:quartz_mine
       count: 1

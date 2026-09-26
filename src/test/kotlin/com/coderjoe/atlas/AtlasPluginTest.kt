@@ -3,6 +3,7 @@ package com.coderjoe.atlas
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.fluid.FluidBlockFactory
 import com.coderjoe.atlas.block.power.PowerBlockFactory
+import com.coderjoe.atlas.block.power.mine.MineTier
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
 import com.coderjoe.atlas.hologram.HologramInspector
 import com.coderjoe.atlas.testing.Blocks
@@ -25,9 +26,9 @@ class AtlasPluginTest {
     }
 
     @Test
-    fun `power system initializes with 19 block types`() {
+    fun `power system initializes its twelve machines plus one block per mine`() {
         Blocks.initPowerFactory()
-        assertEquals(19, PowerBlockFactory.getRegisteredBlockIds().size)
+        assertEquals(12 + MineTier.entries.size, PowerBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test

@@ -19,13 +19,16 @@ import com.coderjoe.atlas.block.transport.ConveyorBelt
 import com.coderjoe.atlas.block.transport.TransportBlockFactory
 import com.coderjoe.atlas.craftengine.CraftEngineIntegration
 import com.coderjoe.atlas.data.AtlasSubsystem
+import com.coderjoe.atlas.data.ChunkOreSurvey
 import com.coderjoe.atlas.data.FluidBlockPersistence
 import com.coderjoe.atlas.data.PowerBlockPersistence
 import com.coderjoe.atlas.data.TransportBlockPersistence
+import com.coderjoe.atlas.hologram.DepositReadout
 import com.coderjoe.atlas.hologram.HologramInspector
 import com.coderjoe.atlas.item.AtlasGoggles
 import com.coderjoe.atlas.item.GuideBook
 import com.coderjoe.atlas.listener.AtlasBlockListener
+import com.coderjoe.atlas.listener.ChunkSurveyListener
 import com.coderjoe.atlas.listener.GuideBookListener
 import com.coderjoe.atlas.listener.PlayerJoinListener
 import com.coderjoe.atlas.util.AtlasConfig
@@ -40,6 +43,8 @@ class Atlas : JavaPlugin() {
     private lateinit var fluidSubsystem: AtlasSubsystem
     private lateinit var transportSubsystem: AtlasSubsystem
     private var hologramInspector: HologramInspector? = null
+    private var depositReadout: DepositReadout? = null
+    private var oreSurvey: ChunkOreSurvey? = null
     private var autoSaveTask: BukkitTask? = null
 
     private val subsystems: List<AtlasSubsystem>
@@ -57,10 +62,15 @@ class Atlas : JavaPlugin() {
 
         server.pluginManager.registerEvents(PlayerJoinListener(), this)
 
+        val survey = ChunkOreSurvey(this)
+        oreSurvey = survey
+        server.pluginManager.registerEvents(ChunkSurveyListener(survey), this)
+        server.worlds.flatMap { it.loadedChunks.asList() }.forEach(survey::survey)
+
         // One index for every block, whatever system it belongs to, so a lookup can no longer miss
         // a neighbour because it was filed somewhere else. The three subsystems still own a save
         // file and a factory each until steps 2.6 and 2.7 retire them.
-        registry = BlockRegistry(this)
+        registry = BlockRegistry(this, survey)
 
         powerSubsystem =
             AtlasSubsystem(
@@ -123,6 +133,9 @@ class Atlas : JavaPlugin() {
         hologramInspector =
             HologramInspector(this, registry, AtlasBlockTypes.catalog) { AtlasGoggles.isWearing(it, this) }
                 .also { it.start() }
+        depositReadout =
+            DepositReadout(this, survey::oreIn) { AtlasGoggles.isWearing(it, this) }
+                .also { it.start() }
 
         val guideBookListener = GuideBookListener(this)
         server.pluginManager.registerEvents(guideBookListener, this)
@@ -146,6 +159,8 @@ class Atlas : JavaPlugin() {
         initializedSubsystems().forEach { it.save() }
 
         hologramInspector?.stop()
+        depositReadout?.stop()
+        oreSurvey?.stop()
 
         initializedSubsystems().forEach { it.stop() }
 

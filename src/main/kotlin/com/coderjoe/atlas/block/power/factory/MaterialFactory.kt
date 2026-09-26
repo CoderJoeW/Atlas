@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack
  *
  * Cobblestone and obsidian differ only in tier - storage, power cost and what comes out - so both
  * live here and the two subclasses supply nothing but numbers, the same split [com.coderjoe.atlas.block.power.mine.Mine] uses for the
- * seven ore rigs.
+ * ore rigs.
  */
 abstract class MaterialFactory(
     location: Location,

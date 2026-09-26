@@ -1,5 +1,6 @@
 package com.coderjoe.atlas.block
 
+import com.coderjoe.atlas.block.deposit.DepositMap
 import com.coderjoe.atlas.util.atlasInfo
 import com.coderjoe.atlas.util.coordinates
 import org.bukkit.Location
@@ -7,14 +8,17 @@ import org.bukkit.block.BlockFace
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.concurrent.ConcurrentHashMap
 
-class BlockRegistry(private val plugin: JavaPlugin) {
+class BlockRegistry(
+    private val plugin: JavaPlugin,
+    deposits: DepositMap = DepositMap.UNIFORM,
+) {
     private val blocks = ConcurrentHashMap<String, AtlasBlock>()
     private val blockIds = ConcurrentHashMap<String, String>()
 
     /** Locations Atlas is placing a block state at, so the listener ignores its own placements. */
     val updatingLocations: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
-    private val context = BlockContext(plugin, this)
+    private val context = BlockContext(plugin, this, deposits)
 
     companion object {
         fun locationKey(location: Location): String {
