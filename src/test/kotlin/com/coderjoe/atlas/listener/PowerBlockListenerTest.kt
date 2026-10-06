@@ -1,17 +1,22 @@
 package com.coderjoe.atlas.listener
 
+import com.coderjoe.atlas.AtlasBlockTypes
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.block.BlockSystem
-import com.coderjoe.atlas.block.power.PowerBlockFactory
+import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
+import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import org.bukkit.block.Block
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -23,15 +28,7 @@ class PowerBlockListenerTest {
     fun setup() {
         MockServer.setup()
         registry = BlockRegistry(MockServer.plugin)
-        val system =
-            BlockSystem(
-                name = "power",
-                registry = registry,
-                factory = PowerBlockFactory,
-                descriptors = emptyMap(),
-            )
-        listener =
-            AtlasBlockListener(MockServer.plugin, registry, listOf(system))
+        listener = AtlasBlockListener(MockServer.plugin, registry, AtlasBlockTypes.catalog)
     }
 
     @AfterEach
@@ -90,5 +87,34 @@ class PowerBlockListenerTest {
         }
 
         assertNull(registry.getBlock(loc))
+    }
+
+    private fun placeEvent(blockId: String?): BlockPlaceEvent {
+        mockkObject(CraftEngineHelper)
+        every { CraftEngineHelper.getBlockId(any()) } returns blockId
+        val placed = mockk<Block>(relaxed = true)
+        every { placed.location } returns MockServer.createLocation()
+        val against = mockk<Block>(relaxed = true)
+        every { against.location } returns MockServer.createLocation(y = 63.0)
+        val event = mockk<BlockPlaceEvent>(relaxed = true)
+        every { event.block } returns placed
+        every { event.blockAgainst } returns against
+        return event
+    }
+
+    @Test
+    fun `placing a battery variant registers a battery under its base id`() {
+        listener.onBlockPlace(placeEvent(SmallBattery.BLOCK_ID_LOW))
+
+        val (block, blockId) = registry.getAllBlocksWithIds().single()
+        assertInstanceOf(SmallBattery::class.java, block)
+        assertEquals(SmallBattery.BLOCK_ID, blockId)
+    }
+
+    @Test
+    fun `placing a block the catalog does not know registers nothing`() {
+        listener.onBlockPlace(placeEvent("minecraft:stone"))
+
+        assertTrue(registry.getAllBlocks().isEmpty())
     }
 }

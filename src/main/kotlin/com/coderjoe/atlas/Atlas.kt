@@ -1,28 +1,9 @@
 package com.coderjoe.atlas
 
-import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.block.BlockSystem
-import com.coderjoe.atlas.block.fluid.FluidBlockFactory
-import com.coderjoe.atlas.block.fluid.FluidContainer
-import com.coderjoe.atlas.block.fluid.FluidPipe
-import com.coderjoe.atlas.block.fluid.FluidPump
-import com.coderjoe.atlas.block.power.LavaGenerator
-import com.coderjoe.atlas.block.power.PowerBlockFactory
-import com.coderjoe.atlas.block.power.PowerCable
-import com.coderjoe.atlas.block.power.SmallBattery
-import com.coderjoe.atlas.block.power.SmallSolarPanel
-import com.coderjoe.atlas.block.power.factory.CobblestoneFactory
-import com.coderjoe.atlas.block.power.factory.ObsidianFactory
-import com.coderjoe.atlas.block.power.mine.MineTier
-import com.coderjoe.atlas.block.transport.ConveyorBelt
-import com.coderjoe.atlas.block.transport.TransportBlockFactory
 import com.coderjoe.atlas.craftengine.CraftEngineIntegration
-import com.coderjoe.atlas.data.AtlasSubsystem
+import com.coderjoe.atlas.data.BlockPersistence
 import com.coderjoe.atlas.data.ChunkOreSurvey
-import com.coderjoe.atlas.data.FluidBlockPersistence
-import com.coderjoe.atlas.data.PowerBlockPersistence
-import com.coderjoe.atlas.data.TransportBlockPersistence
 import com.coderjoe.atlas.hologram.DepositReadout
 import com.coderjoe.atlas.hologram.HologramInspector
 import com.coderjoe.atlas.item.AtlasGoggles
@@ -39,16 +20,11 @@ import org.bukkit.scheduler.BukkitTask
 class Atlas : JavaPlugin() {
     private lateinit var craftEngineIntegration: CraftEngineIntegration
     private lateinit var registry: BlockRegistry
-    private lateinit var powerSubsystem: AtlasSubsystem
-    private lateinit var fluidSubsystem: AtlasSubsystem
-    private lateinit var transportSubsystem: AtlasSubsystem
+    private lateinit var persistence: BlockPersistence
     private var hologramInspector: HologramInspector? = null
     private var depositReadout: DepositReadout? = null
     private var oreSurvey: ChunkOreSurvey? = null
     private var autoSaveTask: BukkitTask? = null
-
-    private val subsystems: List<AtlasSubsystem>
-        get() = listOf(powerSubsystem, fluidSubsystem, transportSubsystem)
 
     override fun onEnable() {
         if (!dataFolder.exists()) {
@@ -67,71 +43,14 @@ class Atlas : JavaPlugin() {
         server.pluginManager.registerEvents(ChunkSurveyListener(survey), this)
         server.worlds.flatMap { it.loadedChunks.asList() }.forEach(survey::survey)
 
-        // One index for every block, whatever system it belongs to, so a lookup can no longer miss
-        // a neighbour because it was filed somewhere else. The three subsystems still own a save
-        // file and a factory each until steps 2.6 and 2.7 retire them.
         registry = BlockRegistry(this, survey)
+        val catalog = AtlasBlockTypes.catalog
+        persistence = BlockPersistence(this, catalog).also { it.load(registry) }
+        logger.atlasInfo("Block registry initialized with ${catalog.blockIds.size} block types")
 
-        powerSubsystem =
-            AtlasSubsystem(
-                name = "power",
-                registry = registry,
-                factory = PowerBlockFactory,
-                descriptors = powerDescriptors(),
-                persistence = PowerBlockPersistence(this),
-                plugin = this,
-            )
-        fluidSubsystem =
-            AtlasSubsystem(
-                name = "fluid",
-                registry = registry,
-                factory = FluidBlockFactory,
-                descriptors = fluidDescriptors(),
-                persistence = FluidBlockPersistence(this),
-                plugin = this,
-            )
-        transportSubsystem =
-            AtlasSubsystem(
-                name = "transport",
-                registry = registry,
-                factory = TransportBlockFactory,
-                descriptors = transportDescriptors(),
-                persistence = TransportBlockPersistence(this),
-                plugin = this,
-            )
-        subsystems.forEach { it.init() }
-
-        // Register unified listener
-        val powerSystem =
-            BlockSystem(
-                name = "power",
-                registry = registry,
-                factory = PowerBlockFactory,
-                descriptors = powerSubsystem.descriptors,
-            )
-
-        val fluidSystem =
-            BlockSystem(
-                name = "fluid",
-                registry = registry,
-                factory = FluidBlockFactory,
-                descriptors = fluidSubsystem.descriptors,
-            )
-
-        val transportSystem =
-            BlockSystem(
-                name = "transport",
-                registry = registry,
-                factory = TransportBlockFactory,
-                descriptors = transportSubsystem.descriptors,
-            )
-
-        server.pluginManager.registerEvents(
-            AtlasBlockListener(this, registry, listOf(powerSystem, fluidSystem, transportSystem)),
-            this,
-        )
+        server.pluginManager.registerEvents(AtlasBlockListener(this, registry, catalog), this)
         hologramInspector =
-            HologramInspector(this, registry, AtlasBlockTypes.catalog) { AtlasGoggles.isWearing(it, this) }
+            HologramInspector(this, registry, catalog) { AtlasGoggles.isWearing(it, this) }
                 .also { it.start() }
         depositReadout =
             DepositReadout(this, survey::oreIn) { AtlasGoggles.isWearing(it, this) }
@@ -146,7 +65,7 @@ class Atlas : JavaPlugin() {
         autoSaveTask =
             server.scheduler.runTaskTimer(
                 this,
-                Runnable { subsystems.forEach { it.save() } },
+                Runnable { persistence.save(registry) },
                 6000L, 6000L,
             )
 
@@ -156,48 +75,14 @@ class Atlas : JavaPlugin() {
     override fun onDisable() {
         autoSaveTask?.cancel()
 
-        initializedSubsystems().forEach { it.save() }
+        if (::persistence.isInitialized) persistence.save(registry)
 
         hologramInspector?.stop()
         depositReadout?.stop()
         oreSurvey?.stop()
 
-        initializedSubsystems().forEach { it.stop() }
+        if (::registry.isInitialized) registry.stopAll()
 
         logger.atlasInfo("Atlas plugin has been disabled!")
-    }
-
-    private fun initializedSubsystems(): List<AtlasSubsystem> {
-        val result = mutableListOf<AtlasSubsystem>()
-        if (::powerSubsystem.isInitialized) result.add(powerSubsystem)
-        if (::fluidSubsystem.isInitialized) result.add(fluidSubsystem)
-        if (::transportSubsystem.isInitialized) result.add(transportSubsystem)
-        return result
-    }
-
-    private fun transportDescriptors(): Map<String, BlockDescriptor> {
-        return listOf(
-            ConveyorBelt.descriptor,
-        ).associateBy { it.baseBlockId }
-    }
-
-    private fun powerDescriptors(): Map<String, BlockDescriptor> {
-        return listOf(
-            SmallSolarPanel.descriptor,
-            SmallBattery.descriptor,
-            PowerCable.descriptor,
-            LavaGenerator.descriptor,
-            CobblestoneFactory.descriptor,
-            ObsidianFactory.descriptor,
-            *MineTier.entries.map { it.descriptor }.toTypedArray(),
-        ).associateBy { it.baseBlockId }
-    }
-
-    private fun fluidDescriptors(): Map<String, BlockDescriptor> {
-        return listOf(
-            FluidPump.descriptor,
-            FluidPipe.descriptor,
-            FluidContainer.descriptor,
-        ).associateBy { it.baseBlockId }
     }
 }

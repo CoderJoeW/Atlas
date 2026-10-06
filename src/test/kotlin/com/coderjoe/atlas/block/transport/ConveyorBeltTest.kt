@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.block.transport
 
+import com.coderjoe.atlas.AtlasBlockTypes
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
-import com.coderjoe.atlas.testing.Blocks
 import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
 import io.mockk.mockk
@@ -74,18 +74,16 @@ class ConveyorBeltTest {
     }
 
     @Test
-    fun `base ID is registered`() {
-        Blocks.initTransportFactory()
+    fun `base ID is catalogued`() {
         assertTrue(
-            TransportBlockFactory.isRegistered("atlas:conveyor_belt"),
+            AtlasBlockTypes.catalog.find("atlas:conveyor_belt") != null,
         )
     }
 
     @Test
-    fun `factory creates ConveyorBelt from base ID`() {
-        Blocks.initTransportFactory()
+    fun `catalog creates ConveyorBelt from base ID`() {
         val block =
-            TransportBlockFactory.create(
+            AtlasBlockTypes.catalog.create(
                 "atlas:conveyor_belt",
                 MockServer.createLocation(),
                 BlockFace.NORTH,

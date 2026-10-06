@@ -1,17 +1,16 @@
 package com.coderjoe.atlas.block.power.mine
 
+import com.coderjoe.atlas.AtlasBlockTypes
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.StatusLine
 import com.coderjoe.atlas.block.Tone
 import com.coderjoe.atlas.block.deposit.Purity
-import com.coderjoe.atlas.block.power.PowerBlockFactory
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.transport.ConveyorBelt
 import com.coderjoe.atlas.testing.AtlasPaths.BLOCK_MODEL_DIR
 import com.coderjoe.atlas.testing.AtlasPaths.config
 import com.coderjoe.atlas.testing.AtlasPaths.configFiles
-import com.coderjoe.atlas.testing.Blocks
 import com.coderjoe.atlas.testing.Blocks.placedIn
 import com.coderjoe.atlas.testing.MockServer
 import org.bukkit.Location
@@ -440,14 +439,13 @@ class MineTest {
 
     @Test
     fun `every mine descriptor faces the player and registers its own ID`() {
-        Blocks.initPowerFactory()
         val descriptors = MineTier.entries.map { it.descriptor }
         assertEquals(descriptors.size, descriptors.map { it.baseBlockId }.toSet().size)
         for (descriptor in descriptors) {
             // The shaft mouth is turned back toward whoever placed it.
             assertEquals(PlacementType.DIRECTIONAL_OPPOSITE, descriptor.placementType, descriptor.baseBlockId)
             assertTrue(descriptor.displayName.endsWith("Mine"), descriptor.displayName)
-            assertTrue(PowerBlockFactory.isRegistered(descriptor.baseBlockId), descriptor.baseBlockId)
+            assertTrue(AtlasBlockTypes.catalog.find(descriptor.baseBlockId) != null, descriptor.baseBlockId)
         }
     }
 

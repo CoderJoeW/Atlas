@@ -49,13 +49,10 @@ object MockServer {
         val task = mockk<BukkitTask>(relaxed = true)
         every { scheduler.runTask(any<JavaPlugin>(), any<Runnable>()) } returns task
         every { scheduler.runTaskTimer(any<JavaPlugin>(), any<Runnable>(), any(), any()) } returns task
-
-        Blocks.clearFactories()
     }
 
     fun teardown() {
         unmockkAll()
-        Blocks.clearFactories()
         dataFolder.deleteRecursively()
     }
 
