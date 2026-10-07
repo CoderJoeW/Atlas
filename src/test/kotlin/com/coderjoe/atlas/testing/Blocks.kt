@@ -8,7 +8,7 @@ import com.coderjoe.atlas.block.BlockRegistry
  * hook - `powerUpdate()`, `fluidUpdate()` - directly.
  *
  * Blocks themselves are placed with [com.coderjoe.atlas.block.BlockRegistry.track], which gives
- * them their context without starting their tick tasks.
+ * them their context without putting them on the ticker.
  */
 object Blocks {
     /** Tracks this block in [registry] under its own id and hands it back, for tests that need one in place. */
