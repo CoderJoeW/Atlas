@@ -4,6 +4,7 @@ import com.coderjoe.atlas.block.BlockCatalog
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.block.BlockFace
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
@@ -40,14 +41,25 @@ class BlockPersistence(
         private const val BLOCKS_KEY = "blocks"
     }
 
+    private data class Spot(val world: String, val x: Int, val y: Int, val z: Int) {
+        override fun toString() = "$world $x,$y,$z"
+    }
+
     private val dataFile = File(plugin.dataFolder, FILE_NAME)
 
-    /** Writes every block in [registry] to [FILE_NAME], returning whether the file was written. */
+    /**
+     * Saved entries that could not become blocks yet, because their world is not loaded or the catalog
+     * does not know their id. [save] writes them back unchanged so they are never lost.
+     */
+    private val held = LinkedHashMap<Spot, Map<*, *>>()
+
+    /**
+     * Writes every block in [registry] to [FILE_NAME], along with the held entries no live block has
+     * replaced, returning whether the file was written.
+     */
     fun save(registry: BlockRegistry): Boolean {
         val blocksWithIds = registry.getAllBlocksWithIds()
-        plugin.logger.atlasInfo("Saving ${blocksWithIds.size} blocks to $FILE_NAME...")
-
-        val blockDataList =
+        val liveDataList =
             blocksWithIds.map { (block, blockId) ->
                 val map =
                     mutableMapOf<String, Any>(
@@ -64,6 +76,9 @@ class BlockPersistence(
                 block.writeSaveData(map)
                 map
             }
+        held.keys.removeAll(liveDataList.mapNotNull(::spotOf).toSet())
+        val blockDataList = liveDataList + held.values
+        plugin.logger.atlasInfo("Saving ${liveDataList.size} blocks and ${held.size} held entries to $FILE_NAME...")
 
         val config = YamlConfiguration()
         config.set(VERSION_KEY, VERSION)
@@ -95,6 +110,45 @@ class BlockPersistence(
     }
 
     fun load(registry: BlockRegistry) {
+        loadFiles(registry)
+        logHeld()
+    }
+
+    /** Restores the held entries in [world], now that it has loaded, into [registry]. */
+    fun restoreWorld(
+        registry: BlockRegistry,
+        world: World,
+    ) {
+        val pending = held.filterKeys { it.world == world.name }
+        if (pending.isEmpty()) return
+
+        var restoredCount = 0
+        for ((spot, entry) in pending) {
+            if (restore(registry, entry, spot, world)) {
+                held.remove(spot)
+                restoredCount++
+            }
+        }
+        plugin.logger.atlasInfo(
+            "World '${world.name}' loaded: restored $restoredCount of ${pending.size} held blocks, ${held.size} still held",
+        )
+    }
+
+    private fun logHeld() {
+        for ((worldName, spots) in held.keys.groupBy { it.world }) {
+            if (plugin.server.getWorld(worldName) == null) {
+                plugin.logger.warning(
+                    "Holding ${spots.size} blocks in world '$worldName', which is not loaded; they will be restored when it loads",
+                )
+            } else {
+                plugin.logger.warning(
+                    "Holding ${spots.size} blocks in world '$worldName' that could not be created; they stay in $FILE_NAME unchanged",
+                )
+            }
+        }
+    }
+
+    private fun loadFiles(registry: BlockRegistry) {
         val legacyFiles = LEGACY_FILES.keys.map { File(plugin.dataFolder, it) }.filter { it.isFile }
 
         if (dataFile.isFile) {
@@ -158,43 +212,57 @@ class BlockPersistence(
         plugin.logger.atlasInfo("Loading ${blockDataList.size} blocks from $source...")
 
         var loadedCount = 0
-        var failedCount = 0
+        var heldCount = 0
+        var skippedCount = 0
 
-        for (blockDataMap in blockDataList) {
-            try {
-                val blockId = blockDataMap["blockId"] as? String ?: continue
-                val worldName = blockDataMap["world"] as? String ?: continue
-                val x = (blockDataMap["x"] as? Number)?.toInt() ?: continue
-                val y = (blockDataMap["y"] as? Number)?.toInt() ?: continue
-                val z = (blockDataMap["z"] as? Number)?.toInt() ?: continue
-                val facingStr = blockDataMap["facing"] as? String
-
-                val world = plugin.server.getWorld(worldName)
-                if (world == null) {
-                    plugin.logger.warning("Failed to load block at $worldName $x,$y,$z - world not found")
-                    failedCount++
-                    continue
-                }
-
-                val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
-                val facing = facingStr?.let { runCatching { BlockFace.valueOf(it) }.getOrNull() } ?: BlockFace.SELF
-
-                val block = catalog.create(blockId, location, facing)
-                if (block != null) {
-                    @Suppress("UNCHECKED_CAST")
-                    block.readSaveData(blockDataMap as Map<String, Any>)
-                    registry.register(block, blockId)
-                    loadedCount++
-                } else {
-                    plugin.logger.warning("Failed to create block for ID: $blockId at $x,$y,$z")
-                    failedCount++
-                }
-            } catch (e: Exception) {
-                plugin.logger.warning("Failed to load block: ${e.message}")
-                failedCount++
+        for (entry in blockDataList) {
+            val spot = spotOf(entry)
+            if (spot == null || entry["blockId"] !is String) {
+                skippedCount++
+                continue
+            }
+            val world = plugin.server.getWorld(spot.world)
+            if (world != null && restore(registry, entry, spot, world)) {
+                loadedCount++
+            } else {
+                held[spot] = entry
+                heldCount++
             }
         }
 
-        plugin.logger.atlasInfo("Loaded $loadedCount blocks from $source, $failedCount failed")
+        plugin.logger.atlasInfo("Loaded $loadedCount blocks from $source, holding $heldCount, skipped $skippedCount malformed")
+    }
+
+    private fun restore(
+        registry: BlockRegistry,
+        entry: Map<*, *>,
+        spot: Spot,
+        world: World,
+    ): Boolean {
+        val blockId = entry["blockId"] as String
+        return try {
+            val location = Location(world, spot.x.toDouble(), spot.y.toDouble(), spot.z.toDouble())
+            val facing = (entry["facing"] as? String)?.let { runCatching { BlockFace.valueOf(it) }.getOrNull() } ?: BlockFace.SELF
+            val block = catalog.create(blockId, location, facing)
+            if (block == null) {
+                plugin.logger.warning("Unknown block ID $blockId at $spot; keeping its saved entry")
+                return false
+            }
+            @Suppress("UNCHECKED_CAST")
+            block.readSaveData(entry as Map<String, Any>)
+            registry.register(block, blockId)
+            true
+        } catch (e: Exception) {
+            plugin.logger.warning("Failed to load $blockId at $spot, keeping its saved entry: ${e.message}")
+            false
+        }
+    }
+
+    private fun spotOf(entry: Map<*, *>): Spot? {
+        val world = entry["world"] as? String ?: return null
+        val x = (entry["x"] as? Number)?.toInt() ?: return null
+        val y = (entry["y"] as? Number)?.toInt() ?: return null
+        val z = (entry["z"] as? Number)?.toInt() ?: return null
+        return Spot(world, x, y, z)
     }
 }

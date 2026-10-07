@@ -12,6 +12,7 @@ import com.coderjoe.atlas.listener.AtlasBlockListener
 import com.coderjoe.atlas.listener.ChunkSurveyListener
 import com.coderjoe.atlas.listener.GuideBookListener
 import com.coderjoe.atlas.listener.PlayerJoinListener
+import com.coderjoe.atlas.listener.WorldLoadListener
 import com.coderjoe.atlas.util.AtlasConfig
 import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.plugin.java.JavaPlugin
@@ -48,6 +49,7 @@ class Atlas : JavaPlugin() {
         persistence = BlockPersistence(this, catalog).also { it.load(registry) }
         logger.atlasInfo("Block registry initialized with ${catalog.blockIds.size} block types")
 
+        server.pluginManager.registerEvents(WorldLoadListener(persistence, registry), this)
         server.pluginManager.registerEvents(AtlasBlockListener(this, registry, catalog), this)
         hologramInspector =
             HologramInspector(this, registry, catalog) { AtlasGoggles.isWearing(it, this) }
