@@ -148,7 +148,7 @@ class SmallBatteryTest {
         val run = cable(0.0, 64.0, 0.0)
         val battery = battery(0.0, 63.0, 0.0)
 
-        run.powerUpdate()
+        PowerGrid.of(registry).tick()
 
         assertEquals(3, battery.currentPower)
         assertEquals(0, panel.currentPower)
@@ -162,7 +162,7 @@ class SmallBatteryTest {
         charged.currentPower = 20
         val empty = battery(0.0, 63.0, 0.0)
 
-        run.powerUpdate()
+        PowerGrid.of(registry).tick()
 
         assertEquals(10, charged.currentPower)
         assertEquals(10, empty.currentPower)
@@ -177,7 +177,7 @@ class SmallBatteryTest {
         val b = battery(0.0, 63.0, 0.0)
         b.currentPower = 10
 
-        run.powerUpdate()
+        PowerGrid.of(registry).tick()
 
         assertEquals(10, a.currentPower)
         assertEquals(10, b.currentPower)
@@ -194,7 +194,7 @@ class SmallBatteryTest {
 
         // A single unit cannot close a gap of one - it only swaps which battery leads - so the
         // pair has to be left as it is, or it would oscillate for as long as the run existed.
-        repeat(3) { run.powerUpdate() }
+        repeat(3) { PowerGrid.of(registry).tick() }
 
         assertEquals(11, ahead.currentPower)
         assertEquals(10, behind.currentPower)
@@ -208,7 +208,7 @@ class SmallBatteryTest {
         charged.currentPower = 7
         val empty = battery(0.0, 63.0, 0.0)
 
-        repeat(3) { run.powerUpdate() }
+        repeat(3) { PowerGrid.of(registry).tick() }
 
         assertEquals(7, charged.currentPower + empty.currentPower, "no charge may be created or lost")
         assertTrue(
@@ -228,7 +228,7 @@ class SmallBatteryTest {
         mid.currentPower = 6
         val empty = battery(1.0, 65.0, 0.0)
 
-        repeat(5) { run.powerUpdate() }
+        repeat(5) { PowerGrid.of(registry).tick() }
 
         val totals = listOf(full.currentPower, mid.currentPower, empty.currentPower)
         assertEquals(36, totals.sum(), "no charge may be created or lost")

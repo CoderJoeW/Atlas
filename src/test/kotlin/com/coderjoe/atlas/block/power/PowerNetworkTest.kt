@@ -38,7 +38,7 @@ class PowerNetworkTest {
         val only = cable(0.0, 64.0, 0.0)
         val network = PowerNetworks.networkFor(only)
         assertEquals(1, network.cables.size)
-        assertTrue(network.leader === only)
+        assertTrue(network.cables.single() === only)
     }
 
     @Test
@@ -177,7 +177,7 @@ class PowerNetworkTest {
         assertEquals(0, network.transfer(), "nothing to draw the power, so none moves")
         assertTrue(network.hasSupply(), "but the run is still fed and must read as live")
 
-        run.powerUpdate()
+        network.tick()
         assertTrue(run.carrying, "the cable should render lit, not dead")
     }
 
@@ -188,7 +188,7 @@ class PowerNetworkTest {
         registry.track(battery, "atlas:small_battery")
 
         assertFalse(PowerNetworks.networkFor(run).hasSupply())
-        run.powerUpdate()
+        PowerNetworks.networkFor(run).tick()
         assertFalse(run.carrying)
     }
 

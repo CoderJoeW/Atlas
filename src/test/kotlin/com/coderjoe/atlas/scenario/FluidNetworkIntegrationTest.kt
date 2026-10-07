@@ -3,6 +3,7 @@ package com.coderjoe.atlas.scenario
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.fluid.FluidContainer
+import com.coderjoe.atlas.block.fluid.FluidGrid
 import com.coderjoe.atlas.block.fluid.FluidPipe
 import com.coderjoe.atlas.block.fluid.FluidPump
 import com.coderjoe.atlas.testing.MockServer
@@ -108,7 +109,7 @@ class FluidNetworkIntegrationTest {
         val pump = pump(0.0, 64.0, 0.0, FluidType.WATER, BlockFace.SOUTH)
         val run = pipe(0.0, 64.0, 1.0)
 
-        run.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertEquals(FluidType.WATER, pump.storedFluid, "nowhere to send it, so it stays put")
     }
@@ -118,7 +119,7 @@ class FluidNetworkIntegrationTest {
         pump(0.0, 64.0, 0.0, FluidType.LAVA, BlockFace.SOUTH)
         val run = pipe(0.0, 64.0, 1.0)
 
-        run.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertEquals(FluidType.LAVA, run.carrying, "the run should glow with the fluid available on it")
     }

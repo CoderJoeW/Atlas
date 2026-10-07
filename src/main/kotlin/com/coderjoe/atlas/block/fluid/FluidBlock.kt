@@ -11,8 +11,19 @@ import org.bukkit.block.BlockFace
 
 abstract class FluidBlock(
     location: Location,
-    var storedFluid: FluidType = FluidType.NONE,
+    storedFluid: FluidType = FluidType.NONE,
 ) : AtlasBlock(location) {
+    /**
+     * What this block holds. Every write is reported to the pipe runs touching it, because which
+     * pipe carries which fluid - and where a lava run ends and a water run begins - is read off
+     * the blocks feeding a run.
+     */
+    var storedFluid: FluidType = storedFluid
+        set(value) {
+            field = value
+            if (isAttached) FluidGrid.of(registry).fluidChangedAt(this)
+        }
+
     open fun hasFluid(): Boolean = storedFluid != FluidType.NONE
 
     protected fun updateFluidState() {

@@ -191,7 +191,7 @@ class FluidPumpTest {
         registry.track(tank, "atlas:fluid_container")
 
         // ticking the run must not move anything: the pump pushes, it is not pulled from
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertEquals(FluidType.WATER, pump.storedFluid, "the run must leave the pump alone")
         assertEquals(FluidType.NONE, tank.storedFluid)

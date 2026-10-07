@@ -368,7 +368,7 @@ class FluidContainerTest {
             "atlas:fluid_pipe",
         )
 
-        pipe.fluidUpdate()
+        FluidGrid.of(fluidRegistry).tick()
         assertEquals(FluidType.NONE, pipe.storedFluid) // could not pull
         assertEquals(1, container.storedAmount) // unchanged
     }

@@ -548,7 +548,7 @@ class FluidBlockLogicTest {
         registry.track(pipe1, "atlas:fluid_pipe")
         registry.track(pipe2, "atlas:fluid_pipe")
 
-        pipe1.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertEquals(FluidType.NONE, pipe1.storedFluid)
         assertEquals(FluidType.NONE, pipe2.storedFluid)
@@ -649,7 +649,7 @@ class FluidBlockLogicTest {
             "atlas:fluid_pipe",
         )
 
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
         assertEquals(FluidType.NONE, pipe.storedFluid)
     }
 
@@ -662,7 +662,7 @@ class FluidBlockLogicTest {
             "atlas:fluid_pipe",
         )
 
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
         assertEquals(FluidType.NONE, pipe.storedFluid)
     }
 }

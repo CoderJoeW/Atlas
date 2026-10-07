@@ -14,6 +14,7 @@ abstract class AtlasBlock(
     private var context: BlockContext? = null
     protected val plugin: JavaPlugin get() = requireContext().plugin
     protected val deposits: DepositMap get() = requireContext().deposits
+    protected val registry: BlockRegistry get() = requireContext().registry
     internal open val updateIntervalTicks: Long = 20L
 
     /** Tick interval for [spawnEffects]. Zero leaves the block out of the effect lane entirely. */
