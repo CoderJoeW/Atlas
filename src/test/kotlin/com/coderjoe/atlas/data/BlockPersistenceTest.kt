@@ -11,6 +11,9 @@ import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.block.power.factory.CobblestoneFactory
 import com.coderjoe.atlas.block.transport.ConveyorBelt
 import com.coderjoe.atlas.testing.MockServer
+import io.mockk.every
+import io.mockk.mockk
+import org.bukkit.World
 import org.bukkit.block.BlockFace
 import org.bukkit.configuration.file.YamlConfiguration
 import org.junit.jupiter.api.AfterEach
@@ -332,6 +335,133 @@ class BlockPersistenceTest {
         val copies = MockServer.dataFolder.listFiles()!!.filter { it.name.startsWith("power_blocks.yml.migrated-") }
         assertEquals(1, copies.size)
         assertFalse(file("power_blocks.yml").exists())
+    }
+
+    private val netherBattery =
+        """
+        - blockId: atlas:small_battery
+          world: nether
+          x: 1
+          y: 70
+          z: 2
+          currentPower: 4
+        """.trimIndent()
+
+    private val netherBelt =
+        """
+        - blockId: atlas:conveyor_belt
+          world: nether
+          x: 3
+          y: 70
+          z: 2
+          facing: EAST
+        """.trimIndent()
+
+    private fun writeBlocks(vararg entries: String) {
+        file(BlockPersistence.FILE_NAME).writeText("version: ${BlockPersistence.VERSION}\nblocks:\n" + entries.joinToString("\n"))
+    }
+
+    private fun savedEntries(): List<Map<*, *>> = YamlConfiguration.loadConfiguration(file(BlockPersistence.FILE_NAME)).getMapList("blocks")
+
+    private fun mockWorld(name: String): World {
+        val world = mockk<World>(relaxed = true)
+        every { world.name } returns name
+        return world
+    }
+
+    @Test
+    fun `blocks in a world that is not loaded survive a save unchanged`() {
+        writeBlocks(netherBattery, netherBelt)
+        val before = savedEntries()
+
+        persistence.load(registry)
+        persistence.save(registry)
+
+        assertTrue(registry.getAllBlocks().isEmpty())
+        assertEquals(before, savedEntries())
+    }
+
+    @Test
+    fun `loading the world later restores its held blocks with their data and facing`() {
+        writeBlocks(netherBattery, netherBelt)
+        persistence.load(registry)
+
+        persistence.restoreWorld(registry, mockWorld("nether"))
+
+        val byX = registry.getAllBlocks().associateBy { it.location.blockX }
+        assertEquals(setOf(1, 3), byX.keys)
+        assertEquals(4, assertInstanceOf(SmallBattery::class.java, byX[1]).currentPower)
+        assertEquals(BlockFace.EAST, assertInstanceOf(ConveyorBelt::class.java, byX[3]).facing)
+        assertTrue(byX.values.all { it.location.world?.name == "nether" })
+    }
+
+    @Test
+    fun `restored blocks are saved once`() {
+        writeBlocks(netherBattery, netherBelt)
+        persistence.load(registry)
+        persistence.restoreWorld(registry, mockWorld("nether"))
+
+        persistence.save(registry)
+
+        assertEquals(2, savedEntries().size)
+    }
+
+    @Test
+    fun `loading an unrelated world leaves held blocks held`() {
+        writeBlocks(netherBattery)
+        persistence.load(registry)
+
+        persistence.restoreWorld(registry, mockWorld("the_end"))
+        persistence.save(registry)
+
+        assertTrue(registry.getAllBlocks().isEmpty())
+        assertEquals(1, savedEntries().size)
+    }
+
+    @Test
+    fun `a live block on a held location replaces the held entry`() {
+        writeBlocks(netherBattery)
+        persistence.load(registry)
+        val nether = mockWorld("nether")
+        registry.track(SmallBattery(MockServer.createLocation(1.0, 70.0, 2.0, nether)).also { it.currentPower = 9 }, SmallBattery.BLOCK_ID)
+
+        persistence.save(registry)
+
+        assertEquals(9, savedEntries().single()["currentPower"])
+    }
+
+    @Test
+    fun `an entry with an id the catalog does not know is kept`() {
+        writeBlocks(
+            """
+            - blockId: atlas:removed_machine
+              world: world
+              x: 0
+              y: 64
+              z: 0
+              speed: 3
+            """.trimIndent(),
+        )
+        val before = savedEntries()
+
+        persistence.load(registry)
+        persistence.save(registry)
+
+        assertTrue(registry.getAllBlocks().isEmpty())
+        assertEquals(before, savedEntries())
+    }
+
+    @Test
+    fun `migration keeps legacy blocks whose world is not loaded`() {
+        file("power_blocks.yml").writeText("power_blocks:\n$netherBattery")
+
+        persistence.load(registry)
+
+        assertTrue(registry.getAllBlocks().isEmpty())
+        assertTrue(file("power_blocks.yml.migrated").isFile)
+        val entry = savedEntries().single()
+        assertEquals("nether", entry["world"])
+        assertEquals(4, entry["currentPower"])
     }
 
     @Test
