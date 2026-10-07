@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.data
 
-import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.BlockFactory
+import com.coderjoe.atlas.block.BlockCatalog
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.util.atlasInfo
 import org.bukkit.Location
@@ -9,71 +8,154 @@ import org.bukkit.block.BlockFace
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
-import kotlin.collections.get
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
+/**
+ * Every Atlas block, whatever its family, in one [FILE_NAME] stamped with a schema [VERSION].
+ *
+ * Servers that ran Atlas before the families shared a file have one file per family instead. The
+ * first load with no [FILE_NAME] reads those, writes their blocks to [FILE_NAME], and only then
+ * renames each to `<name>.migrated`, so a failed write leaves them in place to try again next start.
+ */
 class BlockPersistence(
     private val plugin: JavaPlugin,
-    private val fileName: String,
-    private val yamlKey: String,
-    private val factory: BlockFactory,
-    /**
-     * Which blocks in the shared registry belong in this file.
-     *
-     * Scaffolding with a known end date: one registry now holds every block, but there are still
-     * three save files until step 2.6 merges them, so each file has to pick its own family out of
-     * the shared index. The three predicates are exhaustive and never overlap, so nothing is
-     * dropped and nothing is written twice.
-     */
-    private val owns: (AtlasBlock) -> Boolean,
+    private val catalog: BlockCatalog,
 ) {
-    private val dataFile = File(plugin.dataFolder, fileName)
+    companion object {
+        const val FILE_NAME = "blocks.yml"
+        const val VERSION = 1
+        const val MIGRATED_SUFFIX = ".migrated"
 
-    fun save(registry: BlockRegistry) {
-        val config = YamlConfiguration()
-        val blocksWithIds = registry.getAllBlocksWithIds().filter { (block, _) -> owns(block) }
+        /** The per-family save files, by file name, with the key each kept its block list under. */
+        val LEGACY_FILES =
+            mapOf(
+                "power_blocks.yml" to "power_blocks",
+                "fluid_blocks.yml" to "fluid_blocks",
+                "transport_blocks.yml" to "transport_blocks",
+            )
 
-        plugin.logger.atlasInfo("Saving ${blocksWithIds.size} blocks to $fileName...")
+        private const val VERSION_KEY = "version"
+        private const val BLOCKS_KEY = "blocks"
+    }
 
-        val blockDataList = mutableListOf<Map<String, Any>>()
+    private val dataFile = File(plugin.dataFolder, FILE_NAME)
 
-        for ((block, blockId) in blocksWithIds) {
-            val map =
-                mutableMapOf<String, Any>(
-                    "blockId" to blockId,
-                    "world" to (block.location.world?.name ?: "world"),
-                    "x" to block.location.blockX,
-                    "y" to block.location.blockY,
-                    "z" to block.location.blockZ,
-                )
-            val facing = block.facing
-            if (facing != BlockFace.SELF) {
-                map["facing"] = facing.name
+    /** Writes every block in [registry] to [FILE_NAME], returning whether the file was written. */
+    fun save(registry: BlockRegistry): Boolean {
+        val blocksWithIds = registry.getAllBlocksWithIds()
+        plugin.logger.atlasInfo("Saving ${blocksWithIds.size} blocks to $FILE_NAME...")
+
+        val blockDataList =
+            blocksWithIds.map { (block, blockId) ->
+                val map =
+                    mutableMapOf<String, Any>(
+                        "blockId" to blockId,
+                        "world" to (block.location.world?.name ?: "world"),
+                        "x" to block.location.blockX,
+                        "y" to block.location.blockY,
+                        "z" to block.location.blockZ,
+                    )
+                val facing = block.facing
+                if (facing != BlockFace.SELF) {
+                    map["facing"] = facing.name
+                }
+                block.writeSaveData(map)
+                map
             }
-            block.writeSaveData(map)
-            blockDataList.add(map)
-        }
 
-        config.set(yamlKey, blockDataList)
+        val config = YamlConfiguration()
+        config.set(VERSION_KEY, VERSION)
+        config.set(BLOCKS_KEY, blockDataList)
 
-        try {
-            config.save(dataFile)
-            plugin.logger.atlasInfo("Successfully saved ${blockDataList.size} blocks to $fileName")
+        val partial = File(plugin.dataFolder, "$FILE_NAME.tmp")
+        return try {
+            config.save(partial)
+            replace(partial, dataFile)
+            plugin.logger.atlasInfo("Successfully saved ${blockDataList.size} blocks to $FILE_NAME")
+            true
         } catch (e: Exception) {
-            plugin.logger.severe("Failed to save blocks to $fileName: ${e.message}")
+            plugin.logger.severe("Failed to save blocks to $FILE_NAME: ${e.message}")
             e.printStackTrace()
+            partial.delete()
+            false
+        }
+    }
+
+    private fun replace(
+        source: File,
+        target: File,
+    ) {
+        try {
+            Files.move(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
+        } catch (_: AtomicMoveNotSupportedException) {
+            Files.move(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
     fun load(registry: BlockRegistry) {
-        if (!dataFile.exists()) {
-            plugin.logger.atlasInfo("No $fileName data file found, starting fresh")
+        val legacyFiles = LEGACY_FILES.keys.map { File(plugin.dataFolder, it) }.filter { it.isFile }
+
+        if (dataFile.isFile) {
+            val config = YamlConfiguration.loadConfiguration(dataFile)
+            val version = config.getInt(VERSION_KEY, VERSION)
+            if (version > VERSION) {
+                plugin.logger.warning("$FILE_NAME is schema version $version, newer than $VERSION; loading what this version understands")
+            }
+            loadEntries(registry, config.getMapList(BLOCKS_KEY), FILE_NAME)
+            if (legacyFiles.isNotEmpty()) {
+                plugin.logger.warning(
+                    "Setting aside ${legacyFiles.map { it.name }} without loading them: $FILE_NAME already holds the blocks",
+                )
+                legacyFiles.forEach(::retire)
+            }
             return
         }
 
-        val config = YamlConfiguration.loadConfiguration(dataFile)
-        val blockDataList = config.getMapList(yamlKey)
+        if (legacyFiles.isEmpty()) {
+            plugin.logger.atlasInfo("No $FILE_NAME data file found, starting fresh")
+            return
+        }
 
-        plugin.logger.atlasInfo("Loading ${blockDataList.size} blocks from $fileName...")
+        migrate(registry, legacyFiles)
+    }
+
+    private fun migrate(
+        registry: BlockRegistry,
+        legacyFiles: List<File>,
+    ) {
+        plugin.logger.atlasInfo("Migrating ${legacyFiles.map { it.name }} to $FILE_NAME...")
+        for (file in legacyFiles) {
+            val config = YamlConfiguration.loadConfiguration(file)
+            loadEntries(registry, config.getMapList(LEGACY_FILES.getValue(file.name)), file.name)
+        }
+
+        if (save(registry)) {
+            legacyFiles.forEach(::retire)
+        } else {
+            plugin.logger.severe("Keeping ${legacyFiles.map { it.name }} in place; migration will be retried on the next start")
+        }
+    }
+
+    private fun retire(file: File) {
+        var target = File(file.parentFile, file.name + MIGRATED_SUFFIX)
+        if (target.exists()) {
+            target = File(file.parentFile, "${file.name}$MIGRATED_SUFFIX-${System.currentTimeMillis()}")
+        }
+        if (file.renameTo(target)) {
+            plugin.logger.atlasInfo("Renamed ${file.name} to ${target.name}")
+        } else {
+            plugin.logger.warning("Could not rename ${file.name} to ${target.name}")
+        }
+    }
+
+    private fun loadEntries(
+        registry: BlockRegistry,
+        blockDataList: List<Map<*, *>>,
+        source: String,
+    ) {
+        plugin.logger.atlasInfo("Loading ${blockDataList.size} blocks from $source...")
 
         var loadedCount = 0
         var failedCount = 0
@@ -95,18 +177,9 @@ class BlockPersistence(
                 }
 
                 val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
-                val facing =
-                    if (facingStr != null) {
-                        try {
-                            BlockFace.valueOf(facingStr)
-                        } catch (_: Exception) {
-                            BlockFace.SELF
-                        }
-                    } else {
-                        BlockFace.SELF
-                    }
+                val facing = facingStr?.let { runCatching { BlockFace.valueOf(it) }.getOrNull() } ?: BlockFace.SELF
 
-                val block = factory.create(blockId, location, facing)
+                val block = catalog.create(blockId, location, facing)
                 if (block != null) {
                     @Suppress("UNCHECKED_CAST")
                     block.readSaveData(blockDataMap as Map<String, Any>)
@@ -122,6 +195,6 @@ class BlockPersistence(
             }
         }
 
-        plugin.logger.atlasInfo("Loaded $loadedCount blocks from $fileName, $failedCount failed")
+        plugin.logger.atlasInfo("Loaded $loadedCount blocks from $source, $failedCount failed")
     }
 }

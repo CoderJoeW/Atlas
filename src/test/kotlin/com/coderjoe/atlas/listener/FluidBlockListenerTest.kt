@@ -1,8 +1,7 @@
 package com.coderjoe.atlas.listener
 
+import com.coderjoe.atlas.AtlasBlockTypes
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.block.BlockSystem
-import com.coderjoe.atlas.block.fluid.FluidBlockFactory
 import com.coderjoe.atlas.block.fluid.FluidPump
 import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
@@ -24,14 +23,7 @@ class FluidBlockListenerTest {
     fun setup() {
         MockServer.setup()
         registry = BlockRegistry(MockServer.plugin)
-        val system =
-            BlockSystem(
-                name = "fluid",
-                registry = registry,
-                factory = FluidBlockFactory,
-                descriptors = emptyMap(),
-            )
-        listener = AtlasBlockListener(MockServer.plugin, registry, listOf(system))
+        listener = AtlasBlockListener(MockServer.plugin, registry, AtlasBlockTypes.catalog)
     }
 
     @AfterEach

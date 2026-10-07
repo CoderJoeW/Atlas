@@ -1,8 +1,8 @@
 package com.coderjoe.atlas.listener
 
+import com.coderjoe.atlas.block.BlockCatalog
 import com.coderjoe.atlas.block.BlockDescriptor
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.block.BlockSystem
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.craftengine.CraftEngineHelper
 import org.bukkit.Location
@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class AtlasBlockListener(
     private val plugin: JavaPlugin,
     private val registry: BlockRegistry,
-    private val systems: List<BlockSystem>,
+    private val catalog: BlockCatalog,
 ) : Listener {
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
@@ -26,19 +26,12 @@ class AtlasBlockListener(
         if (registry.updatingLocations.contains(key)) return
 
         val blockId = CraftEngineHelper.getBlockId(event.block) ?: return
-
-        for (system in systems) {
-            val descriptor = system.findDescriptorForBlockId(blockId)
-            if (descriptor != null) {
-                handlePlacement(event, system, descriptor)
-                return
-            }
-        }
+        val descriptor = catalog.find(blockId) ?: return
+        handlePlacement(event, descriptor)
     }
 
     private fun handlePlacement(
         event: BlockPlaceEvent,
-        system: BlockSystem,
         descriptor: BlockDescriptor,
     ) {
         val location = event.block.location.clone()
@@ -46,7 +39,7 @@ class AtlasBlockListener(
         when (descriptor.placementType) {
             PlacementType.SIMPLE -> {
                 val facing = getPlayerFacing(event)
-                createAndRegister(system, descriptor.baseBlockId, location, facing)
+                createAndRegister(descriptor.baseBlockId, location, facing)
             }
             PlacementType.DIRECTIONAL -> {
                 val facing = getPlayerFacing(event)
@@ -61,7 +54,7 @@ class AtlasBlockListener(
                                 CraftEngineHelper.setFacing(location, playerFacing)
                                 playerFacing
                             }
-                        createAndRegister(system, descriptor.baseBlockId, location, actualFacing)
+                        createAndRegister(descriptor.baseBlockId, location, actualFacing)
                     },
                 )
             }
@@ -78,7 +71,7 @@ class AtlasBlockListener(
                                 CraftEngineHelper.setFacing(location, playerFacing)
                                 playerFacing
                             }
-                        createAndRegister(system, descriptor.baseBlockId, location, actualFacing)
+                        createAndRegister(descriptor.baseBlockId, location, actualFacing)
                     },
                 )
             }
@@ -86,14 +79,13 @@ class AtlasBlockListener(
     }
 
     private fun createAndRegister(
-        system: BlockSystem,
         blockId: String,
         location: Location,
         facing: BlockFace,
     ) {
-        val block = system.factory.create(blockId, location, facing)
+        val block = catalog.create(blockId, location, facing)
         if (block != null) {
-            system.registry.register(block, blockId)
+            registry.register(block, blockId)
         }
     }
 

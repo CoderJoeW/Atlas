@@ -1,12 +1,7 @@
 package com.coderjoe.atlas
 
 import com.coderjoe.atlas.block.BlockRegistry
-import com.coderjoe.atlas.block.fluid.FluidBlockFactory
-import com.coderjoe.atlas.block.power.PowerBlockFactory
-import com.coderjoe.atlas.block.power.mine.MineTier
-import com.coderjoe.atlas.block.transport.TransportBlockFactory
 import com.coderjoe.atlas.hologram.HologramInspector
-import com.coderjoe.atlas.testing.Blocks
 import com.coderjoe.atlas.testing.MockServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
@@ -23,24 +18,6 @@ class AtlasPluginTest {
     @AfterEach
     fun teardown() {
         MockServer.teardown()
-    }
-
-    @Test
-    fun `power system initializes its twelve machines plus one block per mine`() {
-        Blocks.initPowerFactory()
-        assertEquals(12 + MineTier.entries.size, PowerBlockFactory.getRegisteredBlockIds().size)
-    }
-
-    @Test
-    fun `fluid system initializes with 3 block types`() {
-        Blocks.initFluidFactory()
-        assertEquals(3, FluidBlockFactory.getRegisteredBlockIds().size)
-    }
-
-    @Test
-    fun `transport system initializes with 1 block type`() {
-        Blocks.initTransportFactory()
-        assertEquals(1, TransportBlockFactory.getRegisteredBlockIds().size)
     }
 
     @Test

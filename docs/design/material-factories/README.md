@@ -60,7 +60,7 @@ push-fed fluid: `MaterialFactory` now banks each unit as it lands and holds it u
 fluid and the power are both there, so "water in, waiting on lava" is a state the block can sit in
 indefinitely. The four-way split in the colour mockup turned out to describe real states after all.
 
-Banked fluid is persisted alongside `currentPower` (`PowerBlockPersistence`), so a restart puts
+Banked fluid is persisted alongside `currentPower` (`BlockPersistence`), so a restart puts
 back a half-filled machine rather than silently eating a unit the pump already spent power to
 lift.
 
