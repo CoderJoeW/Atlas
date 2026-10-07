@@ -7,6 +7,7 @@ import com.coderjoe.atlas.block.fluid.FluidPipe
 import com.coderjoe.atlas.block.fluid.FluidPump
 import com.coderjoe.atlas.block.power.LavaGenerator
 import com.coderjoe.atlas.block.power.PowerCable
+import com.coderjoe.atlas.block.power.PowerGrid
 import com.coderjoe.atlas.block.power.SmallSolarPanel
 import com.coderjoe.atlas.testing.MockServer
 import io.mockk.every
@@ -139,7 +140,7 @@ class CrossSystemIntegrationTest {
 
         // Step 2: the run ticks and drives the panel's charge into the pump on its edge. The
         // pump's buffer has room for the unit, so the panel empties in one go.
-        cable.powerUpdate()
+        PowerGrid.of(registry).tick()
         assertEquals(1, pump.storedPower, "the run should have fed the pump")
         assertEquals(0, solar.currentPower, "and taken it off the panel")
 

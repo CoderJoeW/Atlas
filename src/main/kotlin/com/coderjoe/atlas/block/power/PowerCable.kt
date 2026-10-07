@@ -46,10 +46,12 @@ class PowerCable(location: Location) : PowerBlock(location, maxStorage = 0) {
 
     override val baseBlockId: String = BLOCK_ID
 
-    override val updateIntervalTicks: Long = 20L
+    override val updateIntervalTicks: Long = PowerGrid.TICK_INTERVAL
 
-    /** Set by the run's leader each tick: whether this network moved any power. */
+    /** Set by the run's network each tick: whether it has power on it. */
     internal var carrying: Boolean = false
+
+    internal val grid: PowerGrid get() = PowerGrid.of(registry)
 
     /** Remembered so the block state is only rewritten when the shape or flow changes. */
     private var renderedConnections: Set<BlockFace>? = null
@@ -90,7 +92,7 @@ class PowerCable(location: Location) : PowerBlock(location, maxStorage = 0) {
     ): Int = PowerNetworks.networkFor(this).draw(amount)
 
     /** A cable is "live" when the run it belongs to has a producer with something to give. */
-    override fun canSupplyPower(): Boolean = PowerNetworks.networkFor(this).terminals().first.isNotEmpty()
+    override fun canSupplyPower(): Boolean = PowerNetworks.networkFor(this).hasSupply()
 
     /**
      * A cable stores nothing, so its own gauge would always read 0/0. It reports the run it
@@ -132,22 +134,16 @@ class PowerCable(location: Location) : PowerBlock(location, maxStorage = 0) {
             else -> StatusLine("Power is flowing", Tone.GOOD)
         }
 
+    /** The run's transfer is ticked once for the whole run by [PowerGrid]; a cable only draws itself. */
     override fun powerUpdate() {
-        val network = PowerNetworks.networkFor(this)
-
-        // every cable in a run discovers the same network, so only its leader runs the transfer,
-        // and it tells the whole run whether it is live
-        if (network.leader === this) {
-            val moved = network.transfer() > 0
-            // A run is lit whenever a generator on it has charge, not only in the tick power
-            // happens to move. Otherwise a full solar panel with nothing drawing from it yet
-            // looks exactly like a run with no generator at all.
-            val live = moved || network.hasSupply()
-            for (cable in network.cables) cable.carrying = live
-        }
-
         renderConnections()
     }
+
+    override fun onPlaced() = grid.placed(this)
+
+    override fun onRemoved() = grid.removed(this)
+
+    override fun onNeighborChanged() = grid.neighborChanged(this)
 
     /** Rewrites the six arm properties and the glow, but only when something actually changed. */
     private fun renderConnections() {

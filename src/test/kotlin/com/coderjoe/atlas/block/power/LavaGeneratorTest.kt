@@ -3,6 +3,7 @@ package com.coderjoe.atlas.block.power
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.fluid.FluidContainer
+import com.coderjoe.atlas.block.fluid.FluidGrid
 import com.coderjoe.atlas.block.fluid.FluidPipe
 import com.coderjoe.atlas.testing.MockServer
 import org.junit.jupiter.api.AfterEach
@@ -66,7 +67,7 @@ class LavaGeneratorTest {
         val pipe = FluidPipe(MockServer.createLocation(0.0, 64.0, -1.0))
         registry.track(pipe, "atlas:fluid_pipe")
 
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
         gen.powerUpdate()
 
         assertEquals("atlas:lava_generator_active", gen.getVisualStateBlockId())
@@ -86,12 +87,12 @@ class LavaGeneratorTest {
         val pipe = FluidPipe(MockServer.createLocation(0.0, 64.0, -1.0))
         registry.track(pipe, "atlas:fluid_pipe")
 
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
         gen.powerUpdate()
         assertEquals("atlas:lava_generator_active", gen.getVisualStateBlockId())
 
         // the tank is empty now, so the next push moves nothing
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
         gen.powerUpdate()
         assertEquals("atlas:lava_generator", gen.getVisualStateBlockId())
     }
@@ -122,7 +123,7 @@ class LavaGeneratorTest {
         tank.storeFluid(FluidType.LAVA)
         registry.track(tank, "atlas:fluid_container")
 
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertEquals(2, gen.currentPower)
         assertFalse(tank.hasFluid())
@@ -145,7 +146,7 @@ class LavaGeneratorTest {
         tank.storeFluid(FluidType.WATER)
         registry.track(tank, "atlas:fluid_container")
 
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertEquals(0, gen.currentPower)
         assertTrue(tank.hasFluid())
@@ -164,7 +165,7 @@ class LavaGeneratorTest {
         val tank = FluidContainer(MockServer.createLocation(0.0, 64.0, -2.0))
         registry.track(tank, "atlas:fluid_container")
 
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertEquals(0, gen.currentPower)
     }
@@ -185,7 +186,7 @@ class LavaGeneratorTest {
         tank.storeFluid(FluidType.LAVA)
         registry.track(tank, "atlas:fluid_container")
 
-        pipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertEquals(gen.maxStorage, gen.currentPower)
         assertTrue(tank.hasFluid())
@@ -214,8 +215,8 @@ class LavaGeneratorTest {
         tank2.storeFluid(FluidType.LAVA)
         registry.track(tank2, "atlas:fluid_container")
 
-        pipe1.fluidUpdate()
-        pipe2.fluidUpdate()
+        // one grid tick ticks both runs once each
+        FluidGrid.of(registry).tick()
 
         assertEquals(4, gen.currentPower)
         assertFalse(tank1.hasFluid())

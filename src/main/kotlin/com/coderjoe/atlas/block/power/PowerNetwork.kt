@@ -1,7 +1,7 @@
 package com.coderjoe.atlas.block.power
 
 import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.BlockRegistry
+import com.coderjoe.atlas.block.BlockRun
 import com.coderjoe.atlas.block.capability.PowerConsumer
 import org.bukkit.block.BlockFace
 
@@ -12,8 +12,14 @@ import org.bukkit.block.BlockFace
  * producers on its edge and hands it to the consumers on its edge, so a run moves power end to
  * end in a single tick no matter how long it is, and no cable needs to know which way is
  * "forward". Splitting and merging fall out of the shape of the run for free.
+ *
+ * The blocks touching the run are found once, when the run is discovered, as [edges]. Which of
+ * them give or take power is asked fresh on every call, since that changes as charge moves.
  */
-class PowerNetwork(val cables: List<PowerCable>) {
+class PowerNetwork(
+    val cables: List<PowerCable>,
+    private val edges: List<BlockRun.Edge>,
+) {
     private companion object {
         /**
          * The smallest charge difference between two batteries that a single unit can usefully
@@ -42,58 +48,39 @@ class PowerNetwork(val cables: List<PowerCable>) {
         val faceTowardCable: BlockFace,
     )
 
-    /**
-     * The cable that runs the transfer for the whole network.
-     *
-     * Every cable in a run discovers the same set, so one of them has to be picked to act, or the
-     * transfer would run once per cable. The lowest location key is stable and needs no shared
-     * state to agree on.
-     */
-    val leader: PowerCable? get() = cables.minByOrNull { BlockRegistry.locationKey(it.location) }
-
     private var nextSourceIndex: Int = 0
 
     fun terminals(): Pair<List<Terminal>, List<Terminal>> {
-        val sources = LinkedHashMap<String, Terminal>()
-        val sinks = LinkedHashMap<String, Terminal>()
+        val sources = ArrayList<Terminal>()
+        val sinks = ArrayList<Terminal>()
+        val seenSources = HashSet<PowerBlock>()
+        val seenSinks = HashSet<PowerBlock>()
 
-        for (cable in cables) {
-            for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = cable.neighbor(face) as? PowerBlock ?: continue
-                if (neighbor is PowerCable) continue
-
-                val back = face.oppositeFace
-                val key = BlockRegistry.locationKey(neighbor.location)
-                if (neighbor.hasPower() && neighbor.canOutputToward(back)) {
-                    sources.putIfAbsent(key, Terminal(neighbor, back))
-                }
-                if (neighbor.canAcceptPower() && neighbor.canAcceptFrom(back)) {
-                    sinks.putIfAbsent(key, Terminal(neighbor, back))
-                }
+        for (edge in edges) {
+            val block = edge.block as? PowerBlock ?: continue
+            val back = edge.faceTowardRun
+            if (block.hasPower() && block.canOutputToward(back) && seenSources.add(block)) {
+                sources += Terminal(block, back)
+            }
+            if (block.canAcceptPower() && block.canAcceptFrom(back) && seenSinks.add(block)) {
+                sinks += Terminal(block, back)
             }
         }
 
-        return sources.values.toList() to sinks.values.toList()
+        return sources to sinks
     }
 
     /** The blocks on this run's edge that take power but are not power blocks themselves. */
     fun consumers(): List<ConsumerTerminal> {
-        val found = LinkedHashMap<String, ConsumerTerminal>()
-        for (cable in cables) {
-            for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = cable.neighbor(face) ?: continue
-                if (neighbor is PowerBlock) continue
-                val consumer = neighbor as? PowerConsumer ?: continue
-
-                val back = face.oppositeFace
-                if (!consumer.drawsPowerFrom(back)) continue
-                found.putIfAbsent(
-                    BlockRegistry.locationKey(neighbor.location),
-                    ConsumerTerminal(neighbor, consumer, back),
-                )
-            }
+        val found = ArrayList<ConsumerTerminal>()
+        val seen = HashSet<AtlasBlock>()
+        for (edge in edges) {
+            if (edge.block is PowerBlock) continue
+            val consumer = edge.block as? PowerConsumer ?: continue
+            if (!consumer.drawsPowerFrom(edge.faceTowardRun) || !seen.add(edge.block)) continue
+            found += ConsumerTerminal(edge.block, consumer, edge.faceTowardRun)
         }
-        return found.values.toList()
+        return found
     }
 
     /** Whether any producer on this run has power to give, whether or not anything is drawing it. */
@@ -105,7 +92,30 @@ class PowerNetwork(val cables: List<PowerCable>) {
      */
     fun transfer(): Int {
         val (sources, sinks) = terminals()
-        val consumers = consumers()
+        return transfer(sources, sinks, consumers())
+    }
+
+    /**
+     * One network tick: moves what it can, then marks every cable lit or dark.
+     *
+     * A run is lit whenever a generator on it has charge, not only in the tick power happens to
+     * move. Otherwise a full solar panel with nothing drawing from it yet looks exactly like a run
+     * with no generator at all. If nothing moved, nothing changed, so the sources found for the
+     * transfer still answer that.
+     */
+    fun tick(): Int {
+        val (sources, sinks) = terminals()
+        val moved = transfer(sources, sinks, consumers())
+        val live = moved > 0 || sources.any { it.block.hasPower() }
+        for (cable in cables) cable.carrying = live
+        return moved
+    }
+
+    private fun transfer(
+        sources: List<Terminal>,
+        sinks: List<Terminal>,
+        consumers: List<ConsumerTerminal>,
+    ): Int {
         if (sources.isEmpty() || (sinks.isEmpty() && consumers.isEmpty())) return 0
 
         var moved = 0

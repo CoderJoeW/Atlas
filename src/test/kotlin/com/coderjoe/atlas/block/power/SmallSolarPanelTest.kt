@@ -170,7 +170,7 @@ class SmallSolarPanelTest {
 
         panel.forceGenerationDue()
         panel.powerUpdate()
-        cable.powerUpdate()
+        PowerGrid.of(registry).tick()
 
         assertEquals(0, cable.currentPower)
         assertEquals(1, panel.currentPower)

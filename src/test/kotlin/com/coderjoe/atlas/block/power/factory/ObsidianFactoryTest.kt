@@ -3,6 +3,7 @@ package com.coderjoe.atlas.block.power.factory
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.capability.FluidType
 import com.coderjoe.atlas.block.fluid.FluidContainer
+import com.coderjoe.atlas.block.fluid.FluidGrid
 import com.coderjoe.atlas.block.fluid.FluidPipe
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.testing.MockServer
@@ -184,8 +185,7 @@ class ObsidianFactoryTest {
         lavaTank.storeFluid(FluidType.LAVA)
         registry.track(lavaTank, "atlas:fluid_container")
 
-        waterPipe.fluidUpdate()
-        lavaPipe.fluidUpdate()
+        FluidGrid.of(registry).tick()
 
         assertFalse(waterTank.hasFluid())
         assertFalse(lavaTank.hasFluid())

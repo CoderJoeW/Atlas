@@ -1,7 +1,6 @@
 package com.coderjoe.atlas.block.fluid
 
 import com.coderjoe.atlas.block.BlockDescriptor
-import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.PlacementType
 import com.coderjoe.atlas.block.capability.FluidConsumer
 import com.coderjoe.atlas.block.capability.FluidType
@@ -18,7 +17,7 @@ import org.bukkit.block.BlockFace
  * connected, so what the player sees is the plumbing, not an orientation they have to remember.
  */
 class FluidPipe(location: Location) : FluidBlock(location) {
-    override val updateIntervalTicks: Long = 20L
+    override val updateIntervalTicks: Long = FluidGrid.TICK_INTERVAL
 
     companion object {
         const val BLOCK_ID = "atlas:fluid_pipe"
@@ -48,8 +47,10 @@ class FluidPipe(location: Location) : FluidBlock(location) {
 
     override fun getVisualStateBlockId(): String = BLOCK_ID
 
-    /** Set by the run's leader each tick: what the network is carrying, for the glow in the pipe. */
+    /** Set by the run's network each tick: what it is carrying, for the glow in the pipe. */
     internal var carrying: FluidType = FluidType.NONE
+
+    internal val grid: FluidGrid get() = FluidGrid.of(registry)
 
     /** Remembered so the block state is only rewritten when the shape or the flow changes. */
     private var renderedConnections: Set<BlockFace>? = null
@@ -68,13 +69,13 @@ class FluidPipe(location: Location) : FluidBlock(location) {
      * is visible rather than looking like one continuous pipe that quietly carries both.
      */
     fun connections(): Set<BlockFace> {
-        val run = FluidNetworks.networkFor(this).pipes.mapTo(HashSet()) { BlockRegistry.locationKey(it.location) }
+        val run = FluidNetworks.networkFor(this)
         return ADJACENT_FACES.filter { face ->
             val back = face.oppositeFace
             val neighbor = neighbor(face)
 
             when {
-                neighbor is FluidPipe -> BlockRegistry.locationKey(neighbor.location) in run
+                neighbor is FluidPipe -> FluidNetworks.networkFor(neighbor) === run
                 neighbor is FluidBlock -> neighbor.canProvideFluid(back) || neighbor.canAcceptFluid(back)
                 // A block from another system may still draw fluid off this run - the lava
                 // generator is one, and it has to show as plumbed in like anything else.
@@ -105,22 +106,16 @@ class FluidPipe(location: Location) : FluidBlock(location) {
     /** Pushing into a pipe is really pushing to an acceptor or a consumer on its run. */
     override fun storeFluid(type: FluidType): Boolean = FluidNetworks.networkFor(this).deliver(type)
 
+    /** The run's transfer is ticked once for the whole run by [FluidGrid]; a pipe only draws itself. */
     override fun fluidUpdate() {
-        val network = FluidNetworks.networkFor(this)
-
-        // every pipe in a run discovers the same network, so only its leader runs the transfer,
-        // and it tells the whole run what is flowing
-        if (network.leader === this) {
-            val moved = network.transfer()
-            // A run reads as carrying whenever a provider on it has something to give, not only
-            // in the tick a unit happens to move. Otherwise a full pump with nothing drawing from
-            // it yet looks exactly like a run with no source at all.
-            val flowing = if (moved != FluidType.NONE) moved else network.availableFluid()
-            for (pipe in network.pipes) pipe.carrying = flowing
-        }
-
         renderConnections()
     }
+
+    override fun onPlaced() = grid.placed(this)
+
+    override fun onRemoved() = grid.removed(this)
+
+    override fun onNeighborChanged() = grid.neighborChanged(this)
 
     /** Rewrites the six arm properties and the fluid colour, but only when something changed. */
     private fun renderConnections() {

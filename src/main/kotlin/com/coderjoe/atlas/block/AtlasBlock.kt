@@ -7,20 +7,20 @@ import com.coderjoe.atlas.util.coordinates
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
 
 abstract class AtlasBlock(
     val location: Location,
 ) {
-    private var updateTask: BukkitTask? = null
-    private var effectTask: BukkitTask? = null
     private var context: BlockContext? = null
     protected val plugin: JavaPlugin get() = requireContext().plugin
     protected val deposits: DepositMap get() = requireContext().deposits
-    protected open val updateIntervalTicks: Long = 20L
+    protected val registry: BlockRegistry get() = requireContext().registry
+    internal open val updateIntervalTicks: Long = 20L
 
-    /** Tick interval for [spawnEffects]. Zero disables the ambient effect task entirely. */
-    protected open val effectIntervalTicks: Long = 0L
+    /** Tick interval for [spawnEffects]. Zero leaves the block out of the effect lane entirely. */
+    internal open val effectIntervalTicks: Long = 0L
+
+    internal val isAttached: Boolean get() = context != null
     private var currentVisualState: String? = null
 
     companion object {
@@ -43,7 +43,7 @@ abstract class AtlasBlock(
 
     protected abstract fun blockUpdate()
 
-    /** Ambient visuals, run on its own timer at [effectIntervalTicks]. Purely cosmetic. */
+    /** Ambient visuals, run by the ticker every [effectIntervalTicks]. Purely cosmetic. */
     internal open fun spawnEffects() {}
 
     abstract fun getVisualStateBlockId(): String
@@ -91,53 +91,34 @@ abstract class AtlasBlock(
             },
         )
 
-        updateTask =
-            plugin.server.scheduler.runTaskTimer(
-                plugin,
-                Runnable {
-                    try {
-                        blockUpdate()
-                        updateVisualState()
-                    } catch (e: Exception) {
-                        plugin.logger.warning(
-                            """
-                            Error in block tick at ${location.coordinates}: ${e.message}
-                            """.trimIndent(),
-                        )
-                    }
-                },
-                updateIntervalTicks, updateIntervalTicks,
-            )
-
-        if (effectIntervalTicks > 0) {
-            effectTask =
-                plugin.server.scheduler.runTaskTimer(
-                    plugin,
-                    Runnable {
-                        try {
-                            spawnEffects()
-                        } catch (e: Exception) {
-                            plugin.logger.warning(
-                                """
-                                Error in block effects at ${location.coordinates}: ${e.message}
-                                """.trimIndent(),
-                            )
-                        }
-                    },
-                    effectIntervalTicks, effectIntervalTicks,
-                )
-        }
-
+        requireContext().registry.ticker.schedule(this)
         plugin.logger.atlasInfo("${this::class.simpleName} at ${location.coordinates} started")
     }
 
     fun stop() {
-        updateTask?.cancel()
-        updateTask = null
-        effectTask?.cancel()
-        effectTask = null
+        val ticker = requireContext().registry.ticker
+        if (!ticker.isScheduled(this)) return
+        ticker.unschedule(this)
         plugin.logger.atlasInfo("${this::class.simpleName} at ${location.coordinates} stopped")
     }
+
+    internal fun runUpdate() {
+        blockUpdate()
+        updateVisualState()
+    }
+
+    internal fun runEffects() {
+        spawnEffects()
+    }
+
+    /** Called by the registry once this block is indexed and can see its neighbours. */
+    internal open fun onPlaced() {}
+
+    /** Called by the registry once this block is gone from the index. */
+    internal open fun onRemoved() {}
+
+    /** Called by the registry when a block next to this one is placed or removed. */
+    internal open fun onNeighborChanged() {}
 
     internal fun attach(context: BlockContext) {
         this.context = context

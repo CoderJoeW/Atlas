@@ -20,6 +20,18 @@ class BlockRegistry(
 
     private val context = BlockContext(plugin, this, deposits)
 
+    /** The one scheduler task every registered block is updated from. */
+    val ticker = BlockTicker(plugin)
+
+    private val systems = ConcurrentHashMap<Class<*>, Any>()
+
+    /**
+     * Neighbour lookups made through [getAdjacentBlock] - what every block's view of its
+     * surroundings goes through, so the clearest single measure of how simulation work grows.
+     */
+    var adjacentLookups: Long = 0L
+        private set
+
     companion object {
         fun locationKey(location: Location): String {
             return "${location.world?.name}:${location.coordinates}"
@@ -40,7 +52,7 @@ class BlockRegistry(
     }
 
     /**
-     * Indexes [block] and hands it its context without starting its tick tasks. [register] is
+     * Indexes [block] and hands it its context without putting it on the [ticker]. [register] is
      * this plus [AtlasBlock.start]; tests call it alone to lay out a neighbourhood and drive each
      * block's update by hand.
      */
@@ -50,19 +62,43 @@ class BlockRegistry(
     ) {
         val key = locationKey(block.location)
         block.attach(context)
-        blocks[key] = block
+        val replaced = blocks.put(key, block)
         blockIds[key] = blockId
+        if (replaced != null && replaced !== block) {
+            replaced.stop()
+            replaced.onRemoved()
+        }
+        block.onPlaced()
+        notifyNeighbors(block.location)
     }
 
     fun unregister(location: Location): AtlasBlock? {
         val key = locationKey(location)
         val block = blocks.remove(key)
         blockIds.remove(key)
-        block?.stop()
         if (block != null) {
+            block.stop()
+            block.onRemoved()
+            notifyNeighbors(location)
             plugin.logger.atlasInfo("Unregistered ${block::class.simpleName} at ${location.coordinates}")
         }
         return block
+    }
+
+    /**
+     * The one [type] shared by every block in this registry, made by [create] the first time it is
+     * asked for. A block family keeps state that spans many blocks - a cable run's network - here,
+     * so this package never has to know about the families built on it.
+     */
+    fun <T : Any> system(
+        type: Class<T>,
+        create: (BlockRegistry) -> T,
+    ): T = type.cast(systems.getOrPut(type) { create(this) })
+
+    private fun notifyNeighbors(location: Location) {
+        for (face in AtlasBlock.ADJACENT_FACES) {
+            getAdjacentBlock(location, face)?.onNeighborChanged()
+        }
     }
 
     fun getBlock(location: Location): AtlasBlock? {
@@ -73,6 +109,7 @@ class BlockRegistry(
         location: Location,
         face: BlockFace,
     ): AtlasBlock? {
+        adjacentLookups++
         val offset = face.direction
         return getBlock(
             Location(
@@ -122,5 +159,8 @@ class BlockRegistry(
         plugin.logger.atlasInfo("Stopping ${blocks.size} blocks...")
         blocks.values.forEach { it.stop() }
         blocks.clear()
+        blockIds.clear()
+        ticker.stop()
+        systems.clear()
     }
 }

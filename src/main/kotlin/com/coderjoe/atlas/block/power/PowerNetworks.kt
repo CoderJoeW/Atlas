@@ -1,34 +1,12 @@
 package com.coderjoe.atlas.block.power
 
-import com.coderjoe.atlas.block.AtlasBlock
-import com.coderjoe.atlas.block.BlockRegistry
-
 /**
- * Finds the connected run of cable a given cable belongs to.
+ * Finds the network a given cable belongs to.
  *
- * Discovery is a flood fill done fresh each time rather than a cached graph kept in step with
- * every place and break. Runs are small and this is cheap, and it removes a whole class of bugs
- * where a stale edge outlives the cable that made it.
+ * Each connected run is discovered by one flood fill and then shared by all of its cables until a
+ * cable, or a block against one, is placed or broken - see [PowerGrid]. Asking again in between
+ * costs a map lookup rather than another walk of the run.
  */
 object PowerNetworks {
-    fun networkFor(start: PowerCable): PowerNetwork {
-        val found = LinkedHashMap<String, PowerCable>()
-        val queue = ArrayDeque<PowerCable>()
-        found[BlockRegistry.locationKey(start.location)] = start
-        queue.add(start)
-
-        while (queue.isNotEmpty()) {
-            val cable = queue.removeFirst()
-            for (face in AtlasBlock.ADJACENT_FACES) {
-                val neighbor = cable.neighbor(face)
-                if (neighbor !is PowerCable) continue
-                val key = BlockRegistry.locationKey(neighbor.location)
-                if (found.putIfAbsent(key, neighbor) == null) {
-                    queue.add(neighbor)
-                }
-            }
-        }
-
-        return PowerNetwork(found.values.toList())
-    }
+    fun networkFor(start: PowerCable): PowerNetwork = start.grid.networkFor(start)
 }

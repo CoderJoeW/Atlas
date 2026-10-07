@@ -3,6 +3,7 @@ package com.coderjoe.atlas.scenario
 import com.coderjoe.atlas.block.BlockRegistry
 import com.coderjoe.atlas.block.power.LavaGenerator
 import com.coderjoe.atlas.block.power.PowerCable
+import com.coderjoe.atlas.block.power.PowerGrid
 import com.coderjoe.atlas.block.power.PowerNetworks
 import com.coderjoe.atlas.block.power.SmallBattery
 import com.coderjoe.atlas.block.power.SmallSolarPanel
@@ -48,9 +49,8 @@ class PowerNetworkIntegrationTest {
         solar.powerUpdate()
         assertEquals(1, solar.currentPower)
 
-        // one network tick moves the charge the whole length of the run, not one block per tick.
-        // Every cable ticks in game; only the run's leader actually performs the transfer.
-        cables.forEach { it.powerUpdate() }
+        // one network tick moves the charge the whole length of the run, not one block per tick
+        PowerGrid.of(registry).tick()
 
         assertEquals(0, solar.currentPower)
         assertEquals(1, battery.currentPower)
@@ -69,9 +69,8 @@ class PowerNetworkIntegrationTest {
         for (network in networks) {
             assertEquals(5, network.cables.size)
         }
-        // and they all agree on which one of them runs the transfer
-        val leaders = networks.map { it.leader }.distinct()
-        assertEquals(1, leaders.size)
+        // and it is one shared network, so its transfer runs once rather than once per cable
+        assertTrue(networks.all { it === networks.first() })
     }
 
     @Test
@@ -112,7 +111,7 @@ class PowerNetworkIntegrationTest {
         repeat(2) {
             solar.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
             solar.powerUpdate()
-            for (cable in listOf(junction, eastArm, westArm)) cable.powerUpdate()
+            PowerGrid.of(registry).tick()
         }
 
         // the run splits without any splitter block: a unit to each branch
@@ -156,7 +155,7 @@ class PowerNetworkIntegrationTest {
         registry.track(cable, "atlas:power_cable")
         registry.track(source, "atlas:lava_generator")
 
-        cable.powerUpdate()
+        PowerGrid.of(registry).tick()
         assertEquals(0, cable.currentPower) // did not pull
         assertEquals(1, source.currentPower) // unchanged
     }
@@ -179,8 +178,7 @@ class PowerNetworkIntegrationTest {
         repeat(3) {
             solar.ticksSinceGeneration = SmallSolarPanel.GENERATION_INTERVAL_TICKS
             solar.powerUpdate()
-            cable1.powerUpdate()
-            cable2.powerUpdate()
+            PowerGrid.of(registry).tick()
             battery.powerUpdate()
         }
 
